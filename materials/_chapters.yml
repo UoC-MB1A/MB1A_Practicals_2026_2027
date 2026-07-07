@@ -1,0 +1,9 @@
+book:
+  chapters:
+    - part: "Developer Guidelines"
+      chapters:
+        - materials/01-render_guidelines.md
+        - materials/02-content_guidelines.md
+        - materials/03-authorship.md
+        - materials/04-versions.md
+        - materials/05-customising.md
