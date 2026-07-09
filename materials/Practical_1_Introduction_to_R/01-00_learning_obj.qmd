@@ -10,16 +10,16 @@ library(tidyverse)
 
 # Practical 1 - Using R and RStudio
 
-::: callout-tip
+::: {.callout-tip .objectives}
+
 #### Learning objectives
 
-##### Part 1: Setup
+##### [Part 1: Setup](01-01_setting_up.qmd)
 
-- Setup and Introduction
 - Setting up and using Git and GitHub.
 - Setting up RStudio.
 
-##### Part 2: R and RStudio
+##### [Part 2: R and RStudio](01-02_using_r_and_rstudio.qmd)
 
 - Introduction to R and RStudio
 - Introduction to the R language.
@@ -27,18 +27,18 @@ library(tidyverse)
 - The console, scripts and notebooks.
 - Documenting and formatting your code
 
-##### Part 3: Beginning R
+##### [Part 3: Variables and functions](01-03_simple_variables_functions.qmd)
 
 - Introduction to Data Analysis in R
 - Variables and variable names
 - Types of variable
+
+##### [Part 4: Vectors, data frames and plots](01-04_complex_variables_plotting.qmd)
 - Multi-Element Variables
 - Vectors
 - Indices
 - Data frames
 - Introduction to plotting in R
-
-##### Part 4 - Exercises
 
 ##### Part 5 - Extension Exercises
 :::

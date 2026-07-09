@@ -240,3 +240,12 @@ pre.text {
   opacity: 1;
   color: $primary-darker;
 }
+
+.objectives a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.objectives a:hover {
+  text-decoration: underline;
+}

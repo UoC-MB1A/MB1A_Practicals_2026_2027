@@ -5,5 +5,4 @@ book:
         - materials/Practical_1_Introduction_to_R/01-00_learning_obj.qmd
         - materials/Practical_1_Introduction_to_R/01-01_setting_up.qmd
         - materials/Practical_1_Introduction_to_R/01-02_using_r_and_rstudio.qmd
-        - materials/Practical_1_Introduction_to_R/01-03_simple_variables_functions.qmd
-        - materials/Practical_1_Introduction_to_R/01-04_complex_variables_plotting.qmd
+        - materials/Practical_1_Introduction_to_R/01-03_objects_arguments_functions.qmd

@@ -1,8 +1,17 @@
 ---
-title: "Objects, Arguments and Functions"
+title: "3. Variables and functions"
 format: html
 editor: visual
 ---
+
+::: callout-tip
+##### Part 3: Beginning R - Variables and functions
+
+- Introduction to Data Analysis in R
+- Variables and variable names
+- Types of variable
+
+
 ## Functions and their arguments
 
 Functions are "canned scripts" that automate more complicated sets of commands including operations assignments, etc. Many functions are predefined, or can be made available by importing *packages* (more on that later). A function usually takes one or more inputs called *arguments*. Functions often (but not always) return a *value*. A typical example would be the function `sqrt()`. The input (the argument) must be a number, and the return value (in fact, the output) is the square root of that number.
@@ -19,9 +28,8 @@ Here, the value `9` is given to the `sqrt()` function. This function calculates 
 
 The return 'value' of a function need not be numerical (like that of `sqrt()`), and it also does not need to be a single item: it can be a set of things, or even a data set. We'll see that when we read data files. :::
 :::
-:::::
-:::::::
 
+::::: :::::::
 
 ### Arguments
 

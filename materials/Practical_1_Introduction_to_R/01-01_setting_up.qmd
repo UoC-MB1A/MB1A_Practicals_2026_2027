@@ -1,5 +1,5 @@
 ---
-title: "Setting Up"
+title: "1. Setting Up"
 format: html
 editor: visual
 ---
@@ -11,7 +11,6 @@ library(tidyverse)
 ::: callout-tip
 ##### Part 1: Setup
 
-- Setup and Introduction
 - Setting up and using Git and GitHub.
 - Setting up RStudio.
 :::

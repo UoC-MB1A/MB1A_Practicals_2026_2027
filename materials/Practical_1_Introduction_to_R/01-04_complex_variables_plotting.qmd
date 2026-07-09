@@ -1,0 +1,189 @@
+---
+title: "4. Vectors, data frames and plots"
+format: html
+editor: visual
+---
+
+::: callout-tip
+##### Part 4: Beginning R: Vectors, data frames and plots
+- Multi-Element Variables
+- Vectors
+- Indices
+- Data frames
+- Introduction to plotting in R
+:::
+
+## Functions and their arguments
+
+Functions are "canned scripts" that automate more complicated sets of commands including operations assignments, etc. Many functions are predefined, or can be made available by importing *packages* (more on that later). A function usually takes one or more inputs called *arguments*. Functions often (but not always) return a *value*. A typical example would be the function `sqrt()`. The input (the argument) must be a number, and the return value (in fact, the output) is the square root of that number.
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| eval: false
+sqrt(9)
+```
+
+Here, the value `9` is given to the `sqrt()` function. This function calculates the square root, and returns the value. This function is very simple, because it takes just one argument.
+
+The return 'value' of a function need not be numerical (like that of `sqrt()`), and it also does not need to be a single item: it can be a set of things, or even a data set. We'll see that when we read data files. :::
+:::
+
+::::: :::::::
+
+### Arguments
+
+Arguments allow you to control the behaviour of a function. They can be anything, not only numbers or file names. Exactly what each argument means differs per function and can be looked up in the documentation. Some functions take arguments which may either be specified by the user, or, if left out, take on a *default* value: these are called *options*.
+
+Options are typically used to alter the way the function operates, such as if it should ignore missing values, or what symbol to use in a plot. However, if you want something specific, you can specify a value of your choice which will be used instead of the default.
+
+Let's try a function that can take multiple arguments: `round()`.
+
+:::::::::::::: {.panel-tabset group="language"}
+## R
+
+```{r}
+round(3.14159)
+```
+
+## R
+
+We can use `args(round)` to find what arguments it takes, or look at the help for this function using `?round`.
+
+```{r}
+args(round)
+```
+
+We see that if we want a different number of digits, we can type `digits = 2` or however many we want. For example:
+
+```{r}
+#| eval: false
+round(x = 3.14159, digits = 2)
+```
+
+If you provide the arguments in the exact same order as they are defined you don't have to name them:
+
+```{r}
+#| eval: false
+round(3.14159, 2)
+```
+
+And if you do name the arguments, you can switch their order:
+
+```{r}
+#| eval: false
+round(digits = 2, x = 3.14159)
+```
+
+::: callout-tip
+## Getting help
+
+You can have a more detailed look by checking the help page of the function. You can access any help page by typing `help(function_name)` or `?function_name`. So, for the round function this would be `help(round)` or `?round`.
+:::
+
+It's good practice be explicit about the names of the arguments. That way you can avoid confusion later on when looking back at your code or when sharing your code.
+
+## Adding functionality using packages
+
+:::::::::::: {.panel-tabset group="language"}
+## R
+
+Additional packages can be installed to extend the functionality of R. Most packages are available in a central repository called CRAN and can be installed from within R using the `install.packages()` function.
+
+For example, to install (or update) the `tidyverse` package, you would run the following command on the console:
+
+```{r}
+#| eval: false
+install.packages("tidyverse")
+```
+
+Because the install process accesses the CRAN repository, you will need an Internet connection to install packages.
+
+After this, you can then load the package to use it in your analysis. You load packages using the `library()` command (note the lack of quotation marks):
+
+```{r}
+#| eval: false
+library(tidyverse)
+```
+
+There are other repositories available. A very popular one is the Bioconductor project, which contains thousands of packages for bioinformatics applications. These use a different installation command, but the instructions are always given in each package’s page.
+
+## Exercises
+
+### Creating a working directory {#sec-exr_createwd}
+
+::: {#ex-createwd .callout-exercise}
+#### Creating a working directory
+
+{{< level 1 >}}
+
+Create a working directory called `data-analysis`. When you've done this, add the following sub folders:
+
+- `data`
+- `scripts`
+- `images`
+
+**Note**: programming languages are case-sensitive, so `data` is not treated the same way as `Data`.
+:::
+
+### Creating a script {#sec-exr_createscript}
+
+:::::::::: {#ex-createscript .callout-exercise}
+#### Creating a script
+
+{{< level 1 >}}
+
+Create a script and save it as `01_session` in the `scripts` folder within your working directory.
+
+::::::::: {.callout-answer collapse="true"}
+:::::::: {.panel-tabset group="language"}
+## R
+
+Go to `File` \> `New File` \> `R Script` in RStudio and save the script. Remember to add the `.R` extension.
+
+### Running code {#sec-exr_runningcode}
+
+:::: {#ex-runningcode .callout-exercise}
+#### Running code
+
+{{< level 1 >}}
+
+In your new script `01_session`, run some mathematical operations, such as:
+
+```{r}
+#| eval: false
+
+8 * 4
+6 - 9
+```
+
+::: callout-hint
+Remember, you run the code using <kbd>Ctrl</kbd> + <kbd>Enter</kbd> (or <kbd>Command</kbd> + <kbd>Enter</kbd> on Mac).
+:::
+::::
+
+### Functions {#sec-exr_functions}
+
+::::: {#ex-functions .callout-exercise}
+#### Functions
+
+{{< level 2 >}}
+
+In your new script `01_session`, find the absolute value for `-11`. Use Google or a chatbot to find which function you need.
+
+:::: {.callout-answer collapse="true"}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+abs(-11)
+```
+:::
+::::
+:::::
+::::::::
+:::::::::
+::::::::::
+::::::::::::
+::::::::::::::
