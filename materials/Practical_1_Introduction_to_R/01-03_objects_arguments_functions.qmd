@@ -3,6 +3,25 @@ title: "Objects, Arguments and Functions"
 format: html
 editor: visual
 ---
+## Functions and their arguments
+
+Functions are "canned scripts" that automate more complicated sets of commands including operations assignments, etc. Many functions are predefined, or can be made available by importing *packages* (more on that later). A function usually takes one or more inputs called *arguments*. Functions often (but not always) return a *value*. A typical example would be the function `sqrt()`. The input (the argument) must be a number, and the return value (in fact, the output) is the square root of that number.
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| eval: false
+sqrt(9)
+```
+
+Here, the value `9` is given to the `sqrt()` function. This function calculates the square root, and returns the value. This function is very simple, because it takes just one argument.
+
+The return 'value' of a function need not be numerical (like that of `sqrt()`), and it also does not need to be a single item: it can be a set of things, or even a data set. We'll see that when we read data files. :::
+:::
+:::::
+:::::::
+
 
 ### Arguments
 
