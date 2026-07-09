@@ -1,0 +1,81 @@
+---
+title: "Running Code"
+format: html
+editor: visual
+---
+
+## Running code {#running-code}
+
+The simplest way of using a programming language is to use it interactively. We can do this by typing directly into the console / terminal.
+
+::::::: {.panel-tabset group="language"}
+## R
+
+For example, you can use R as a glorified calculator:
+
+```{r}
+3 + 5
+12 / 7
+```
+
+Running code like this directly in the console is generally not a good idea, because then we can't keep track of what we are doing. So, we first need to create a script to save our code in. Then, we can then play around. Let's focus on that next.
+
+::: callout-important
+Complete [creating a script](#ex-createscript) before proceeding.
+:::
+
+### Splitting code {#sec-splitting_code}
+
+As your analysis grows, so does your code. So, often we want to split analyses into multiple scripts, for example:
+
+- `01_preprocessing` may contain data cleaning steps
+- `02_exploration` may contain exploratory plots of your data
+- `03_analysis` could contain (statistical) analyses of your data
+- `04_figures` could contain code for figures, ready for publication
+
+::::: {.panel-tabset group="language"}
+## R
+
+Each of these files could be hundreds of lines long. So, keeping track of your code makes sense. We can do that with **code headings**, which use the `# heading ----` syntax. You can even add different heading levels, by increasing the number of `#` at the start.
+
+This creates a little table of contents in the bottom-left corner of the script pane:
+
+![Code headings](images/rstudio-codeheadings.png)
+
+### Comments in code
+
+It's always a good idea to add explanations to your code. We can do that with the hash tag `#` symbol, for example:
+
+```{r}
+#| eval: false
+
+# This code calculates the sum of two numbers
+1 + 9
+```
+
+It's always a good idea to add lots of comments to your code. What makes sense to you in that moment, might not a week later. Similarly, when sharing code with colleagues and collaborators, it's always good to be as clear as possible.
+
+::: callout-important
+## Complete before proceeding
+
+Please complete the exercises to [create a script](#ex-createscript) and trial [running code](#ex-runningcode).
+:::
+
+## Functions and their arguments
+
+Functions are "canned scripts" that automate more complicated sets of commands including operations assignments, etc. Many functions are predefined, or can be made available by importing *packages* (more on that later). A function usually takes one or more inputs called *arguments*. Functions often (but not always) return a *value*. A typical example would be the function `sqrt()`. The input (the argument) must be a number, and the return value (in fact, the output) is the square root of that number.
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| eval: false
+sqrt(9)
+```
+
+Here, the value `9` is given to the `sqrt()` function. This function calculates the square root, and returns the value. This function is very simple, because it takes just one argument.
+
+The return 'value' of a function need not be numerical (like that of `sqrt()`), and it also does not need to be a single item: it can be a set of things, or even a data set. We'll see that when we read data files. :::
+:::
+:::::
+:::::::
