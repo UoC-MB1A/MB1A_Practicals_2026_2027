@@ -2,7 +2,6 @@ book:
   chapters:
     - part: "Practical 1 - Basics of R and RStudio"
       chapters:
-        - materials/01-00_installing_r_and_rstudio.qmd
-        - materials/01-01_using_r_and_rstudio.qmd
-        - materials/01-02_running_code.qmd
-        - materials/01-03_objects_arguments_functions.qmd
+        - materials/Practical_1_Introduction_to_R/01-01_using_r_and_rstudio.qmd
+        - materials/Practical_1_Introduction_to_R/01-02_running_code.qmd
+        - materials/Practical_1_Introduction_to_R/01-03_objects_arguments_functions.qmd
