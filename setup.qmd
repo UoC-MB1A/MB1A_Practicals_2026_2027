@@ -1,0 +1,87 @@
+---
+title: "Installing R and RStudio"
+format: html
+editor: visual
+---
+---
+pagetitle: "Software installation"
+---
+
+To run R, we need to install R (the programming language). We also install RStudio, which acts as a graphical interface for R.
+
+::: {.panel-tabset group="os"}
+
+#### Windows 10/11
+
+You can install R and RStudio using `winget`. 
+Click the Windows key and search for  _Windows PowerShell_, right-click on the app and choose **Run as administrator**. 
+Then run the following commands: 
+
+```powershell
+winget install --id=RProject.R -e
+winget install --id=RProject.Rtools -e
+winget install --id=Posit.RStudio -e
+```
+
+Alternatively, you can manually download and install these programs using default options:
+
+- [R](https://cran.r-project.org/bin/windows/base/release.html)
+- [RTools](https://cran.r-project.org/bin/windows/Rtools/)
+- [RStudio](https://www.rstudio.com/products/rstudio/download/#download)
+
+#### macOS
+
+To open a terminal, do one of the following:
+
+- Click the Launchpad icon in the Dock, type Terminal in the search field, then click Terminal.
+
+- In the Finder , open the /Applications/Utilities folder, then double-click Terminal.
+
+
+Once you open a Terminal window, you can execute commands and run tools.
+
+## Xcode Command Line Tools
+
+We recommend installing the Xcode Command Line Tools, which makes several useful software utilities available.
+
+In your terminal, run:
+
+```bash
+xcode-select --install
+```
+
+## Homebrew
+
+On macOS the `brew` package manager is a popular choice for installing packages as a user. 
+
+First, make sure to install Xcode as instructed in the previous section.
+Then, in your terminal, run:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Test your `brew` installation by installing the `wget` utility, which is used to download files from the web:
+
+```bash
+brew install wget
+```
+You can now install R and RStudio using `brew`. 
+In your terminal, run:
+
+```bash
+brew install --cask r
+brew install --cask rstudio
+```
+
+Alternatively, you can manually download and install these programs using default options:
+
+- [R](https://cran.r-project.org/bin/macosx/)
+- [RStudio](https://www.rstudio.com/products/rstudio/download/#download)
+
+#### Linux
+
+- Go to the [R installation](https://cran.r-project.org/bin/linux/) folder and look at the instructions for your distribution.
+- Download the [RStudio](https://www.rstudio.com/products/rstudio/download/#download) installer for your distribution and install it using your package manager.
+
+:::
