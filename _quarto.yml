@@ -8,7 +8,7 @@ project:
   output-dir: _site
   render:
     - index.md
-    - setup.md
+    - setup.qmd
     - materials.md
     - materials/*
     - "!materials/*/no_render"
@@ -60,6 +60,6 @@ book:
         - text: "Overview"
           href: index.md
         - text: "Data & Setup"
-          href: setup.md
+          href: setup.qmd
   appendices: 
     - href: versions.md
