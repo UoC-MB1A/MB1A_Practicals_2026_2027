@@ -1,64 +1,41 @@
 ---
+title: "Course Overview"
 date: today
-pagetitle: "Overview"
+number-sections: false
 ---
 
-# Course Development Guidelines {.unnumbered}
-
-## Overview
-
-Include a one-paragraph summary of the course here. 
+The aim of this series of practical sessions is to develop the skills to independently perform biological and mathematical analyses using the programming language R. There will be eight two hour practicals, four in Michaelmas term and four in Lent term.
 
 ::: {.callout-tip}
+
 ### Learning Objectives
 
-- List course learning objectives here.
-- These describe concepts the learners should grasp and techniques they should be able to use by the end of the course.
-- You can think of these as completing the phrase "after this course, the participant should be able to..."
-- They are not supposed to be as detailed as the learning objectives of each section, but more high-level.
+Across the eight practicals we will learn how to use R for analyses related to the following topics:
+
+- Practical 1: Introduction to R and RStudio
+- Practical 2: Data frames and plotting
+- Practical 3: Probability
+- Practical 4: Statistics
+- Practical 5: Bioinformatics
+- Practical 6: Programming logic and further statistics
+- Practical 7: Mathematical modelling - systems of differential equations
+- Practical 8: Mathematical modelling - modelling epidemics
+
 :::
 
 
-### Target Audience
-
-Brief description of target audience here.
-
-
-### Prerequisites
-
-Detail any prerequisite skills needed to attend this course, with links to other relevant materials/courses if possible.
-
-
-<!-- Training Developer note: comment the following section out if you did not assign levels to your exercises -->
 ### Exercises
 
-Exercises in these materials are labelled according to their level of difficulty:
+Exercises in these materials are labelled as follows:
 
 | Level | Description |
-| ----: | :---------- |
-| {{< fa solid star >}} {{< fa regular star >}} {{< fa regular star >}} | Exercises in level 1 are simpler and designed to get you familiar with the concepts and syntax covered in the course. |
-| {{< fa solid star >}} {{< fa solid star >}} {{< fa regular star >}} | Exercises in level 2 combine different concepts together and apply it to a given task. |
-| {{< fa solid star >}} {{< fa solid star >}} {{< fa solid star >}} | Exercises in level 3 require going beyond the concepts and syntax introduced to solve new problems. |
+| -: | :---------- |
+| {{< fa solid anchor >}} | These are essential, fundamental exercises designed to get you familiar with using R for Mathematical Biology. Everybody should review these, however if you've programmed before some may already be familiar |
+| {{< fa solid flask >}} | These exercises require you to combine material from throughout the session and from previous practicals to solve a biological problem. They are intended to be challenging, but will help you to become more comfortable with R and with Mathematical Biology.
+| {{< fa solid rocket >}}| These are expansion exercises which go beyond the material covered in the course. They are optional and are intended to stretch students who are more comfortable with computation and coding. |
 
-
-## Citation & Authors
-
-Please cite these materials if:
-
-- You adapted or used any of them in your own teaching.
-- These materials were useful for your research work. For example, you can cite us in the methods section of your paper: "We carried our analyses based on the recommendations in _YourReferenceHere_".
-
-<!-- 
-This is generated automatically from the CITATION.cff file. 
-If you think you should be added as an author, please get in touch with us.
--->
-
-{{< citation CITATION.cff >}}
 
 
 ## Acknowledgements
 
-<!-- if there are no acknowledgements we can delete this section -->
-
-- List any other sources of materials that were used.
-- Or other people that may have advised during the material development (but are not authors).
+Many of these materials use content from the Cambridge Centre for Research Informatics Training, in particular the [Data Analysis in R and Python](https://cambiotraining.github.io/data-analysis-in-r-and-python/) course by Hugo Tavares and Martin van Rongen and the Core Statistics course by Martin van Rongen, Matt Castle, Emer Jones, Rob Nicholls, Holly Pavey and Vicki Hodgson.

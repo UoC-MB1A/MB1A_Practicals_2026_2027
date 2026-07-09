@@ -1,10 +1,8 @@
 ---
 title: "Installing R and RStudio"
-format: html
+date: today
+number-sections: false
 editor: visual
----
----
-pagetitle: "Software installation"
 ---
 
 To run R, we need to install R (the programming language). We also install RStudio, which acts as a graphical interface for R.

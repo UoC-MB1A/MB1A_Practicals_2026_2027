@@ -52,14 +52,14 @@ book:
   page-navigation: true
   navbar:
     pinned: true
-    title: "Course Development Guidelines"
+    title: "MB1A Practicals 2026-2027"
     logo: "my-theme/university_crest_reversed.png"
   chapters:
     - part: "Welcome"
       chapters: 
         - text: "Overview"
           href: index.md
-        - text: "Data & Setup"
+        - text: "Installing R and RStudio"
           href: setup.qmd
   appendices: 
     - href: versions.md

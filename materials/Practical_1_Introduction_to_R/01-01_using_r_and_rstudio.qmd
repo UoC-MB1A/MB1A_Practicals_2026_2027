@@ -51,9 +51,6 @@ Once you have an account, visit the page [https://github.com/UoC-MB1A/MB1A_Stude
 At the top of the page, you should see a button labelled **Fork**.
 
 ![The fork button](images/gitfork.png){#fig-gitfork width=100%}
-
-
-
 ## The R Language
 
 ![The R Logo](images/Rlogo_small.png){#fig-rlogo}
