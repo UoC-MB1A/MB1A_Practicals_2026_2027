@@ -53,7 +53,7 @@ book:
   navbar:
     pinned: true
     title: "Course Development Guidelines"
-    logo: "university_crest_reversed.png"
+    logo: "my-theme/university_crest_reversed.png"
   chapters:
     - part: "Welcome"
       chapters: 
