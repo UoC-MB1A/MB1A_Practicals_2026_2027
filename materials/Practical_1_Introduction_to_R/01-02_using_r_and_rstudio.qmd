@@ -1,11 +1,10 @@
 ---
-title: "2. Using R and RStudio"
 format: html
-editor: visual
 ---
+# Part 2: Using R and RStudio {#sec-p2_setup}
 
 ::: callout-tip
-##### Part 2: R and RStudio
+# @sec-p2_setup
 
 - Introduction to R and RStudio
 - Introduction to the R language.
@@ -109,7 +108,6 @@ In order to write our first script, we need to
 Complete [creating a script](#ex-createscript) before proceeding.
 :::
 
-
 ### Comments in code
 
 It's always a good idea to add explanations to your code. We can do that with the hash tag `#` symbol, for example:
@@ -123,5 +121,4 @@ It's always a good idea to add explanations to your code. We can do that with th
 
 It's always a good idea to add lots of comments to your code. What makes sense to you in that moment, might not a week later. Similarly, when sharing code with colleagues and collaborators, it's always good to be as clear as possible.
 
-
-
+{{< include ../includes/git_push.qmd >}}

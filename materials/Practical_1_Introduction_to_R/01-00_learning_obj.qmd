@@ -1,7 +1,6 @@
 ---
 title: "Learning Objectives"
 format: html
-editor: visual
 ---
 
 ```{r setup, include=FALSE}
@@ -11,13 +10,11 @@ library(tidyverse)
 # Practical 1 - Using R and RStudio
 
 ::: {.callout-tip .objectives}
+## Learning objectives
 
-#### Learning objectives
-
-##### [Part 1: Setup](01-01_setting_up.qmd)
-
-- Setting up and using Git and GitHub.
-- Setting up RStudio.
+### @sec-p1_setup
+- @sec-git_github
+- @sec-setup_rstudio
 
 ##### [Part 2: R and RStudio](01-02_using_r_and_rstudio.qmd)
 
@@ -34,6 +31,7 @@ library(tidyverse)
 - Types of variable
 
 ##### [Part 4: Vectors, data frames and plots](01-04_complex_variables_plotting.qmd)
+
 - Multi-Element Variables
 - Vectors
 - Indices
