@@ -22,6 +22,8 @@ format:
     code-link: true
     code-copy: true
     lightbox: true
+    crossrefs:
+      hover: false
 
 filters:
   - callout-exercise
@@ -63,3 +65,9 @@ book:
           href: setup.qmd
   appendices: 
     - href: versions.md
+
+metadata:
+  course-title: MB1A
+  intake: "2026_2027"
+  git_org: "UoC-MB1A"
+  git_repo: "MB1A_Students_2026_2027"
