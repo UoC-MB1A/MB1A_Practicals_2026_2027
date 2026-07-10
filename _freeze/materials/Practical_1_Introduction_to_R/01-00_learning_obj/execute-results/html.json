@@ -1,0 +1,15 @@
+{
+  "hash": "1917d45e803d7f5632694d083f2b6749",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Learning Objectives\"\nformat: html\n---\n\n\n\n# Practical 1 - Using R and RStudio\n\n::: {.callout-tip .objectives}\n## Learning objectives\n\n### @sec-p1_setup\n- @sec-git_github\n- @sec-setup_rstudio\n\n##### [Part 2: R and RStudio](01-02_using_r_and_rstudio.qmd)\n\n- Introduction to R and RStudio\n- Introduction to the R language.\n- The RStudio interface.\n- The console, scripts and notebooks.\n- Documenting and formatting your code\n\n##### [Part 3: Variables and functions](01-03_simple_variables_functions.qmd)\n\n- Introduction to Data Analysis in R\n- Variables and variable names\n- Types of variable\n\n##### [Part 4: Vectors, data frames and plots](01-04_complex_variables_plotting.qmd)\n\n- Multi-Element Variables\n- Vectors\n- Indices\n- Data frames\n- Introduction to plotting in R\n\n##### Part 5 - Extension Exercises\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
