@@ -1,25 +1,36 @@
 ---
 format: html
 ---
-# Part 2: Using R and RStudio {#sec-p2_setup}
 
-::: callout-tip
-# @sec-p2_setup
 
-- Introduction to R and RStudio
-- Introduction to the R language.
-- The RStudio interface.
-- The console, scripts and notebooks.
-- Documenting and formatting your code
+# Part 2: Using R and RStudio {#sec-p2_r_and_rstudio}
+
+::: {.callout-note .partmenu}
+## Sections
+- @sec-r_language
+- @sec-coding_in_the_console
+- @sec-rstudio_interface
+- @sec-console_scripts_notebooks
+- @sec-documenting_and_formatting_your_code
 :::
 
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you should be able to:
+
+- Explain what the R language is and why you might use it.
+- Create a GitHub account and fork a repository
+- Clone your repository into RStudio
+:::
+
+## The R language {#sec-r_language}
 ![The R Logo](images/Rlogo_small.png){#fig-rlogo}
 
-In this session, we will learn the basics of using the programming language *R*, which we will use for data analysis and visualisation throughout the MB1A course.
+In this session, we will learn the basics of using the programming language **R**, which we will use for data analysis and visualisation throughout the {{< meta course-title >}} course.
 
 The R language was initially developed by two programmers, Ross Ihaka and Robert Gentleman, in 1993, for teaching introductory statistics. It has become one of the most commonly used languages in scientific computing, particularly amongst biologists.
 
-## Why Learn R?
+### Why Learn R?
 
 R provides many of the same functions as spreadsheet tools such as MS Excel and Google Sheets, and statistics and graphing software like SPSS and GraphPad.
 
@@ -29,11 +40,66 @@ However, R has lots of advantages over these tools:
 - Repetitive tasks can be automated.
 - As a scientist, using a programming language such as R to perform data analysis means that your analysis is *reproducible* by other scientists - everything you have done to process the data is explicitly recorded.
 
-## The RStudio Interface
+## Coding in the Console {#sec-coding_in_the_console}
+
+Before we go any further, let's try writing some R code.
+
+When you first open your RStudio project, your screen will look like this.
+
+![The welcome screen of RStudio](images/rstudio_no_source.png){#fig-rstudio_main width="100%"}
+
+We will look at other parts of the screen shortly, but for now let's focus on the **Console**.
+
+In the console, R commands can be typed and executed immediately by the computer. When you type a line of code and press {{< kbd Enter >}}, it is transferred to the R **interpreter**. Results are shown straight after the command is executed. However, no record is kept and any information is lost once the session is closed.
+
+Try typing the following, in the grey box,  into the console, then press {{< kbd Enter >}}.
+
+```{r console_sayhi}
+print("Hello! First contact with R successful!")
+```
+
+You should immediately see the message on the screen.
+
+Now, try the following. Here, you are creating a new **variable**, `x`, with a value of 8. In R, the operator `<-` associates a specific name (here the name is `x`) with a specific value (we will discuss this in more detail later).
+
+```{r console_var}
+x <- 3 + 5
+```
+
+To see the value of `x`, type `print (x)` into the console, then press {{< kbd Enter >}}.
+
+```{r console_var_res}
+print (x)
+```
+
+Usually in these practicals, we won't run most of our code directly in the console like this as it doesn't save what we've done. Coding in the console is a bit like cooking without a recipe - the results can be great, but if you want to make the same thing again, you may not remember exactly what you did.
+
+However, it can be useful to use the console, for example to quickly try something out or check the value of a variable.
+
+::: {.callout-exercise #ex-creating_objects}
+## Making a variable in the console
+{{< fa solid anchor >}}
+- In your console, create a variable with your first name. The syntax you will need to use is as follows - replace "Mary" with your own name.
+
+```{r name_var}
+my_name <- "Mary"
+```
+
+Then, have R write you a message as follows:
+
+```{r name_show}
+print (paste("Hi ", my_name, ", Welcome to R!"))
+```
+
+:::
+
+## The RStudio Interface {#sec-rstudio_interface}
+
+Now we will learn a bit about the rest of RStudio.
 
 [RStudio](https://posit.co/products/open-source/rstudio/) is an interactive development environment (IDE) - a piece of software designed to make working with R as easy as possible. It's free, open-source and well-supported.
 
-![The welcome screen of RStudio](images/rstudio-main.png){#fig-rstudio_main}
+![The welcome screen of RStudio](images/rstudio_no_source.png){#fig-rstudio_main width="100%"}
 
 In the image above you can see that the window is divided into three main parts, each with various tabs. In clockwise order we have:
 
@@ -45,39 +111,13 @@ In bold we've highlighted the tabs we'll be using most.
 
 In the **Console** we can directly run code. The **Environment** shows any information that is stored in R's memory (empty in the figure above). The **Files** tab is a mini file browser; **Plots** shows you any plots that have been created and **Help** is where you can go for help.
 
-## Running Code in RStudio
+## The console, scripts and notebooks {#sec-console_scripts_notebooks}
 
 The basis of programming is that we create or *code* instructions for the computer to follow. Next, we tell the computer to follow the instructions by *executing* or *running* those instructions.
 
 There are three main ways of interacting with the R language: using the console, using script files (plain text files containing only code), or using Rmarkdown.
 
 ### The Console
-
-In the console, commands can be typed and executed immediately by the computer. When you type a line of code and press {{< kbd Enter >}}, it is transferred to the R **interpreter**. Results will be shown straight after the command is executed. However, no record is kept and any information is lost once the session is closed.
-
-Try typing the following into the console, then press {{< kbd Enter >}}.
-
-```{r console_add}
-3 + 5
-```
-
-You should immediately see the answer.
-
-Now, try the following. Here, you are creating a new **variable**, `x`, with a value of 8. In R, the operator `<-` associates a specific name (here the name is `x`) with a specific value. We will discuss this in more detail later.
-
-```{r console_var}
-x <- 3 + 5
-```
-
-To see the value of `x`, type `x` into the console, then press {{< kbd Enter >}}.
-
-```{r console_var_res}
-print (x)
-```
-
-Running code like this directly in the console is generally not a good idea, because then we can't keep track of what we have done.
-
-However, it can be useful, for example to quickly try something or to check the value of a variable.
 
 ::: callout-warning
 ## The R prompt
@@ -107,6 +147,8 @@ In order to write our first script, we need to
 ::: callout-important
 Complete [creating a script](#ex-createscript) before proceeding.
 :::
+
+## Documenting and formatting your code {#sec-documenting_and_formatting_your_code}
 
 ### Comments in code
 
