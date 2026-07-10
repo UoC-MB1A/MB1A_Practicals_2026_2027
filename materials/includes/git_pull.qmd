@@ -3,12 +3,14 @@
 
 At the beginning of each practical, make sure to pull any changes in the main copy of online repository from GitHub.
 
-1. Log in to GitHub and navigate to your fork of the MB1A_Students repository.
-2. Click on "Sync Fork".
-3. If it shows "This branch is not behind the upstream" there is nothing else you need to do.
-4. Otherwise, click `Update Branch`.
-5. Go to your RStudio session and open the `Git` tab.
-6. Click `Pull` to update your local copy of the repository.
+1. Open RStudio
+2. Choose `File` > `Open Project`
+3. Navigate to your ``{{< meta course-title >}}_Students_{{< meta intake >}}.Rproj`` file and open it.
+4. In a web browser, log in to GitHub and navigate to your fork of the MB1A_Students repository.
+5. Click on `Sync Fork`. If it shows "This branch is not behind the upstream" there is nothing else you need to do.
+7. Otherwise, click `Update Branch`.
+8. Go to your RStudio session and open the `Git` tab.
+9. Click `Pull` to update your local copy of the repository.
 
 :::
 	
