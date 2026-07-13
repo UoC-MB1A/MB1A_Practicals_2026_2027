@@ -12,7 +12,7 @@ library(styler)
 - @sec-r_language
 - @sec-coding_in_the_console
 - @sec-rstudio_interface
-- @sec-console_scripts_markdown
+- @sec-console_scripts_quarto
 - @sec-documenting_and_formatting_your_code
 :::
 
@@ -20,9 +20,12 @@ library(styler)
 #### Learning objectives
 By the end of this part of the practical you should be able to:
 
-- Explain what the R language is and why you might use it.
-- Create a GitHub account and fork a repository
-- Clone your repository into RStudio
+- Explain what R is and why it is useful for biological data analysis.
+- Use some features of the RStudio interface
+- Use the R console, scripts and Quarto documents to run R code.
+- Create a simple reproducible analysis using Quarto.
+- Understand the benefits of writing clear, well-formatted and documented R code.
+
 :::
 
 ## The R language {#sec-r_language}
@@ -41,9 +44,9 @@ R provides many of the same functions as spreadsheet tools such as MS Excel and 
 
 However, R has lots of advantages over these tools:
 
-- It has many additional, powerful functions.
-- Repetitive tasks can be automated.
-- As a scientist, using a programming language such as R to perform data analysis means that your analysis is *reproducible* by other scientists - everything you have done to process the data is explicitly recorded.
+- It provides thousands of functions for statistics, visualisation and data analysis.
+- It allows you to automate repetitive tasks rather than repeating the same steps manually.
+- It creates reproducible workflows: every step of your analysis can be recorded, checked and repeated by yourself or others.
 
 ## Coding in the Console {#sec-coding_in_the_console}
 
@@ -139,7 +142,7 @@ Click on the environment now - you should see two variables: `x`, with a value o
 * **Help** is where you can go for help. 
 
 ::: {.callout-exercise #ex_help}
-In the search box on the Help tab, search for the function `sum`.
+In the search box on the Help tab, search for the function `sum()`.
 
 Using the **Examples** section as a guide, calculate the sum of the numbers 2, 3, 4 in the console.
 
@@ -150,17 +153,17 @@ sum(2, 3, 4)
 :::
 :::
 
-## The console, scripts and markdown {#sec-console_scripts_markdown}
+## The console, scripts and Quarto{#sec-console_scripts_quarto}
 
 [↑ top](#)
 
 The basis of programming is that we create or *code* instructions for the computer to follow. Next, we tell the computer to follow the instructions by *executing* or *running* those instructions.
 
-There are three main ways of interacting with the R language: using the console, using script files (plain text files containing only code), or using Rmarkdown.
+There are three main ways in which we will interact with the R language: 
 
 * The console - as we discussed above
 * Scripts
-* Rmarkdown
+* Quarto
 
 ### Scripts
 
@@ -260,7 +263,7 @@ Below your code chunk, type the following:
 ```markdown
 The total diameter of my colonies is 11.1cm.
 ```
-
+Running a code chunk executes only that piece of code. Rendering a Quarto document runs all the code and creates the final report.
 
 Produce a report based on your document by clicking the `Render` button - ![render_button](../images/render_button.png){.inline-icon}. This runs all of the code and formats the document into **html** format, so it is easy to read and share.
 
@@ -324,7 +327,7 @@ This function will only work if your code is able to run without errors and you'
 :::
 ![Style Active File](images/styler.png){#fig-styler .screenshot width="50%"}
 
-For example, the Style active file feature removes the extraneous spaces from the following code.
+For example, the `Style active file` feature removes the extraneous spaces from the following code.
 
 Before:
 
@@ -333,7 +336,8 @@ Before:
 After:
 
 ![Good formatting](images/good_formatting.png){#fig-good_formatting width="50%"}
-Where you need to give something a name in R, it is helpful to use a name which describes what it is. For example, rather than `x <- 12` it is preferable to write e.g. `mean_size <- 12`.
+
+Also, where you need to give something a name in R, it is helpful to use a name which describes what it is. For example, rather than `x <- 12` it is preferable to write e.g. `mean_size <- 12`.
 
 ::: {.callout-exercise #ex_formatting}
 Format the code in the HPA data Quarto document you created earlier using the `Style active file` feature. It may not change at all, or it may change a lot. Change any variable names to be informative, if they are not already.

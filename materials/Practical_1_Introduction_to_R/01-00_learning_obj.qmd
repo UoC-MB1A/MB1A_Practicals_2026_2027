@@ -13,20 +13,37 @@ library(tidyverse)
 ## Learning objectives
 
 ### @sec-p1_setup
+
+#### Sections
 - @sec-git_github
 - @sec-setup_rstudio
 
-##### [Part 2: R and RStudio](01-02_using_r_and_rstudio.qmd)
+By the end of this part of the practical you should be able to:
 
-- Introduction to R and RStudio
-- Introduction to the R language.
-- The RStudio interface.
-- The console, scripts and notebooks.
-- Documenting and formatting your code
+- Explain what Git and GitHub are
+- Create a GitHub account and fork a repository
+- Clone your repository into RStudio
 
-##### [Part 3: Variables and functions](01-03_simple_variables_functions.qmd)
+### @sec-p2_r_and_rstudio
 
-- Introduction to Data Analysis in R
+#### Sections
+- @sec-r_language
+- @sec-coding_in_the_console
+- @sec-rstudio_interface
+- @sec-console_scripts_quarto
+- @sec-documenting_and_formatting_your_code
+
+By the end of this part of the practical you should be able to:
+
+- Explain what R is and why it is useful for biological data analysis.
+- Use some features of the RStudio interface
+- Use the R console, scripts and Quarto documents to run R code.
+- Create a simple reproducible analysis using Quarto.
+- Understand the benefits of writing clear, well-formatted and documented R code.
+
+### @sec-p3_functions_and_variables
+
+- Functions
 - Variables and variable names
 - Types of variable
 
