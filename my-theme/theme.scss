@@ -276,8 +276,12 @@ pre.text {
 }
 
 .callout code {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
-
+/* Inline icons */
+img.inline-icon {
+  height: 1.2em;
+  vertical-align: -0.15em;
+}
 

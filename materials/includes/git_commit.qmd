@@ -5,7 +5,7 @@ Remember to save your progress regularly by committing your changes with Git.
 1. Save your changes in RStudio with the `Save` button.
 2. Render your Rmarkdown document into html with the `Render` button.
 3. Open the `Git` tab in RStudio.
-4. Tick the files you have changed - usually the Rmd and html files for the practical.
+4. Tick the files you have changed - usually the quarto (qmd) and html files for the practical.
 5. Click `Commit` and write a short message describing your changes.
 
 :::
