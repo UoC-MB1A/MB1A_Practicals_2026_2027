@@ -14,6 +14,7 @@ library(styler)
 - @sec-rstudio_interface
 - @sec-console_scripts_quarto
 - @sec-documenting_and_formatting_your_code
+- @sec-summary_0102
 :::
 
 :::{.callout-tip .objectives}
@@ -344,7 +345,7 @@ Format the code in the HPA data Quarto document you created earlier using the `S
 :::
 
 ::: {.callout-tip}
-## Summary
+## Summary {#sec-summary0102}
 - **R** is a commonly used programming language amongst biologists.
 - **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.
 - We can code interactively in the **console**.

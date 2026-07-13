@@ -8,6 +8,7 @@ format: html
 ## Sections
 - @sec-git_github
 - @sec-setup_rstudio
+- @sec-summary_0101
 :::
 
 :::{.callout-tip .objectives}
@@ -142,7 +143,7 @@ At the end of each session, you should follow the instructions below (again, we 
 Although this seems like a lot of steps, you'll quickly get used to the workflow. Using Git and GitHub from the start of the course will help you keep your work organised and introduce you to tools that are widely used in research and industry.
 
 ::: {.callout-tip}
-## Summary
+## Summary {#sec-summary0101}
 - **Git** keeps track of changes to your files.
 - **GitHub** stores your Git repository online.
 - A **fork** is your own copy of an online repository on GitHub.

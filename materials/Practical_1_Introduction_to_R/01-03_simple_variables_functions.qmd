@@ -11,8 +11,10 @@ library(gt)
 ::: {.callout-note .partmenu}
 ## Sections
 - @sec-functions
+- @sec-arguments
 - @sec-variables
 - @sec-variable_types
+- @sec-summary_0103
 :::
 
 :::{.callout-tip .objectives}
@@ -28,6 +30,8 @@ By the end of this part of the practical you should be able to:
 For this part of the practical, we recommend that you store your analysis in a single Quarto document, with a brief description above each piece of code explaining what it does.
 
 ## Functions {#sec-functions}
+
+[↑ top](#)
 
 Functions take inputs (called arguments), perform an action, and often return an output. They allow us to perform common tasks without writing the same code repeatedly.
 
@@ -60,7 +64,9 @@ round(3.14159)
 :::
 :::
 
-### Arguments
+## Arguments {#sec-arguments}
+
+[↑ top](#)
 
 Arguments allow you to control the behaviour of a function. They can be anything, not only numbers. Exactly what each argument means differs per function and can be looked up in the documentation. 
 
@@ -100,18 +106,18 @@ We can call the function with these three arguments:
 For example:
 
 ```{r seq1}
-print (seq(1, 10, 2))
+print(seq(1, 10, 2))
 ```
 ```{r seq2}
-print (seq(5, 15, 5))
+print(seq(5, 15, 5))
 ```
 However, we can also use their names, and then put them in any order:
 
 ```{r seq3}
-print (seq(by=2, from=1, to=10))
+print(seq(by = 2, from = 1, to = 10))
 ```
 ```{r seq4}
-print (seq(by=5, to=15, from=5))
+print(seq(by = 5, to = 15, from = 5))
 ```
 
 ::: {.callout-exercise #arg_order}
@@ -120,7 +126,7 @@ The order of arguments is: `rep(x, times)` - so you first specify `x`, then the 
 
 For example:
 ```{r rep1}
-print (rep(2, 5))
+print(rep(2, 5))
 ```
 ```{r rep2}
 print(rep(x=2, times=5))
@@ -133,12 +139,14 @@ Write some code to repeat the number 5, 7 times, first by specifying arguments i
 print(rep(5, 7))
 
 # keywords
-print (rep(times=7, x=5))
+print(rep(times = 7, x = 5))
 ```
 :::
 :::
 
 ## Variables {#sec-variables}
+
+[↑ top](#)
 
 Another fundamental concept in programming is a **variable**.
 
@@ -155,7 +163,7 @@ To check this has worked, we can use the **function**, `print()` to show the val
 
 ```{r variable_retrieve}
 my_variable <- 12
-print (my_variable)
+print(my_variable)
 ```
 
 We can change the value of our variable by assigning it a new value. Although the first line of the code below is run, the value is then replaced in the second line, so when we reach the third line, the value is `10`.
@@ -163,7 +171,7 @@ We can change the value of our variable by assigning it a new value. Although th
 ```{r variable_reassign}
 my_variable <- 12
 my_variable <- 10
-print (my_variable)
+print(my_variable)
 ```
 
 ::: {.callout-exercise #ex_varorder}
@@ -230,6 +238,8 @@ Compare this to a variable name which is not already in use:
 
 ## Types of variable {#sec-variable_types}
 
+[↑ top](#)
+
 ### Numeric, character and logical variables
 
 Different types of data can be stored as variables. 
@@ -246,13 +256,13 @@ All variables which are numbers can be classed as numeric (there are some more s
 
 ```{r numeric_variable}
 x <- 1
-print (x)
+print(x)
 
 x <- 1.74
-print (x)
+print(x)
 
 x <- 4e-3
-print (x)
+print(x)
 ```
 
 #### Character
@@ -262,10 +272,10 @@ A character variable consists of text - it can be one or multiple words.
 
 ```{r character_variable}
 x <- "hello"
-print (x)
+print(x)
 
 x <- "I am a variable"
-print (x)
+print(x)
 ```
 
 #### Logical
@@ -275,10 +285,10 @@ These can only be TRUE or FALSE.
 
 ```{r bool_variable}
 x <- TRUE
-print (x)
+print(x)
 
 x <- FALSE
-print (x)
+print(x)
 ```
 
 #### Identifying types of variables
@@ -286,29 +296,28 @@ print (x)
 We can find out what type of variable we have using the function `class`.
 ```{r print_class}
 x <- "hi there"
-print (class(x))
+print(class(x))
 
 x <- 1513871
-print (class(x))
+print(class(x))
 
 x <- FALSE
-print (class(x))
-
+print(class(x))
 ```
 
 ::: {.callout-exercise #ex_var_types}
-Create character, numerical and logical variables, print them, then check their class.
+Create character, numerical and logical variables, print them, then check their classes.
 
 ::: {.callout-answer collapse="true"}
 ```{r exercise_var_types_solution}
 # for example
 my_favourite_number <- 11
-my_favourite_word <- 'hullabaloo'
+my_favourite_word <- "hullabaloo"
 is_this_true <- FALSE
 
-print (class(my_favourite_number))
-print (class(my_favourite_word))
-print (class(is_this_true))
+print(class(my_favourite_number))
+print(class(my_favourite_word))
+print(class(is_this_true))
 ```
 :::
 :::
@@ -321,7 +330,7 @@ The attributes of your two batches of cells are in this table:
 
 ```{r table_cells, echo=FALSE}
 df <- data.frame(
-          cell_ID = c("CX1", "CX2"),
+  cell_ID = c("CX1", "CX2"),
   treated = c(TRUE, FALSE),
   num_cells_before = c(5415, 8123),
   num_cells_after = c(1432, 7543)
@@ -347,4 +356,20 @@ n_before_2 <- 8123
 n_after_1 <- 1432
 n_after_2 <- 7543
 ```
+:::
+:::
 
+::: {.callout-tip}
+## Summary {#sec-summary0103}
+
+[↑ top](#)
+
+- A **function** performs a specific task, usually taking one or more inputs (called **arguments**) and often returning an output.
+- **Arguments** provide information to a function and control how it behaves. Some arguments are optional and have default values.
+- A **variable** stores a value under a name so that it can be used again later in your code.
+- Choose **descriptive variable names** and avoid spaces, punctuation (except `_`), names beginning with numbers, and names that already have a meaning in R.
+- Common variable types include **numeric** (numbers), **character** (text) and **logical** (`TRUE` or `FALSE`).
+- The `class()` function tells you what type of data a variable contains.
+:::
+
+{{< include ../includes/git_commit.qmd >}}

@@ -1,189 +1,412 @@
 ---
-title: "4. Vectors, data frames and plots"
 format: html
-editor: visual
 ---
 
-::: callout-tip
-##### Part 4: Beginning R: Vectors, data frames and plots
-- Multi-Element Variables
-- Vectors
-- Indices
-- Data frames
-- Introduction to plotting in R
+```{r setup, include=FALSE}
+library(gt)
+```
+
+# Part 4: Vectors, data frames and plots {#sec-p4_vectors_dataframes_plots}
+
+::: {.callout-note .partmenu}
+## Sections
+- @sec-packages
+- @sec-vectors
+- @sec-dataframes
+- @sec-csv
+- @sec-plots
+- @sec-summary0104
 :::
 
-## Functions and their arguments
+:::{.callout-tip .objectives}
+## Learning objectives
+By the end of this part of the practical you should be able to:
+* Install and load a package in R
+* Recognise and use the vector variable type.
+* Isolate elements of the vector using an index.
+* Create and view a simple data frame
+* Recognise and use the CSV file type
+* Plot a simple scatter plot in R
 
-Functions are "canned scripts" that automate more complicated sets of commands including operations assignments, etc. Many functions are predefined, or can be made available by importing *packages* (more on that later). A function usually takes one or more inputs called *arguments*. Functions often (but not always) return a *value*. A typical example would be the function `sqrt()`. The input (the argument) must be a number, and the return value (in fact, the output) is the square root of that number.
-
-::: {.panel-tabset group="language"}
-## R
-
-```{r}
-#| eval: false
-sqrt(9)
-```
-
-Here, the value `9` is given to the `sqrt()` function. This function calculates the square root, and returns the value. This function is very simple, because it takes just one argument.
-
-The return 'value' of a function need not be numerical (like that of `sqrt()`), and it also does not need to be a single item: it can be a set of things, or even a data set. We'll see that when we read data files. :::
 :::
 
-::::: :::::::
+## Packages {#sec-packages}
 
-### Arguments
+[↑ top](#)
 
-Arguments allow you to control the behaviour of a function. They can be anything, not only numbers or file names. Exactly what each argument means differs per function and can be looked up in the documentation. Some functions take arguments which may either be specified by the user, or, if left out, take on a *default* value: these are called *options*.
+The standard version of R contains many useful packages and functions for data analysis. However, there are also thousands of additional **packages** containing additional functions for specific purposes.
 
-Options are typically used to alter the way the function operates, such as if it should ignore missing values, or what symbol to use in a plot. However, if you want something specific, you can specify a value of your choice which will be used instead of the default.
+Normally, you need to install these packages in RStudio before you use them.
 
-Let's try a function that can take multiple arguments: `round()`.
+Let's install the package `fortunes`, to demonstrate.
 
-:::::::::::::: {.panel-tabset group="language"}
-## R
+```{r install_fortunes}
+install.packages("fortunes")
+```
+We can then load the package into R using the function `library`:
 
-```{r}
-round(3.14159)
+```{r load_fortunes}
+library(fortunes)
 ```
 
-## R
+This package just includes one function, `fortune`, which outputs a random quote about R.
 
-We can use `args(round)` to find what arguments it takes, or look at the help for this function using `?round`.
-
-```{r}
-args(round)
+```{r use_fortunes}
+fortune()
 ```
+You have already installed all the packages you will need for this practical by following the instructions in @sec-install.
 
-We see that if we want a different number of digits, we can type `digits = 2` or however many we want. For example:
+However, we will sometimes need to load a package, for example, for this practical we will use some functions from the [`tidyverse`](https://tidyverse.org/) package collection for data science and from the [`gt`](https://gt.rstudio.com/) package for visualising data frames.
 
-```{r}
-#| eval: false
-round(x = 3.14159, digits = 2)
-```
+Therefore, you need to include the following code at the beginning of your Quarto document.
 
-If you provide the arguments in the exact same order as they are defined you don't have to name them:
-
-```{r}
-#| eval: false
-round(3.14159, 2)
-```
-
-And if you do name the arguments, you can switch their order:
-
-```{r}
-#| eval: false
-round(digits = 2, x = 3.14159)
-```
-
-::: callout-tip
-## Getting help
-
-You can have a more detailed look by checking the help page of the function. You can access any help page by typing `help(function_name)` or `?function_name`. So, for the round function this would be `help(round)` or `?round`.
-:::
-
-It's good practice be explicit about the names of the arguments. That way you can avoid confusion later on when looking back at your code or when sharing your code.
-
-## Adding functionality using packages
-
-:::::::::::: {.panel-tabset group="language"}
-## R
-
-Additional packages can be installed to extend the functionality of R. Most packages are available in a central repository called CRAN and can be installed from within R using the `install.packages()` function.
-
-For example, to install (or update) the `tidyverse` package, you would run the following command on the console:
-
-```{r}
-#| eval: false
-install.packages("tidyverse")
-```
-
-Because the install process accesses the CRAN repository, you will need an Internet connection to install packages.
-
-After this, you can then load the package to use it in your analysis. You load packages using the `library()` command (note the lack of quotation marks):
-
-```{r}
-#| eval: false
+```{r load_tidyverse}
 library(tidyverse)
+library(gt)
 ```
 
-There are other repositories available. A very popular one is the Bioconductor project, which contains thousands of packages for bioinformatics applications. These use a different installation command, but the instructions are always given in each package’s page.
+## Vectors  {#sec-vectors}
 
-## Exercises
+[↑ top](#)
 
-### Creating a working directory {#sec-exr_createwd}
+All of the variables we've created so far just have a single element - one number, one section of text, or one TRUE/FALSE.
 
-::: {#ex-createwd .callout-exercise}
-#### Creating a working directory
+However, we can also create variables which contain multiple elements.
 
-{{< level 1 >}}
+One of the most common types of multi-element variable in R is a **vector**.
 
-Create a working directory called `data-analysis`. When you've done this, add the following sub folders:
+Vectors in R are (usually) specified using the function `c`.
 
-- `data`
-- `scripts`
-- `images`
-
-**Note**: programming languages are case-sensitive, so `data` is not treated the same way as `Data`.
-:::
-
-### Creating a script {#sec-exr_createscript}
-
-:::::::::: {#ex-createscript .callout-exercise}
-#### Creating a script
-
-{{< level 1 >}}
-
-Create a script and save it as `01_session` in the `scripts` folder within your working directory.
-
-::::::::: {.callout-answer collapse="true"}
-:::::::: {.panel-tabset group="language"}
-## R
-
-Go to `File` \> `New File` \> `R Script` in RStudio and save the script. Remember to add the `.R` extension.
-
-### Running code {#sec-exr_runningcode}
-
-:::: {#ex-runningcode .callout-exercise}
-#### Running code
-
-{{< level 1 >}}
-
-In your new script `01_session`, run some mathematical operations, such as:
-
-```{r}
-#| eval: false
-
-8 * 4
-6 - 9
+```{r first_vector}
+my_first_vector <- c(1, 5, 9)
+print (my_first_vector)
 ```
 
-::: callout-hint
-Remember, you run the code using <kbd>Ctrl</kbd> + <kbd>Enter</kbd> (or <kbd>Command</kbd> + <kbd>Enter</kbd> on Mac).
-:::
-::::
+You can have vectors with all numbers, all text, or all logical values, but everything needs to be the same type.
 
-### Functions {#sec-exr_functions}
+```{r text_bool_vectors}
+character_vec <- c('hello', 'this', 'is', 'a', 'character', 'vector')
+print (character_vec)
 
-::::: {#ex-functions .callout-exercise}
-#### Functions
+logical_vec <- c(TRUE, FALSE, TRUE)
+print (logical_vec)
+```
 
-{{< level 2 >}}
+If you have existing variables, you can put them into a vector using their variable names.
 
-In your new script `01_session`, find the absolute value for `-11`. Use Google or a chatbot to find which function you need.
+```{r vectors_of_variables}
+x <- 1
+y <- 2
+z <- 3
 
-:::: {.callout-answer collapse="true"}
-::: {.panel-tabset group="language"}
-## R
+xyz_vec <- c(x, y, z)
+```
 
-```{r}
-abs(-11)
+::: {.callout-exercise #ex_vectors1}
+
+Let's look again at our dataset in which you have treated one batch of cells with radiation and kept the other as a control, then counted the number of live cells before and after.
+
+The attributes of your two batches of cells are in this table:
+
+```{r table_cells, echo=FALSE}
+df <- data.frame(
+  cell_ID = c("CX1", "CX2"),
+  treated = c(TRUE, FALSE),
+  num_cells_before = c(5415, 8123),
+  num_cells_after = c(1432, 7543)
+)
+
+gt(df)
+```
+
+Combine the variables you made earlier into four vectors, one for each column of the table.
+
+::: {.callout-answer collapse="true"}
+```{r vector_df_solution}
+# for example
+cell_id_1 <- "CX1"
+cell_id_2 <- "CX2"
+
+treated_1 <- TRUE
+treated_2 <- FALSE
+
+n_before_1 <- 5415
+n_before_2 <- 8123
+
+n_after_1 <- 1432
+n_after_2 <- 7543
+
+cell_id <- c(cell_id_1, cell_id_2)
+treated <- c(treated_1, treated_2)
+n_before <- c(n_before_1, n_before_2)
+n_after <- c(n_after_1, n_after_2)
 ```
 :::
-::::
-:::::
-::::::::
-:::::::::
-::::::::::
-::::::::::::
-::::::::::::::
+:::
+
+### Accessing elements of a vector
+
+Once our values are in a vector, we can access them using an *index*, which refers to the position of the value within the vector. Indices are indicated within square brackets - `[]`.
+
+```{r vector_indices}
+nice_food <- c('cheese', 'beans', 'potatoes')
+
+print (nice_food[1])
+
+print (nice_food[2])
+
+print (nice_food[3])
+```
+
+
+### Index Exercise 
+
+::: {.callout-exercise #ex_vectors1}
+
+Isolate the fourth value in this vector and assign it to a new variable, then print its value.
+
+```{r vector_indices_exercise, exercise=TRUE}
+all_my_pets <- c('dog', 'horse', 'guinea pig', 'chicken', 'cat')
+```
+
+::: {.callout-answer collapse="true"}
+```{r vector_indices_exercise_solution, exercise=TRUE}
+# for example
+all_my_pets <- c('dog', 'horse', 'guinea pig', 'chicken', 'cat')
+my_only_bird <- all_my_pets[4]
+print(my_only_bird)
+```
+:::
+:::
+
+## Data Frames {#sec-dataframes}
+
+[↑ top](#)
+
+Our next variable type is a **data frame** (sometimes called a **tibble**), which is one of the types of variable you'll most commonly use. A data frame is basically a table, consisting of rows and columns. Each row is a single record, corresponding to some entity - a cell, a person, a country - and each column is a specific piece of information.
+
+For example:
+
+```{r csv_example, echo=FALSE}
+df <- tibble(
+  fruit = c("apple", "pear", "banana"),
+  length = c(22, 30, 55),
+  weight = c(150, 165, 170)
+)
+
+gt(df)
+```
+
+In this data frame, there are three columns - fruit, length and weight, and three rows, each containing information about a specific fruit.
+
+We can build a data frame using the R function `tibble` (note that there is also an R function `data.frame` which you might see referenced elsewhere, usually modern applications use `tibble` as it is more user-friendly).
+
+I would specify the data frame above as follows:
+
+```{r make_tibble}
+my_dataframe <- tibble(fruit = c("apple", "pear", "banana"),
+                       length = c(22, 30, 55),
+                       weight = c(150, 165, 170))
+
+
+print(my_dataframe)
+```
+
+Although we can see our data frame using the `print()` function, it's not formatted particularly nicely. Instead, we can use the function `gt`.
+
+```{r gt}
+my_dataframe <- tibble(fruit = c("apple", "pear", "banana"),
+                       length = c(22, 30, 55),
+                       weight = c(150, 165, 170))
+
+gt(my_dataframe)
+```
+
+::: {.callout-exercise #ex_celldf}
+
+Let's revisit our radiation experiment data.
+
+
+```{r table_cells_df, echo=FALSE}
+df <- data.frame(
+  cell_ID = c("CX1", "CX2"),
+  treated = c(TRUE, FALSE),
+  num_cells_before = c(5415, 8123),
+  num_cells_after = c(1432, 7543)
+)
+
+gt(df)
+```
+
+Using a data frame and the `tibble` function, reproduce this table, then visualise it using the `gt` function.
+
+::: {.callout-answer collapse="true"}
+
+```{r df_exercise_solution}
+# for example
+df <- tibble(cell_ID = c("CX1", "CX2"),
+             treated = c(TRUE, FALSE),
+             num_cells_before = c(5415, 8123),
+             num_cells_after = c(1432, 7543)) 
+
+gt(df)
+```
+:::
+:::
+
+## CSV Format  {#sec-csv}
+
+[↑ top](#)
+
+The data we will use in many of our practicals is stored in comma-separated values (CSV) format, a plain-text file format where each line represents a row and values in columns are separated by commas.
+
+For example, for this table:
+
+```{r csv_example2, echo=FALSE}
+df <- data.frame(
+          fruit = c("apple", "pear", "banana"),
+  length = c(22, 30, 55),
+  weight = c(150, 165, 170)
+)
+
+gt(df)
+```
+
+
+The contents of the CSV file would be:
+```text
+fruit,length,weight
+apple,22,150
+pear,30,165
+banana,55,170
+```
+
+There is a file provided in your `data` folder for Practical 1 named `weather.csv`. Open this file on your computer in a text editor (for example NotePad, TextEdit) and examine it.
+
+::: {.callout-exercise #ex_weather}
+Based on this table, what was the temperature in degrees C on 2026-07-02 at 12:00:00?
+
+::: {.callout-answer collapse="true"}
+17.8
+:::
+
+:::
+
+
+### Reading CSV Files
+
+The R function `read_csv` reads a CSV file into R. 
+
+If I wanted to read the file `weather_data.csv`, the code I would use would be as follows. I can view the data frame with the same `gt` function we used previously.
+
+```{r read_weather_data}
+weather <- read_csv("data/weather_data.csv")
+gt(weather)
+```
+
+::: {.callout-exercise #ex_public_health}
+### Reading UK Public Health Monitoring Data
+
+The UK government provide some public health data for England (other UK countries have data available elsewhere) on their data portal, here - https://ukhsa-dashboard.data.gov.uk/. The data is available for download in CSV format.
+
+Choose any of the datasets with measurements provided over time which are available on this page and download the CSV formatted data to your computer. You can find these by clicking on one of the graphs then choosing "Download", then "CSV format". Move this file into the `Practical_1/data` folder of your course 
+
+In a new Quarto report, load this table into R and then view the resulting table with `gt()`. These tables are mostly long, so we can use the `head()` function to just visualise the first ten lines:
+
+For example:
+
+```{r gt_head}
+rhinovirus <- read_csv("data/ukhsa-chart-download-rhinovirus.csv")
+
+gt(head(rhinovirus))
+```
+
+Don't forget to write a line or two describing what you did - for example, which dataset you have selected.
+
+You will need this section at the top of your Quarto document:
+```{r load_tidyverse2}
+library(tidyverse)
+library(gt)
+```
+
+:::
+## Plotting in R {#sec-plots}
+
+[↑ top](#)
+
+### Initiating a Plot
+We will now learn to draw some basic graphs in R, we will learn much more about this over future weeks.
+
+We start a new, empty plot using the function `ggplot`. We pass this function our dataframe variable, to tell it that this is the data we are going to plot.
+
+In this example, I'll plot data from the `weather` data frame.
+
+```{r load_weather, echo=FALSE}
+gt(weather)
+```
+
+First, I read the table and initiate a blank canvas on which to put my plot.
+
+```{r initiate_plot}
+weather <- read_csv("data/weather_data.csv")
+
+ggplot(weather)
+```
+
+
+### Adding axes
+We use another function, `aes`, as an argument to the `ggplot` function,  telling R how various attributes of the data map to the "aesthetics" of the plot.
+
+For example, here we choose which data we will represent with the *x* and *y* axes.
+
+```{r axes_plot}
+ggplot(weather, aes(x = observation_time,
+                    y = temperature_c)
+)
+```
+
+### Adding Data
+
+Now we can add some data to our graph. In this plotting package, `ggplot`, we add additional things to our plot using a `+` symbol.
+
+Here, we add a line representing the data using the `geom_line` function.
+
+```{r line_plot}
+ggplot(weather, aes(x = observation_time,
+                    y = temperature_c)) +
+  geom_line()
+```
+
+### Adding extra features
+
+We can add some additional features here to make the plot look nicer. For example, here I will change the colour of the line to red, add *x* and *y* axis labels and add a title.
+
+```{r colour_line_plot}
+ggplot(weather, aes(x = observation_time,
+                    y = temperature_c)) +
+  geom_line(color='red') +
+  xlab("Date") +
+  ylab("Temp (C)") +
+  ggtitle("Temperature by Date")
+```
+
+::: {.callout-exercise #ex_public_health_plot}
+
+Following on from the UKHSA public health data you downloaded above and loaded into R, in the same Quarto document:
+
+* Plot a line graph, where the x axis is date (contained in the `date` column), and the *y* axis is the metric measured in the table (from the `metric_value`) column.
+* Change the colour of the line and add appropriate axis labels - you can go back to the UKHSA data website to see exactly what is being measured.
+:::
+
+## Summary {#sec-summary0104}
+
+[↑ top](#)
+
+* We can combine multiple variables of the same type into a **vector** using the function `c`.
+* Tabular data can be represented in a **data frame**, generated using the function `tibble`.
+* Data is commonly made available in comma-seperated variable (CSV) format
+* The function `read_csv` is used to read external data in CSV format into an R data frame.
+* Plots are generated from data using the function `ggplot`.
+* We can add axes and other aesthetics to the plot using the funcition `aes`.
+
+{{< include ../includes/git_push.qmd >}}

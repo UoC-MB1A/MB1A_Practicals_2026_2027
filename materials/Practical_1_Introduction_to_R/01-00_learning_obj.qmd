@@ -43,9 +43,18 @@ By the end of this part of the practical you should be able to:
 
 ### @sec-p3_functions_and_variables
 
-- Functions
-- Variables and variable names
-- Types of variable
+#### Sections
+- @sec-functions
+- @sec-arguments
+- @sec-variables
+- @sec-variable_types
+
+By the end of this part of the practical you should be able to:
+
+- Understand what a function is and use some simple functions.
+- Understand how and why we provide arguments to functions.
+- Explain the concept of a variable and use variables in your code.
+- Know the difference between a character, numeric and logical variable.
 
 ##### [Part 4: Vectors, data frames and plots](01-04_complex_variables_plotting.qmd)
 
