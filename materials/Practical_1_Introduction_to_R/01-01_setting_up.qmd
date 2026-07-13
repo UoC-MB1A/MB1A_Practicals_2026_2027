@@ -100,11 +100,11 @@ To do this, in your RStudio session, select `File` > `New Project`.
 In the window which pops up, choose `Version Control`.
 
 
-![New Project Version Control](images/new_rstudio_vc.png){#fig-newrstudio_vc}
+![New Project Version Control](images/new_rstudio_vc.png){#fig-newrstudio_vc width="70%"}
 
 Select `Git - Clone a project from a Git repository`.
 
-![New Project Git](images/new_rstudio_fromgit.png){#fig-new_rstudio_fromgit}
+![New Project Git](images/new_rstudio_fromgit.png){#fig-new_rstudio_fromgit width="70%"}
 
 Copy and paste the URL of your forked repository into the `Repository URL` box.
 
@@ -116,7 +116,7 @@ The rest of the boxes should fill in automatically.
 
 Click `Create Project`.
 
-![New Project Clone](images/new_rstudio_clone.png){#fig-new_rstudio_clone}
+![New Project Clone](images/new_rstudio_clone.png){#fig-new_rstudio_clone width="70%"}
 
 RStudio will download a copy of your repository (known as a **clone**) and open it as a new project.
 
