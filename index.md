@@ -6,9 +6,9 @@ number-sections: false
 
 The aim of this series of practical sessions is to develop the skills to independently perform biological and mathematical analyses using the programming language R. There will be eight two hour practicals, four in Michaelmas term and four in Lent term.
 
-::: {.callout-tip}
+::: {.callout-tip .partmenu}
 
-### Learning Objectives
+### Sessions
 
 Across the eight practicals we will learn how to use R for analyses related to the following topics:
 
