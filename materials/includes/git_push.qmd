@@ -1,7 +1,7 @@
 ::: {.callout-tip}
 ## Push your changes
 
-At the end of the practical, commit your changes with Git and push them to GitHub.
+Now you are at the end of the practical, commit your changes with Git and push them to GitHub.
 
 1. Save your changes in RStudio with the `Save` button.
 2. Render your Rmarkdown document into html with the `Render` button.
