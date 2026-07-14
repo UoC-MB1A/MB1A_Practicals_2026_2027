@@ -9,8 +9,8 @@ format: html
 ::: {.callout-note .partmenu}
 ## Sections
 - @sec-dataset
-- @sec-summary_stats
 - @sec-select
+- @sec-summary_stats
 - @sec-merge
 - @sec-long_wide
 - @sec-summary_0201
@@ -62,7 +62,7 @@ What is the longitude of the Moscow breeding site?
 :::
 :::
 
-### Reading the CSV file
+### Reading the first CSV file
 
 Now we will start to build a new Quarto document to examine this dataset.
 
@@ -91,6 +91,7 @@ bird_breeding_sites <- read_csv("data/breeding_site_locations.csv")
 gt(bird_breeding_sites)
 ```
 :::
+:::
 
 It should look like this:
 
@@ -101,15 +102,37 @@ gt(bird_breeding_sites)
 
 The `Site` column contains the site of each breeding population of birds, the `breeding_lat` column is the latitude of this site and the `breeding_lon` column is the longitude.
 
-We also need to read a second CSV file into a data frame. This one contains the data about the Iberian stopover and winter locations for the birds. 
+### Reading the second CSV file
+
+We also need to read a second CSV file into a data frame. This one contains the data about the Iberian stopover and winter locations for the birds. It is identical one of the Supplementary data files associated with the publication.
 
 Unlike the breeding site data, in this table there are multiple records for each site - as the birds were recorded at multiple locations.
 
+::: {.callout-exercise #ex_read_csv2}
+The data frame is saved in the `data` directory for this practical as `data/migratory_connectivity_dataset.csv`.
 
-## Summary statistics {#sec-summary_stats}
+In your Quarto document, please read the file into a variable and visualise the top 10 rows using the `gt()` and `head()` functions.
+
+::: {.callout-note #ex_read_csv_nb}
+Reminder: You can nicely visualise the top 10 rows of a data frame using `gt()` and `head()` together as follows, replacing `df_variable` with your variable name.
+
+```{r gthead, eval=FALSE}
+gt(head(df_variable))
+```
+
+:::
+
+::: {.callout-answer collapse="true"}
+```{r read_bird_data2}
+bird_migration <- read_csv("data/migratory_connectivity_dataset.csv")
+gt(head(bird_migration))
+```
 
 
+:::
+:::
 ## Selecting rows and columns {#sec-select}
+## Summary statistics {#sec-summary_stats}
 ## Merging and joining {#sec-merge}
 ## Long and wide formats {#sec-long_wide}
 ## Review {#sec-summary_0201}

@@ -17,8 +17,8 @@ library(tidyverse)
 
 #### Sections
 - @sec-dataset
-- @sec-summary_stats
 - @sec-select
+- @sec-summary_stats
 - @sec-merge
 - @sec-long_wide
 - @sec-summary_0201
