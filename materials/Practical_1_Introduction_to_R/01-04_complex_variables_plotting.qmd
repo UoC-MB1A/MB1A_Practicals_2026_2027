@@ -357,7 +357,7 @@ library(gt)
 ### Initiating a Plot
 We will now learn to draw some basic graphs in R, we will learn much more about this over future weeks.
 
-We start a new, empty plot using the function `ggplot`. We pass this function our dataframe variable, to tell it that this is the data we are going to plot.
+We start a new, empty plot using the function `ggplot`. The input for this function is our data frame variable, which contains the data we are going to plot.
 
 In this example, I'll plot data from the `weather` data frame.
 
@@ -437,7 +437,7 @@ Following on from the UKHSA public health data you downloaded above and loaded i
 * Data is commonly made available in comma-seperated variable (CSV) format
 * The function `read_csv` is used to read external data in CSV format into an R data frame.
 * Plots are generated from data using the function `ggplot`.
-* We can add axes and other aesthetics to the plot using the funcition `aes`.
+* We can add axes and other aesthetics to the plot using the function `aes`.
 :::
 
 {{< include ../includes/git_push.qmd >}}

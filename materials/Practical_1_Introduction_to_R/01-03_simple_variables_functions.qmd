@@ -39,6 +39,7 @@ Functions take inputs (called arguments), perform an action, and often return an
 ![Functions](images/function_illu.png){#fig-functions width='50%'}
 
 We have used some functions already:
+
 * The `print()` function outputs text to the screen.
 * The `sum()` function adds together a series of numbers.
 

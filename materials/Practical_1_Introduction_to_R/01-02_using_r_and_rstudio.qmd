@@ -291,7 +291,7 @@ As our code becomes more complicated, the value of using Quarto will become much
 
 {{< fa solid flask >}}
 
-The Human Protein Atlas (HPA) is a programme which was initiated in 2003 with the aim to map all the human proteins in cells, tissues, and organs using  various omics technologies.
+The Human Protein Atlas (HPA) is a research project which was initiated in 2003 with the aim to map all the human proteins in cells, tissues, and organs using  various omics technologies.
 
 We are going to look at a small amount of data from the HPA brain resource, which explores the distribution of proteins in various regions of the mammalian brain.
 
@@ -299,7 +299,7 @@ There is a description of the brain data [here](https://www.proteinatlas.org/hum
 
 On the [brain data](https://www.proteinatlas.org/humanproteome/brain) page, the **BRAIN SUMMARY** table shows the number of genes which were categorised as *regionally elevated* in different regions of the brain. Genes were classed as regionally elevated if they showed distinctly higher expression in these regions than in the rest of the brain.
 
-Create a new Quarto document and, based on the brain summary table, using R, calculate the total number of genes with regionally elevated expression in the **forebrain** - that is, the Cerebral cortex, Basal ganglia, Thalamus and Hypothalamus - regions in human, pig and mouse. 
+Create a new Quarto document and, based on the brain summary table, using R, calculate the total number of genes with regionally elevated expression in the **forebrain** - that is, the cerebral cortex, basal ganglia, thalamus and hypothalamus - regions in human, pig and mouse. 
 
 In your Quarto document:
 
@@ -371,7 +371,7 @@ Format the code in the HPA data Quarto document you created earlier using the `S
 ## Summary
 - **R** is a commonly used programming language amongst biologists.
 - **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.
-- We can code interactively in the **console**.
+- We can code interactively in the **console** but it is not easy to track or document.
 - **Scripts** contain simple lists of commands for R to carry out.
 - **Quarto** documents combine text, code and images to make your analysis clear and reproducible.
 - Code **formatting** and **documentation** are important to keep your code readable and reusable.
