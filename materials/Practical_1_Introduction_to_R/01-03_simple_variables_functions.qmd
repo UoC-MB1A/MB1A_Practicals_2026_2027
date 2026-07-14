@@ -53,6 +53,9 @@ sqrt(9)
 Here, the input `9` is given as an argument to the `sqrt()` function. The function calculates the square root, and returns the value. This function is very simple, because it takes just one argument and has no additional options.
 
 ::: {.callout-exercise #functions_first}
+
+{{< fa solid anchor >}}
+
 The function `round()` rounds a number, by default into the nearest whole number.
 
 Write some code to round the number 3.14159 to the nearest whole number.
@@ -121,6 +124,10 @@ print(seq(by = 5, to = 15, from = 5))
 ```
 
 ::: {.callout-exercise #arg_order}
+
+{{< fa solid anchor >}}
+
+
 The function `rep()` repeats a value, `x` a specific number of times.
 The order of arguments is: `rep(x, times)` - so you first specify `x`, then the number of `times` you want it to be repeated.
 
@@ -175,6 +182,9 @@ print(my_variable)
 ```
 
 ::: {.callout-exercise #ex_varorder}
+
+{{< fa solid anchor >}}
+
 What would be the value of `whatsmynumber` after running all of code below?
 
 ```{r varorder}
@@ -306,6 +316,9 @@ print(class(x))
 ```
 
 ::: {.callout-exercise #ex_var_types}
+
+{{< fa solid anchor >}}
+
 Create character, numerical and logical variables, print them, then check their classes.
 
 ::: {.callout-answer collapse="true"}
@@ -323,6 +336,8 @@ print(class(is_this_true))
 :::
 
 ::: {.callout-exercise #ex_celldata}
+
+{{< fa solid anchor >}}
 
 You have conducted an experiment in which you have treated one batch of cells with radiation and kept the other as a control, then counted the number of live cells before and after.
 
@@ -360,7 +375,7 @@ n_after_2 <- 7543
 :::
 
 ::: {.callout-tip}
-## Summary {#sec-summary0103}
+## Summary {#sec-summary_0103}
 
 [↑ top](#)
 

@@ -89,7 +89,9 @@ However, it can be useful to use the console, for example to quickly try somethi
 
 ::: {.callout-exercise #ex-creating_objects}
 ## Making a variable in the console
+
 {{< fa solid anchor >}}
+
 - In your console, create a variable with your first name. The syntax you will need to use is as follows - replace "Mary" with your own name.
 
 ```{r name_var}
@@ -143,6 +145,9 @@ Click on the environment now - you should see two variables: `x`, with a value o
 * **Help** is where you can go for help. 
 
 ::: {.callout-exercise #ex_help}
+
+{{< fa solid anchor >}}
+
 In the search box on the Help tab, search for the function `sum()`.
 
 Using the **Examples** section as a guide, calculate the sum of the numbers 2, 3, 4 in the console.
@@ -196,6 +201,8 @@ print(z)
 ```
 
 ::: {.callout-exercise #ex_script}
+
+{{< fa solid anchor >}}
 
 Here is the code we wrote in the console above:
 
@@ -275,6 +282,9 @@ Your first Quarto report should open in a new window. A **html** file will also 
 As our code becomes more complicated, the value of using Quarto will become much clearer.
 
 ::: {.callout-exercise #ex_quarto}
+
+{{< fa solid flask >}}
+
 The Human Protein Atlas (HPA) is a programme which was initiated in 2003 with the aim to map all the human proteins in cells, tissues, and organs using  various omics technologies.
 
 We are going to look at a small amount of data from the HPA brain resource, which explores the distribution of proteins in various regions of the mammalian brain.
@@ -341,11 +351,14 @@ After:
 Also, where you need to give something a name in R, it is helpful to use a name which describes what it is. For example, rather than `x <- 12` it is preferable to write e.g. `mean_size <- 12`.
 
 ::: {.callout-exercise #ex_formatting}
+
+{{< fa solid flask >}}
+
 Format the code in the HPA data Quarto document you created earlier using the `Style active file` feature. It may not change at all, or it may change a lot. Change any variable names to be informative, if they are not already.
 :::
 
 ::: {.callout-tip}
-## Summary {#sec-summary0102}
+## Summary {#sec-summary_0102}
 - **R** is a commonly used programming language amongst biologists.
 - **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.
 - We can code interactively in the **console**.
@@ -355,4 +368,3 @@ Format the code in the HPA data Quarto document you created earlier using the `S
 :::
 
 {{< include ../includes/git_commit.qmd >}}
-

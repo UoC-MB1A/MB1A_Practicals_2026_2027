@@ -15,12 +15,14 @@ library(gt)
 - @sec-dataframes
 - @sec-csv
 - @sec-plots
-- @sec-summary0104
+- @sec-summary_0104
 :::
 
 :::{.callout-tip .objectives}
 ## Learning objectives
+
 By the end of this part of the practical you should be able to:
+
 * Install and load a package in R
 * Recognise and use the vector variable type.
 * Isolate elements of the vector using an index.
@@ -79,17 +81,17 @@ Vectors in R are (usually) specified using the function `c`.
 
 ```{r first_vector}
 my_first_vector <- c(1, 5, 9)
-print (my_first_vector)
+print(my_first_vector)
 ```
 
 You can have vectors with all numbers, all text, or all logical values, but everything needs to be the same type.
 
 ```{r text_bool_vectors}
-character_vec <- c('hello', 'this', 'is', 'a', 'character', 'vector')
-print (character_vec)
+character_vec <- c("hello", "this", "is", "a", "character", "vector")
+print(character_vec)
 
 logical_vec <- c(TRUE, FALSE, TRUE)
-print (logical_vec)
+print(logical_vec)
 ```
 
 If you have existing variables, you can put them into a vector using their variable names.
@@ -103,6 +105,8 @@ xyz_vec <- c(x, y, z)
 ```
 
 ::: {.callout-exercise #ex_vectors1}
+
+{{< fa solid anchor >}}
 
 Let's look again at our dataset in which you have treated one batch of cells with radiation and kept the other as a control, then counted the number of live cells before and after.
 
@@ -149,13 +153,13 @@ n_after <- c(n_after_1, n_after_2)
 Once our values are in a vector, we can access them using an *index*, which refers to the position of the value within the vector. Indices are indicated within square brackets - `[]`.
 
 ```{r vector_indices}
-nice_food <- c('cheese', 'beans', 'potatoes')
+nice_food <- c("cheese", "beans", "potatoes")
 
-print (nice_food[1])
+print(nice_food[1])
 
-print (nice_food[2])
+print(nice_food[2])
 
-print (nice_food[3])
+print(nice_food[3])
 ```
 
 
@@ -163,16 +167,18 @@ print (nice_food[3])
 
 ::: {.callout-exercise #ex_vectors1}
 
+{{< fa solid anchor >}}
+
 Isolate the fourth value in this vector and assign it to a new variable, then print its value.
 
 ```{r vector_indices_exercise, exercise=TRUE}
-all_my_pets <- c('dog', 'horse', 'guinea pig', 'chicken', 'cat')
+all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 ```
 
 ::: {.callout-answer collapse="true"}
 ```{r vector_indices_exercise_solution, exercise=TRUE}
 # for example
-all_my_pets <- c('dog', 'horse', 'guinea pig', 'chicken', 'cat')
+all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 my_only_bird <- all_my_pets[4]
 print(my_only_bird)
 ```
@@ -204,9 +210,11 @@ We can build a data frame using the R function `tibble` (note that there is also
 I would specify the data frame above as follows:
 
 ```{r make_tibble}
-my_dataframe <- tibble(fruit = c("apple", "pear", "banana"),
-                       length = c(22, 30, 55),
-                       weight = c(150, 165, 170))
+my_dataframe <- tibble(
+  fruit = c("apple", "pear", "banana"),
+  length = c(22, 30, 55),
+  weight = c(150, 165, 170)
+)
 
 
 print(my_dataframe)
@@ -215,14 +223,18 @@ print(my_dataframe)
 Although we can see our data frame using the `print()` function, it's not formatted particularly nicely. Instead, we can use the function `gt`.
 
 ```{r gt}
-my_dataframe <- tibble(fruit = c("apple", "pear", "banana"),
-                       length = c(22, 30, 55),
-                       weight = c(150, 165, 170))
+my_dataframe <- tibble(
+  fruit = c("apple", "pear", "banana"),
+  length = c(22, 30, 55),
+  weight = c(150, 165, 170)
+)
 
 gt(my_dataframe)
 ```
 
 ::: {.callout-exercise #ex_celldf}
+
+{{< fa solid flask >}}
 
 Let's revisit our radiation experiment data.
 
@@ -244,10 +256,12 @@ Using a data frame and the `tibble` function, reproduce this table, then visuali
 
 ```{r df_exercise_solution}
 # for example
-df <- tibble(cell_ID = c("CX1", "CX2"),
-             treated = c(TRUE, FALSE),
-             num_cells_before = c(5415, 8123),
-             num_cells_after = c(1432, 7543)) 
+df <- tibble(
+  cell_ID = c("CX1", "CX2"),
+  treated = c(TRUE, FALSE),
+  num_cells_before = c(5415, 8123),
+  num_cells_after = c(1432, 7543)
+)
 
 gt(df)
 ```
@@ -264,7 +278,7 @@ For example, for this table:
 
 ```{r csv_example2, echo=FALSE}
 df <- data.frame(
-          fruit = c("apple", "pear", "banana"),
+  fruit = c("apple", "pear", "banana"),
   length = c(22, 30, 55),
   weight = c(150, 165, 170)
 )
@@ -284,6 +298,9 @@ banana,55,170
 There is a file provided in your `data` folder for Practical 1 named `weather.csv`. Open this file on your computer in a text editor (for example NotePad, TextEdit) and examine it.
 
 ::: {.callout-exercise #ex_weather}
+
+{{< fa solid anchor >}}
+
 Based on this table, what was the temperature in degrees C on 2026-07-02 at 12:00:00?
 
 ::: {.callout-answer collapse="true"}
@@ -305,6 +322,9 @@ gt(weather)
 ```
 
 ::: {.callout-exercise #ex_public_health}
+
+{{< fa solid flask >}}
+
 ### Reading UK Public Health Monitoring Data
 
 The UK government provide some public health data for England (other UK countries have data available elsewhere) on their data portal, here - https://ukhsa-dashboard.data.gov.uk/. The data is available for download in CSV format.
@@ -360,9 +380,10 @@ We use another function, `aes`, as an argument to the `ggplot` function,  tellin
 For example, here we choose which data we will represent with the *x* and *y* axes.
 
 ```{r axes_plot}
-ggplot(weather, aes(x = observation_time,
-                    y = temperature_c)
-)
+ggplot(weather, aes(
+  x = observation_time,
+  y = temperature_c
+))
 ```
 
 ### Adding Data
@@ -372,8 +393,10 @@ Now we can add some data to our graph. In this plotting package, `ggplot`, we ad
 Here, we add a line representing the data using the `geom_line` function.
 
 ```{r line_plot}
-ggplot(weather, aes(x = observation_time,
-                    y = temperature_c)) +
+ggplot(weather, aes(
+  x = observation_time,
+  y = temperature_c
+)) +
   geom_line()
 ```
 
@@ -382,9 +405,11 @@ ggplot(weather, aes(x = observation_time,
 We can add some additional features here to make the plot look nicer. For example, here I will change the colour of the line to red, add *x* and *y* axis labels and add a title.
 
 ```{r colour_line_plot}
-ggplot(weather, aes(x = observation_time,
-                    y = temperature_c)) +
-  geom_line(color='red') +
+ggplot(weather, aes(
+  x = observation_time,
+  y = temperature_c
+)) +
+  geom_line(color = "red") +
   xlab("Date") +
   ylab("Temp (C)") +
   ggtitle("Temperature by Date")
@@ -392,13 +417,15 @@ ggplot(weather, aes(x = observation_time,
 
 ::: {.callout-exercise #ex_public_health_plot}
 
+{{< fa solid flask >}}
+
 Following on from the UKHSA public health data you downloaded above and loaded into R, in the same Quarto document:
 
 * Plot a line graph, where the x axis is date (contained in the `date` column), and the *y* axis is the metric measured in the table (from the `metric_value`) column.
 * Change the colour of the line and add appropriate axis labels - you can go back to the UKHSA data website to see exactly what is being measured.
 :::
 
-## Summary {#sec-summary0104}
+## Summary {#sec-summary_0104}
 
 [↑ top](#)
 

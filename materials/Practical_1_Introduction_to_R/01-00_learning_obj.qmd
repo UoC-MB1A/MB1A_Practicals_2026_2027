@@ -58,11 +58,24 @@ By the end of this part of the practical you should be able to:
 
 ##### [Part 4: Vectors, data frames and plots](01-04_complex_variables_plotting.qmd)
 
-- Multi-Element Variables
-- Vectors
-- Indices
-- Data frames
-- Introduction to plotting in R
+#### Sections
+- @sec-packages
+- @sec-vectors
+- @sec-dataframes
+- @sec-csv
+- @sec-plots
+- @sec-summary_0104
+
+By the end of this part of the practical you should be able to:
+
+- Install and load a package in R
+- Recognise and use the vector variable type.
+- Isolate elements of the vector using an index.
+- Create and view a simple data frame
+- Recognise and use the CSV file type
+- Plot a simple scatter plot in R
+
+:::
 
 ##### Part 5 - Extension Exercises
 :::
