@@ -232,6 +232,12 @@ Throughout this course, we will write our code in Quarto documents (.qmd) rather
 * R scripts allow you to save your code, but it is not easy to include explanations, figures, or results in the same file.
 * Quarto documents combine text, code and output into a single file, making it easy to explain what you are doing, present your results, and reproduce your analysis. This helps you keep an organised record of your work and is widely used for teaching, research and data science.
 
+The main reason to use Quarto is to make your research **reproducible**. You will likely have learned about this previously for lab-based research, but reproducibility is just as important for computer-based science.
+
+Optional homework: There is an interesting lecture [here](https://youtu.be/7gYIs7uYbMo?si=uU9m308A8AtqvKCC) about the importance of reproducibility in computational biology.
+
+
+
 #### Creating a Quarto document
 
 To create a new Quarto document in RStudio, select `File` > `New File` > `Quarto Document`. Give the document a title and add your own name as the author, then uncheck the box next to `Use visual markdown editor` and select `Create empty document`.
@@ -357,8 +363,12 @@ Also, where you need to give something a name in R, it is helpful to use a name 
 Format the code in the HPA data Quarto document you created earlier using the `Style active file` feature. It may not change at all, or it may change a lot. Change any variable names to be informative, if they are not already.
 :::
 
-::: {.callout-tip}
-## Summary {#sec-summary_0102}
+## Review {#sec-summary_0102}
+
+[↑ top](#)
+
+::: {.callout-note}
+## Summary
 - **R** is a commonly used programming language amongst biologists.
 - **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.
 - We can code interactively in the **console**.

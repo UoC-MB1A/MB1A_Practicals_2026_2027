@@ -423,17 +423,21 @@ Following on from the UKHSA public health data you downloaded above and loaded i
 
 * Plot a line graph, where the x axis is date (contained in the `date` column), and the *y* axis is the metric measured in the table (from the `metric_value`) column.
 * Change the colour of the line and add appropriate axis labels - you can go back to the UKHSA data website to see exactly what is being measured.
+
 :::
 
-## Summary {#sec-summary_0104}
+## Review {#sec-summary_0104}
 
 [↑ top](#)
 
+::: {.callout-note}
+## Summary
 * We can combine multiple variables of the same type into a **vector** using the function `c`.
 * Tabular data can be represented in a **data frame**, generated using the function `tibble`.
 * Data is commonly made available in comma-seperated variable (CSV) format
 * The function `read_csv` is used to read external data in CSV format into an R data frame.
 * Plots are generated from data using the function `ggplot`.
 * We can add axes and other aesthetics to the plot using the funcition `aes`.
+:::
 
 {{< include ../includes/git_push.qmd >}}

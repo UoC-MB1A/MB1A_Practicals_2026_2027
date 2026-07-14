@@ -15,6 +15,7 @@ library(gt)
 - @sec-variables
 - @sec-variable_types
 - @sec-summary_0103
+
 :::
 
 :::{.callout-tip .objectives}
@@ -374,11 +375,12 @@ n_after_2 <- 7543
 :::
 :::
 
-::: {.callout-tip}
-## Summary {#sec-summary_0103}
+## Review {#sec-summary_0103}
 
 [↑ top](#)
 
+::: {.callout-note}
+## Summary
 - A **function** performs a specific task, usually taking one or more inputs (called **arguments**) and often returning an output.
 - **Arguments** provide information to a function and control how it behaves. Some arguments are optional and have default values.
 - A **variable** stores a value under a name so that it can be used again later in your code.

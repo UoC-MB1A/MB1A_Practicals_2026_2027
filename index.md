@@ -30,8 +30,8 @@ Exercises in these materials are labelled as follows:
 
 | Level | Description |
 | -: | :---------- |
-| {{< fa solid anchor >}} | These are essential, fundamental exercises designed to get you familiar with using R for Mathematical Biology. Everybody should review these, however if you've programmed before some may already be familiar |
-| {{< fa solid flask >}} | These exercises require you to combine material from throughout the session and from previous practicals to solve a biological problem. They are intended to be challenging, but will help you to become more comfortable with R and with Mathematical Biology.
+| {{< fa solid anchor >}} | These are essential, fundamental exercises designed to get you familiar with using R for {{< meta course-topic >}}. Everybody should review these, however if you've programmed before some may already be familiar |
+| {{< fa solid flask >}} | These exercises require you to combine material from throughout the session and from previous practicals to solve a biological problem. They are intended to be challenging, but will help you to become more comfortable with R and with {{< meta course-topic >}}.
 | {{< fa solid rocket >}}| These are expansion exercises which go beyond the material covered in the course. They are optional and are intended to stretch students who are more comfortable with computation and coding. |
 
 

@@ -1,5 +1,5 @@
 ---
-title: "Learning Objectives"
+title: "Plan and Learning Objectives"
 format: html
 ---
 
@@ -9,8 +9,9 @@ library(tidyverse)
 
 # Practical 1 - Using R and RStudio
 
-::: {.callout-tip .objectives}
-## Learning objectives
+::: {.callout-tip .partmenu}
+
+## Practical 1 - Using R and RStudio
 
 ### @sec-p1_setup
 
@@ -18,6 +19,7 @@ library(tidyverse)
 - @sec-git_github
 - @sec-setup_rstudio
 
+#### Learning Objectives
 By the end of this part of the practical you should be able to:
 
 - Explain what Git and GitHub are
@@ -32,6 +34,8 @@ By the end of this part of the practical you should be able to:
 - @sec-rstudio_interface
 - @sec-console_scripts_quarto
 - @sec-documenting_and_formatting_your_code
+
+#### Learning Objectives
 
 By the end of this part of the practical you should be able to:
 
@@ -49,6 +53,8 @@ By the end of this part of the practical you should be able to:
 - @sec-variables
 - @sec-variable_types
 
+#### Learning Objectives
+
 By the end of this part of the practical you should be able to:
 
 - Understand what a function is and use some simple functions.
@@ -56,7 +62,7 @@ By the end of this part of the practical you should be able to:
 - Explain the concept of a variable and use variables in your code.
 - Know the difference between a character, numeric and logical variable.
 
-##### [Part 4: Vectors, data frames and plots](01-04_complex_variables_plotting.qmd)
+### @sec-p4_vectors_dataframes_plots
 
 #### Sections
 - @sec-packages
@@ -68,6 +74,8 @@ By the end of this part of the practical you should be able to:
 
 By the end of this part of the practical you should be able to:
 
+#### Learning Objectives
+
 - Install and load a package in R
 - Recognise and use the vector variable type.
 - Isolate elements of the vector using an index.
@@ -78,4 +86,3 @@ By the end of this part of the practical you should be able to:
 :::
 
 ##### Part 5 - Extension Exercises
-:::
