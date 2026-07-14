@@ -1,0 +1,15 @@
+{
+  "hash": "4dcef0e2a1e302b750a44b9eb34583e3",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Plan and Learning Objectives\"\nformat: html\n---\n\n\n\n# Practical 2 - Data Frames and Plots\n\n::: {.callout-tip .partmenu}\n\n## Practical 2 - Data Frames and Plots\n\n### @sec-p1_manipulating_dataframes\n\n#### Sections\n- @sec-dataset\n- @sec-summary_stats\n- @sec-select\n- @sec-merge\n- @sec-long_wide\n- @sec-summary_0201\n\n#### Learning Objectives\n\nBy the end of this part of the practical you will be able to:\n\n* Calculate dataframe summary statistics\n* Select specific columns and rows\n* Merge data from multiple dataframes\n* Convert data from \"wide\" to \"long\" format\n\n### @sec-p2_visualisation\n\n### @sec-p3_visualisation_exercise\n\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
