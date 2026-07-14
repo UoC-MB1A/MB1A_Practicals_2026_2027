@@ -1,0 +1,115 @@
+---
+format: html
+---
+
+# Part 1: Manipulating Data Frames {#sec-p1_manipulating_dataframes}
+
+
+
+::: {.callout-note .partmenu}
+## Sections
+- @sec-dataset
+- @sec-summary_stats
+- @sec-select
+- @sec-merge
+- @sec-long_wide
+- @sec-summary_0201
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Calculate dataframe summary statistics
+* Select specific columns and rows
+* Merge data from multiple dataframes
+* Convert data from "wide" to "long" format
+:::
+
+## Sync your Git repository
+{{< include ../includes/git_pull.qmd >}}
+
+## Dataset {#sec-dataset}
+
+In this practical, we will first work with a published dataset to learn how to perform various analyses in R. 
+
+You'll then be asked to carry out a similar analysis independently with data from a different source.
+
+For the worked example, we will use data from [this Science paper](https://doi.org/10.1126/science.ads0532), published in June 2026.
+This study tracked the migration of a songbird species, the pied flycatcher (*Ficedula hypoleuca*).
+
+We will reproduce Figure 1B from this paper, which shows the breeding site, Iberian stopover location and winter location for 8 bird populations.
+
+All of the data we will use comes from the Supplementary Data associated with this publication.
+
+![Pied flycatcher](images/birdy.png){#fig-pied_flycatcher width="30%"}
+
+
+The first part of the data we will use for this practical contains the longitude and latitude co-ordinates for breeding sites for eight specific populations of pied flycatcher. This data comes from Supplementary Table 1 in the publication. 
+
+### Starting your analysis
+
+The file is in the data directory for Practical 2 and named `breeding_site_locations.csv`. Open this file in a text editor (for example NotePad, TextEdit) and examine it.
+
+::: {.callout-exercise #ex_breeding_csv}
+
+{{< fa solid anchor >}}
+
+What is the longitude of the Moscow breeding site?
+
+::: {.callout-answer collapse="true"}
+36.7
+:::
+:::
+
+### Reading the CSV file
+
+Now we will start to build a new Quarto document to examine this dataset.
+
+You will need to include the following as an R code chunk at the start of the document.
+
+```{r include_libs}
+library(gt)
+library(tidyverse)
+```
+
+
+::: {.callout-exercise #ex_read_csv}
+
+{{< fa solid anchor >}}
+
+In your document, read `data/breeding_site_locations.csv` into a variable, then view it with `gt`.
+
+::: {.callout-note #ex_read_csv_nb}
+Reminder: The R function `read_csv` reads a CSV file into R as a data frame. The function `gt` is used to view a data frame.
+
+:::
+
+::: {.callout-answer collapse="true"}
+```{r read_bird_data, eval=FALSE}
+bird_breeding_sites <- read_csv("data/breeding_site_locations.csv")
+gt(bird_breeding_sites)
+```
+:::
+
+It should look like this:
+
+```{r view_breeding_location_data}
+bird_breeding_sites <- read_csv("data/breeding_site_locations.csv")
+gt(bird_breeding_sites)
+```
+
+The `Site` column contains the site of each breeding population of birds, the `breeding_lat` column is the latitude of this site and the `breeding_lon` column is the longitude.
+
+We also need to read a second CSV file into a data frame. This one contains the data about the Iberian stopover and winter locations for the birds. 
+
+Unlike the breeding site data, in this table there are multiple records for each site - as the birds were recorded at multiple locations.
+
+
+## Summary statistics {#sec-summary_stats}
+
+
+## Selecting rows and columns {#sec-select}
+## Merging and joining {#sec-merge}
+## Long and wide formats {#sec-long_wide}
+## Review {#sec-summary_0201}

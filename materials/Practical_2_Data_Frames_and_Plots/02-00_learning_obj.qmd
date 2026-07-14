@@ -1,0 +1,39 @@
+---
+title: "Plan and Learning Objectives"
+format: html
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+# Practical 2 - Data Frames and Plots
+
+::: {.callout-tip .partmenu}
+
+## Practical 2 - Data Frames and Plots
+
+### @sec-p1_manipulating_dataframes
+
+#### Sections
+- @sec-dataset
+- @sec-summary_stats
+- @sec-select
+- @sec-merge
+- @sec-long_wide
+- @sec-summary_0201
+
+#### Learning Objectives
+
+By the end of this part of the practical you will be able to:
+
+* Calculate dataframe summary statistics
+* Select specific columns and rows
+* Merge data from multiple dataframes
+* Convert data from "wide" to "long" format
+
+### @sec-p2_visualisation
+
+### @sec-p3_visualisation_exercise
+
+:::

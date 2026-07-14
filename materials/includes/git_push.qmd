@@ -9,5 +9,6 @@ Now you are at the end of the practical, commit your changes with Git and push t
 4. Tick the files you have changed - usually the Rmd and html files for the practical.
 5. Click `Commit` and write a short message describing your changes.
 6. Click `Push` to save the changes to GitHub.
+7. Visit your GitHub account and check that your changes are there.
 :::
 	

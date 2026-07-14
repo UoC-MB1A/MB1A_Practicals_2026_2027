@@ -7,3 +7,10 @@ book:
         - materials/Practical_1_Introduction_to_R/01-02_using_r_and_rstudio.qmd
         - materials/Practical_1_Introduction_to_R/01-03_simple_variables_functions.qmd
         - materials/Practical_1_Introduction_to_R/01-04_complex_variables_plotting.qmd
+
+    - part: "Practical 2 - Data Frames and Visualisation"
+      chapters:
+        - materials/Practical_2_Data_Frames_and_Plots/02-00_learning_obj.qmd
+        - materials/Practical_2_Data_Frames_and_Plots/02-01_manipulating_dataframes.qmd
+        - materials/Practical_2_Data_Frames_and_Plots/02-02_visualisation.qmd
+        - materials/Practical_2_Data_Frames_and_Plots/02-03_visualisation_exercise.qmd
