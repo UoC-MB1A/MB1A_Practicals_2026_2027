@@ -18,6 +18,7 @@ library(tidyverse)
 #### Sections
 - @sec-dataset
 - @sec-select
+- @sec-filter
 - @sec-summary_stats
 - @sec-merge
 - @sec-long_wide
@@ -27,10 +28,11 @@ library(tidyverse)
 
 By the end of this part of the practical you will be able to:
 
-* Calculate dataframe summary statistics
-* Select specific columns and rows
-* Merge data from multiple dataframes
-* Convert data from "wide" to "long" format
+* Use the pipe operator to create multi-step analyses.
+* Select specific columns and rows from a dataframe.
+* Calculate summary statistics for groups of observations.
+* Merge information from multiple dataframes.
+* Convert data from "wide" to "long" format.
 
 ### @sec-p2_visualisation
 
