@@ -1,2 +1,0 @@
-- In the _quarto.yml, change navbar title and metadata to the appropriate values
-- In 01-01_setting_up.qmd the screenshots are specific to MB1A
