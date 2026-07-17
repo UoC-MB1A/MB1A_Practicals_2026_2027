@@ -1,5 +1,0 @@
----
-format: html
----
-
-# Part 3: Visualisation Exercise {#sec-p3_visualisation_exercise}
