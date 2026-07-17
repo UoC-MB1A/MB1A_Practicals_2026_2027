@@ -318,7 +318,7 @@ ggplot(
 
 ::: {.callout-note}
 
-## Summary
+### Summary
 
 - The function `ggplot()` is used to create a new plot.
 - The `aes()` function controls how variables in the data are mapped to visual properties of the plot.

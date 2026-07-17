@@ -520,13 +520,13 @@ gt(head(bird_migration_exc))
 :::
 :::
 
-## Review {#sec-summary_0202}
+## Review {#sec-summary_0201}
 
 [↑ top](#)
 
 ::: {.callout-note}
 
-## Summary
+### Summary
 
 * The **pipe operator** (`|>`) allows us to pass data through a series of analysis steps.
 * `select()` allows us to choose specific columns from a data frame.

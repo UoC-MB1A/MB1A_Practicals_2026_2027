@@ -55,7 +55,7 @@ By the end of this part of the practical you will be able to:
 - @sec-add_points
 - @sec-add_map
 - @sec-group_points
-- @sec-summary_0202
+- @sec-summary_0203
 
 #### Learning Objectives
 
@@ -67,6 +67,7 @@ By the end of this part of the practical you will be able to:
 * Change the colours and shapes of the points based on caegorical data.
 * Add paths connecting points based on categorical data.
 
-### @sec-p3_visualisation_exercise
+### @sec-p4_visualisation_exercise
+
 
 :::

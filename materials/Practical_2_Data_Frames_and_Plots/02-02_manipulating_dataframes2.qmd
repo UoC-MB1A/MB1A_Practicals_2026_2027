@@ -245,7 +245,7 @@ write_csv(combined_bird_piv, "data/combined_birds.csv")
 
 ::: {.callout-note}
 
-## Summary
+### Summary
 
 * `group_by()` and `summarise()` allow us to calculate statistics for groups of observations.
 * **Joins** allow us to combine information from multiple data frames using shared columns.

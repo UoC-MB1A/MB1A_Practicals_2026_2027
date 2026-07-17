@@ -2,4 +2,272 @@
 format: html
 ---
 
-# Part 3: Visualisation Exercise {#sec-p3_visualisation_exercise}
+# Part 4: Visualisation Exercise {#sec-p4_visualisation_exercise}
+::: {.callout-note .partmenu}
+## Sections
+- @sec-load_packages_ve
+- @sec-download_data_ve
+- @sec-read_data_ve
+- @sec-process_df_ve
+- @sec-plot_data_ve
+- @sec-summary_0204
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will have:
+
+* Applied the data manipulation and plotting techniques introduced throughout Practical 2 to a real animal tracking dataset.
+
+:::
+
+
+In this exercise, you will apply the skills from Parts 1 to 3 to analyse a new dataset independently. You will download animal tracking data from the Movebank database, process it into a suitable format, and create a map showing the median location of each tracked individual on each day.
+
+## Load packages {#sec-load_packages_ve}
+
+Please start a new Quarto document for this exercise.
+
+We need to load the `tidyverse` and `gt` packages again, together with two additional packages:
+
+* `janitor`, which helps clean column names.
+* `lubridate`, which provides functions for working with dates.
+
+```{r load_packages_vis_ex}
+library(tidyverse)
+library(gt)
+library(janitor)
+library(lubridate)
+```
+
+## Download data {#sec-download_data_ve}
+
+First, you need to download some animal location data from the [Movebank database]( https://www.movebank.org/). This is a public database of animal location tracking data from different studies, in a standardised format to encourage data reuse.
+
+To find your dataset:
+
+* On the MoveBank Site, click on "Data" and then "View and Manage Studies". 
+* Select "Studies where I can download any data"
+* Choose a study from the list. Search for an animal which interests you. Choose a study containing approximately 5–15 tracked individuals (shown in the "Number of Animals" field on the website). This will give enough data to produce an interesting plot without making it difficult to interpret.
+
+In this exercise, based on this data frame, you will plot the median location of each individual animal by date as a scatter plot overlaid onto a map.
+
+First, download the CSV file and rename it so there are no gaps in the file name, then put it into the data directory for Practical 2.
+
+## Read Data {#sec-read_data_ve}
+
+Read the data frame into a variable.
+
+This data has a couple of features you've not come across yet, so we'll provide some code to help you:
+
+* The column names are not in a format that R can easily use, as they contain hyphens (`-`). We can use an additional function, `clean_names()` to rename the columns. `clean_names()` converts column names into a consistent format by replacing spaces and punctuation with underscores and converting everything to lower case.
+
+* One of the columns contains date information which needs to be reformated - we do this using the `mutate()` function and the `as_date()` function. We'll learn more about the `mutate()` function in a later practical.
+
+In the below, replace `seals.csv` with the filename of the data frame you have downloaded.
+
+```{r read_location_data}
+locations <- read_csv("data/seals.csv") |>
+  clean_names() |>
+  mutate(Date = as_date(timestamp))
+```
+
+## Process data frame {#sec-process_df_ve}
+
+* Look at the dataframe and check that the data looks as expected.
+* Identify the columns containing the longitude and latitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
+* Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
+* Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
+* Using the `summarize` function, calculate the median latitude and median longitude for each individual on each date.
+
+### Example solution
+
+::: {.callout-answer collapse="true"}
+* Look at the dataframe and check that the data looks as expected.
+
+```{r display_location_data}
+gt(head(locations))
+```
+
+* Identify the columns containing the latitude and longitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
+
+  * latitude - location_lat
+  * longitude - location_long
+
+* Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
+
+```{r select_relevant_columns_visex}
+loc_selected <- locations |> select(
+  Date,
+  individual_local_identifier,
+  location_long, location_lat
+)
+
+gt(head(loc_selected))
+```
+
+* Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
+
+```{r group_data_visex}
+loc_grouped <- loc_selected |>
+  group_by(Date, individual_local_identifier)
+```
+
+* Using the `summarize` function, calculate the median latitude and median longitude for each individual on each date.
+
+```{r summarise_data_visex}
+loc_sum <- loc_grouped |>
+  summarise(
+    Longitude = median(location_long),
+    Latitude = median(location_lat)
+  )
+
+gt(head(loc_sum))
+```
+:::
+
+## Plot data {#sec-plot_data_ve}
+
+* Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
+* Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
+* Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude`. If your study covers a small geographic area, you may find that adding 2 degrees leaves too much empty space. Adjust these values if necessary.
+* Colour the points by individual by adding `color = individual_local_identifier` to the `aes` function.
+* If you wish, change the appearance of your plot to your taste.
+
+### Example solution
+
+::: {.callout-answer collapse="true"}
+
+* Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
+
+```{r add_points_visex}
+ggplot(
+  loc_sum,
+  aes(
+    x = Longitude,
+    y = Latitude,
+  )
+) +
+  geom_point()
+```
+
+
+* Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
+
+```{r add_map_visex}
+ggplot(
+  loc_sum,
+  aes(
+    x = Longitude,
+    y = Latitude,
+  )
+) +
+  geom_point() +
+  annotation_borders(linewidth = 0.2) +
+  coord_quickmap()
+```
+
+* Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude`. If `2` seems like too little or too much for your data, feel free to adjust.
+
+```{r axlim_visex}
+min_lat <- loc_sum |>
+  pull(Latitude) |>
+  min()
+
+max_lat <- loc_sum |>
+  pull(Latitude) |>
+  max()
+
+min_lon <- loc_sum |>
+  pull(Longitude) |>
+  min()
+
+max_lon <- loc_sum |>
+  pull(Longitude) |>
+  max()
+
+
+ggplot(
+  loc_sum,
+  aes(
+    x = Longitude,
+    y = Latitude,
+  )
+) +
+  geom_point() +
+  annotation_borders(
+    linewidth = 0.2
+  ) +
+  coord_quickmap(
+    # as my data has a narrow y range I have used 0.2 instead of 2
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 0.2, max_lat + 0.2)
+  )
+```
+
+
+* Colour the points by individual by adding `color = individual_local_identifier` to the `aes` function.
+
+```{r full_plot_visex}
+ggplot(
+  loc_sum,
+  aes(
+    x = Longitude,
+    y = Latitude,
+    color = individual_local_identifier
+  )
+) +
+  geom_point() +
+  annotation_borders(
+    linewidth = 0.2
+  ) +
+  coord_quickmap(
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 0.2, max_lat + 0.2)
+  )
+```
+* If you wish, change the appearance of your plot to your taste.
+
+```{r theme_etc_visex, fig.width=10, fig.height=4.5}
+ggplot(
+  loc_sum,
+  aes(
+    x = Longitude,
+    y = Latitude,
+    color = individual_local_identifier
+  )
+) +
+  geom_point() +
+  annotation_borders(
+    linewidth = 0.2
+  ) +
+  coord_quickmap(
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 0.2, max_lat + 0.2)
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  theme_bw()
+```
+:::
+
+## Review {#sec-summary_0204}
+
+[↑ top](#)
+
+::: {.callout-note}
+### Summary
+
+In this exercise you have:
+
+- Downloaded a real animal tracking dataset from Movebank.
+- Cleaned and processed the data.
+- Selected relevant columns.
+- Grouped observations and calculated summary statistics.
+- Created a scatter plot of animal locations.
+- Added map borders and appropriate axis limits.
+- Used colour to distinguish individual animals.
+- Applied the data manipulation and plotting techniques introduced throughout Practical 2.
+
+:::
+
+{{< include ../includes/git_push.qmd >}}
