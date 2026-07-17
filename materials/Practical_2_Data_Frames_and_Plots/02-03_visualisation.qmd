@@ -1,0 +1,331 @@
+---
+format: html
+---
+```{r include_libs, include=FALSE}
+library(gt)
+library(tidyverse)
+combined_bird_piv <- read_csv("data/combined_birds.csv")
+```
+
+# Part 3: Visualisation {#sec-p3_visualisation}
+
+::: {.callout-note .partmenu}
+## Sections
+- @sec-plot_recap
+- @sec-blank_plot
+- @sec-add_points
+- @sec-axis_limits
+- @sec-group_points
+- @sec-add_paths
+- @sec-summary_0203
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Generate a new blank plot and add axes.
+* Add points to a scatter plot.
+* Calculate appropriate axis limits and add these to the plot.
+* Change the colours and shapes of the points based on categorical data.
+* Add paths connecting points based on categorical data.
+
+:::
+
+## Recap {#sec-plot_recap}
+
+[↑ top](#)
+
+Now, we want to reproduce Figure 2B from the [source publication](https://doi.org/10.1126/science.ads0532). 
+
+Look again at the plot. You will be able to see that our data frame, combined_bird_piv, contains all the information we need.
+
+* Breeding site
+* Longitude and latitude of breeding site
+* Longitude and latitude of post-Saharan stopover
+* Longitude and latitude of winter non-breeding site
+
+```{r show_bird_df}
+gt(combined_bird_piv)
+```
+
+## Initiating a new plot {#sec-blank_plot}
+
+[↑ top](#)
+
+We will visualise the migration paths of the birds using the R plotting package `ggplot`. 
+
+We can do this in the same Quarto document used for Part 1.
+
+`ggplot` builds figures by starting with a blank plot and then adding layers. We first tell `ggplot` which data frame to use, then specify the variables to plot, and finally add layers such as points, lines and axes.
+
+As we saw in Practical 1 (@sec-plots), we first need to generate a new blank plot.
+
+We do this using the function `ggplot()`, with our data frame as an argument.
+
+```{r blank_ggplot_birds}
+ggplot(combined_bird_piv)
+```
+
+Based on the published plot, we know that our `x` axis should be **Longitude** and our `y` axis should be **Latitude**.
+
+::: {.callout-exercise #ex_add_axes}
+
+Look back at the plotting code from Practical 1 (@sec-plots).
+
+Add the x and y axis to your blank plot.
+
+::: {.callout-answer collapse="true"}
+
+```{r axes_ggplot_birds}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude)
+)
+```
+
+:::
+:::
+
+## Adding points {#sec-add_points}
+
+[↑ top](#)
+
+A plot of longitude against latitude is simply a scatter plot - longitude determines the position on the x axis and latitude determines the position on the y axis.
+
+To demonstrate the geom_point function, let's briefly revisit our fruit data frame from the previous practical.
+
+```{r fruit_scatter_data}
+my_dataframe <- tibble(
+  fruit = c("apple", "pear", "banana"),
+  length = c(22, 30, 55),
+  weight = c(150, 165, 170)
+)
+
+gt(my_dataframe)
+```
+
+To plot this data as a scatter plot, with length on the x axis and weight on the y axis, we would do this:
+
+```{r fruit_scatter}
+ggplot(my_dataframe, aes(x = length, y = weight)) +
+  geom_point()
+```
+
+::: {.callout-exercise #ex_add_points}
+
+Going back to your bird data, plot all of the longitude and latitude points as a scatter plot.
+
+::: {.callout-answer collapse="true"}
+
+```{r points_ggplot_birds}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude)
+) +
+  geom_point()
+```
+:::
+:::
+
+If you compare this with the plot in the paper, you can see that the points are at the same positions. 
+
+Now, we can add some additional information to make the plot more informative.
+
+ggplot has a convenient function `annotation_borders()` to add geographical country borders to a scatter plot representing a map. We're also going to add a second function used with map data, `coord_quickmap()` - this keeps the shape of the plot consistent so the map isn't skewed.
+
+We can add this to our scatter plot as follows. The argument `linewidth` sets the width of the lines in the map borders.
+
+```{r map_ggplot_birds}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude)
+) +
+  geom_point() +
+  annotation_borders(linewidth=0.2) +
+  coord_quickmap()
+```
+## Setting axis limits {#sec-axis_limits}
+
+[↑ top](#)
+
+It would be clearer to zoom in just on the region containing the points, we can do this by setting the **axis limits**.
+
+It would be helpful to know the minimum and maximum longitude and latitude of the points, we can do this with the `min()` and `max()` functions and the function `pull()`, which pulls a single column from a data frame.
+
+e.g. to find the minimum longitude in our dataframe
+```{r min_long}
+min_long <- combined_bird_piv |> pull(Longitude) |> min()
+
+print (min_long)
+```
+
+::: {.callout-exercise #ex_calc_lims}
+Calculate the maximum longitude and the minimum and maximum latitude, and store these as variables `max_long`, `min_lat` and `max_lat`.
+
+::: {.callout-answer collapse="true"}
+```{r axis_limits}
+min_long <- combined_bird_piv |> pull(Longitude) |> min()
+max_long <- combined_bird_piv |> pull(Longitude) |> max()
+min_lat <- combined_bird_piv |> pull(Latitude) |> min()
+max_lat <- combined_bird_piv |> pull(Latitude) |> max()
+```
+
+```{r max_long}
+print (max_long)
+```
+
+```{r min_lat}
+print (min_lat)
+```
+
+```{r max_lat}
+print (max_lat)
+```
+
+:::
+:::
+
+We can use these numbers directly as our axis limits - but let's subtract `2` from each minimum and add `2` to each maximum so our points are not right on the edge of the plot.
+
+We can set the x axis limits as an argument to the `coord_quickmap()` function as follows:
+
+```{r xlim_birds}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude)
+) +
+  geom_point() +
+  annotation_borders(linewidth=0.2) +
+  coord_quickmap(xlim=c(min_long-2, max_long+2))
+```
+::: {.callout-exercise #ex_set_lims}
+Set the y axis limits using your `min_lat` and `max_lat` variables as a second argument to `coord_quickmap()`.
+
+::: {.callout-answer collapse="true"}
+```{r ylim_birds}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude)
+) +
+  geom_point() +
+  annotation_borders(linewidth=0.2) +
+  coord_quickmap(
+  xlim=c(min_long-2, max_long+2),
+  ylim=c(min_lat-2, max_lat+2))
+```
+:::
+:::
+
+## Group points {#sec-group_points}
+
+[↑ top](#)
+
+The aes() function controls how variables in the data are mapped to visual properties of the plot. So far we have mapped Longitude to the x-axis and Latitude to the y-axis. We can also map variables to colour, shape and many other visual properties.
+
+Let's revisit our data frame.
+
+```{r revisit_dataframe}
+gt(combined_bird_piv)
+```
+
+We want to set the colour by the `Site` column and the shape by the `Location_Type` column.
+
+To set colour by `Site`, we add `color = Site` as an argument to the `aes()` function.
+
+```{r colour_site}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude, color = Site)
+) +
+  geom_point() +
+  annotation_borders(linewidth=0.2) +
+  coord_quickmap(
+  xlim=c(min_long-2, max_long+2),
+  ylim=c(min_lat-2, max_lat+2))
+```
+
+Setting shape by `Location_Type` is very similar, we add `shape = Location_Type` as an argument to the `aes()` function.
+
+::: {.callout-exercise #ex_calc_lims}
+Add this argument to the `aes()` function, along with `color=Site`, to set both the shape and the colour of the points.
+
+::: {.callout-answer collapse="true"}
+```{r shape_location}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)) +
+  geom_point() +
+  annotation_borders(linewidth=0.2) +
+  coord_quickmap(
+  xlim=c(min_long-2, max_long+2),
+  ylim=c(min_lat-2, max_lat+2))
+```
+:::
+:::
+
+
+## Add paths {#sec-add_paths}
+
+[↑ top](#)
+
+Finally, we want to add paths to join the points from the same location.
+
+To do this, we use the `geom_path()` function, grouping the points by breeding site, by adding the argument `aes(group = Site)`:
+
+```{r connect_points}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)) +
+  geom_point() +
+  annotation_borders(linewidth=0.2) +
+  coord_quickmap(
+  xlim=c(min_long-2, max_long+2),
+  ylim=c(min_lat-2, max_lat+2)) + 
+  geom_path(aes(group = Site))
+```
+
+Now we have our plot! In the next part of the practical, you will generate a similar plot independently.
+
+Meanwhile, there are various tweaks available if you want to change the appearance of your plot.
+
+For example:
+
+* To change the size of the points, add e.g. `size = 3` as an argument to the `geom_point()` function.
+* To change the colour theme of all the data points, add `scale_color_brewer(palette = "PALETTE")`, changing PALETTE to anything on the chart on [this page](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
+* You can change the overall theme of your plot using one of the theme options on [this page](https://ggplot2.tidyverse.org/reference/ggtheme.html)
+
+It's worthwhile to search online for other aesthetic changes you can make to your plot, many options are available.
+
+E.g.
+
+```{r tweak}
+ggplot(
+  combined_bird_piv,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)) +
+  geom_point(size=4) +
+  annotation_borders(linewidth=0.2) +
+  coord_quickmap(
+  xlim=c(min_long-2, max_long+2),
+  ylim=c(min_lat-2, max_lat+2)) + 
+  geom_path(aes(group = Site)) +
+  scale_color_brewer(palette='Dark2') +
+  theme_bw()
+```
+## Review {#sec-summary_0203}
+
+[↑ top](#)
+
+::: {.callout-note}
+
+## Summary
+
+- The function `ggplot()` is used to create a new plot.
+- The `aes()` function controls how variables in the data are mapped to visual properties of the plot.
+- `geom_point()` is used to add points.
+- `geom_path()` is used to connect related observations.
+- Colour and shape can be used to display categorical variables.
+
+:::
+
+{{< include ../includes/git_commit.qmd >}}

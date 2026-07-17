@@ -13,15 +13,13 @@ library(tidyverse)
 
 ## Practical 2 - Data Frames and Plots
 
-### @sec-p1_manipulating_dataframes
+### @sec-p1_basic_dataframe_operations
 
 #### Sections
 - @sec-dataset
+- @sec-pipe
 - @sec-select
 - @sec-filter
-- @sec-summary_stats
-- @sec-merge
-- @sec-long_wide
 - @sec-summary_0201
 
 #### Learning Objectives
@@ -29,12 +27,45 @@ library(tidyverse)
 By the end of this part of the practical you will be able to:
 
 * Use the pipe operator to create multi-step analyses.
-* Select specific columns and rows from a dataframe.
+* Select specific columns from a dataframe.
+* Select rows from a dataframe which meet specific criteria
+
+
+### @sec-p2_complex_dataframe_operations
+
+#### Sections
+- @sec-summary_stats
+- @sec-merge
+- @sec-long_wide
+- @sec-summary_0202
+
+#### Learning Objectives
+
+By the end of this part of the practical you will be able to:
+
 * Calculate summary statistics for groups of observations.
 * Merge information from multiple dataframes.
 * Convert data from "wide" to "long" format.
 
-### @sec-p2_visualisation
+### @sec-p3_visualisation
+
+#### Sections
+- @sec-plot_recap
+- @sec-blank_plot
+- @sec-add_points
+- @sec-add_map
+- @sec-group_points
+- @sec-summary_0202
+
+#### Learning Objectives
+
+By the end of this part of the practical you will be able to:
+
+* Generate a new blank plot and add axes.
+* Add points to a scatter plot.
+* Calculate appropriate axis limits and add these to the plot.
+* Change the colours and shapes of the points based on caegorical data.
+* Add paths connecting points based on categorical data.
 
 ### @sec-p3_visualisation_exercise
 
