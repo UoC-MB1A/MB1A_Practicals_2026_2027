@@ -11,6 +11,7 @@ book:
     - part: "Practical 2 - Data Frames and Visualisation"
       chapters:
         - materials/Practical_2_Data_Frames_and_Plots/02-00_learning_obj.qmd
-        - materials/Practical_2_Data_Frames_and_Plots/02-01_manipulating_dataframes.qmd
-        - materials/Practical_2_Data_Frames_and_Plots/02-02_visualisation.qmd
-        - materials/Practical_2_Data_Frames_and_Plots/02-03_visualisation_exercise.qmd
+        - materials/Practical_2_Data_Frames_and_Plots/02-01_manipulating_dataframes1.qmd
+        - materials/Practical_2_Data_Frames_and_Plots/02-02_manipulating_dataframes2.qmd
+        - materials/Practical_2_Data_Frames_and_Plots/02-03_visualisation.qmd
+        - materials/Practical_2_Data_Frames_and_Plots/02-04_visualisation_exercise.qmd
