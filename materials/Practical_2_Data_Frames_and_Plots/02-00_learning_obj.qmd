@@ -53,8 +53,9 @@ By the end of this part of the practical you will be able to:
 - @sec-plot_recap
 - @sec-blank_plot
 - @sec-add_points
-- @sec-add_map
+- @sec-axis_limits
 - @sec-group_points
+- @sec-add_paths
 - @sec-summary_0203
 
 #### Learning Objectives
@@ -64,10 +65,22 @@ By the end of this part of the practical you will be able to:
 * Generate a new blank plot and add axes.
 * Add points to a scatter plot.
 * Calculate appropriate axis limits and add these to the plot.
-* Change the colours and shapes of the points based on caegorical data.
+* Change the colours and shapes of the points based on categorical data.
 * Add paths connecting points based on categorical data.
 
 ### @sec-p4_visualisation_exercise
 
+#### Sections
+- @sec-load_packages_ve
+- @sec-download_data_ve
+- @sec-read_data_ve
+- @sec-process_df_ve
+- @sec-plot_data_ve
+- @sec-summary_0204
+
+#### Learning objectives
+By the end of this part of the practical you will have:
+
+* Applied the data manipulation and plotting techniques introduced throughout Practical 2 to a real animal tracking dataset.
 
 :::
