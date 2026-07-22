@@ -253,6 +253,6 @@ write_csv(combined_bird_piv, "data/combined_birds.csv")
 
 :::
 
-Remember to save your work before moving on to Part 2.
+Remember to save your work before moving on to Part 3.
 
 {{< include ../includes/git_commit.qmd >}}

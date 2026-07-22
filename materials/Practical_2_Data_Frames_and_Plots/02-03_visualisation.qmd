@@ -328,4 +328,6 @@ ggplot(
 
 :::
 
+Remember to save your work before moving on to Part 4.
+
 {{< include ../includes/git_commit.qmd >}}
