@@ -1,0 +1,15 @@
+{
+  "hash": "fecec6f9c6747d34cb4af6f01b139b14",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Plan and Learning Objectives\"\nformat: html\n---\n\n\n\n# Practical 5 - Bioinformatics\n\n::: {.callout-tip .partmenu}\n\n## Practical 5 - Bioinformatics\n\n### @sec-p1_intro_bioconductor\n\n#### Sections\n- @sec-ervs\n- @sec-bioconductor\n- @sec-dataset\n- @sec-get_sequence\n- @sec-summary_0501\n\n:::\n\n:::{.callout-tip .objectives}\n#### Learning objectives\nBy the end of this part of the practical you will be able to:\n\n* Use some of the tools from the R Bioconductor repository.\n* Identify and understand a FASTA file\n* Load a set of DNA sequences into R\n* Isolate a specific sequence\n\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
