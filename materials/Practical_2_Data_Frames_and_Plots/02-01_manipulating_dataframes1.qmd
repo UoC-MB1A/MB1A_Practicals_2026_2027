@@ -6,11 +6,13 @@ format: html
 
 ::: {.callout-note .partmenu}
 ## Sections
+
 - @sec-dataset
 - @sec-pipe
 - @sec-select
 - @sec-filter
 - @sec-summary_0201
+
 :::
 
 :::{.callout-tip .objectives}

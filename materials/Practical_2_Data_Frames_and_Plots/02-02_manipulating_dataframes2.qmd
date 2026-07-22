@@ -11,11 +11,13 @@ bird_migration_exc <- read_csv("data/bird_migration_exc.csv")
 # Part 2: Complex Data Frame Operations {#sec-p2_complex_dataframe_operations}
 
 ::: {.callout-note .partmenu}
+
 ## Sections
 - @sec-summary_stats
 - @sec-merge
 - @sec-long_wide
 - @sec-summary_0202
+
 :::
 
 :::{.callout-tip .objectives}
