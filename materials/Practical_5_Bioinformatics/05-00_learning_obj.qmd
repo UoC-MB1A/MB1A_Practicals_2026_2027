@@ -1,0 +1,36 @@
+---
+title: "Plan and Learning Objectives"
+format: html
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+# Practical 5 - Bioinformatics
+
+::: {.callout-tip .partmenu}
+
+## Practical 5 - Bioinformatics
+
+### @sec-p1_intro_bioconductor
+
+#### Sections
+- @sec-ervs
+- @sec-bioconductor
+- @sec-dataset
+- @sec-get_sequence
+- @sec-summary_0501
+
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Use some of the tools from the R Bioconductor repository.
+* Identify and understand a FASTA file
+* Load a set of DNA sequences into R
+* Isolate a specific sequence
+
+:::
