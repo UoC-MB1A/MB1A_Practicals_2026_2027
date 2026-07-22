@@ -22,9 +22,7 @@ library(tidyverse)
 - @sec-get_sequence
 - @sec-summary_0501
 
-:::
 
-:::{.callout-tip .objectives}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -33,9 +31,7 @@ By the end of this part of the practical you will be able to:
 * Load a set of DNA sequences into R
 * Isolate a specific sequence
 
-:::
 
-::: {.callout-tip .partmenu}
 ### @sec-p2_finding_orfs
 
 #### Sections
@@ -54,9 +50,6 @@ By the end of this part of the practical you will be able to:
 * Translate DNA/RNA sequences into amino acid sequences.
 * Save sequences as a FASTA file
 
-:::
-
-::: {.callout-tip .partmenu}
 
 ### @sec-p3_blast
 
@@ -66,9 +59,7 @@ By the end of this part of the practical you will be able to:
 - @sec-process_blast
 - @sec-summary_0503
 
-:::
 
-:::{.callout-tip .objectives}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -76,9 +67,6 @@ By the end of this part of the practical you will be able to:
 * Interpret the results of a BLAST search.
 * Extract and organise information from BLAST results.
 
-:::
-
-::: {.callout-tip .partmenu}
 
 ### @sec-p4_msa_phylogeny
 
@@ -88,9 +76,6 @@ By the end of this part of the practical you will be able to:
 - @sec-visualise_phylogeny
 - @sec-summary_0504
 
-:::
-
-:::{.callout-tip .objectives}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -98,9 +83,6 @@ By the end of this part of the practical you will be able to:
 * Build phylogenetic trees
 * Visualise phylogenetic trees.
 
-:::
-
-::: {.callout-tip .partmenu}
 
 ### @sec-p5_share_results
 
@@ -111,9 +93,6 @@ By the end of this part of the practical you will be able to:
 - @sec-push_ervs
 - @sec-pull_request_ervs
 
-:::
-
-:::{.callout-tip .objectives}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
