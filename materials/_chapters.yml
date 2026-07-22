@@ -15,3 +15,11 @@ book:
         - materials/Practical_2_Data_Frames_and_Plots/02-02_manipulating_dataframes2.qmd
         - materials/Practical_2_Data_Frames_and_Plots/02-03_visualisation.qmd
         - materials/Practical_2_Data_Frames_and_Plots/02-04_visualisation_exercise.qmd
+
+    - part: "Practical 5 - Bioinformatics"
+      chapters:
+        - materials/Practical_5_Bioinformatics/05-00_learning_obj.qmd
+        - materials/Practical_5_Bioinformatics/05-01_bioconductor.qmd
+        - materials/Practical_5_Bioinformatics/05-02_sequence_analysis.qmd
+        - materials/Practical_5_Bioinformatics/05-03_blast.qmd
+        - materials/Practical_5_Bioinformatics/05-04_align_phylo.qmd
