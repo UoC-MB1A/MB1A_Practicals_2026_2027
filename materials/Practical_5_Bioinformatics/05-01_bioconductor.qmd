@@ -164,7 +164,7 @@ print(mean(width(beaver_fasta)))
 In the spreadsheet [here](xxx) there is a list of the beaver ERV regions - the same ones that are in your FASTA file. As a group, we want to try to analyse as many of these as possible. Each student will characterise one ERV region, and together the class will build a larger collection of annotated ERVs.
 
 ::: {.callout-important}
-Please choose any available region and put your CRSID next to it on the spreadsheet, so others know that it is taken. Each sequence has a unique ID, please note the ID for your sequence.
+Please choose any available region and put your CRSID next to it on the spreadsheet, so others know that it is taken. Each sequence has a unique ID, please note the ID for your sequence. Wherever you are asked later for your **ERV_ID**, this is the number you need.
 :::
 
 Access your specific sequence using this unique ID as an index - `beaver_fasta["UNIQUE_ID"]` where `UNIQUE_ID` is the ID for your sequence.

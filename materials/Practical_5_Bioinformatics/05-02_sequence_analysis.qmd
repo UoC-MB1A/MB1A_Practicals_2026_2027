@@ -133,11 +133,12 @@ print(paste0("abc", seq(1, 10)))
 ```
 ::: {.callout-exercise #ex_fasta}
 
-Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named 'Ccan_ORF_i' where i is a unique number. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq()`. Store the names as a variable `orf_names`.
+Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named 'Ccan_ERV_j_ORF_i' where j is the ID of your specific ERV region and i is a unique number for each ORF. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq()`. Store the names as a variable `orf_names`.
 
 ::: {.callout-answer #ex_fasta_ans callout="true"}
 ```{r paste0_orfs}
-orf_names <- paste0("Ccan_ORF_", seq(1, length(orfs)))
+# Replace ERV_1 with the ID of your specific ERV region
+orf_names <- paste0("Ccan_ERV_1_ORF_", seq(1, length(orfs)))
 ```
 :::
 :::
