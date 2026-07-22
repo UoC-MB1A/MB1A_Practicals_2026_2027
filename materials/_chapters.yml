@@ -23,3 +23,4 @@ book:
         - materials/Practical_5_Bioinformatics/05-02_sequence_analysis.qmd
         - materials/Practical_5_Bioinformatics/05-03_blast.qmd
         - materials/Practical_5_Bioinformatics/05-04_align_phylo.qmd
+        - materials/Practical_5_Bioinformatics/05-05_share_data.qmd
