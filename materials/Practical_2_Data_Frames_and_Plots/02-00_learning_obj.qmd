@@ -13,7 +13,7 @@ library(tidyverse)
 
 ## Practical 2 - Data Frames and Plots
 
-### @sec-p1_basic_dataframe_operations
+### @sec-p1_basic_data_frame_operations
 
 #### Sections
 - @sec-dataset
@@ -27,11 +27,11 @@ library(tidyverse)
 By the end of this part of the practical you will be able to:
 
 * Use the pipe operator to create multi-step analyses.
-* Select specific columns from a dataframe.
-* Select rows from a dataframe which meet specific criteria
+* Select specific columns from a data frame.
+* Select rows from a data frame which meet specific criteria
 
 
-### @sec-p2_complex_dataframe_operations
+### @sec-p2_complex_data_frame_operations
 
 #### Sections
 - @sec-summary_stats
@@ -44,7 +44,7 @@ By the end of this part of the practical you will be able to:
 By the end of this part of the practical you will be able to:
 
 * Calculate summary statistics for groups of observations.
-* Merge information from multiple dataframes.
+* Merge information from multiple data frames.
 * Convert data from "wide" to "long" format.
 
 ### @sec-p3_visualisation

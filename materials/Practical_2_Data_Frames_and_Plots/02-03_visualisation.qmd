@@ -96,19 +96,19 @@ A plot of longitude against latitude is simply a scatter plot - longitude determ
 To demonstrate the geom_point function, let's briefly revisit our fruit data frame from the previous practical.
 
 ```{r fruit_scatter_data}
-my_dataframe <- tibble(
+my_data_frame <- tibble(
   fruit = c("apple", "pear", "banana"),
   length = c(22, 30, 55),
   weight = c(150, 165, 170)
 )
 
-gt(my_dataframe)
+gt(my_data_frame)
 ```
 
 To plot this data as a scatter plot, with length on the x axis and weight on the y axis, we would do this:
 
 ```{r fruit_scatter}
-ggplot(my_dataframe, aes(x = length, y = weight)) +
+ggplot(my_data_frame, aes(x = length, y = weight)) +
   geom_point()
 ```
 
@@ -153,7 +153,7 @@ It would be clearer to zoom in just on the region containing the points, we can 
 
 It would be helpful to know the minimum and maximum longitude and latitude of the points, we can do this with the `min()` and `max()` functions and the function `pull()`, which pulls a single column from a data frame.
 
-e.g. to find the minimum longitude in our dataframe
+e.g. to find the minimum longitude in our data frame
 ```{r min_long}
 min_long <- combined_bird_piv |> pull(Longitude) |> min()
 
@@ -225,7 +225,7 @@ The aes() function controls how variables in the data are mapped to visual prope
 
 Let's revisit our data frame.
 
-```{r revisit_dataframe}
+```{r revisit_data_frame}
 gt(combined_bird_piv)
 ```
 

@@ -2,7 +2,7 @@
 format: html
 ---
 
-# Part 1: Basic Data Frame Operations {#sec-p1_basic_dataframe_operations}
+# Part 1: Basic Data Frame Operations {#sec-p1_basic_data_frame_operations}
 
 ::: {.callout-note .partmenu #parts-0201}
 ## Sections
@@ -20,8 +20,8 @@ format: html
 By the end of this part of the practical you will be able to:
 
 * Use the pipe operator to create multi-step analyses.
-* Select specific columns from a dataframe.
-* Select rows from a dataframe which meet specific criteria
+* Select specific columns from a data frame.
+* Select rows from a data frame which meet specific criteria
 
 :::
 
@@ -207,7 +207,7 @@ gt(head(bird_migration_sites))
 :::
 
 ::: {.callout-exercise #ex-examine_csv}
-Examine this dataframe using the `glimpse` function.
+Examine this data frame using the `glimpse` function.
 
 How many columns and rows are there?
 
@@ -379,7 +379,7 @@ gt(bird_breeding_selected)
 ```
 ::: {.callout-exercise #ex-select_migration}
 
-Repeat this for the `bird_migration_sites` dataframe:
+Repeat this for the `bird_migration_sites` data frame:
 
 * Select the columns Site, winterLongitude, winterLatitude, pslon, pslat
 * Take the distinct rows only

@@ -62,12 +62,12 @@ By the end of this part of the practical you should be able to:
 - Explain the concept of a variable and use variables in your code.
 - Know the difference between a character, numeric and logical variable.
 
-### @sec-p4_vectors_dataframes_plots
+### @sec-p4_vectors_data_frames_plots
 
 #### Sections
 - @sec-packages
 - @sec-vectors
-- @sec-dataframes
+- @sec-data_frames
 - @sec-csv
 - @sec-plots
 - @sec-summary_0104

@@ -6,13 +6,13 @@ format: html
 library(gt)
 ```
 
-# Part 4: Vectors, data frames and plots {#sec-p4_vectors_dataframes_plots}
+# Part 4: Vectors, data frames and plots {#sec-p4_vectors_data_frames_plots}
 
 ::: {.callout-note .partmenu #parts-0104}
 ## Sections
 - @sec-packages
 - @sec-vectors
-- @sec-dataframes
+- @sec-data_frames
 - @sec-csv
 - @sec-plots
 - @sec-summary_0104
@@ -185,7 +185,7 @@ print(my_only_bird)
 :::
 :::
 
-## Data Frames {#sec-dataframes}
+## Data Frames {#sec-data_frames}
 
 [↑ top](#)
 
@@ -210,26 +210,26 @@ We can build a data frame using the R function `tibble` (note that there is also
 I would specify the data frame above as follows:
 
 ```{r make_tibble}
-my_dataframe <- tibble(
+my_data_frame <- tibble(
   fruit = c("apple", "pear", "banana"),
   length = c(22, 30, 55),
   weight = c(150, 165, 170)
 )
 
 
-print(my_dataframe)
+print(my_data_frame)
 ```
 
 Although we can see our data frame using the `print()` function, it's not formatted particularly nicely. Instead, we can use the function `gt`.
 
 ```{r gt}
-my_dataframe <- tibble(
+my_data_frame <- tibble(
   fruit = c("apple", "pear", "banana"),
   length = c(22, 30, 55),
   weight = c(150, 165, 170)
 )
 
-gt(my_dataframe)
+gt(my_data_frame)
 ```
 
 ::: {.callout-exercise #ex-celldf}

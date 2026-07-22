@@ -74,7 +74,7 @@ locations <- read_csv("data/seals.csv") |>
 
 ## Process data frame {#sec-process_df_ve}
 
-* Look at the dataframe and check that the data looks as expected.
+* Look at the data frame and check that the data looks as expected.
 * Identify the columns containing the longitude and latitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
 * Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
 * Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
@@ -83,7 +83,7 @@ locations <- read_csv("data/seals.csv") |>
 ### Example solution
 
 ::: {.callout-answer collapse="true" #ex-process_df_ans}
-* Look at the dataframe and check that the data looks as expected.
+* Look at the data frame and check that the data looks as expected.
 
 ```{r display_location_data}
 gt(head(locations))

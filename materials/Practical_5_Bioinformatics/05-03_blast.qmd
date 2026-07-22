@@ -114,7 +114,7 @@ Then my results for this ORF are:
 
 
 ::: {.callout-exercise #ex-blast_res_df}
-Record the most similar sequence name for each ORF in an R data frame with two columns - `name` and `most_similar_sequence_id` (as we did in @sec-dataframes). Name the data frame variable `blast_res`.
+Record the most similar sequence name for each ORF in an R data frame with two columns - `name` and `most_similar_sequence_id` (as we did in @sec-data_frames). Name the data frame variable `blast_res`.
 
 ::: {.callout-answer collapse="true" #ex-blast_res_df_ans}
 
@@ -178,7 +178,7 @@ print (orfs)
 
 Let's convert it to a data frame so we can manipulate it more easily. We can do this with the `tibble` function.
 
-```{r orf_dataframe}
+```{r orf_data_frame}
 orf_df <- tibble(
   name = names(orfs),
   orf_start = start(orfs),
@@ -194,7 +194,7 @@ Merge this new data frame with information about your ORFs (`orf_df`) with the d
 
 ::: {.callout-answer collapse="true" #ex_blast_res_merge_ans}
 
-```{r orf_dataframe_merge}
+```{r orf_data_frame_merge}
 blast_combined <- full_join(blast_expanded, orf_df)
 
 gt(blast_combined)

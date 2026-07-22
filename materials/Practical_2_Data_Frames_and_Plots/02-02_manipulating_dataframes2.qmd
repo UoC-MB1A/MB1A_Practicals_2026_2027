@@ -8,7 +8,7 @@ bird_breeding_exc <- read_csv("output/bird_breeding_exc.csv")
 bird_migration_exc <- read_csv("output/bird_migration_exc.csv")
 ```
 
-# Part 2: Complex Data Frame Operations {#sec-p2_complex_dataframe_operations}
+# Part 2: Complex Data Frame Operations {#sec-p2_complex_data_frame_operations}
 
 ::: {.callout-note .partmenu #parts-0202}
 
@@ -25,7 +25,7 @@ bird_migration_exc <- read_csv("output/bird_migration_exc.csv")
 By the end of this part of the practical you will be able to:
 
 * Calculate summary statistics for groups of observations.
-* Merge information from multiple dataframes.
+* Merge information from multiple data frames.
 * Convert data from "wide" to "long" format.
 
 :::
