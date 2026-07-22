@@ -1,0 +1,216 @@
+---
+format: html
+---
+
+# Part 2: Finding Open Reading Frames {#sec-p2_finding_orfs}
+
+::: {.callout-note .partmenu}
+## Sections
+- @sec-orfs
+- @sec-translate
+- @sec-save
+- @sec-summary_0502
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Identify open reading frames in a DNA/RNA sequence.
+* Translate DNA/RNA sequences into amino acid sequences.
+* Save sequences as a FASTA file
+
+:::
+
+```{r read_fasta_again, include=FALSE}
+library(ORFik)
+library(tidyverse)
+library(gt)
+beaver_fasta <- readDNAStringSet("data/C_canadensis_ervs.fasta")
+current_erv <- beaver_fasta["Ccan_ERV_1"]
+```
+
+## Retrovirus genes  {#sec-genes}
+
+Now we have our sequence, we want to check if it really does contain an ERV.
+
+All retroviruses have three genes in common (some also have additional genes):
+
+* *gag* - group-specific antigen - encodes structural proteins (1500-1800 nt).
+* *pol* - polymerase - encodes enzymes required for viral replication (2500-3500 nt).
+* *env* - envelope - encodes surface proteins which allow the virus to attach to host cells (2500-3000 nt).
+
+When the retrovirus first enters the host genome, it will be identical to the viral genome. However, over time, the retrovirus will pick up mutations and become less and less recognisable.
+
+## Open Reading Frames {#sec-orfs}
+
+When a retrovirus first integrates into the host genome, its copy in the host genome will contain intact, full length **open reading frames** (ORFs) for at least *gag*, *pol* and *env*.
+
+An ORF is a stretch of DNA that could potentially encode a protein. It typically begins with a start codon and continues until the next stop codon.
+
+When we translate a sequence, it can be translated in 3 **reading frames** on each strand.
+
+For example, lets say we have the sequence below:
+
+```{r seq_example}
+my_seq <- DNAStringSet("ATATGAAACCCGGGTTTTAAGC")
+```
+
+::: {.callout-note #dna_rna}
+In reality, DNA is transcribed into RNA before being translated, however for convenience in R we can directly translate DNA sequences.
+:::
+
+Our sequence can be divided into codons as follows:
+
+```text
+frame 1:
+ATA TGA AAC CCG GGT TTT AAG C
+ I   *   N   P   G   F   K
+
+frame 2:
+AT ATG AAA CCC GGG TTT TAA GC
+    M   K   P   G   F   *
+frame 3:
+A TAT GAA ACC CGG GTT TTA AGC
+   Y   E   T   R   V   L   S
+```
+Here, the only open reading frame is in **frame 2**, where there is a start codon, ATG, encoding methionine (M), followed by four more amino acids, then a stop codon (*), TAA.
+
+We can detect ORFs in R using the `findORFs()` function from the package `ORFik`.
+
+```{r demo_findorfs}
+# the [[1]] here is because this function can work on multiple
+# sequences at once - we only have one sequence so we only want
+# the first result.
+my_orfs <- findORFs(my_seq)[[1]]
+
+print(my_orfs)
+```
+The result is an [`IRanges`](https://www.rdocumentation.org/packages/IRanges/versions/2.6.1/topics/IRanges-class) object which shows us there is an ORF running from the start codon at position 3 to the stop codon at position 20, with a width of 18 nucleotides.
+
+### ORFs in the ERV sequence
+
+::: {.callout-exercise #ex_orfs}
+
+Find ORFs in your ERV sequence (stored in the variable `current_erv`) using the findORFs function. As in the example, you will need to add `[[1]]` at the end, as you only have a single sequence.
+
+The longest ORFs in the sequence are likely to represent the retroviral genes, so we can add the argument `minimumLength = 200` to filter out ORFs less than 200 amino acids in length.
+
+Store the result in a variable named `orfs`.
+
+::: {.callout-answer #ex_fasta_ans callout="true"}
+```{r find_orfs_beaver}
+orfs <- findORFs(current_erv, minimumLength = 200)[[1]]
+```
+:::
+:::
+
+Have a look at your `orfs` variable, it is an `IRanges` object showing the `start` and `end` positions of the ORFs within the longer sequence, along with their `width` (the length of the ORF in nucleotides). 
+
+```{r view_orfs}
+print(orfs)
+```
+
+### Adding sequence names
+
+Currently, our ORFs don't have names, so it may be hard to identify which is which later.
+
+The `paste0` function in R concatenates two or more arguments into a single character variable.
+
+e.g.
+```{r paste0_ex}
+print(paste0("abc", 1))
+```
+If one of the arguments to paste0 is a vector, R will combine each element of the vector with the other arguments.
+
+::: {.callout-note #seq_function}
+Remember that the function `seq(start, end, increment)` generates a vector of numbers from `start` to `end` with a step size of `increment`, e.g. `seq(1, 10, 2)` = `r seq(1, 10, 2)`.
+:::
+
+e.g. 
+```{r paste0_ex2}
+print(paste0("abc", seq(1, 10)))
+```
+::: {.callout-exercise #ex_fasta}
+
+Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named 'Ccan_ORF_i' where i is a unique number. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq()`. Store the names as a variable `orf_names`.
+
+::: {.callout-answer #ex_fasta_ans callout="true"}
+```{r paste0_orfs}
+orf_names <- paste0("Ccan_ORF_", seq(1, length(orfs)))
+```
+:::
+:::
+
+You can assign these names to the ORFs in your IRanges variable as follows:
+
+```{r paste0_names}
+names(orfs) <- orf_names
+```
+
+Have another look at the resulting variable - the ORFs should now have unique names.
+
+```{r show_names}
+print(orfs)
+```
+
+Now we can retrieve the sequences for our ORFs from the longer ERV sequence we got from our FASTA file.
+
+To do so, we can use the function `extractAt()`. 
+
+```{r get_orf_seqs}
+# Again this function can work on multiple sequences at once
+# We only have one sequence so we only want the first result, hence the [[1]].
+orf_seqs <- extractAt(current_erv, orfs)[[1]]
+
+print(orf_seqs)
+```
+
+## Translation {#sec-translate}
+
+Now we have our open reading frame sequences. Given that they are open reading frames, they should translate into amino acid sequences with no issues - each should start with a start codon and end with a stop codon, and there should be no internal stop codons.
+
+::: {.callout-exercise #ex_translate_orfs}
+Translate your open reading frames into amino acid sequences. The Bioconductor function `translate()` will do this, with just one argument, your ORF nucleotide sequences.
+
+Store the result in a variable named `orf_aa_seqs`. Look at your amino acid sequences using the `print()` function.
+
+::: {.callout-answer #ex_translate_orfs_ans collapse="true"}
+```{r translate_orfs}
+orf_aa_seqs <- translate(orf_seqs)
+
+print(orf_aa_seqs)
+```
+
+:::
+:::
+## Saving sequences in FASTA format {#sec-save}
+
+We can write these amino acid sequences into a new FASTA file with the function `writeXStringSet()`.
+
+```{r write_aa_seqs}
+writeXStringSet(orf_aa_seqs, "data/orf_aa_seqs.fasta")
+```
+
+On your computer, check that this FASTA file exists in `data/orf_aa_seqs.fasta` and contains the amino acid sequences for your ORFs.
+
+## Review {#sec-summary_0502}
+
+[↑ top](#)
+
+::: {.callout-note}
+
+### Summary
+
+* RNA can be translated in different **reading frames**.
+* Potential **open reading frames (ORFs)** can be identified in a DNA/RNA sequence using `findORFs()`.
+* `IRanges` objects to represent the positions of features within a sequence.
+* These positions can be extracted from a `DNAStringSet` or `AAStringSet` sequence with the function `extractAt()`.
+* DNA/RNA sequences are translated itno amino acid sequences using `translate()`.
+* Sequences can be saved in FASTA format using `writeXStringSet()`.
+
+:::
+
+Remember to save your work before moving on to Part 3.
+
+{{< include ../includes/git_commit.qmd >}}
