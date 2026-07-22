@@ -190,10 +190,10 @@ print(orf_aa_seqs)
 We can write these amino acid sequences into a new FASTA file with the function `writeXStringSet()`.
 
 ```{r write_aa_seqs}
-writeXStringSet(orf_aa_seqs, "data/orf_aa_seqs.fasta")
+writeXStringSet(orf_aa_seqs, "output/orf_aa_seqs.fasta")
 ```
 
-On your computer, check that this FASTA file exists in `data/orf_aa_seqs.fasta` and contains the amino acid sequences for your ORFs.
+On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta` and contains the amino acid sequences for your ORFs.
 
 ## Review {#sec-summary_0502}
 

@@ -4,7 +4,7 @@ format: html
 ```{r include_libs, include=FALSE}
 library(gt)
 library(tidyverse)
-combined_bird_piv <- read_csv("data/combined_birds.csv")
+combined_bird_piv <- read_csv("output/combined_birds.csv")
 ```
 
 # Part 3: Visualisation {#sec-p3_visualisation}

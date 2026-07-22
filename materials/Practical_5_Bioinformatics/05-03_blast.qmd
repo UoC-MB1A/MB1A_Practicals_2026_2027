@@ -54,7 +54,7 @@ On the BLASTp homepage, first select the checkbox "Align 2 or more sequences". T
 
 ![The BLASTp homepage](images/blast.png){#fig-blast}
 
-Your query sequences are the sequences you want to identify - your putative ERV ORFs. Click the "Browse..." button in the query sequence section and choose the FASTA file you just created - `data/orf_aa_seqs.fasta`. 
+Your query sequences are the sequences you want to identify - your putative ERV ORFs. Click the "Browse..." button in the query sequence section and choose the FASTA file you just created - `output/orf_aa_seqs.fasta`. 
 
 The subject sequences are the database you would like to compare to - the known retrovirus gene sequences. Click the "Browse..." button in the subject sequence section and choose the FASTA file of known retrovirus sequences - `data/known_ERV_proteins.fasta`.
 

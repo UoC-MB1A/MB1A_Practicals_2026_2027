@@ -4,8 +4,8 @@ format: html
 ```{r include_libs, include=FALSE}
 library(gt)
 library(tidyverse)
-bird_breeding_exc <- read_csv("data/bird_breeding_exc.csv")
-bird_migration_exc <- read_csv("data/bird_migration_exc.csv")
+bird_breeding_exc <- read_csv("output/bird_breeding_exc.csv")
+bird_migration_exc <- read_csv("output/bird_migration_exc.csv")
 ```
 
 # Part 2: Complex Data Frame Operations {#sec-p2_complex_dataframe_operations}
@@ -238,7 +238,7 @@ We now have our input table for Part 2!
 We can save a copy using the function `write_csv()`. The first argument is the variable we want to save and the second is the path to the file we want to save it into.
 
 ```{r write_birds}
-write_csv(combined_bird_piv, "data/combined_birds.csv")
+write_csv(combined_bird_piv, "output/combined_birds.csv")
 ```
 
 ## Review {#sec-summary_0202}
