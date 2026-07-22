@@ -88,7 +88,6 @@ Usually in these practicals, we won't run most of our code directly in the conso
 However, it can be useful to use the console, for example to quickly try something out or check the value of a variable.
 
 ::: {.callout-exercise #ex-creating_objects}
-## Making a variable in the console
 
 {{< fa solid anchor >}}
 

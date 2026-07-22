@@ -71,6 +71,8 @@ Based on the published plot, we know that our `x` axis should be **Longitude** a
 
 ::: {.callout-exercise #ex-add_axes}
 
+{{< fa solid anchor >}}
+
 Look back at the plotting code from Practical 1 (@sec-plots).
 
 Add the x and y axis to your blank plot.
@@ -113,6 +115,8 @@ ggplot(my_data_frame, aes(x = length, y = weight)) +
 ```
 
 ::: {.callout-exercise #ex-add_points}
+
+{{< fa solid anchor >}}
 
 Going back to your bird data, plot all of the longitude and latitude points as a scatter plot.
 
@@ -161,6 +165,9 @@ print (min_long)
 ```
 
 ::: {.callout-exercise #ex-calc_lims}
+
+{{< fa solid anchor >}}
+
 Calculate the maximum longitude and the minimum and maximum latitude, and store these as variables `max_long`, `min_lat` and `max_lat`.
 
 ::: {.callout-answer collapse="true" #ex-calc_lims_ans}
@@ -200,6 +207,9 @@ ggplot(
   coord_quickmap(xlim=c(min_long-2, max_long+2))
 ```
 ::: {.callout-exercise #ex-set_lims}
+
+{{< fa solid anchor >}}
+
 Set the y axis limits using your `min_lat` and `max_lat` variables as a second argument to `coord_quickmap()`.
 
 ::: {.callout-answer collapse="true" #ex-set_lims_ans}
@@ -248,6 +258,9 @@ ggplot(
 Setting shape by `Location_Type` is very similar, we add `shape = Location_Type` as an argument to the `aes()` function.
 
 ::: {.callout-exercise #ex-set_shape_colour}
+
+{{< fa solid anchor >}}
+
 Add this argument to the `aes()` function, along with `color=Site`, to set both the shape and the colour of the points.
 
 ::: {.callout-answer collapse="true" #ex-set_shape_colour_ans}

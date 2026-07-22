@@ -36,6 +36,8 @@ identified_orf_seqs <- readAAStringSet("output/identified_orf_aa_seqs.fasta")
 
 ## Build multiple sequence alignments {#sec-alignment}
 
+[↑ top](#)
+
 Now, for each retroviral gene, we have identified an ORF, its location and sequence, and have used BLASTp to identify its most similar known retroviral proteins and likely genus.
 
 ```{r show_orf_tab}
@@ -92,6 +94,9 @@ Retroviruses, especially endogenous retroviruses, are very divergent, so the seq
 :::
 
 ::: {.callout-exercise #ex-build_msas}
+
+{{< fa solid flask >}}
+
 Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one multiple sequence alignment for each gene.
 
 Save all of the alignments in your output directory in FASTA format as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.fasta</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
@@ -99,6 +104,8 @@ Save all of the alignments in your output directory in FASTA format as <code><sp
 :::
 
 ## Build phylogenies {#sec-phylogeny}
+
+[↑ top](#)
 
 There are various ways we can create phylogenies from our sequences, including directly inside R. However, in R the options for tree-building algorithms are quite limited.
 
@@ -125,11 +132,16 @@ You may see some warning messages that the sequence names in your phylogeny are 
 Once the tree-building algorithm has finished (this might take a couple of minutes), click on `Newick` in the results section - this will show your tree in [Newick format](https://en.wikipedia.org/wiki/Newick_format). Paste the text displayed on the next screen into an empty text file and save it in your `output` directory as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.newick</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
 
 ::: {.callout-exercise #ex-build_newick}
+
+{{< fa solid flask >}}
+
 Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one Newick file for each gene. Save all of the alignments in NEWICK format with names formatted as above.
 
 :::
 
 ## Visualise phylogenies {#sec-visualise_phylogeny}
+
+[↑ top](#)
 
 Once the phylogenetic analyses are complete, we can then read our trees into R using the function `read.newick()`.
 
@@ -216,6 +228,9 @@ ggsave(
 ```
 
 ::: {.callout-exercise #ex-draw_trees}
+
+{{< fa solid flask >}}
+
 Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one PDF tree for each gene.
 
 Save all of the trees as PDFs in your output directory as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.pdf</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
@@ -223,6 +238,8 @@ Save all of the trees as PDFs in your output directory as <code><span style="col
 :::
 
 ## Review {#sec-summary_0504}
+
+[↑ top](#)
 
 ::: {.callout-note #note-summary_0504}
 

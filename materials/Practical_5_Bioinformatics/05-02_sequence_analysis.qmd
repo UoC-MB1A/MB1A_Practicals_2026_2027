@@ -32,6 +32,8 @@ current_erv <- beaver_fasta["Ccan_ERV_1"]
 
 ## Retrovirus genes  {#sec-genes}
 
+[↑ top](#)
+
 Now we have our sequence, we want to check if it really does contain an ERV.
 
 All retroviruses have three genes in common (some also have additional genes):
@@ -43,6 +45,8 @@ All retroviruses have three genes in common (some also have additional genes):
 When the retrovirus first enters the host genome, it will be identical to the viral genome. However, over time, the retrovirus will pick up mutations and become less and less recognisable.
 
 ## Open Reading Frames {#sec-orfs}
+
+[↑ top](#)
 
 When a retrovirus first integrates into the host genome, its copy in the host genome will contain intact, full length **open reading frames** (ORFs) for at least *gag*, *pol* and *env*.
 
@@ -92,6 +96,8 @@ The result is an [`IRanges`](https://www.rdocumentation.org/packages/IRanges/ver
 
 ::: {.callout-exercise #ex-orfs}
 
+{{< fa solid flask >}}
+
 Find ORFs in your ERV sequence (stored in the variable `current_erv`) using the findORFs function. As in the example, you will need to add `[[1]]` at the end, as you only have a single sequence.
 
 The longest ORFs in the sequence are likely to represent the retroviral genes, so we can add the argument `minimumLength = 200` to filter out ORFs less than 200 amino acids in length.
@@ -133,6 +139,8 @@ print(paste0("abc", seq(1, 10)))
 ```
 ::: {.callout-exercise #ex-orf_names}
 
+{{< fa solid anchor >}}
+
 Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named 'Ccan_ERV_j_ORF_i' where j is the ID of your specific ERV region and i is a unique number for each ORF. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq()`. Store the names as a variable `orf_names`.
 
 ::: {.callout-answer collapse="true" #ex-orf_names_ans}
@@ -169,9 +177,14 @@ print(orf_seqs)
 
 ## Translation {#sec-translate}
 
+[↑ top](#)
+
 Now we have our open reading frame sequences. Given that they are open reading frames, they should translate into amino acid sequences with no issues - each should start with a start codon and end with a stop codon, and there should be no internal stop codons.
 
 ::: {.callout-exercise #ex-translate_orfs}
+
+{{< fa solid anchor >}}
+
 Translate your open reading frames into amino acid sequences. The Bioconductor function `translate()` will do this, with just one argument, your ORF nucleotide sequences.
 
 Store the result in a variable named `orf_aa_seqs`. Look at your amino acid sequences using the `print()` function.
@@ -186,6 +199,8 @@ print(orf_aa_seqs)
 :::
 :::
 ## Saving sequences in FASTA format {#sec-save}
+
+[↑ top](#)
 
 We can write these amino acid sequences into a new FASTA file with the function `writeXStringSet()`.
 

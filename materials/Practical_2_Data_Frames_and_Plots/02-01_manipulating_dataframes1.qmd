@@ -42,6 +42,9 @@ This study tracked the migration of a songbird species, the pied flycatcher (*Fi
 We will reproduce Figure 1B from this paper, which shows the breeding site, post-Saharan stopover location and winter location for 8 bird populations.
 
 ::: {.callout-exercise #ex-view_plot}
+
+{{< fa solid anchor >}}
+
 Have a look at this plot and its legend.
 
 What are the `x` and `y` axis labels?
@@ -184,6 +187,9 @@ We also need to read a second CSV file into a data frame. This one contains the 
 Unlike the breeding site data, in this table there are multiple records for each site - as the birds were recorded at multiple locations.
 
 ::: {.callout-exercise #ex-read_csv2}
+
+{{< fa solid flask >}}
+
 The data frame is saved in the `data` directory for this practical as `data/migratory_connectivity_dataset.csv`.
 
 In your Quarto document, please read the file into a variable and visualise the top 10 rows using the `gt()` and `head()` functions.
@@ -207,6 +213,9 @@ gt(head(bird_migration_sites))
 :::
 
 ::: {.callout-exercise #ex-examine_csv}
+
+{{< fa solid anchor >}}
+
 Examine this data frame using the `glimpse` function.
 
 How many columns and rows are there?
@@ -318,6 +327,9 @@ print(my_result)
 ```
 
 ::: {.callout-exercise #ex-pipe}
+
+{{< fa solid anchor >}}
+
 Using the pipe operator, calculate the absolute value (function `abs()`) of the mean (function `mean()` of this vector, then round it to the nearest whole number (`round()`). Assign the result to a variable.
 
 ```{r pipe_vec}
@@ -378,6 +390,8 @@ bird_breeding_selected <- bird_breeding_sites |>
 gt(bird_breeding_selected)
 ```
 ::: {.callout-exercise #ex-select_migration}
+
+{{< fa solid flask >}}
 
 Repeat this for the `bird_migration_sites` data frame:
 
@@ -442,6 +456,9 @@ print(x == 3)
 This shows `TRUE` because `x` is equal to `3`.
 
 ::: {.callout-exercise #ex-comparisons}
+
+{{< fa solid anchor >}}
+
 Assign `y` a value of 12 and then use comparison operators to show if:
 
 `y` is equal to 7
@@ -501,6 +518,8 @@ gt(bird_breeding_long_10)
 For our analysis we will exclude the measurements from the `Spain` site, as their post-Saharan stopover locations are very close to their breeding locations. 
 
 ::: {.callout-exercise #ex-filter_breeding}
+
+{{< fa solid flask >}}
 
 Filter both the breeding site and the migration site data frames to exclude `Spain` from the `Site` column. Store these in the variables `bird_breeding_exc` and `bird_migration_exc`, respectively.
 

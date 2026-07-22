@@ -34,6 +34,8 @@ To do this, we'll copy our main output files into a second GitHub repository, li
 
 ## Fork GitHub Repository {#sec-fork_ervs}
 
+[↑ top](#)
+
 While logged in to your GitHub account in a web browser, navigate to the [ERV Submissions](https://github.com/UoC-MB1A/MB1A_ERV_Submissions) folder.
 
 Click on the `Fork` button on your GitHub browser page.
@@ -47,6 +49,8 @@ On the next page, you should see the following:
 The default settings are fine for our purposes, choose `Create Fork`.
 
 ## Clone GitHub Repository {#sec-clone_ervs}
+
+[↑ top](#)
 
 Now we want to import our new fork of the Git repository into RStudio.
 
@@ -81,6 +85,8 @@ RStudio will download a copy of your repository (known as a **clone**) and open 
 
 
 ## Transfer files {#sec-transfer_ervs}
+
+[↑ top](#)
 
 You should now have two RStudio projects in different folders.
 
@@ -117,6 +123,8 @@ From your main Practical_5 directory, please also copy:
 
 ## Push changes to GitHub  {#sec-push_ervs}
 
+[↑ top](#)
+
 In the `Git` panel in Rstudio, push your changes as usual:
 1. Open the `Git` tab in RStudio.
 2. Tick the files you have added to your submission.
@@ -125,6 +133,8 @@ In the `Git` panel in Rstudio, push your changes as usual:
 5. Visit your fork on your GitHub account and check that your changes are there.
 
 ## Make a pull request  {#sec-pull_request_ervs}
+
+[↑ top](#)
 
 For this practical we have one extra step, as we want to import your results into the central submissions repository. 
 

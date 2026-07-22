@@ -22,6 +22,8 @@ By the end of this part of the practical you should be able to:
 
 ## Setting up Git and GitHub {#sec-git_github}
 
+[↑ top](#)
+
 Before we start running code, we should make sure our RStudio session is set up correctly.
 
 In this course, we will use **Git** and **GitHub** to track changes to our code and store the code online. We can use these tools directly in RStudio.
@@ -87,6 +89,8 @@ On the next page, you should see the following:
 The default settings are fine for our purposes, choose `Create Fork`.
 
 ## Cloning a repository with RStudio {#sec-setup_rstudio}
+
+[↑ top](#)
 
 Now we're ready to load this repository in RStudio. You should already have installed R and RStudio on your computer, following the instructions here: @sec-install
 

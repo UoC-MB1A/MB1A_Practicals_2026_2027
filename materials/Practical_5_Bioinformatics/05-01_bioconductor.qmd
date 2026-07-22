@@ -29,6 +29,8 @@ By the end of this part of the practical you will be able to:
 
 ## Endogenous retroviruses {#sec-ervs}
 
+[↑ top](#)
+
 Retroviruses are RNA viruses that replicate by converting their RNA genome into DNA. As part of their life cycle, retroviruses **integrate** this DNA into the genome of their vertebrate host, inserting a copy of their retroviral genome into the host genome.
 
 ![Retrovirus integration](images/integration.png){#fig-integration}
@@ -46,6 +48,8 @@ Endogenous retroviruses in humans are fairly well known, but we know almost noth
 ![Castor canadensis](images/beaver.jpg){#fig-beaver width="50%"}
 
 ## The Practical {#sec-aims}
+
+[↑ top](#)
 
 The aim of this practical is to generate new biological knowledge by analysing endogenous retrovirus sequences from the North American beaver, using bioinformatics techniques. We will upload the annotations generated during this practical to a new publicly available database of mammalian endogenous retroviruses, for the research community to use in the future.
 
@@ -67,6 +71,8 @@ At the end of the practical you can upload your results to a public database to 
 
 ## Bioconductor {#sec-bioconductor}
 
+[↑ top](#)
+
 Bioconductor is a repository for R packages, datasets and workflows which are specific for analysing biological data.
 
 ![Bioconductor logo](images/bioconductor.png){#fig-bioconductor width="50%"}
@@ -87,6 +93,8 @@ library(tidyverse)
 
 
 ## Isolate sequences from the ERV-like regions {#sec-get_sequence}
+
+[↑ top](#)
 
 You have been provided with sequence data from the beaver genome in FASTA format as `data/C_canadensis_erv_regions.fasta`. This file contains the DNA sequence of 365 regions of the beaver genome which have previously been identified as potentially containing ERVs. 
 
@@ -111,6 +119,9 @@ TTCAGCTGATTCTGATCTACTA
 Open the FASTA file provided in the data directory as `data/C_canadensis_erv_regions.fasta` in a text editor on your computer. 
 
 ::: {.callout-exercise #ex-fasta}
+
+{{< fa solid anchor >}}
+
 What is the name of the second sequence in the file?
 
 ::: {.callout-answer collapse="true" #ex-fasta_ans}
@@ -132,6 +143,8 @@ print(beaver_fasta)
 ```
 
 ::: {.callout-exercise #ex-lengths_beavers}
+
+{{< fa solid anchor >}}
 
 You can access the lengths of the sequences using the function `width()`, with your DNAStringSet variable as the argument.
 

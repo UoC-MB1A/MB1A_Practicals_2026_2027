@@ -90,6 +90,8 @@ gt(lat_df)
 
 ::: {.callout-exercise #ex-medians_migration}
 
+{{< fa solid flask >}}
+
 For the migration site data frame, group by site and then make a new summary data frame which contains median values for the columns `Stopover_Latitude`, `Stopover_Longitude`, `Winter_Latitude` and `Winter_Longitude` for each Site. Name the new columns to match the original columns -  `Stopover_Latitude`, `Stopover_Longitude`, `Winter_Latitude`, `Winter_Longitude`.
 
 Store this new data frame in a variable `bird_migration_summary`.
@@ -171,6 +173,9 @@ For our bird data, the `Site` column is shared between the two data frames - `bi
 We can actually use any type of join, because all of the sites are in both data frames, let's use a **full join**.
 
 ::: {.callout-exercise #ex-join}
+
+{{< fa solid flask >}}
+
 Perform a full outer join on the `bird_breeding_exc` data frame and the `bird_migration_summary` data frame. Store the resulting data frame in a new variable, named `combined_bird_data`.
 
 ::: {.callout-answer #ex-join_ans}

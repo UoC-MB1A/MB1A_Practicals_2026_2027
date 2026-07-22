@@ -22,9 +22,13 @@ By the end of this part of the practical you will have:
 :::
 
 
+{{< fa solid flask >}}
+
 In this exercise, you will apply the skills from Parts 1 to 3 to analyse a new dataset independently. You will download animal tracking data from the Movebank database, process it into a suitable format, and create a map showing the median location of each tracked individual on each day.
 
 ## Load packages {#sec-load_packages_ve}
+
+[↑ top](#)
 
 Please start a new Quarto document for this exercise.
 
@@ -42,6 +46,8 @@ library(lubridate)
 
 ## Download data {#sec-download_data_ve}
 
+[↑ top](#)
+
 First, you need to download some animal location data from the [Movebank database]( https://www.movebank.org/). This is a public database of animal location tracking data from different studies, in a standardised format to encourage data reuse.
 
 To find your dataset:
@@ -55,6 +61,8 @@ In this exercise, based on this data frame, you will plot the median location of
 First, download the CSV file and rename it so there are no gaps in the file name, then put it into the data directory for Practical 2.
 
 ## Read Data {#sec-read_data_ve}
+
+[↑ top](#)
 
 Read the data frame into a variable.
 
@@ -73,6 +81,8 @@ locations <- read_csv("data/seals.csv") |>
 ```
 
 ## Process data frame {#sec-process_df_ve}
+
+[↑ top](#)
 
 * Look at the data frame and check that the data looks as expected.
 * Identify the columns containing the longitude and latitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
@@ -127,6 +137,8 @@ gt(head(loc_sum))
 :::
 
 ## Plot data {#sec-plot_data_ve}
+
+[↑ top](#)
 
 * Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
 * Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
