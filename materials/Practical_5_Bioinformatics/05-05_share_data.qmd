@@ -24,6 +24,7 @@ By the end of this part of the practical you will have:
 * Transferred your final results and analysis pipeline to the submission repository.
 * Pushed your results to your GitHub fork.
 * Created a Pull Request to contribute your results to the central MB1A_ERV_Submissions repository
+
 :::
 
 Now you're ready to share your results with the research community.

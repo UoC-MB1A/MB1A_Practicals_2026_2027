@@ -22,7 +22,7 @@ By the end of this part of the practical you will be able to:
 
 :::
 
-```{r read_fasta_again, include=FALSE}
+```{r read_fasta_again, include=FALSE, warning=FALSE}
 library(ORFik)
 library(tidyverse)
 library(gt)
@@ -215,7 +215,7 @@ ggsave(
 )
 ```
 
-::: {.callout-exercise #ex_draw trees}
+::: {.callout-exercise #ex_draw_trees}
 Repeat the steps above for each of the ORF sequences in your `identified_orf_df` dataframe, so that you have one PDF tree for each gene.
 
 Save all of the trees as PDFs in your output directory as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.pdf</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.

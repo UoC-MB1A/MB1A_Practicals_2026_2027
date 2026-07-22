@@ -17,8 +17,8 @@ library(tidyverse)
 
 #### Sections
 - @sec-ervs
+- @sec-aims
 - @sec-bioconductor
-- @sec-dataset
 - @sec-get_sequence
 - @sec-summary_0501
 
@@ -32,5 +32,95 @@ By the end of this part of the practical you will be able to:
 * Identify and understand a FASTA file
 * Load a set of DNA sequences into R
 * Isolate a specific sequence
+
+:::
+
+::: {.callout-tip .partmenu}
+### @sec-p2_finding_orfs
+
+#### Sections
+- @sec-orfs
+- @sec-translate
+- @sec-save
+- @sec-summary_0502
+
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Identify open reading frames in a DNA/RNA sequence.
+* Translate DNA/RNA sequences into amino acid sequences.
+* Save sequences as a FASTA file
+
+:::
+
+::: {.callout-tip .partmenu}
+
+### @sec-p3_blast
+
+#### Sections
+- @sec-run_blast
+- @sec-blast_results
+- @sec-process_blast
+- @sec-summary_0503
+
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Use BLASTp to find proteins related to a sequence of interest.
+* Interpret the results of a BLAST search.
+* Extract and organise information from BLAST results.
+
+:::
+
+::: {.callout-tip .partmenu}
+
+### @sec-p4_msa_phylogeny
+
+#### Sections
+- @sec-alignment
+- @sec-phylogeny
+- @sec-visualise_phylogeny
+- @sec-summary_0504
+
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Construct multiple sequence alignments of related sequences.
+* Build phylogenetic trees
+* Visualise phylogenetic trees.
+
+:::
+
+::: {.callout-tip .partmenu}
+
+### @sec-p5_share_results
+
+#### Sections
+- @sec-fork_ervs
+- @sec-clone_ervs
+- @sec-transfer_ervs
+- @sec-push_ervs
+- @sec-pull_request_ervs
+
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Forked the MB1A_ERV_Submissions GitHub repository.
+* Cloned your fork onto your computer using RStudio.
+* Transferred your final results and analysis pipeline to the submission repository.
+* Pushed your results to your GitHub fork.
+* Created a Pull Request to contribute your results to the central MB1A_ERV_Submissions repository
 
 :::
