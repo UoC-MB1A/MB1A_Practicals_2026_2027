@@ -33,7 +33,7 @@ We need to load the `tidyverse` and `gt` packages again, together with two addit
 * `janitor`, which helps clean column names.
 * `lubridate`, which provides functions for working with dates.
 
-```{r load_packages_vis_ex}
+```{r setup0204}
 library(tidyverse)
 library(gt)
 library(janitor)
@@ -85,7 +85,7 @@ locations <- read_csv("data/seals.csv") |>
 ::: {.callout-answer collapse="true" #ex-process_df_ans}
 * Look at the data frame and check that the data looks as expected.
 
-```{r display_location_data}
+```{r process_df_ans1}
 gt(head(locations))
 ```
 
@@ -96,7 +96,7 @@ gt(head(locations))
 
 * Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
 
-```{r select_relevant_columns_visex}
+```{r process_df_ans2}
 loc_selected <- locations |> select(
   Date,
   individual_local_identifier,
@@ -108,14 +108,14 @@ gt(head(loc_selected))
 
 * Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
 
-```{r group_data_visex}
+```{r process_df_ans3}
 loc_grouped <- loc_selected |>
   group_by(Date, individual_local_identifier)
 ```
 
 * Using the `summarize` function, calculate the median latitude and median longitude for each individual on each date.
 
-```{r summarise_data_visex}
+```{r process_df_ans4}
 loc_sum <- loc_grouped |>
   summarise(
     Longitude = median(location_long),
@@ -140,7 +140,7 @@ gt(head(loc_sum))
 
 * Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
 
-```{r add_points_visex}
+```{r plot_data_ans1}
 ggplot(
   loc_sum,
   aes(
@@ -154,7 +154,7 @@ ggplot(
 
 * Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
 
-```{r add_map_visex}
+```{r plot_data_ans2}
 ggplot(
   loc_sum,
   aes(
@@ -169,7 +169,7 @@ ggplot(
 
 * Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude`. If `2` seems like too little or too much for your data, feel free to adjust.
 
-```{r axlim_visex}
+```{r plot_data_ans3}
 min_lat <- loc_sum |>
   pull(Latitude) |>
   min()
@@ -208,7 +208,7 @@ ggplot(
 
 * Colour the points by individual by adding `color = individual_local_identifier` to the `aes` function.
 
-```{r full_plot_visex}
+```{r plot_data_ans4}
 ggplot(
   loc_sum,
   aes(
@@ -228,7 +228,7 @@ ggplot(
 ```
 * If you wish, change the appearance of your plot to your taste.
 
-```{r theme_etc_visex, fig.width=10, fig.height=4.5}
+```{r plot_data_ans5}
 ggplot(
   loc_sum,
   aes(

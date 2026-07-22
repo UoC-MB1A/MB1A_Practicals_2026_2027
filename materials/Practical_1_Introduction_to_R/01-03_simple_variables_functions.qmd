@@ -2,7 +2,7 @@
 format: html
 ---
 
-```{r setup, include=FALSE}
+```{r setup0103, include=FALSE}
 library(gt)
 ```
 
@@ -62,8 +62,8 @@ The function `round()` rounds a number, by default into the nearest whole number
 
 Write some code to round the number 3.14159 to the nearest whole number.
 
-::: {.callout-answer collapse="true" #ex-first_functions}
-```{r ex_functions_first_answer}
+::: {.callout-answer collapse="true" #ex-first_functions_ans}
+```{r first_functions_ans}
 round(3.14159)
 ```
 :::
@@ -143,7 +143,7 @@ print(rep(x=2, times=5))
 Write some code to repeat the number 5, 7 times, first by specifying arguments in order and then using their names.
 
 ::: {.callout-answer collapse="true" #ex-arg_order_ans}
-```{r arg_order_answer}
+```{r arg_order_ans}
 # ordered
 print(rep(5, 7))
 
@@ -238,13 +238,13 @@ To check if a word already exists as a function in R, you can type `?` followed 
 
 e.g.
 
-```{r variable_check_used, exercise=TRUE}
+```{r variable_check_used}
 ?sum
 ```
 
 Compare this to a variable name which is not already in use:
 
-```{r variable_check_ok, exercise=TRUE}
+```{r variable_check_ok}
 ?banana
 ```
 
@@ -324,7 +324,7 @@ print(class(x))
 Create character, numerical and logical variables, print them, then check their classes.
 
 ::: {.callout-answer collapse="true" #ex-var_types_ans}
-```{r exercise_var_types_solution}
+```{r var_types_ans}
 # for example
 my_favourite_number <- 11
 my_favourite_word <- "hullabaloo"
@@ -359,7 +359,7 @@ gt(df)
 In your Quarto document, create eight variables of appropriate types which together contain all of the information in the table.
 
 ::: {.callout-answer collapse="true" #ex-celldata_ans}
-```{r ex_celldata_solution}
+```{r celldata_ans}
 # for example
 cell_id_1 <- "CX1"
 cell_id_2 <- "CX2"

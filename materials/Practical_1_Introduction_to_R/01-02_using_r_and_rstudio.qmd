@@ -1,7 +1,7 @@
 ---
 format: html
 ---
-```{r libraries, include=FALSE}
+```{r setup0102, include=FALSE}
 library(styler)
 ```
 
@@ -154,7 +154,7 @@ In the search box on the Help tab, search for the function `sum()`.
 Using the **Examples** section as a guide, calculate the sum of the numbers 2, 3, 4 in the console.
 
 ::: {.callout-answer collapse="true" #ex-r_help_ans}
-```{r ex_help_answer}
+```{r r_help_ans}
 sum(2, 3, 4)
 ```
 :::
@@ -215,7 +215,7 @@ print(paste("Hi", my_name, "Welcome to R!"))
 Write a script based on this code but to display, for example, "My name is Jeremy and I am 27 years old", but with your own (or another) name and age. Run your script using the ![source_button](../images/source_button.png){.inline-icon} button.
 
 ::: {.callout-answer collapse="true" #ex-first_script_ans}
-```{r ex_script_answer}
+```{r first_script_ans}
 my_name <- "Jeremy"
 my_age <- 27
 print(paste("My name is", my_name, "and I am", my_age, "years old"))
@@ -321,7 +321,7 @@ It's always a good idea to add explanations to your code. We can do so in Quarto
 
 Within a code chunk, we can also use  the hash tag `#` symbol to add comments, as shown below.
 
-```{r}
+```{r code_chunk}
 #| eval: false
 
 # This code calculates the sum of two numbers

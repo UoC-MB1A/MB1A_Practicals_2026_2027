@@ -2,7 +2,7 @@
 format: html
 ---
 
-```{r setup, include=FALSE}
+```{r setup0104, include=FALSE}
 library(gt)
 ```
 
@@ -126,7 +126,7 @@ gt(df)
 Combine the variables you made earlier into four vectors, one for each column of the table.
 
 ::: {.callout-answer collapse="true" #ex-vectors1_ans}
-```{r vector_df_solution}
+```{r vectors1_ans}
 # for example
 cell_id_1 <- "CX1"
 cell_id_2 <- "CX2"
@@ -171,12 +171,12 @@ print(nice_food[3])
 
 Isolate the fourth value in this vector and assign it to a new variable, then print its value.
 
-```{r vector_indices_exercise, exercise=TRUE}
+```{r vector_indices, exercise=TRUE}
 all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 ```
 
 ::: {.callout-answer collapse="true" #ex-index_ans}
-```{r vector_indices_exercise_solution, exercise=TRUE}
+```{r index_ans, exercise=TRUE}
 # for example
 all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 my_only_bird <- all_my_pets[4]
@@ -254,7 +254,7 @@ Using a data frame and the `tibble` function, reproduce this table, then visuali
 
 ::: {.callout-answer collapse="true" #ex-celldf_ans}
 
-```{r df_exercise_solution}
+```{r celldf_ans}
 # for example
 df <- tibble(
   cell_ID = c("CX1", "CX2"),

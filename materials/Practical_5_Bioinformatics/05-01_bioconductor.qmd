@@ -76,7 +76,7 @@ We are going to use several Bioconductor packages for biological sequence analys
 
 Import these libraries into your Quarto document. We will also need the `gt` and `tidyverse` libraries.
 
-```{r import_bioc, output=FALSE}
+```{r setup0501, output=FALSE}
 library(Biostrings)
 library(ORFik)
 library(msa)
@@ -144,17 +144,17 @@ Using R functions, find out:
 ::: {.callout-answer collapse="true" #ex-lengths_beavers_ans}
 How long is the longest sequence?
 
-```{r max_erv_reg_len}
+```{r lengths_beavers_ans1}
 print(max(width(beaver_fasta)))
 ```
 
 How long is the shortest sequence?
-```{r min_erv_reg_len}
+```{r lengths_beavers_ans2}
 print(min(width(beaver_fasta)))
 ```
 
 What is the mean sequence length?
-```{r mean_erv_reg_len}
+```{r lengths_beavers_ans3}
 print(mean(width(beaver_fasta)))
 ```
 

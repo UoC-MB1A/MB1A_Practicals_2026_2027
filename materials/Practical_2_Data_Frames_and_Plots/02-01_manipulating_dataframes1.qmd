@@ -119,7 +119,7 @@ Now we will start to build a new Quarto document to examine this dataset.
 
 You will need to include the following as an R code chunk at the start of the document.
 
-```{r include_libs}
+```{r setup0201}
 library(gt)
 library(tidyverse)
 ```
@@ -198,7 +198,7 @@ gt(head(df_variable))
 :::
 
 ::: {.callout-answer collapse="true" #ex-read_csv2_ans}
-```{r read_bird_data2}
+```{r read_csv2_ans}
 bird_migration_sites <- read_csv("data/migratory_connectivity_dataset.csv")
 gt(head(bird_migration_sites))
 ```
@@ -325,7 +325,7 @@ input_vec <- c(5, 10, 4, 3)
 ```
 
 ::: {.callout-answer collapse="true #ex-pipe_ans}
-```{r pipe_vec_ans}
+```{r pipe_ans}
 input_vec <- c(5, 10, 4, 3)
 
 result <- input_vec |>
@@ -388,7 +388,7 @@ Repeat this for the `bird_migration_sites` data frame:
 Store the result in a variable named `bird_migration_selected`.
 
 ::: {.callout-answer collapse="true" #ex-select_migration_ans}
-```{r select_breeding_ex_ans}
+```{r select_migration_ans}
 bird_migration_selected <- bird_migration_sites |>
   select(Site, winterLongitude, winterLatitude, pslon, pslat) |>
   unique() |>
@@ -450,23 +450,23 @@ Assign `y` a value of 12 and then use comparison operators to show if:
 `y` is less than or equal to 12
 
 :::{.callout-answer collapse="true" #ex-comparisons_ans}
-```{r operator_ex_ans1}
+```{r comparisons_ans1}
 y <- 12
 ```
 
-```{r operator_ex_ans2}
+```{r comparisons_ans2}
 print(y == 7)
 ```
 
-```{r operator_ex_ans3}
+```{r comparisons_ans3}
 print(y < 15)
 ```
 
-```{r operator_ex_ans4}
+```{r comparisons_ans4}
 print(y > 20)
 ```
 
-```{r operator_ex_ans5}
+```{r comparisons_ans5}
 print(y <= 12)
 ```
 :::
@@ -505,7 +505,7 @@ For our analysis we will exclude the measurements from the `Spain` site, as thei
 Filter both the breeding site and the migration site data frames to exclude `Spain` from the `Site` column. Store these in the variables `bird_breeding_exc` and `bird_migration_exc`, respectively.
 
 ::: {.callout-answer collapse="true" #ex-filter_breeding_ans}
-```{r filter_spain}
+```{r filter_breeding_ans1}
 bird_breeding_exc <- bird_breeding_selected |>
   filter(Site != "Spain")
 
@@ -515,7 +515,7 @@ bird_migration_exc <- bird_migration_selected |>
 gt(bird_breeding_exc)
 ```
 
-```{r filter_spain2}
+```{r filter_breeding_ans2}
 gt(head(bird_migration_exc))
 ```
 

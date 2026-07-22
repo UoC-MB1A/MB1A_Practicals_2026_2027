@@ -99,7 +99,7 @@ The longest ORFs in the sequence are likely to represent the retroviral genes, s
 Store the result in a variable named `orfs`.
 
 ::: {.callout-answer callout="true" #ex-orfs_ans}
-```{r find_orfs_beaver}
+```{r orfs_ans}
 orfs <- findORFs(current_erv, minimumLength = 200)[[1]]
 ```
 :::
@@ -136,7 +136,7 @@ print(paste0("abc", seq(1, 10)))
 Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named 'Ccan_ERV_j_ORF_i' where j is the ID of your specific ERV region and i is a unique number for each ORF. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq()`. Store the names as a variable `orf_names`.
 
 ::: {.callout-answer collapse="true" #ex-orf_names_ans}
-```{r paste0_orfs}
+```{r orf_names_ans}
 # Replace ERV_1 with the ID of your specific ERV region
 orf_names <- paste0("Ccan_ERV_1_ORF_", seq(1, length(orfs)))
 ```

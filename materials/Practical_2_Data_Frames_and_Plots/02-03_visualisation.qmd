@@ -1,7 +1,7 @@
 ---
 format: html
 ---
-```{r include_libs, include=FALSE}
+```{r setup0203, include=FALSE}
 library(gt)
 library(tidyverse)
 combined_bird_piv <- read_csv("output/combined_birds.csv")
@@ -77,7 +77,7 @@ Add the x and y axis to your blank plot.
 
 ::: {.callout-answer collapse="true" #ex-add_axes_ans}
 
-```{r axes_ggplot_birds}
+```{r add_axes_ans}
 ggplot(
   combined_bird_piv,
   aes(x = Longitude, y = Latitude)
@@ -118,7 +118,7 @@ Going back to your bird data, plot all of the longitude and latitude points as a
 
 ::: {.callout-answer collapse="true" #ex-add_points_ans}
 
-```{r points_ggplot_birds}
+```{r add_points_ans}
 ggplot(
   combined_bird_piv,
   aes(x = Longitude, y = Latitude)
@@ -164,22 +164,22 @@ print (min_long)
 Calculate the maximum longitude and the minimum and maximum latitude, and store these as variables `max_long`, `min_lat` and `max_lat`.
 
 ::: {.callout-answer collapse="true" #ex-calc_lims_ans}
-```{r axis_limits}
+```{r calc_lims_ans1}
 min_long <- combined_bird_piv |> pull(Longitude) |> min()
 max_long <- combined_bird_piv |> pull(Longitude) |> max()
 min_lat <- combined_bird_piv |> pull(Latitude) |> min()
 max_lat <- combined_bird_piv |> pull(Latitude) |> max()
 ```
 
-```{r max_long}
+```{r calc_lims_ans2}
 print (max_long)
 ```
 
-```{r min_lat}
+```{r calc_lims_ans3}
 print (min_lat)
 ```
 
-```{r max_lat}
+```{r calc_lims_ans4}
 print (max_lat)
 ```
 
@@ -203,7 +203,7 @@ ggplot(
 Set the y axis limits using your `min_lat` and `max_lat` variables as a second argument to `coord_quickmap()`.
 
 ::: {.callout-answer collapse="true" #ex-set_lims_ans}
-```{r ylim_birds}
+```{r set_lims_ans}
 ggplot(
   combined_bird_piv,
   aes(x = Longitude, y = Latitude)
@@ -251,7 +251,7 @@ Setting shape by `Location_Type` is very similar, we add `shape = Location_Type`
 Add this argument to the `aes()` function, along with `color=Site`, to set both the shape and the colour of the points.
 
 ::: {.callout-answer collapse="true" #ex-set_shape_colour_ans}
-```{r shape_location}
+```{r set_shape_colour_ans}
 ggplot(
   combined_bird_piv,
   aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)) +

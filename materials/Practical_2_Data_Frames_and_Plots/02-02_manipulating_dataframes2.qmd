@@ -1,7 +1,7 @@
 ---
 format: html
 ---
-```{r include_libs, include=FALSE}
+```{r setup0202, include=FALSE}
 library(gt)
 library(tidyverse)
 bird_breeding_exc <- read_csv("output/bird_breeding_exc.csv")
@@ -95,7 +95,7 @@ For the migration site data frame, group by site and then make a new summary dat
 Store this new data frame in a variable `bird_migration_summary`.
 
 ::: {.callout-answer collapse="true" #ex-medians_migration_ans}
-```{r migration_summary}
+```{r medians_migration_ans}
 bird_migration_grouped <- bird_migration_exc |> group_by(Site)
 
 bird_migration_summary <- bird_migration_grouped |>
