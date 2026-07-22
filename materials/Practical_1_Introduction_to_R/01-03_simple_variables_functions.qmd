@@ -8,7 +8,7 @@ library(gt)
 
 # Part 3: Functions and Variables {#sec-p3_functions_and_variables}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0103}
 ## Sections
 - @sec-functions
 - @sec-arguments
@@ -18,7 +18,7 @@ library(gt)
 
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0103}
 ## Learning objectives
 By the end of this part of the practical you should be able to:
 
@@ -54,7 +54,7 @@ sqrt(9)
 
 Here, the input `9` is given as an argument to the `sqrt()` function. The function calculates the square root, and returns the value. This function is very simple, because it takes just one argument and has no additional options.
 
-::: {.callout-exercise #functions_first}
+::: {.callout-exercise #ex-first_functions}
 
 {{< fa solid anchor >}}
 
@@ -62,7 +62,7 @@ The function `round()` rounds a number, by default into the nearest whole number
 
 Write some code to round the number 3.14159 to the nearest whole number.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-first_functions}
 ```{r ex_functions_first_answer}
 round(3.14159)
 ```
@@ -125,7 +125,7 @@ print(seq(by = 2, from = 1, to = 10))
 print(seq(by = 5, to = 15, from = 5))
 ```
 
-::: {.callout-exercise #arg_order}
+::: {.callout-exercise #ex-arg_order}
 
 {{< fa solid anchor >}}
 
@@ -142,7 +142,7 @@ print(rep(x=2, times=5))
 ```
 Write some code to repeat the number 5, 7 times, first by specifying arguments in order and then using their names.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-arg_order_ans}
 ```{r arg_order_answer}
 # ordered
 print(rep(5, 7))
@@ -183,7 +183,7 @@ my_variable <- 10
 print(my_variable)
 ```
 
-::: {.callout-exercise #ex_varorder}
+::: {.callout-exercise #ex-varorder}
 
 {{< fa solid anchor >}}
 
@@ -194,7 +194,7 @@ whatsmynumber <- 1
 whatsmynumber <- 5
 ```
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-varorder_ans}
 5
 :::
 :::
@@ -317,13 +317,13 @@ x <- FALSE
 print(class(x))
 ```
 
-::: {.callout-exercise #ex_var_types}
+::: {.callout-exercise #ex-var_types}
 
 {{< fa solid anchor >}}
 
 Create character, numerical and logical variables, print them, then check their classes.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-var_types_ans}
 ```{r exercise_var_types_solution}
 # for example
 my_favourite_number <- 11
@@ -337,7 +337,7 @@ print(class(is_this_true))
 :::
 :::
 
-::: {.callout-exercise #ex_celldata}
+::: {.callout-exercise #ex-celldata}
 
 {{< fa solid anchor >}}
 
@@ -358,7 +358,7 @@ gt(df)
 
 In your Quarto document, create eight variables of appropriate types which together contain all of the information in the table.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-celldata_ans}
 ```{r ex_celldata_solution}
 # for example
 cell_id_1 <- "CX1"
@@ -380,7 +380,7 @@ n_after_2 <- 7543
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0103}
 ## Summary
 - A **function** performs a specific task, usually taking one or more inputs (called **arguments**) and often returning an output.
 - **Arguments** provide information to a function and control how it behaves. Some arguments are optional and have default values.

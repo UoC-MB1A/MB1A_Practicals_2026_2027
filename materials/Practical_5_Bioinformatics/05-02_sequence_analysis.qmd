@@ -4,7 +4,7 @@ format: html
 
 # Part 2: Finding Open Reading Frames {#sec-p2_finding_orfs}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0502}
 ## Sections
 - @sec-orfs
 - @sec-translate
@@ -12,7 +12,7 @@ format: html
 - @sec-summary_0502
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0502}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -56,7 +56,7 @@ For example, lets say we have the sequence below:
 my_seq <- DNAStringSet("ATATGAAACCCGGGTTTTAAGC")
 ```
 
-::: {.callout-note #dna_rna}
+::: {.callout-note #note-dna_rna}
 In reality, DNA is transcribed into RNA before being translated, however for convenience in R we can directly translate DNA sequences.
 :::
 
@@ -90,7 +90,7 @@ The result is an [`IRanges`](https://www.rdocumentation.org/packages/IRanges/ver
 
 ### ORFs in the ERV sequence
 
-::: {.callout-exercise #ex_orfs}
+::: {.callout-exercise #ex-orfs}
 
 Find ORFs in your ERV sequence (stored in the variable `current_erv`) using the findORFs function. As in the example, you will need to add `[[1]]` at the end, as you only have a single sequence.
 
@@ -98,7 +98,7 @@ The longest ORFs in the sequence are likely to represent the retroviral genes, s
 
 Store the result in a variable named `orfs`.
 
-::: {.callout-answer #ex_fasta_ans callout="true"}
+::: {.callout-answer callout="true" #ex-orfs_ans}
 ```{r find_orfs_beaver}
 orfs <- findORFs(current_erv, minimumLength = 200)[[1]]
 ```
@@ -123,7 +123,7 @@ print(paste0("abc", 1))
 ```
 If one of the arguments to paste0 is a vector, R will combine each element of the vector with the other arguments.
 
-::: {.callout-note #seq_function}
+::: {.callout-note #note-seq_function}
 Remember that the function `seq(start, end, increment)` generates a vector of numbers from `start` to `end` with a step size of `increment`, e.g. `seq(1, 10, 2)` = `r seq(1, 10, 2)`.
 :::
 
@@ -131,11 +131,11 @@ e.g.
 ```{r paste0_ex2}
 print(paste0("abc", seq(1, 10)))
 ```
-::: {.callout-exercise #ex_fasta}
+::: {.callout-exercise #ex-orf_names}
 
 Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named 'Ccan_ERV_j_ORF_i' where j is the ID of your specific ERV region and i is a unique number for each ORF. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq()`. Store the names as a variable `orf_names`.
 
-::: {.callout-answer #ex_fasta_ans callout="true"}
+::: {.callout-answer collapse="true" #ex-orf_names_ans}
 ```{r paste0_orfs}
 # Replace ERV_1 with the ID of your specific ERV region
 orf_names <- paste0("Ccan_ERV_1_ORF_", seq(1, length(orfs)))
@@ -171,12 +171,12 @@ print(orf_seqs)
 
 Now we have our open reading frame sequences. Given that they are open reading frames, they should translate into amino acid sequences with no issues - each should start with a start codon and end with a stop codon, and there should be no internal stop codons.
 
-::: {.callout-exercise #ex_translate_orfs}
+::: {.callout-exercise #ex-translate_orfs}
 Translate your open reading frames into amino acid sequences. The Bioconductor function `translate()` will do this, with just one argument, your ORF nucleotide sequences.
 
 Store the result in a variable named `orf_aa_seqs`. Look at your amino acid sequences using the `print()` function.
 
-::: {.callout-answer #ex_translate_orfs_ans collapse="true"}
+::: {.callout-answer collapse="true" #ex-translate_orfs_ans}
 ```{r translate_orfs}
 orf_aa_seqs <- translate(orf_seqs)
 
@@ -199,7 +199,7 @@ On your computer, check that this FASTA file exists in `data/orf_aa_seqs.fasta` 
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0502}
 
 ### Summary
 

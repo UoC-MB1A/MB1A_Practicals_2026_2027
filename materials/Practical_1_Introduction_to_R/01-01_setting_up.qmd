@@ -4,14 +4,14 @@ format: html
 
 # Part 1: Setting Up {#sec-p1_setup}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0101}
 ## Sections
 - @sec-git_github
 - @sec-setup_rstudio
 - @sec-summary_0101
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0101}
 #### Learning objectives
 By the end of this part of the practical you should be able to:
 
@@ -49,7 +49,7 @@ This means you'll always have a backup of your work, you'll be able to recover p
 
 For the {{< meta course-title >}} practicals, we would like you to create a free GitHub account (unless you already have an account you're happy to use).
 
-::: {.callout-important}
+::: {.callout-important #note-set_up_github}
 Please [set up a GitHub account now](https://github.com/signup?source=form-home-signup&user_email=), preferably using your University email address.
 
 You will not need Copilot for these practicals.
@@ -109,7 +109,7 @@ Select `Git - Clone a project from a Git repository`.
 
 Copy and paste the URL of your forked repository into the `Repository URL` box.
 
-::: {.callout-important}
+::: {.callout-important #note-check_fork_url}
 Make sure you are using the URL for your forked repository, not the original! Your username should be in the URL. If you're not sure, please talk to a demonstrator.
 :::
 
@@ -146,7 +146,7 @@ Although this seems like a lot of steps, you'll quickly get used to the workflow
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0101}
 ## Summary
 
 - **Git** keeps track of changes to your files.

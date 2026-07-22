@@ -7,7 +7,7 @@ library(styler)
 
 # Part 2: Using R and RStudio {#sec-p2_r_and_rstudio}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0102}
 ## Sections
 - @sec-r_language
 - @sec-coding_in_the_console
@@ -17,7 +17,7 @@ library(styler)
 - @sec-summary_0102
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0102}
 #### Learning objectives
 By the end of this part of the practical you should be able to:
 
@@ -105,7 +105,8 @@ print(paste("Hi", my_name, "Welcome to R!"))
 ```
 
 :::
-::: callout-warning
+
+::: {.callout-important #note-r_prompt}
 ## The R prompt
 
 If R is ready to accept commands, the R console shows a `>` prompt. 
@@ -144,7 +145,7 @@ Click on the environment now - you should see two variables: `x`, with a value o
 
 * **Help** is where you can go for help. 
 
-::: {.callout-exercise #ex_help}
+::: {.callout-exercise #ex-r_help}
 
 {{< fa solid anchor >}}
 
@@ -152,7 +153,7 @@ In the search box on the Help tab, search for the function `sum()`.
 
 Using the **Examples** section as a guide, calculate the sum of the numbers 2, 3, 4 in the console.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-r_help_ans}
 ```{r ex_help_answer}
 sum(2, 3, 4)
 ```
@@ -200,7 +201,7 @@ z <- x + y
 print(z)
 ```
 
-::: {.callout-exercise #ex_script}
+::: {.callout-exercise #ex-first_script}
 
 {{< fa solid anchor >}}
 
@@ -213,7 +214,7 @@ print(paste("Hi", my_name, "Welcome to R!"))
 
 Write a script based on this code but to display, for example, "My name is Jeremy and I am 27 years old", but with your own (or another) name and age. Run your script using the ![source_button](../images/source_button.png){.inline-icon} button.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-first_script_ans}
 ```{r ex_script_answer}
 my_name <- "Jeremy"
 my_age <- 27
@@ -287,7 +288,7 @@ Your first Quarto report should open in a new window. A **html** file will also 
 
 As our code becomes more complicated, the value of using Quarto will become much clearer.
 
-::: {.callout-exercise #ex_quarto}
+::: {.callout-exercise #ex-quarto}
 
 {{< fa solid flask >}}
 
@@ -339,9 +340,10 @@ In this course, we will use the [tidyverse style guide](https://style.tidyverse.
 
 In the Quarto document you created above, click on `Addins` on the menu and then `Style active file` - this will automatically change your code to the tidyverse style where possible. 
 
-::: {.callout-important}
+::: {.callout-important #note-quarto_errors}
 This function will only work if your code is able to run without errors and you've saved your Quarto document
 :::
+
 ![Style Active File](images/styler.png){#fig-styler .screenshot width="50%"}
 
 For example, the `Style active file` feature removes the extraneous spaces from the following code.
@@ -356,7 +358,7 @@ After:
 
 Also, where you need to give something a name in R, it is helpful to use a name which describes what it is. For example, rather than `x <- 12` it is preferable to write e.g. `mean_size <- 12`.
 
-::: {.callout-exercise #ex_formatting}
+::: {.callout-exercise #ex-formatting}
 
 {{< fa solid flask >}}
 
@@ -367,7 +369,7 @@ Format the code in the HPA data Quarto document you created earlier using the `S
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0102}
 ## Summary
 - **R** is a commonly used programming language amongst biologists.
 - **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.

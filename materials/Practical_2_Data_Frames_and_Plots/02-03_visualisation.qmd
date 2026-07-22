@@ -9,7 +9,7 @@ combined_bird_piv <- read_csv("data/combined_birds.csv")
 
 # Part 3: Visualisation {#sec-p3_visualisation}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0203}
 ## Sections
 - @sec-plot_recap
 - @sec-blank_plot
@@ -20,7 +20,7 @@ combined_bird_piv <- read_csv("data/combined_birds.csv")
 - @sec-summary_0203
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0203}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -69,13 +69,13 @@ ggplot(combined_bird_piv)
 
 Based on the published plot, we know that our `x` axis should be **Longitude** and our `y` axis should be **Latitude**.
 
-::: {.callout-exercise #ex_add_axes}
+::: {.callout-exercise #ex-add_axes}
 
 Look back at the plotting code from Practical 1 (@sec-plots).
 
 Add the x and y axis to your blank plot.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-add_axes_ans}
 
 ```{r axes_ggplot_birds}
 ggplot(
@@ -112,11 +112,11 @@ ggplot(my_dataframe, aes(x = length, y = weight)) +
   geom_point()
 ```
 
-::: {.callout-exercise #ex_add_points}
+::: {.callout-exercise #ex-add_points}
 
 Going back to your bird data, plot all of the longitude and latitude points as a scatter plot.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-add_points_ans}
 
 ```{r points_ggplot_birds}
 ggplot(
@@ -160,10 +160,10 @@ min_long <- combined_bird_piv |> pull(Longitude) |> min()
 print (min_long)
 ```
 
-::: {.callout-exercise #ex_calc_lims}
+::: {.callout-exercise #ex-calc_lims}
 Calculate the maximum longitude and the minimum and maximum latitude, and store these as variables `max_long`, `min_lat` and `max_lat`.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-calc_lims_ans}
 ```{r axis_limits}
 min_long <- combined_bird_piv |> pull(Longitude) |> min()
 max_long <- combined_bird_piv |> pull(Longitude) |> max()
@@ -199,10 +199,10 @@ ggplot(
   annotation_borders(linewidth=0.2) +
   coord_quickmap(xlim=c(min_long-2, max_long+2))
 ```
-::: {.callout-exercise #ex_set_lims}
+::: {.callout-exercise #ex-set_lims}
 Set the y axis limits using your `min_lat` and `max_lat` variables as a second argument to `coord_quickmap()`.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-set_lims_ans}
 ```{r ylim_birds}
 ggplot(
   combined_bird_piv,
@@ -247,10 +247,10 @@ ggplot(
 
 Setting shape by `Location_Type` is very similar, we add `shape = Location_Type` as an argument to the `aes()` function.
 
-::: {.callout-exercise #ex_calc_lims}
+::: {.callout-exercise #ex-set_shape_colour}
 Add this argument to the `aes()` function, along with `color=Site`, to set both the shape and the colour of the points.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-set_shape_colour_ans}
 ```{r shape_location}
 ggplot(
   combined_bird_piv,
@@ -316,7 +316,7 @@ ggplot(
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0203}
 
 ### Summary
 

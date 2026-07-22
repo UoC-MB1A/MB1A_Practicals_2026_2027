@@ -9,7 +9,7 @@ library(tidyverse)
 
 # Practical 2 - Data Frames and Plots
 
-::: {.callout-tip .partmenu}
+::: {.callout-tip .partmenu #parts-0200}
 
 ## Practical 2 - Data Frames and Plots
 

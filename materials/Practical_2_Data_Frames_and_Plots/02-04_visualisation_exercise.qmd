@@ -3,7 +3,7 @@ format: html
 ---
 
 # Part 4: Visualisation Exercise {#sec-p4_visualisation_exercise}
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0204}
 ## Sections
 - @sec-load_packages_ve
 - @sec-download_data_ve
@@ -13,7 +13,7 @@ format: html
 - @sec-summary_0204
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0204}
 #### Learning objectives
 By the end of this part of the practical you will have:
 
@@ -82,7 +82,7 @@ locations <- read_csv("data/seals.csv") |>
 
 ### Example solution
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-process_df_ans}
 * Look at the dataframe and check that the data looks as expected.
 
 ```{r display_location_data}
@@ -136,7 +136,7 @@ gt(head(loc_sum))
 
 ### Example solution
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-plot_data_ans}
 
 * Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
 
@@ -254,7 +254,7 @@ ggplot(
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0204}
 ### Summary
 
 In this exercise you have:

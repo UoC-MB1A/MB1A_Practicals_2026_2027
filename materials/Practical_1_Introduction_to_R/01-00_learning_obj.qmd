@@ -9,7 +9,7 @@ library(tidyverse)
 
 # Practical 1 - Using R and RStudio
 
-::: {.callout-tip .partmenu}
+::: {.callout-tip .partmenu #parts-0100}
 
 ## Practical 1 - Using R and RStudio
 

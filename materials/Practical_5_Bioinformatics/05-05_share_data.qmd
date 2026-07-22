@@ -4,7 +4,7 @@ format: html
 
 # Part 5: Share your results {#sec-p5_share_results}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0505}
 ## Sections
 
 - @sec-fork_ervs
@@ -15,7 +15,8 @@ format: html
 
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0505}
+
 #### Learning objectives
 By the end of this part of the practical you will have:
 
@@ -68,7 +69,7 @@ Select `Git - Clone a project from a Git repository`.
 
 Copy and paste the URL of your forked repository into the `Repository URL` box.
 
-::: {.callout-important}
+::: {.callout-important #note-use_fork_ervs}
 Make sure you are using the URL for your forked repository, not the original! Your username should be in the URL. .
 :::
 
@@ -146,7 +147,7 @@ Click the "Create pull request" button.
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0505}
 
 ### Summary
 

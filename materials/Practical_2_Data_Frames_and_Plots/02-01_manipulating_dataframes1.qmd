@@ -4,7 +4,7 @@ format: html
 
 # Part 1: Basic Data Frame Operations {#sec-p1_basic_dataframe_operations}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0201}
 ## Sections
 
 - @sec-dataset
@@ -41,12 +41,12 @@ This study tracked the migration of a songbird species, the pied flycatcher (*Fi
 
 We will reproduce Figure 1B from this paper, which shows the breeding site, post-Saharan stopover location and winter location for 8 bird populations.
 
-::: {.callout-exercise #ex_view_plot}
+::: {.callout-exercise #ex-view_plot}
 Have a look at this plot and its legend.
 
 What are the `x` and `y` axis labels?
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-view_plot_ans1}
 
 x - Longitude
 
@@ -56,7 +56,7 @@ y - Latitude
 
 What do the colours represent?
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-view_plot_ans2}
 The locations of the breeding populations.
 
 * Orange - Spain
@@ -71,7 +71,7 @@ The locations of the breeding populations.
 
 What do the shapes represent?
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-view_plot_ans3}
 The type of site:
 
 * Circles - breeding site
@@ -102,13 +102,13 @@ The first part of the data we will use for this practical contains the longitude
 
 The file is in the data directory for Practical 2 and named `breeding_site_locations.csv`. Open this file in a text editor (for example NotePad, TextEdit) and examine it.
 
-::: {.callout-exercise #ex_breeding_csv}
+::: {.callout-exercise #ex-breeding_csv}
 
 {{< fa solid anchor >}}
 
 What is the longitude of the Moscow breeding site?
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-breeding_csv_ans}
 36.7
 :::
 :::
@@ -126,18 +126,18 @@ library(tidyverse)
 
 There are two data frames needed - saved in your practical 2 data directory as `data/breeding_site_locations.csv` and `data/migratory_connectivity_dataset.csv`.
 
-::: {.callout-exercise #ex_read_csv}
+::: {.callout-exercise #ex-read_csv}
 
 {{< fa solid anchor >}}
 
 In your document, read `data/breeding_site_locations.csv` into a variable, then view it with `gt`.
 
-::: {.callout-note #ex_read_csv_nb}
+::: {.callout-note #note-read_csv}
 Reminder: The R function `read_csv` reads a CSV file into R as a data frame. The function `gt` is used to view a data frame.
 
 :::
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-read_csv_ans}
 ```{r read_bird_data, eval=FALSE}
 bird_breeding_sites <- read_csv("data/breeding_site_locations.csv")
 gt(bird_breeding_sites)
@@ -183,12 +183,12 @@ We also need to read a second CSV file into a data frame. This one contains the 
 
 Unlike the breeding site data, in this table there are multiple records for each site - as the birds were recorded at multiple locations.
 
-::: {.callout-exercise #ex_read_csv2}
+::: {.callout-exercise #ex-read_csv2}
 The data frame is saved in the `data` directory for this practical as `data/migratory_connectivity_dataset.csv`.
 
 In your Quarto document, please read the file into a variable and visualise the top 10 rows using the `gt()` and `head()` functions.
 
-::: {.callout-note #ex_read_csv_nb}
+::: {.callout-note #note-gt_head}
 Reminder: You can nicely visualise the top 10 rows of a data frame using `gt()` and `head()` together as follows, replacing `df_variable` with your variable name.
 
 ```{r gthead, eval=FALSE}
@@ -197,7 +197,7 @@ gt(head(df_variable))
 
 :::
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-read_csv2_ans}
 ```{r read_bird_data2}
 bird_migration_sites <- read_csv("data/migratory_connectivity_dataset.csv")
 gt(head(bird_migration_sites))
@@ -206,24 +206,24 @@ gt(head(bird_migration_sites))
 :::
 :::
 
-::: {.callout-exercise #ex_examine_csv}
+::: {.callout-exercise #ex-examine_csv}
 Examine this dataframe using the `glimpse` function.
 
 How many columns and rows are there?
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-examine_csv_ans1}
 100 rows, 34 columns
 :::
 
 What is the data type for the column `Tag`?
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-examine_csv_ans2}
 character (`<chr>`)
 :::
 
 What is the data type for the column `Birth`?
 
-::: {.callout-answer collapse="true}
+::: {.callout-answer collapse="true" #ex-examine_csv_ans3}
 numeric / double (`<dbl>`)
 :::
 :::
@@ -317,14 +317,14 @@ my_result <- my_numbers |>
 print(my_result)
 ```
 
-::: {.callout-exercise #ex_pipe}
+::: {.callout-exercise #ex-pipe}
 Using the pipe operator, calculate the absolute value (function `abs()`) of the mean (function `mean()` of this vector, then round it to the nearest whole number (`round()`). Assign the result to a variable.
 
 ```{r pipe_vec}
 input_vec <- c(5, 10, 4, 3)
 ```
 
-::: {.callout-answer collapse="true}
+::: {.callout-answer collapse="true #ex-pipe_ans}
 ```{r pipe_vec_ans}
 input_vec <- c(5, 10, 4, 3)
 
@@ -377,7 +377,7 @@ bird_breeding_selected <- bird_breeding_sites |>
 
 gt(bird_breeding_selected)
 ```
-::: {.callout-exercise #ex_select_breeding}
+::: {.callout-exercise #ex-select_migration}
 
 Repeat this for the `bird_migration_sites` dataframe:
 
@@ -387,7 +387,7 @@ Repeat this for the `bird_migration_sites` dataframe:
 
 Store the result in a variable named `bird_migration_selected`.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-select_migration_ans}
 ```{r select_breeding_ex_ans}
 bird_migration_selected <- bird_migration_sites |>
   select(Site, winterLongitude, winterLatitude, pslon, pslat) |>
@@ -441,7 +441,7 @@ print(x == 3)
 ```
 This shows `TRUE` because `x` is equal to `3`.
 
-::: {.callout-exercise #ex_select_breeding}
+::: {.callout-exercise #ex-comparisons}
 Assign `y` a value of 12 and then use comparison operators to show if:
 
 `y` is equal to 7
@@ -449,7 +449,7 @@ Assign `y` a value of 12 and then use comparison operators to show if:
 `y` is greater than 20
 `y` is less than or equal to 12
 
-:::{.callout-answer collapse="true"}
+:::{.callout-answer collapse="true" #ex-comparisons_ans}
 ```{r operator_ex_ans1}
 y <- 12
 ```
@@ -500,11 +500,11 @@ gt(bird_breeding_long_10)
 
 For our analysis we will exclude the measurements from the `Spain` site, as their post-Saharan stopover locations are very close to their breeding locations. 
 
-::: {.callout-exercise #ex_select_breeding}
+::: {.callout-exercise #ex-filter_breeding}
 
 Filter both the breeding site and the migration site data frames to exclude `Spain` from the `Site` column. Store these in the variables `bird_breeding_exc` and `bird_migration_exc`, respectively.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-filter_breeding_ans}
 ```{r filter_spain}
 bird_breeding_exc <- bird_breeding_selected |>
   filter(Site != "Spain")
@@ -526,7 +526,7 @@ gt(head(bird_migration_exc))
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0201}
 
 ### Summary
 

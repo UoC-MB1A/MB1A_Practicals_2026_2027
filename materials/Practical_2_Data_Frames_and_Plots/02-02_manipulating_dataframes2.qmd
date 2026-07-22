@@ -10,7 +10,7 @@ bird_migration_exc <- read_csv("data/bird_migration_exc.csv")
 
 # Part 2: Complex Data Frame Operations {#sec-p2_complex_dataframe_operations}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0202}
 
 ## Sections
 - @sec-summary_stats
@@ -20,7 +20,7 @@ bird_migration_exc <- read_csv("data/bird_migration_exc.csv")
 
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0202}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -61,7 +61,7 @@ We can then use the function `summarize()` to calculate specific statistics per 
 
 For example, here we create a new data frame, `lat_df`, with one column `Highest_Lat_Stopover`, which contains the maximum (calculated with the function `max()`) value in the `Stopover_Latitude` column for each Site.
 
-::: {.callout-note #nb_narm}
+::: {.callout-note #note-narm}
 Notice the `na.rm = TRUE` argument here - this is telling R to ignore any rows which have a value of "NA".
 :::
 
@@ -88,13 +88,13 @@ lat_df <- bird_migration_grouped |>
 gt(lat_df)
 ```
 
-::: {.callout-exercise #ex_medians_migration}
+::: {.callout-exercise #ex-medians_migration}
 
 For the migration site data frame, group by site and then make a new summary data frame which contains median values for the columns `Stopover_Latitude`, `Stopover_Longitude`, `Winter_Latitude` and `Winter_Longitude` for each Site. Name the new columns to match the original columns -  `Stopover_Latitude`, `Stopover_Longitude`, `Winter_Latitude`, `Winter_Longitude`.
 
 Store this new data frame in a variable `bird_migration_summary`.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-medians_migration_ans}
 ```{r migration_summary}
 bird_migration_grouped <- bird_migration_exc |> group_by(Site)
 
@@ -170,10 +170,10 @@ For our bird data, the `Site` column is shared between the two data frames - `bi
 
 We can actually use any type of join, because all of the sites are in both data frames, let's use a **full join**.
 
-::: {.callout-exercise #ex_join}
+::: {.callout-exercise #ex-join}
 Perform a full outer join on the `bird_breeding_exc` data frame and the `bird_migration_summary` data frame. Store the resulting data frame in a new variable, named `combined_bird_data`.
 
-::: {.callout-answer #ex_join_ans}
+::: {.callout-answer #ex-join_ans}
 ```{r join_birds}
 combined_bird_data <- full_join(bird_breeding_exc, bird_migration_summary)
 
@@ -245,7 +245,7 @@ write_csv(combined_bird_piv, "data/combined_birds.csv")
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0202}
 
 ### Summary
 

@@ -8,7 +8,7 @@ library(gt)
 
 # Part 4: Vectors, data frames and plots {#sec-p4_vectors_dataframes_plots}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0104}
 ## Sections
 - @sec-packages
 - @sec-vectors
@@ -18,7 +18,7 @@ library(gt)
 - @sec-summary_0104
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0104}
 ## Learning objectives
 
 By the end of this part of the practical you should be able to:
@@ -104,7 +104,7 @@ z <- 3
 xyz_vec <- c(x, y, z)
 ```
 
-::: {.callout-exercise #ex_vectors1}
+::: {.callout-exercise #ex-vectors1}
 
 {{< fa solid anchor >}}
 
@@ -125,7 +125,7 @@ gt(df)
 
 Combine the variables you made earlier into four vectors, one for each column of the table.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-vectors1_ans}
 ```{r vector_df_solution}
 # for example
 cell_id_1 <- "CX1"
@@ -165,7 +165,7 @@ print(nice_food[3])
 
 ### Index Exercise 
 
-::: {.callout-exercise #ex_vectors1}
+::: {.callout-exercise #ex-index}
 
 {{< fa solid anchor >}}
 
@@ -175,7 +175,7 @@ Isolate the fourth value in this vector and assign it to a new variable, then pr
 all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 ```
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-index_ans}
 ```{r vector_indices_exercise_solution, exercise=TRUE}
 # for example
 all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
@@ -232,7 +232,7 @@ my_dataframe <- tibble(
 gt(my_dataframe)
 ```
 
-::: {.callout-exercise #ex_celldf}
+::: {.callout-exercise #ex-celldf}
 
 {{< fa solid flask >}}
 
@@ -252,7 +252,7 @@ gt(df)
 
 Using a data frame and the `tibble` function, reproduce this table, then visualise it using the `gt` function.
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-celldf_ans}
 
 ```{r df_exercise_solution}
 # for example
@@ -297,13 +297,13 @@ banana,55,170
 
 There is a file provided in your `data` folder for Practical 1 named `weather.csv`. Open this file on your computer in a text editor (for example NotePad, TextEdit) and examine it.
 
-::: {.callout-exercise #ex_weather}
+::: {.callout-exercise #ex-weather}
 
 {{< fa solid anchor >}}
 
 Based on this table, what was the temperature in degrees C on 2026-07-02 at 12:00:00?
 
-::: {.callout-answer collapse="true"}
+::: {.callout-answer collapse="true" #ex-weather_ans}
 17.8
 :::
 
@@ -321,7 +321,7 @@ weather <- read_csv("data/weather_data.csv")
 gt(weather)
 ```
 
-::: {.callout-exercise #ex_public_health}
+::: {.callout-exercise #ex-public_health}
 
 {{< fa solid flask >}}
 
@@ -415,7 +415,7 @@ ggplot(weather, aes(
   ggtitle("Temperature by Date")
 ```
 
-::: {.callout-exercise #ex_public_health_plot}
+::: {.callout-exercise #ex-public_health_plot}
 
 {{< fa solid flask >}}
 
@@ -430,7 +430,7 @@ Following on from the UKHSA public health data you downloaded above and loaded i
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0104}
 ## Summary
 * We can combine multiple variables of the same type into a **vector** using the function `c`.
 * Tabular data can be represented in a **data frame**, generated using the function `tibble`.

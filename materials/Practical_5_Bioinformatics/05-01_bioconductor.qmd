@@ -4,7 +4,7 @@ format: html
 
 # Part 1: Introduction to Bioconductor and Sequence Analysis in R {#sec-p1_intro_bioconductor}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0501}
 ## Sections
 - @sec-ervs
 - @sec-aims
@@ -13,7 +13,7 @@ format: html
 - @sec-summary_0501
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0501}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -110,10 +110,10 @@ TTCAGCTGATTCTGATCTACTA
 
 Open the FASTA file provided in the data directory as `data/C_canadensis_erv_regions.fasta` in a text editor on your computer. 
 
-::: {.callout-exercise #ex_fasta}
+::: {.callout-exercise #ex-fasta}
 What is the name of the second sequence in the file?
 
-::: {.callout-answer #ex_fasta_ans}
+::: {.callout-answer collapse="true" #ex-fasta_ans}
 `Ccan_ERV_2`
 :::
 :::
@@ -131,7 +131,7 @@ This reads our FASTA file into a variable type called a `DNAStringSet`, which is
 print(beaver_fasta)
 ```
 
-::: {.callout-exercise #ex_histo_beavers}
+::: {.callout-exercise #ex-lengths_beavers}
 
 You can access the lengths of the sequences using the function `width()`, with your DNAStringSet variable as the argument.
 
@@ -141,7 +141,7 @@ Using R functions, find out:
 * How long is the shortest sequence?
 * What is the mean sequence length?
 
-::: {.callout-answer #ex_histo_ans collapse="true"}
+::: {.callout-answer collapse="true" #ex-lengths_beavers_ans}
 How long is the longest sequence?
 
 ```{r max_erv_reg_len}
@@ -163,7 +163,7 @@ print(mean(width(beaver_fasta)))
 
 In the spreadsheet [here](xxx) there is a list of the beaver ERV regions - the same ones that are in your FASTA file. As a group, we want to try to analyse as many of these as possible. Each student will characterise one ERV region, and together the class will build a larger collection of annotated ERVs.
 
-::: {.callout-important}
+::: {.callout-important #note-choose_erv}
 Please choose any available region and put your CRSID next to it on the spreadsheet, so others know that it is taken. Each sequence has a unique ID, please note the ID for your sequence. Wherever you are asked later for your **ERV_ID**, this is the number you need.
 :::
 
@@ -181,7 +181,7 @@ print(current_erv)
 
 [↑ top](#)
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0501}
 
 ### Summary
 

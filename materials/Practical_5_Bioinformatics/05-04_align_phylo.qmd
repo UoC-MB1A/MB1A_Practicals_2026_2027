@@ -4,7 +4,7 @@ format: html
 
 # Part 4: Multiple Sequence Alignment and Phylogeny {#sec-p4_msa_phylogeny}
 
-::: {.callout-note .partmenu}
+::: {.callout-note .partmenu #parts-0504}
 ## Sections
 - @sec-alignment
 - @sec-phylogeny
@@ -12,7 +12,7 @@ format: html
 - @sec-summary_0504
 :::
 
-:::{.callout-tip .objectives}
+:::{.callout-tip .objectives #objectives-0504}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
@@ -87,11 +87,11 @@ writeXStringSet(combined_current_aligned_ss, "output/gag_Ccan_ERV_1_ORF_4.fasta"
 
 You can look at this file directly in a text editor, however it's quite difficult to see details of the alignment in this format. Alternatively, you can upload the sequence to an online alignment viewer, such as [Alignment Viewer](https://alignmentviewer.org/).
 
-::: {.callout-note}
+::: {.callout-note #note-alignment_ervs}
 Retroviruses, especially endogenous retroviruses, are very divergent, so the sequences might not look to be particularly well aligned - don't worry, this is expected.
 :::
 
-::: {.callout-exercise #ex_build_msas}
+::: {.callout-exercise #ex-build_msas}
 Repeat the steps above for each of the ORF sequences in your `identified_orf_df` dataframe, so that you have one multiple sequence alignment for each gene.
 
 Save all of the alignments in your output directory in FASTA format as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.fasta</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
@@ -118,7 +118,7 @@ Please also select `Simple midpoint` in the "Root tree" section, as we don't hav
 
 The default options are OK for our purposes for the other options, so choose **Submit**.
 
-::: {.callout-note}
+::: {.callout-note #note-alignment_warning}
 You may see some warning messages that the sequence names in your phylogeny are not found in the alignment file - this is because IQTree replaces the `|` symbols in sequence names with `_` symbols, and is nothing to worry about.
 :::
 
@@ -215,7 +215,7 @@ ggsave(
 )
 ```
 
-::: {.callout-exercise #ex_draw_trees}
+::: {.callout-exercise #ex-draw_trees}
 Repeat the steps above for each of the ORF sequences in your `identified_orf_df` dataframe, so that you have one PDF tree for each gene.
 
 Save all of the trees as PDFs in your output directory as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.pdf</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
@@ -224,7 +224,7 @@ Save all of the trees as PDFs in your output directory as <code><span style="col
 
 ## Review {#sec-summary_0504}
 
-::: {.callout-note}
+::: {.callout-note #note-summary_0504}
 
 ### Summary
 

@@ -9,7 +9,7 @@ library(tidyverse)
 
 # Practical 5 - Bioinformatics
 
-::: {.callout-tip .partmenu}
+::: {.callout-tip .partmenu #parts-0500}
 
 ## Practical 5 - Bioinformatics
 
@@ -40,9 +40,7 @@ By the end of this part of the practical you will be able to:
 - @sec-save
 - @sec-summary_0502
 
-:::
 
-:::{.callout-tip .objectives}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
