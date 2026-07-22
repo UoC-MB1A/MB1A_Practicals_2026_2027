@@ -171,12 +171,12 @@ print(nice_food[3])
 
 Isolate the fourth value in this vector and assign it to a new variable, then print its value.
 
-```{r vector_indices, exercise=TRUE}
+```{r vector_indices2}
 all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 ```
 
 ::: {.callout-answer collapse="true" #ex-index_ans}
-```{r index_ans, exercise=TRUE}
+```{r index_ans}
 # for example
 all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 my_only_bird <- all_my_pets[4]
