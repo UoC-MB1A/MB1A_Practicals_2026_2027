@@ -9,6 +9,7 @@ project:
   render:
     - index.md
     - setup.qmd
+    - github.qmd
     - materials.md
     - materials/*
     - "!materials/*/no_render"
@@ -63,8 +64,8 @@ book:
           href: index.md
         - text: "Installing R and RStudio"
           href: setup.qmd
-  appendices: 
-    - href: versions.md
+        - text: "Setting up Git, GitHub and RStudio"
+          href: github.qmd
 
 metadata:
   course-title: MB1A
@@ -72,3 +73,4 @@ metadata:
   intake: "2026_2027"
   git_org: "UoC-MB1A"
   git_repo: "MB1A_Students_2026_2027"
+  erv_repo: "MB1A_ERV_Submissions"
