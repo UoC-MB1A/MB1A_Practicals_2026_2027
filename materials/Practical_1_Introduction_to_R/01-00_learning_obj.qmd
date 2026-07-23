@@ -13,20 +13,7 @@ library(tidyverse)
 
 ## Practical 1 - Using R and RStudio
 
-### @sec-p1_setup
-
-#### Sections
-- @sec-git_github
-- @sec-setup_rstudio
-
-#### Learning Objectives
-By the end of this part of the practical you should be able to:
-
-- Explain what Git and GitHub are
-- Create a GitHub account and fork a repository
-- Clone your repository into RStudio
-
-### @sec-p2_r_and_rstudio
+### @sec-p1_r_and_rstudio
 
 #### Sections
 - @sec-r_language
@@ -34,6 +21,7 @@ By the end of this part of the practical you should be able to:
 - @sec-rstudio_interface
 - @sec-console_scripts_quarto
 - @sec-documenting_and_formatting_your_code
+- @sec-summary_0101
 
 #### Learning Objectives
 
@@ -45,13 +33,14 @@ By the end of this part of the practical you should be able to:
 - Create a simple reproducible analysis using Quarto.
 - Understand the benefits of writing clear, well-formatted and documented R code.
 
-### @sec-p3_functions_and_variables
+### @sec-p2_functions_and_variables
 
 #### Sections
 - @sec-functions
 - @sec-arguments
 - @sec-variables
 - @sec-variable_types
+- @sec-summary_0102
 
 #### Learning Objectives
 
@@ -62,7 +51,7 @@ By the end of this part of the practical you should be able to:
 - Explain the concept of a variable and use variables in your code.
 - Know the difference between a character, numeric and logical variable.
 
-### @sec-p4_vectors_data_frames_plots
+### @sec-p3_vectors_data_frames_plots
 
 #### Sections
 - @sec-packages
@@ -70,7 +59,7 @@ By the end of this part of the practical you should be able to:
 - @sec-data_frames
 - @sec-csv
 - @sec-plots
-- @sec-summary_0104
+- @sec-summary_0103
 
 By the end of this part of the practical you should be able to:
 
@@ -85,4 +74,3 @@ By the end of this part of the practical you should be able to:
 
 :::
 
-##### Part 5 - Extension Exercises
