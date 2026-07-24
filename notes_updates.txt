@@ -1,1 +1,5 @@
-- Check GitHub instructions are up-to-date
+- github.qmd - Check GitHub instructions are up-to-date
+- 0101 - Check RStudio screenshots are still accurate
+- 0101, sec-console_scripts_quarto - link to lecture, check it still works
+- 0101, sec-console_scripts_quarto - link to markdown formatting, check it still works
+- 0104, sec-data_frames - check the UKHSA data is still in the same place and the same format
