@@ -5,7 +5,7 @@ doc-id: "0204"
 author: "Katy Brown"
 ---
 
-```{r setup0204}
+```{r setup0204, include=FALSE}
 library(tidyverse)
 library(gt)
 library(janitor)
