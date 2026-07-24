@@ -3,13 +3,8 @@
 
 Now you are at the end of the practical, commit your changes with Git and push them to GitHub.
 
-1. Save your changes in RStudio with the `Save` button.
-2. Render your Rmarkdown document into html with the `Render` button.
-3. Open the `Git` tab in RStudio.
-4. Tick the files you have changed - usually the Rmd and html files for the practical.
-5. Click `Commit` and write a short message describing your changes.
-6. Click `Push` to save the changes to GitHub.
-7. Enter your UserName and your Personal Access Token. If you don't have your token or it doesn't work, visit [this page](https://github.com/settings/personal-access-tokens) while logged into your GitHub account, click on the {{< meta course-title >}} token and choose `Regenerate token`.
-8. Visit your GitHub account and check that your changes are there.
+1. Click `Push` in the Git panel to save the changes to GitHub.
+2. Enter your UserName and your Personal Access Token. If you don't have your token or it doesn't work, visit [this page](https://github.com/settings/personal-access-tokens) while logged into your GitHub account, click on the {{< meta course-title >}} token and choose `Regenerate token`.
+3. Visit your GitHub account and check that your changes are there.
 :::
 	

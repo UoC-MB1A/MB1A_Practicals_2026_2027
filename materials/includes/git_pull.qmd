@@ -1,14 +1,15 @@
+
 ::: {.callout-tip}
 ## Sync your Git Repository
 
-At the beginning of each practical, make sure to pull any changes in the main copy of online repository from GitHub.
+At the beginning of each practical, make sure to sync any changes in the main copy of online repository from GitHub.
 
 1. Open RStudio
 2. Choose `File` > `Open Project`
-3. Navigate to your ``{{< meta course-title >}}_Students_{{< meta intake >}}.Rproj`` file and open it.
+3. Navigate to your **`{{< meta course-title >}}_Students_{{< meta intake >}}`** folder and then to the directory for **`{{< meta practical >}}`**, then load **`{{< meta practical >}}.Rproj`**.
 4. In a web browser, log in to GitHub and navigate to your fork of the MB1A_Students repository.
 5. Click on `Sync Fork`. If it shows "This branch is not behind the upstream" there is nothing else you need to do.
-7. Otherwise, click `Update Branch`.
+7. Otherwise, click `Update Branch`. **Do not** click `Discard commits`.
 8. Go to your RStudio session and open the `Git` tab.
 9. Click `Pull` to update your local copy of the repository.
 
