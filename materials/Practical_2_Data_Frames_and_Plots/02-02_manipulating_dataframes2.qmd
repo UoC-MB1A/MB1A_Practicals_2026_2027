@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_2_Data_Frames_and_Plots
+doc-id: "0202"
+author: "Katy Brown"
 ---
 ```{r setup0202, include=FALSE}
 library(gt)
@@ -16,6 +19,7 @@ bird_migration_exc <- read_csv("output/bird_migration_exc.csv")
 - @sec-summary_stats
 - @sec-merge
 - @sec-long_wide
+- @sec-divide
 - @sec-summary_0202
 
 :::
@@ -34,9 +38,9 @@ By the end of this part of the practical you will be able to:
 
 [↑ top](#)
 
-At the moment, the data frame `bird_breeding_exc` has seven rows, one for each breeding site - as the breeding sites are small, fixed locations. However, the data frame `bird_migration_exc` has multiple measurements for Iberian stopover location and winter location for each breeding site - as the numerous birds were tracked as they migrated.
+At the moment, the data frame `bird_breeding_exc` has seven rows, one for each breeding site - as the breeding sites are small, fixed locations. However, the data frame `bird_migration_exc` has multiple measurements for each location for each bird population - as the numerous birds were tracked as they migrated.
 
-For our visualisation, it's sufficient to just take the median value for Iberian stopover location and winter location for each breeding site.
+For our visualisation, it's sufficient to just take the median values for the migration locations.
 
 To do this, we can *group* our data by the values in a specific column, then calculate summary statistics for each group.
 
@@ -59,7 +63,7 @@ We can see `Groups: Site [7]` at the top, which tells us our data frame is group
 
 We can then use the function `summarize()` to calculate specific statistics per group and generate a new data frame containing these values.
 
-For example, here we create a new data frame, `lat_df`, with one column `Highest_Lat_Stopover`, which contains the maximum (calculated with the function `max()`) value in the `Stopover_Latitude` column for each Site.
+For example, the following code creates a new data frame, `lat_df`, with one column `Highest_Lat_Stopover`, which contains the maximum (calculated with the function `max()`) value in the `Stopover_Latitude` column for each Site.
 
 ::: {.callout-note #note-narm}
 Notice the `na.rm = TRUE` argument here - this is telling R to ignore any rows which have a value of "NA".
@@ -92,7 +96,20 @@ gt(lat_df)
 
 {{< fa solid flask >}}
 
-For the migration site data frame, group by site and then make a new summary data frame which contains median values for the columns `Stopover_Latitude`, `Stopover_Longitude`, `Winter_Latitude` and `Winter_Longitude` for each Site. Name the new columns to match the original columns -  `Stopover_Latitude`, `Stopover_Longitude`, `Winter_Latitude`, `Winter_Longitude`.
+In your **worked example** Quarto document, for the migration site data frame, group by site and then make a new summary data frame which contains **median** values for all of the latitude and longitude columns:
+
+* `Stopover_Latitude`
+* `Stopover_Longitude`
+* `Iberian_Latitude`
+* `Iberian_Longitude`
+* `Westmost_Latitude`
+* `Westmost_Longitude`
+* `Winter_Latitude`
+* `Winter_Longitude`
+
+To simplify plotting later, please stick to this order - Stopover, Iberian, Westmost, Winter.
+
+Name the new columns to match the original columns -  e.g. `Stopover_Latitude`, `Winter_Longitude`.
 
 Store this new data frame in a variable `bird_migration_summary`.
 
@@ -104,8 +121,12 @@ bird_migration_summary <- bird_migration_grouped |>
   summarise(
     Stopover_Longitude = median(Stopover_Longitude, na.rm = TRUE),
     Stopover_Latitude = median(Stopover_Latitude, na.rm = TRUE),
+    Iberian_Longitude = median(Iberian_Longitude, na.rm = TRUE),
+    Iberian_Latitude = median(Iberian_Latitude, na.rm = TRUE),
+    Westmost_Longitude = median(Westmost_Longitude, na.rm = TRUE),
+    Westmost_Latitude = median(Westmost_Latitude, na.rm = TRUE),
     Winter_Longitude = median(Winter_Longitude, na.rm = TRUE),
-    Winter_Latitude = median(Winter_Latitude, na.rm = TRUE)
+    Winter_Latitude = median(Winter_Latitude, na.rm = TRUE),
   )
 gt(bird_migration_summary)
 ```
@@ -168,7 +189,7 @@ right_join_example <- right_join(df_dept, df_score)
 gt(right_join_example)
 ```
 
-For our bird data, the `Site` column is shared between the two data frames - `bird_breeding_selected` and `bird_migration_exc`.
+For our bird data, the `Site` column is shared between the two data frames - `bird_breeding_exc` and `bird_migration_exc`.
 
 We can actually use any type of join, because all of the sites are in both data frames, let's use a **full join**.
 
@@ -176,7 +197,7 @@ We can actually use any type of join, because all of the sites are in both data 
 
 {{< fa solid flask >}}
 
-Perform a full outer join on the `bird_breeding_exc` data frame and the `bird_migration_summary` data frame. Store the resulting data frame in a new variable, named `combined_bird_data`.
+In your **worked example** Quarto document, perform a full outer join on the `bird_breeding_exc` data frame and the `bird_migration_summary` data frame. Store the resulting data frame in a new variable, named `combined_bird_data`.
 
 ::: {.callout-answer #ex-join_ans}
 ```{r join_birds}
@@ -191,6 +212,8 @@ gt(combined_bird_data)
 ## Long and wide formats {#sec-long_wide}
 
 [↑ top](#)
+
+Now you should have a single data frame with all the data you need for your plot.
 
 We need to perform one more transformation before we can plot our data.
 
@@ -227,6 +250,12 @@ After:
 
 We won't ask you to do this in the visualisation exercise, but it's needed in this case.
 
+::: {.callout-note .copycode #copy-pivot}
+
+### Include this code
+
+Include this code chunk in your **worked example** Quarto document to convert your data frame from wide to long format.
+
 ```{r pivotpivotpivot}
 combined_bird_piv <- combined_bird_data |>
   pivot_longer(
@@ -238,13 +267,83 @@ combined_bird_piv <- combined_bird_data |>
 gt(combined_bird_piv)
 ```
 
-We now have our input table for Part 2!
+:::
 
-We can save a copy using the function `write_csv()`. The first argument is the variable we want to save and the second is the path to the file we want to save it into.
+## Subsetting your data frame {#sec-divide}
+
+In order to create the two plots shown in Figure 1A and Figure 1B in the publication, we need to make two subsets of our data frame, one with only the **spring migration** data and one with only the **autumn migration** data.
+
+The spring migration data has the following values in the "Location_Type" column:
+
+* Breeding
+* Stopover
+* Winter
+
+The autumn migration data has the following values in the "Location_Type" column:
+
+* Breeding
+* Iberian
+* Westmost
+* Winter
+
+We can pass a **vector** of values to the `filter()` function and use the operator `%in%` to filter rows on multiple values.
+
+For example, let's go back to our Department data frame.
+
+```{r read_show_department}
+gt(df_dept)
+```
+
+If I wanted just individuals who are in the Maths or English department, I could do this as follows:
+
+```{r filter_department}
+keep_depts <- c("Maths", "English")
+
+df_eng_maths <- df_dept |>
+  filter(Department %in% keep_depts)
+
+gt(df_eng_maths)
+```
+
+::: {.callout-exercise #ex-divide}
+
+{{< fa solid flask >}}
+
+In your **worked example** Quarto document, generate two subsets of your `combined_bird_piv` data frame, one with the **spring** data and one with the **winter** data. Store these in two variables `spring_data` and `autumn_data`.
+
+::: {.callout-answer #ex-divide_ans}
+```{r divide_ans}
+
+spring_vals <- c("Breeding", "Stopover", "Winter")
+autumn_vals <- c("Breeding", "Iberian", "Westmost", "Winter")
+
+spring_data <- combined_bird_piv |>
+  filter(Location_Type %in% spring_vals)
+
+autumn_data <- combined_bird_piv |>
+  filter(Location_Type %in% autumn_vals)
+
+```
+
+:::
+:::
+
+
+We now have our two input tables for the plots!
+
+We can save copies using the function `write_csv()`. The first argument is the variable we want to save and the second is the path to the file we want to save it into.
+
+::: {.callout-note .copycode #copy-pivot}
+### Include this code
+
+Include this code chunk in your **worked example** Quarto document to save your data frame into the `output` folder for the practical.
 
 ```{r write_birds}
-write_csv(combined_bird_piv, "output/combined_birds.csv")
+write_csv(spring_data, "output/birds_spring.csv")
+write_csv(autumn_data, "output/birds_autumn.csv")
 ```
+
+:::
 
 ## Review {#sec-summary_0202}
 
@@ -260,6 +359,14 @@ write_csv(combined_bird_piv, "output/combined_birds.csv")
 
 :::
 
-Remember to save your work before moving on to Part 3.
+For this part of the practical, the main files you have edited are:
+
+- `worked_example.qmd`
+- `output/combined_birds.csv`
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 3.
 
 {{< include ../includes/git_commit.qmd >}}

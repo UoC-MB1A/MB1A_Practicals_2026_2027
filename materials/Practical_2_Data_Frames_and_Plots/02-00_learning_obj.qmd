@@ -1,6 +1,8 @@
 ---
 title: "Plan and Learning Objectives"
 format: html
+practical: Practical_2_Data_Frames_and_Plots
+doc-id: "0200"
 ---
 
 ```{r setup, include=FALSE}
@@ -28,8 +30,6 @@ By the end of this part of the practical you will be able to:
 
 * Use the pipe operator to create multi-step analyses.
 * Select specific columns from a data frame.
-* Select rows from a data frame which meet specific criteria
-
 
 ### @sec-p2_complex_data_frame_operations
 
@@ -37,6 +37,7 @@ By the end of this part of the practical you will be able to:
 - @sec-summary_stats
 - @sec-merge
 - @sec-long_wide
+- @sec-subset
 - @sec-summary_0202
 
 #### Learning Objectives

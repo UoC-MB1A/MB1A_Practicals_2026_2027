@@ -1,41 +1,9 @@
 ---
 format: html
+practical: Practical_2_Data_Frames_and_Plots
+doc-id: "0204"
+author: "Katy Brown"
 ---
-
-# Part 4: Visualisation Exercise {#sec-p4_visualisation_exercise}
-::: {.callout-note .partmenu #parts-0204}
-## Sections
-- @sec-load_packages_ve
-- @sec-download_data_ve
-- @sec-read_data_ve
-- @sec-process_df_ve
-- @sec-plot_data_ve
-- @sec-summary_0204
-:::
-
-:::{.callout-tip .objectives #objectives-0204}
-#### Learning objectives
-By the end of this part of the practical you will have:
-
-* Applied the data manipulation and plotting techniques introduced throughout Practical 2 to a real animal tracking dataset.
-
-:::
-
-
-{{< fa solid flask >}}
-
-In this exercise, you will apply the skills from Parts 1 to 3 to analyse a new dataset independently. You will download animal tracking data from the Movebank database, process it into a suitable format, and create a map showing the median location of each tracked individual on each day.
-
-## Load packages {#sec-load_packages_ve}
-
-[↑ top](#)
-
-Please start a new Quarto document for this exercise.
-
-We need to load the `tidyverse` and `gt` packages again, together with two additional packages:
-
-* `janitor`, which helps clean column names.
-* `lubridate`, which provides functions for working with dates.
 
 ```{r setup0204}
 library(tidyverse)
@@ -44,23 +12,81 @@ library(janitor)
 library(lubridate)
 ```
 
+# Part 4: Visualisation Exercise {#sec-p4_visualisation_exercise}
+
+::: {#parts-0204 .callout-note .partmenu}
+## Sections
+
+- @sec-load_packages_ve
+- @sec-download_data_ve
+- @sec-read_data_ve
+- @sec-process_df_ve
+- @sec-plot_data_ve
+- @sec-summary_0204
+:::
+
+::: {#objectives-0204 .callout-tip .objectives}
+#### Learning objectives
+
+By the end of this part of the practical you will have:
+
+- Applied the data manipulation and plotting techniques introduced throughout Practical 2 to a different real animal tracking dataset.
+:::
+
+{{< fa solid flask >}}
+
+In this exercise, you will apply the skills from Parts 1 to 3 to analyse a new dataset independently. You will download animal tracking data from the Movebank database, process it into a suitable format, and create a map showing the median location of each tracked individual on each day.
+
+Movebank is a free, online database of animal tracking data hosted by the Max Planck Institute of Animal Behavior. It is a database of data from lots of different animal tracking studies, all stored in a standardised format.
+
+For this part of the practical, you will choose an animal tracking dataset and plot the tracked locations of different individuals within that dataset on a map.
+
+## Load packages {#sec-load_packages_ve}
+
+[↑ top](#)
+
+Please start a new Quarto document for this exercise, `visualisation_exercise.qmd`.
+
+We need to load the `tidyverse` and `gt` packages again, together with two additional packages:
+
+- `janitor`, which helps clean column names.
+- `lubridate`, which provides functions for working with dates.
+
+::: {#copy-libraries .callout-note .copycode}
+### Include this code
+
+You will need to include the following as an R code chunk at the start of the document.
+
+```{r libraries_visex, eval=FALSE}
+library(tidyverse)
+library(gt)
+library(janitor)
+library(lubridate)
+```
+:::
+
 ## Download data {#sec-download_data_ve}
 
 [↑ top](#)
 
-First, you need to download some animal location data from the [Movebank database]( https://www.movebank.org/). This is a public database of animal location tracking data from different studies, in a standardised format to encourage data reuse.
+First, you need to download some animal location data from the [Movebank database](https://www.movebank.org/).
 
 To find your dataset:
 
-* On the MoveBank Site, click on "Data" and then "View and Manage Studies". 
-* Select "Studies where I can download any data"
-* Choose a study from the list. Search for an animal which interests you. Choose a study containing approximately 5–15 tracked individuals (shown in the "Number of Animals" field on the website). This will give enough data to produce an interesting plot without making it difficult to interpret.
+- On the MoveBank Site, click on `Data` and then `View and Manage Studies`.
+- Select `Studies where I can download any data`.
+- Choose a study from the list. Search for an animal which interests you. Choose a study containing approximately **5–15** tracked individuals (shown in the "Number of Animals" field on the website). This will give enough data to produce an interesting plot without making it difficult to interpret.
+- Select `Download` \> `Download Data`.
+- Agree with the terms and conditions
+- Download the data in CSV format
+
+![Download Movebank Data](images/movebank.png){#fig-download_movebank .screenshot width="50%"}
 
 In this exercise, based on this data frame, you will plot the median location of each individual animal by date as a scatter plot overlaid onto a map.
 
-First, download the CSV file and rename it so there are no gaps in the file name, then put it into the data directory for Practical 2.
+First, find your downloaded CSV file and rename is as `movebank_data.csv`, then put it into the data directory for Practical 2.
 
-## Read Data {#sec-read_data_ve}
+## Read data {#sec-read_data_ve}
 
 [↑ top](#)
 
@@ -68,14 +94,24 @@ Read the data frame into a variable.
 
 This data has a couple of features you've not come across yet, so we'll provide some code to help you:
 
-* The column names are not in a format that R can easily use, as they contain hyphens (`-`). We can use an additional function, `clean_names()` to rename the columns. `clean_names()` converts column names into a consistent format by replacing spaces and punctuation with underscores and converting everything to lower case.
+- The column names are not in a format that R can easily use, as they contain hyphens (`-`). We can use an additional function, `clean_names()` to rename the columns. `clean_names()` converts column names into a consistent format by replacing spaces and punctuation with underscores and converting everything to lower case.
 
-* One of the columns contains date information which needs to be reformated - we do this using the `mutate()` function and the `as_date()` function. We'll learn more about the `mutate()` function in a later practical.
+- One of the columns contains date information which needs to be reformated - we do this using the `mutate()` function and the `as_date()` function. We'll learn more about the `mutate()` function in a later practical.
 
-In the below, replace `seals.csv` with the filename of the data frame you have downloaded.
+::: {.callout-note .copycode}
+### Include this code
 
-```{r read_location_data}
-locations <- read_csv("data/seals.csv") |>
+Include the following code to read the data into an R data frame
+
+```{r read_location_data, eval=FALSE}
+locations <- read_csv("data/movebank_data.csv") |>
+  clean_names() |>
+  mutate(Date = as_date(timestamp))
+```
+:::
+
+```{r read_location_data_hidden, include=FALSE}
+locations <- read_csv("data/movebank_data.csv") |>
   clean_names() |>
   mutate(Date = as_date(timestamp))
 ```
@@ -84,27 +120,27 @@ locations <- read_csv("data/seals.csv") |>
 
 [↑ top](#)
 
-* Look at the data frame and check that the data looks as expected.
-* Identify the columns containing the longitude and latitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
-* Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
-* Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
-* Using the `summarize` function, calculate the median latitude and median longitude for each individual on each date.
+- Look at the data frame and check that the data looks as expected.
+- Identify the columns containing the longitude and latitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
+- Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
+- Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
+- Using the `summarize` function, calculate the median latitude and median longitude for each individual on each date.
 
 ### Example solution
 
-::: {.callout-answer collapse="true" #ex-process_df_ans}
-* Look at the data frame and check that the data looks as expected.
+::: {#ex-process_df_ans .callout-answer collapse="true"}
+- Look at the data frame and check that the data looks as expected.
 
 ```{r process_df_ans1}
 gt(head(locations))
 ```
 
-* Identify the columns containing the latitude and longitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
+- Identify the columns containing the latitude and longitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
 
-  * latitude - location_lat
-  * longitude - location_long
+  - latitude - location_lat
+  - longitude - location_long
 
-* Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
+- Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
 
 ```{r process_df_ans2}
 loc_selected <- locations |> select(
@@ -116,14 +152,14 @@ loc_selected <- locations |> select(
 gt(head(loc_selected))
 ```
 
-* Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
+- Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.
 
 ```{r process_df_ans3}
 loc_grouped <- loc_selected |>
   group_by(Date, individual_local_identifier)
 ```
 
-* Using the `summarize` function, calculate the median latitude and median longitude for each individual on each date.
+- Using the `summarize` function, calculate the median latitude and median longitude for each individual on each date.
 
 ```{r process_df_ans4}
 loc_sum <- loc_grouped |>
@@ -140,17 +176,23 @@ gt(head(loc_sum))
 
 [↑ top](#)
 
-* Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
-* Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
-* Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude`. If your study covers a small geographic area, you may find that adding 2 degrees leaves too much empty space. Adjust these values if necessary.
-* Colour the points by individual by adding `color = individual_local_identifier` to the `aes` function.
-* If you wish, change the appearance of your plot to your taste.
+- Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
+- Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
+- Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude\`. If your study covers a small geographic area, you may find that adding 2 degrees leaves too much empty space. Adjust these values if necessary.
+
+:::  {.callout-note}
+
+Some of the geographic areas are very small so you might not actually see many borders on your plot - don't worry about this.
+
+:::
+
+- Colour the points by individual by adding `aes(color = individual_local_identifier))` as an argument to `geom_point()`.
+- If you wish, change the appearance of your plot to your taste.
 
 ### Example solution
 
-::: {.callout-answer collapse="true" #ex-plot_data_ans}
-
-* Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
+::: {#ex-plot_data_ans .callout-answer collapse="true"}
+- Plot a scatter plot using `ggplot()` and `geom_point()` with longitude on the x axis and latitude on the y axis.
 
 ```{r plot_data_ans1}
 ggplot(
@@ -163,8 +205,7 @@ ggplot(
   geom_point()
 ```
 
-
-* Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
+- Add a map to the plot using `annotation_borders()` and `coord_quickmap()`.
 
 ```{r plot_data_ans2}
 ggplot(
@@ -179,7 +220,7 @@ ggplot(
   coord_quickmap()
 ```
 
-* Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude`. If `2` seems like too little or too much for your data, feel free to adjust.
+- Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude`. If`2\` seems like too little or too much for your data, feel free to adjust.
 
 ```{r plot_data_ans3}
 min_lat <- loc_sum |>
@@ -217,8 +258,7 @@ ggplot(
   )
 ```
 
-
-* Colour the points by individual by adding `color = individual_local_identifier` to the `aes` function.
+- Colour the points by individual by adding `color = individual_local_identifier` to the `aes` function.
 
 ```{r plot_data_ans4}
 ggplot(
@@ -238,7 +278,8 @@ ggplot(
     ylim = c(min_lat - 0.2, max_lat + 0.2)
   )
 ```
-* If you wish, change the appearance of your plot to your taste.
+
+- If you wish, change the appearance of your plot to your taste.
 
 ```{r plot_data_ans5}
 ggplot(
@@ -266,7 +307,7 @@ ggplot(
 
 [↑ top](#)
 
-::: {.callout-note #note-summary_0204}
+::: {#note-summary_0204 .callout-note}
 ### Summary
 
 In this exercise you have:
@@ -279,7 +320,15 @@ In this exercise you have:
 - Added map borders and appropriate axis limits.
 - Used colour to distinguish individual animals.
 - Applied the data manipulation and plotting techniques introduced throughout Practical 2.
-
 :::
+
+For this part of the practical, the main files you have edited are:
+
+- `visualisation_exercise.qmd`
+- `data/movebank_data.csv`
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
 
 {{< include ../includes/git_push.qmd >}}

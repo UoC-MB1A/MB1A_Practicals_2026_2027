@@ -1,10 +1,13 @@
 ---
 format: html
+practical: Practical_2_Data_Frames_and_Plots
+doc-id: "0203"
+author: "Katy Brown"
 ---
 ```{r setup0203, include=FALSE}
 library(gt)
 library(tidyverse)
-combined_bird_piv <- read_csv("output/combined_birds.csv")
+spring_data <- read_csv("output/birds_spring.csv")
 ```
 
 # Part 3: Visualisation {#sec-p3_visualisation}
@@ -36,9 +39,9 @@ By the end of this part of the practical you will be able to:
 
 [↑ top](#)
 
-Now, we want to reproduce Figure 2B from the [source publication](https://doi.org/10.1126/science.ads0532). 
+First, let's reproduce Figure 2B from the [source publication](https://doi.org/10.1126/science.ads0532). This plot shows the spring migration, which you have stored in your `spring_data` data frame.
 
-Look again at the plot. You will be able to see that our data frame, combined_bird_piv, contains all the information we need.
+Look again at the plot. You will be able to see that our data frame, spring_data, contains all the information we need.
 
 * Breeding site
 * Longitude and latitude of breeding site
@@ -46,14 +49,14 @@ Look again at the plot. You will be able to see that our data frame, combined_bi
 * Longitude and latitude of winter non-breeding site
 
 ```{r show_bird_df}
-gt(combined_bird_piv)
+gt(spring_data)
 ```
 
 ## Initiating a new plot {#sec-blank_plot}
 
 [↑ top](#)
 
-We will visualise the migration paths of the birds using the R plotting package `ggplot`. 
+We will visualise the spring migration paths of the birds using the R plotting package `ggplot`. 
 
 We can do this in the same Quarto document used for Part 1.
 
@@ -64,7 +67,7 @@ As we saw in Practical 1 (@sec-plots), we first need to generate a new blank plo
 We do this using the function `ggplot()`, with our data frame as an argument.
 
 ```{r blank_ggplot_birds}
-ggplot(combined_bird_piv)
+ggplot(spring_data)
 ```
 
 Based on the published plot, we know that our `x` axis should be **Longitude** and our `y` axis should be **Latitude**.
@@ -75,13 +78,13 @@ Based on the published plot, we know that our `x` axis should be **Longitude** a
 
 Look back at the plotting code from Practical 1 (@sec-plots).
 
-Add the x and y axis to your blank plot.
+In your **worked example** Quarto document, generate a new blank plot then add the x and y axis.
 
 ::: {.callout-answer collapse="true" #ex-add_axes_ans}
 
 ```{r add_axes_ans}
 ggplot(
-  combined_bird_piv,
+  spring_data,
   aes(x = Longitude, y = Latitude)
 )
 ```
@@ -95,7 +98,9 @@ ggplot(
 
 A plot of longitude against latitude is simply a scatter plot - longitude determines the position on the x axis and latitude determines the position on the y axis.
 
-To demonstrate the geom_point function, let's briefly revisit our fruit data frame from the previous practical.
+We can add points to our plot using the `geom_point()` function, just like we used `geom_line()` to add a line in the previous practical (@sec-plots).
+
+To demonstrate the `geom_point()` function, let's briefly revisit our fruit data frame from the previous practical.
 
 ```{r fruit_scatter_data}
 my_data_frame <- tibble(
@@ -118,13 +123,13 @@ ggplot(my_data_frame, aes(x = length, y = weight)) +
 
 {{< fa solid anchor >}}
 
-Going back to your bird data, plot all of the longitude and latitude points as a scatter plot.
+Going back to your **worked example** Quarto document, add a layer to your existing plot to plot all of the longitude and latitude points as a scatter plot.
 
 ::: {.callout-answer collapse="true" #ex-add_points_ans}
 
 ```{r add_points_ans}
 ggplot(
-  combined_bird_piv,
+  spring_data,
   aes(x = Longitude, y = Latitude)
 ) +
   geom_point()
@@ -132,23 +137,38 @@ ggplot(
 :::
 :::
 
-If you compare this with the plot in the paper, you can see that the points are at the same positions. 
+If you compare this with Fig 1B in the paper, you can see that the points are at the same positions. 
 
 Now, we can add some additional information to make the plot more informative.
 
+### Adding map features
+
 ggplot has a convenient function `annotation_borders()` to add geographical country borders to a scatter plot representing a map. We're also going to add a second function used with map data, `coord_quickmap()` - this keeps the shape of the plot consistent so the map isn't skewed.
 
-We can add this to our scatter plot as follows. The argument `linewidth` sets the width of the lines in the map borders.
+We can add this layer to our scatter plot as follows. The argument `linewidth` sets the width of the lines in the map borders.
+
+::: {.callout-important #note-scatterplots}
+
+The majority of the steps in this practical are useful for any scatter plot, however, this specific code chunk is specific to plotting maps.
+
+:::
+
+::: {.callout-note .copycode #copy-pivot}
+### Include this code
+
+In your **worked example** Quarto document, add this layer (starting at `annotation_borders`) to your existing scatterplot to add map borders.
 
 ```{r map_ggplot_birds}
 ggplot(
-  combined_bird_piv,
+  spring_data,
   aes(x = Longitude, y = Latitude)
 ) +
   geom_point() +
-  annotation_borders(linewidth=0.2) +
+  annotation_borders(linewidth = 0.2) +
   coord_quickmap()
 ```
+:::
+
 ## Setting axis limits {#sec-axis_limits}
 
 [↑ top](#)
@@ -159,35 +179,49 @@ It would be helpful to know the minimum and maximum longitude and latitude of th
 
 e.g. to find the minimum longitude in our data frame
 ```{r min_long}
-min_long <- combined_bird_piv |> pull(Longitude) |> min()
+min_long <- spring_data |>
+  pull(Longitude) |>
+  min()
 
-print (min_long)
+print(min_long)
 ```
 
 ::: {.callout-exercise #ex-calc_lims}
 
 {{< fa solid anchor >}}
 
-Calculate the maximum longitude and the minimum and maximum latitude, and store these as variables `max_long`, `min_lat` and `max_lat`.
+In your **worked example** Quarto document, before your plotting code, calculate the minimum longitude, maximum longitude and the minimum and maximum latitude, and store these as variables `min_lon`, `max_lon`, `min_lat` and `max_lat`.
 
 ::: {.callout-answer collapse="true" #ex-calc_lims_ans}
 ```{r calc_lims_ans1}
-min_long <- combined_bird_piv |> pull(Longitude) |> min()
-max_long <- combined_bird_piv |> pull(Longitude) |> max()
-min_lat <- combined_bird_piv |> pull(Latitude) |> min()
-max_lat <- combined_bird_piv |> pull(Latitude) |> max()
+min_lon <- spring_data |>
+  pull(Longitude) |>
+  min()
+max_lon <- spring_data |>
+  pull(Longitude) |>
+  max()
+min_lat <- spring_data |>
+  pull(Latitude) |>
+  min()
+max_lat <- spring_data |>
+  pull(Latitude) |>
+  max()
 ```
 
 ```{r calc_lims_ans2}
-print (max_long)
+print(min_lon)
 ```
 
 ```{r calc_lims_ans3}
-print (min_lat)
+print(max_lon)
 ```
 
 ```{r calc_lims_ans4}
-print (max_lat)
+print(min_lat)
+```
+
+```{r calc_lims_ans5}
+print(max_lat)
 ```
 
 :::
@@ -197,37 +231,46 @@ We can use these numbers directly as our axis limits - but let's subtract `2` fr
 
 We can set the x axis limits as an argument to the `coord_quickmap()` function as follows:
 
+::: {.callout-important #note-scatterplots}
+
+For non-map data, we would most commonly use `coord_cartesian()` instead of `coord_quickmap()` here, which works in the same way.
+
+:::
+
 ```{r xlim_birds}
 ggplot(
-  combined_bird_piv,
+  spring_data,
   aes(x = Longitude, y = Latitude)
 ) +
   geom_point() +
-  annotation_borders(linewidth=0.2) +
-  coord_quickmap(xlim=c(min_long-2, max_long+2))
+  annotation_borders(linewidth = 0.2) +
+  coord_quickmap(xlim = c(min_lon - 2, max_lon + 2))
 ```
 ::: {.callout-exercise #ex-set_lims}
 
 {{< fa solid anchor >}}
 
-Set the y axis limits using your `min_lat` and `max_lat` variables as a second argument to `coord_quickmap()`.
+Add x and y axis limits to the plot in your **worked example** Quarto document, by adding your `min_lat` and `max_lat` and `min_lon` and `max_lon` variables as arguments to `coord_quickmap()`.
+
+
 
 ::: {.callout-answer collapse="true" #ex-set_lims_ans}
 ```{r set_lims_ans}
 ggplot(
-  combined_bird_piv,
+  spring_data,
   aes(x = Longitude, y = Latitude)
 ) +
   geom_point() +
-  annotation_borders(linewidth=0.2) +
+  annotation_borders(linewidth = 0.2) +
   coord_quickmap(
-  xlim=c(min_long-2, max_long+2),
-  ylim=c(min_lat-2, max_lat+2))
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  )
 ```
 :::
 :::
 
-## Group points {#sec-group_points}
+## Grouping points {#sec-group_points}
 
 [↑ top](#)
 
@@ -236,7 +279,7 @@ The aes() function controls how variables in the data are mapped to visual prope
 Let's revisit our data frame.
 
 ```{r revisit_data_frame}
-gt(combined_bird_piv)
+gt(spring_data)
 ```
 
 We want to set the colour by the `Site` column and the shape by the `Location_Type` column.
@@ -245,14 +288,15 @@ To set colour by `Site`, we add `color = Site` as an argument to the `aes()` fun
 
 ```{r colour_site}
 ggplot(
-  combined_bird_piv,
+  spring_data,
   aes(x = Longitude, y = Latitude, color = Site)
 ) +
   geom_point() +
-  annotation_borders(linewidth=0.2) +
+  annotation_borders(linewidth = 0.2) +
   coord_quickmap(
-  xlim=c(min_long-2, max_long+2),
-  ylim=c(min_lat-2, max_lat+2))
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  )
 ```
 
 Setting shape by `Location_Type` is very similar, we add `shape = Location_Type` as an argument to the `aes()` function.
@@ -261,24 +305,26 @@ Setting shape by `Location_Type` is very similar, we add `shape = Location_Type`
 
 {{< fa solid anchor >}}
 
-Add this argument to the `aes()` function, along with `color=Site`, to set both the shape and the colour of the points.
+In the plotting code in your **worked example** Quarto document, add the `shape = Location_Type` and `color = Site` arguments to the `aes()` function, to set both the shape and the colour of the points.
 
 ::: {.callout-answer collapse="true" #ex-set_shape_colour_ans}
 ```{r set_shape_colour_ans}
 ggplot(
-  combined_bird_piv,
-  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)) +
+  spring_data,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
+) +
   geom_point() +
-  annotation_borders(linewidth=0.2) +
+  annotation_borders(linewidth = 0.2) +
   coord_quickmap(
-  xlim=c(min_long-2, max_long+2),
-  ylim=c(min_lat-2, max_lat+2))
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  )
 ```
 :::
 :::
 
 
-## Add paths {#sec-add_paths}
+## Adding paths {#sec-add_paths}
 
 [↑ top](#)
 
@@ -288,46 +334,90 @@ To do this, we use the `geom_path()` function, grouping the points by breeding s
 
 ```{r connect_points}
 ggplot(
-  combined_bird_piv,
-  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)) +
+  spring_data,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
+) +
   geom_point() +
-  annotation_borders(linewidth=0.2) +
+  annotation_borders(linewidth = 0.2) +
   coord_quickmap(
-  xlim=c(min_long-2, max_long+2),
-  ylim=c(min_lat-2, max_lat+2)) + 
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  ) +
   geom_path(aes(group = Site))
 ```
 
-Now we have our plot! In the next part of the practical, you will generate a similar plot independently.
+::: {.callout-exercise #ex-add_paths}
 
-Meanwhile, there are various tweaks available if you want to change the appearance of your plot.
+{{< fa solid anchor >}}
+
+In the plotting code in your **worked example** Quarto document, add the `geom_path()` function with the argument `aes(group = Site)` to your plotting code.
+
+::: {.callout-answer collapse="true" #ex-add_paths_ans}
+```{r add_paths_ans}
+ggplot(
+  spring_data,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
+) +
+  geom_point() +
+  annotation_borders(linewidth = 0.2) +
+  coord_quickmap(
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  ) +
+  geom_path(aes(group = Site))
+```
+:::
+:::
+
+
+There are various tweaks available if you want to change the appearance of your plot.
 
 For example:
 
 * To change the size of the points, add e.g. `size = 3` as an argument to the `geom_point()` function.
-* To change the colour theme of all the data points, add `scale_color_brewer(palette = "PALETTE")`, changing PALETTE to anything on the chart on [this page](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
+* To change the width of the line, add e.g. `linewidth = 0.5` as an argument to the `geom_line()` function.
+* To change the colour theme of all the data points, add an additional layer with <code>scale_color_brewer(palette = "[PALETTE]{.orange-text}") </code>, changing [PALETTE]{.orange-text} to anything on the chart on [this page](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
 * You can change the overall theme of your plot using one of the theme options on [this page](https://ggplot2.tidyverse.org/reference/ggtheme.html)
+* You can add a title by adding a layer `ggtitle()`, with the title as the only argument.
 
 It's worthwhile to search online for other aesthetic changes you can make to your plot, many options are available.
+
+Add any of these that you like to the plotting code in your **worked example** Quarto document.
 
 E.g.
 
 ```{r tweak}
 ggplot(
-  combined_bird_piv,
-  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)) +
-  geom_point(size=4) +
-  annotation_borders(linewidth=0.2) +
+  spring_data,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
+) +
+  geom_point(size = 4) +
+  annotation_borders(linewidth = 0.2) +
   coord_quickmap(
-  xlim=c(min_long-2, max_long+2),
-  ylim=c(min_lat-2, max_lat+2)) + 
-  geom_path(aes(group = Site)) +
-  scale_color_brewer(palette='Dark2') +
-  theme_bw()
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  ) +
+  geom_path(aes(group = Site), size = 1) +
+  scale_color_brewer(palette = "Dark2") +
+  theme_bw() +
+  ggtitle("Spring Migration Routes")
 ```
+
+Now we have our plot! Compare it to Figure 1B in the publication.
+
+::: {.callout-exercise #ex-plot_winter}
+
+{{< fa solid flask >}}
+
+In your **worked example** Quarto document, repeat all of the steps above with your `autumn_data` data frame, to generate your own version of Figure 1A. 
+
+:::
+
+
 ## Review {#sec-summary_0203}
 
 [↑ top](#)
+You have now successfully generated two publication-quality plots based on real biological data!
 
 ::: {.callout-note #note-summary_0203}
 
@@ -341,6 +431,13 @@ ggplot(
 
 :::
 
-Remember to save your work before moving on to Part 4.
+For this part of the practical, the main files you have edited are:
+
+- `worked_example.qmd`
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 4.
 
 {{< include ../includes/git_commit.qmd >}}

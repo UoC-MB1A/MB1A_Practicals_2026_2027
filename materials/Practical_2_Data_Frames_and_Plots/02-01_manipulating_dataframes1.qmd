@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_2_Data_Frames_and_Plots
+doc-id: "0201"
+author: "Katy Brown"
 ---
 
 # Part 1: Basic Data Frame Operations {#sec-p1_basic_data_frame_operations}
@@ -28,24 +31,40 @@ By the end of this part of the practical you will be able to:
 ## Sync your Git repository
 {{< include ../includes/git_pull.qmd >}}
 
-## Dataset {#sec-dataset}
+## The dataset {#sec-dataset}
 
 [↑ top](#)
 
 In this practical, we will first work with a published dataset to learn how to perform various analyses in R. 
-
 You'll then be asked to carry out a similar analysis independently with data from a different source.
 
 For the worked example, we will use data from [this Science paper](https://doi.org/10.1126/science.ads0532), published in June 2026.
 This study tracked the migration of a songbird species, the pied flycatcher (*Ficedula hypoleuca*).
 
-We will reproduce Figure 1B from this paper, which shows the breeding site, post-Saharan stopover location and winter location for 8 bird populations.
+![Pied flycatcher](images/birdy.png){#fig-pied_flycatcher width="30%"}
+
+One of the most surprising findings of this study was that these birds take **very different routes** depending on the time of year. The authors demonstrated that:
+
+* In **spring**, the birds migrate north from their wintering grounds in West Africa. After crossing the Sahara, they stop over near the Mediterranean before continuing to their breeding sites in the north (Fig. 1B).
+* In **autumn**, the birds take a **much longer route**. They migrate south from their breeding sites, but — regardless of how far east their breeding site is — they all travel via the Iberian Peninsula (Spain and Portugal) before following the west coast of Africa to their wintering grounds (Fig. 1A). Why they take this detour is **currently unknown**.
+* As a result, spring migration routes are shorter and more variable than autumn migration routes.
+
+In our worked example, we will reproduce Figures 1A and 1B from this paper, illustrating this phenomenon. 
+
+For this practical, we recommend that you create three Quarto documents:
+
+* `{{< meta practical >}}/prac2_exercises.qmd` - general practice exercises
+* `{{< meta practical >}}/worked_example.qmd` - worked example
+* `{{< meta practical >}}/visualisation_exercise.qmd` - visualisation exercise
+
+Please briefly describe your analysis and show your code in each document.
+
 
 ::: {.callout-exercise #ex-view_plot}
 
 {{< fa solid anchor >}}
 
-Have a look at this plot and its legend.
+Have a look at the two plots and their legends.
 
 What are the `x` and `y` axis labels?
 
@@ -78,23 +97,26 @@ What do the shapes represent?
 The type of site:
 
 * Circles - breeding site
-* Triangles - post-Saharan stopover location
 * Squares - non-breeding area (this is the winter location)
-
+* Filled upward triangles - autumn post-Saharan stopover location
+* Filled downward triangles - spring Iberian stopover location
+* Open downward triangles - spring westernmost location
 :::
 
 :::
 
-All of the data we will use comes from the Supplementary Data associated with this publication.
+All of the data we will use here comes from the Supplementary Data associated with this publication.
 
-![Pied flycatcher](images/birdy.png){#fig-pied_flycatcher width="30%"}
 
 To produce this plot, we need a single data frame which contains all of the information in the plot:
 
 * Breeding site
 * Longitude and latitude of breeding site
-* Longitude and latitude of post-Saharan stopover
 * Longitude and latitude of winter non-breeding site
+* Longitude and latitude of post-Saharan stopover
+* Longitude and latitude of the Iberian stopover
+* Longitude and latitude of the westernmost location
+
 
 However, as is very common with biological datasets, the data provided with the publication is not in the ideal format for our needs. Therefore, there are various **data frame operations** we need to perform before we start plotting.
 
@@ -118,8 +140,11 @@ What is the longitude of the Moscow breeding site?
 
 ### Reading the breeding site CSV file
 
-Now we will start to build a new Quarto document to examine this dataset.
+Now we will start to build our Quarto document examining this dataset, `{{< meta practical >}}/worked_example.qmd`
 
+::: {.callout-note .copycode #copy-libraries}
+
+### Include this code
 You will need to include the following as an R code chunk at the start of the document.
 
 ```{r setup0201}
@@ -127,17 +152,18 @@ library(gt)
 library(tidyverse)
 ```
 
-There are two data frames needed - saved in your practical 2 data directory as `data/breeding_site_locations.csv` and `data/migratory_connectivity_dataset.csv`.
+:::
+
+There are two data frames needed - saved in your `{{< meta practical >}}/data`  directory as `data/breeding_site_locations.csv` and `data/migratory_connectivity_dataset.csv`.
 
 ::: {.callout-exercise #ex-read_csv}
 
 {{< fa solid anchor >}}
 
-In your document, read `data/breeding_site_locations.csv` into a variable, then view it with `gt`.
+In your **worked example** Quarto document, read `data/breeding_site_locations.csv` into a variable, then view it with `gt`.
 
 ::: {.callout-note #note-read_csv}
 Reminder: The R function `read_csv` reads a CSV file into R as a data frame. The function `gt` is used to view a data frame.
-
 :::
 
 ::: {.callout-answer collapse="true" #ex-read_csv_ans}
@@ -148,10 +174,13 @@ gt(bird_breeding_sites)
 :::
 :::
 
+```{r read_bird_data_hidden, echo=FALSE}
+bird_breeding_sites <- read_csv("data/breeding_site_locations.csv")
+```
+
 It should look like this:
 
 ```{r view_breeding_location_data}
-bird_breeding_sites <- read_csv("data/breeding_site_locations.csv")
 gt(bird_breeding_sites)
 ```
 
@@ -163,13 +192,13 @@ You can view just the column names from the data frame using the function `colna
 colnames(bird_breeding_sites)
 ```
 
-The contents of columns in this data frame are described in the publication, we will just focus on three for our main analysis.
+We will just focus on three columns for our main analysis.
 
-* Site - breeding site name used throughout the publication
-* Longitude - longitude of the breeding site
-* Latitude - latitude of the breeding site
+* **Site** - breeding site name used throughout the publication
+* **Longitude** - longitude of the breeding site
+* **Latitude** - latitude of the breeding site
 
-We can use the function `glimpse()` to see a summary of the data frame.
+We can use the function `glimpse()` to see a summary of the data frame - try this in your Quarto document.
 
 ```{r glimpse_birds}
 glimpse(bird_breeding_sites)
@@ -182,7 +211,7 @@ There is then a summary of each column. The second column shows `<chr>` or `<dbl
 
 ### Reading the migration site CSV file
 
-We also need to read a second CSV file into a data frame. This one contains the data about the post-Saharan stopover and winter migration sites for the birds. It is identical to one of the Supplementary Data files associated with the publication.
+We also need to read a second CSV file into a data frame. This one contains the data about the post-Saharan stopover, Iberian stopover, westernmost location and winter migration sites for the birds. It is identical to one of the Supplementary Data files associated with the publication.
 
 Unlike the breeding site data, in this table there are multiple records for each site - as the birds were recorded at multiple locations.
 
@@ -192,7 +221,7 @@ Unlike the breeding site data, in this table there are multiple records for each
 
 The data frame is saved in the `data` directory for this practical as `data/migratory_connectivity_dataset.csv`.
 
-In your Quarto document, please read the file into a variable and visualise the top 10 rows using the `gt()` and `head()` functions.
+In your **worked example** Quarto document, please read the file into a variable and visualise the top 10 rows using the `gt()` and `head()` functions.
 
 ::: {.callout-note #note-gt_head}
 Reminder: You can nicely visualise the top 10 rows of a data frame using `gt()` and `head()` together as follows, replacing `df_variable` with your variable name.
@@ -242,20 +271,24 @@ This data frame again has many columns.
 colnames(bird_migration_sites)
 ```
 
-The full details of all of the columns are provided in the supplementary data for the publication. 
+We will just use nine columns in our analysis:
 
-We will just use five columns in our analysis:
+* **Site** - breeding site name used throughout the publication
+* **winterLongitude** - longitude of the winter migration site
+* **winterLatitude** - latitude of the winter migration site
+* **pslon** - longitude of the post-Saharan stopover site
+* **pslat** - latitude of the post-Saharan stopover site
+* **iblon** - longitude of the Iberian stopover site
+* **iblat** - latitude of the Iberian stopover site
+* **awestlon** - longitude of the westernmost location
+* **awestlat** - latitude of the westernmost location
 
-* Site - breeding site name used throughout the publication
-* winterLongitude - longitude of the winter migration site
-* winterLatitude - latitude of the winter migration site
-* pslon - longitude of the post-Saharan stopover site
-* pslat - latitude of the post-Saharan stopover site
 
-
-## The Pipe Symbol {#sec-pipe}
+## The pipe symbol {#sec-pipe}
 
 [↑ top](#)
+
+We are going to make copies of these data frames with only the columns we are interested in.
 
 To do this, we first need to learn about the **pipe** symbol `|>`. This is an **operator** in R which is used to link multiple steps in an analysis.
 
@@ -286,14 +319,6 @@ my_numbers |>
   sqrt()
 ```
 
-This produces the same result as:
-
-```{r nopipe_longer}
-my_numbers <- c(2, 4, 6, 8)
-
-sqrt(sum(my_numbers))
-```
-
 You can keep adding additional steps to your pipe:
 
 ```{r pipe_longerer}
@@ -305,13 +330,6 @@ my_numbers |>
   round()
 ```
 
-This produces the same result as:
-
-```{r nopipe_longerer}
-my_numbers <- c(2, 4, 6, 8)
-
-round(sqrt(sum(my_numbers)))
-```
 
 We can assign the result to a variable using the `<-` operator as usual.
 
@@ -325,20 +343,18 @@ my_result <- my_numbers |>
 
 print(my_result)
 ```
-
 ::: {.callout-exercise #ex-pipe}
 
 {{< fa solid anchor >}}
-
-Using the pipe operator, calculate the absolute value (function `abs()`) of the mean (function `mean()` of this vector, then round it to the nearest whole number (`round()`). Assign the result to a variable.
+In your **Exercises** Quarto document, using the pipe operator, calculate the absolute value (function `abs()`) of the mean (function `mean()` of this vector, then round it to the nearest whole number (`round()`). Assign the result to a variable.
 
 ```{r pipe_vec}
-input_vec <- c(5, 10, 4, 3)
+input_vec <- c(5, -10, 4, -3)
 ```
 
 ::: {.callout-answer collapse="true #ex-pipe_ans}
 ```{r pipe_ans}
-input_vec <- c(5, 10, 4, 3)
+input_vec <- c(5, -10, 4, -3)
 
 result <- input_vec |>
   mean() |>
@@ -349,12 +365,11 @@ result <- input_vec |>
 :::
 :::
 
-
 ## Selecting columns {#sec-select}
 
 [↑ top](#)
 
-For simplicity, we can filter our data frames to just have the relevant columns. We will do this by **piping** our data to the function `select()`.
+To filter our data frames to just have the relevant columns, we will **pipe** our data to the function `select()`.
 
 Select takes the names of the columns you want to keep as arguments.
 
@@ -381,6 +396,12 @@ gt(bird_breeding_selected)
 
 I will also rename the columns in this new table to be a bit clearer, using the `rename()` function.
 
+::: {.callout-note .copycode #copy-pivot}
+
+### Include this code
+Add the code chunk below to your **worked example** Quarto document to filter, deduplicate and then rename columns in the bird_breeding_sites data frame.
+
+
 ```{r select_breeding_uni_rename}
 bird_breeding_selected <- bird_breeding_sites |>
   select(Site, Longitude, Latitude) |>
@@ -389,28 +410,50 @@ bird_breeding_selected <- bird_breeding_sites |>
 
 gt(bird_breeding_selected)
 ```
+:::
+
 ::: {.callout-exercise #ex-select_migration}
 
 {{< fa solid flask >}}
 
-Repeat this for the `bird_migration_sites` data frame:
+In your **worked example** Quarto document, repeat this for the `bird_migration_sites` data frame:
 
-* Select the columns Site, winterLongitude, winterLatitude, pslon, pslat
+* Select the columns Site, winterLongitude, winterLatitude, pslon, pslat, iblon, iblat, awestlon, awestlat
 * Take the distinct rows only
-* Rename winterLongitude as Winter_Longitude, winterLatitude as Winter_Latitude, pslon as Stopover_Longitude and pslat as Stopover_Latitude.
+* Rename:
+  + `winterLongitude` as `Winter_Longitude`
+  + `winterLatitude` as `Winter_Latitude`
+  + `pslon` as `Stopover_Longitude`
+  + `pslat` as `Stopover_Latitude`
+  + `iblon` as `Iberian_Longitude`
+  + `iblat` as `Iberian_Latitude`
+  + `awestlon` as `Westmost_Longitude`
+  + `awestlat` as `Westmost_Latitude`
 
 Store the result in a variable named `bird_migration_selected`.
 
 ::: {.callout-answer collapse="true" #ex-select_migration_ans}
 ```{r select_migration_ans}
 bird_migration_selected <- bird_migration_sites |>
-  select(Site, winterLongitude, winterLatitude, pslon, pslat) |>
+  select(Site,
+         winterLongitude,
+         winterLatitude,
+         pslon,
+         pslat,
+         iblon,
+         iblat,
+         awestlon,
+         awestlat) |>
   unique() |>
   rename(
     Winter_Longitude = winterLongitude,
     Winter_Latitude = winterLatitude,
     Stopover_Longitude = pslon,
-    Stopover_Latitude = pslat
+    Stopover_Latitude = pslat,
+    Iberian_Longitude = iblon,
+    Iberian_Latitude = iblat,
+    Westmost_Longitude = awestlon,
+    Westmost_Latitude = awestlat
   )
 
 gt(head(bird_migration_selected))
@@ -459,12 +502,12 @@ This shows `TRUE` because `x` is equal to `3`.
 
 {{< fa solid anchor >}}
 
-Assign `y` a value of 12 and then use comparison operators to show if:
+In your **Exercises** Quarto document, assign `y` a value of 12 and then use comparison operators to show if:
 
-`y` is equal to 7
-`y` is less than 15
-`y` is greater than 20
-`y` is less than or equal to 12
+* `y` is equal to 7
+* `y` is less than 15
+* `y` is greater than 20
+* `y` is less than or equal to 12
 
 :::{.callout-answer collapse="true" #ex-comparisons_ans}
 ```{r comparisons_ans1}
@@ -515,13 +558,13 @@ bird_breeding_long_10 <- bird_breeding_selected |> filter(Breeding_Longitude > 1
 gt(bird_breeding_long_10)
 ```
 
-For our analysis we will exclude the measurements from the `Spain` site, as their post-Saharan stopover locations are very close to their breeding locations. 
+For our analysis we will exclude the measurements from the `Spain` site, as this site has no data for the post-Saharan stopover location.
 
 ::: {.callout-exercise #ex-filter_breeding}
 
 {{< fa solid flask >}}
 
-Filter both the breeding site and the migration site data frames to exclude `Spain` from the `Site` column. Store these in the variables `bird_breeding_exc` and `bird_migration_exc`, respectively.
+In your **worked example** Quarto document, Filter both the breeding site and the migration site data frames to exclude `Spain` from the `Site` column. Store these in the variables `bird_breeding_exc` and `bird_migration_exc`, respectively.
 
 ::: {.callout-answer collapse="true" #ex-filter_breeding_ans}
 ```{r filter_breeding_ans1}
@@ -549,13 +592,23 @@ gt(head(bird_migration_exc))
 
 ### Summary
 
+So far, we have loaded our two data frames and selected the relevant columns.
+
 * The **pipe operator** (`|>`) allows us to pass data through a series of analysis steps.
 * `select()` allows us to choose specific columns from a data frame.
-* `filter()` allows us to select rows which match specific conditions.
+* `filter()` allows us to filter rows of the data frame based on specific criteria.
 
 :::
 
-Remember to save your work before moving on to Part 2.
+For this part of the practical, the main files you have created are:
+
+- `prac2_exercises.qmd`
+- `worked_example.qmd`
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 2.
 
 {{< include ../includes/git_commit.qmd >}}
 
