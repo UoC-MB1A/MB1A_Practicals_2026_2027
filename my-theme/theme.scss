@@ -191,6 +191,22 @@ div.callout-hint.callout-style-default > .callout-header {
   background-color: #f9f9f8;
 }
 
+/* Code copy callout */
+div.callout.copycode.callout {
+  border-left-color: #A3D1BE;
+}
+
+div.callout.copycode.callout-style-default > .callout-header {
+  background-color: #A3D1BE;
+  color: black;
+}
+
+div.callout.copycode > .callout-header::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  content: "\f0c5";
+  margin-right: 10px;
+}
 
 /*-- Figures & code output ------------------------------------------------*/
 .figure {
@@ -292,5 +308,17 @@ pre.text {
 img.inline-icon {
   height: 1.2em;
   vertical-align: -0.15em;
+}
+
+.red-text {
+  color: crimson;
+}
+
+.blue-text {
+  color: mediumblue;
+}
+
+.orange-text {
+  color: darkorange;
 }
 

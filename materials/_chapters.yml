@@ -4,8 +4,9 @@ book:
       chapters:
         - materials/Practical_1_Introduction_to_R/01-00_learning_obj.qmd
         - materials/Practical_1_Introduction_to_R/01-01_using_r_and_rstudio.qmd
-        - materials/Practical_1_Introduction_to_R/01-02_simple_variables_functions.qmd
-        - materials/Practical_1_Introduction_to_R/01-03_complex_variables_plotting.qmd
+        - materials/Practical_1_Introduction_to_R/01-02_quarto.qmd
+        - materials/Practical_1_Introduction_to_R/01-03_simple_variables_functions.qmd
+        - materials/Practical_1_Introduction_to_R/01-04_complex_variables_plotting.qmd
 
     - part: "Practical 2 - Data Frames and Visualisation"
       chapters:
