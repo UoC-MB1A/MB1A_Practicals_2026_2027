@@ -169,7 +169,7 @@ At the start of each practical session, you should follow the instructions below
 
 {{< include materials/includes/git_pull.qmd >}}
 
-At the end of each session, you should follow the instructions below (again, we will remind you!). You will need to do this at the end of the session today.
+At the end of each session, you should follow the instructions below (again, we will remind you!). 
 
 {{< include materials/includes/git_push.qmd >}}
 
