@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_5_Bioinformatics
+doc-id: "0503"
+author: "Katy Brown"
 ---
 
 # Part 3: Identifying Sequences with BLAST {#sec-p3_blast}

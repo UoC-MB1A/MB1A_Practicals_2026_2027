@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_5_Bioinformatics
+doc-id: "0504"
+author: "Katy Brown"
 ---
 
 # Part 4: Multiple Sequence Alignment and Phylogeny {#sec-p4_msa_phylogeny}

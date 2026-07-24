@@ -3,6 +3,7 @@ title: "Plan and Learning Objectives"
 format: html
 practical: Practical_1_Introduction_to_R
 doc-id: "0100"
+author: "Katy Brown"
 ---
 
 ```{r setup, include=FALSE}

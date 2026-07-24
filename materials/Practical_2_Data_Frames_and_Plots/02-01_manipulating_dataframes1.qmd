@@ -150,6 +150,7 @@ You will need to include the following as an R code chunk at the start of the do
 ```{r setup0201}
 library(gt)
 library(tidyverse)
+library(maps)
 ```
 
 :::

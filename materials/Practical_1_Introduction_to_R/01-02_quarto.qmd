@@ -2,6 +2,7 @@
 format: html
 practical: Practical_1_Introduction_to_R
 doc-id: "0102"
+author: "Katy Brown"
 ---
 ```{r setup0102, include=FALSE}
 library(styler)

@@ -1,6 +1,9 @@
 ---
 title: "Plan and Learning Objectives"
 format: html
+practical: Practical_5_Bioinformatics
+doc-id: "0500"
+author: "Katy Brown"
 ---
 
 ```{r setup, include=FALSE}

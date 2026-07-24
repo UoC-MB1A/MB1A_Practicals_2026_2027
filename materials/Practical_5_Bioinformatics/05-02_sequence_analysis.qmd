@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_5_Bioinformatics
+doc-id: "0502"
+author: "Katy Brown"
 ---
 
 # Part 2: Finding Open Reading Frames {#sec-p2_finding_orfs}

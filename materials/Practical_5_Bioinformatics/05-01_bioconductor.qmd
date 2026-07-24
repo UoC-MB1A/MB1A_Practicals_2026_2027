@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_5_Bioinformatics
+doc-id: "0501"
+author: "Katy Brown"
 ---
 
 # Part 1: Introduction to Bioconductor and Sequence Analysis in R {#sec-p1_intro_bioconductor}

@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_5_Bioinformatics
+doc-id: "0505"
+author: "Katy Brown"
 ---
 
 # Part 5: Share your results {#sec-p5_share_results}
