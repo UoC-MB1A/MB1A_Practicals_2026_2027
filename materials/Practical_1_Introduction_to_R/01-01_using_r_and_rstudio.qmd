@@ -1,5 +1,7 @@
 ---
 format: html
+practical: Practical_1_Introduction_to_R
+doc-id: "0101"
 ---
 ```{r setup0101, include=FALSE}
 library(styler)
@@ -9,11 +11,11 @@ library(styler)
 
 ::: {.callout-note .partmenu #parts-0101}
 ## Sections
+- @sec-open_r
 - @sec-r_language
 - @sec-coding_in_the_console
 - @sec-rstudio_interface
-- @sec-console_scripts_quarto
-- @sec-documenting_and_formatting_your_code
+- @sec-console_scripts
 - @sec-summary_0101
 :::
 
@@ -22,12 +24,15 @@ library(styler)
 By the end of this part of the practical you should be able to:
 
 - Explain what R is and why it is useful for biological data analysis.
-- Use some features of the RStudio interface
-- Use the R console, scripts and Quarto documents to run R code.
-- Create a simple reproducible analysis using Quarto.
-- Understand the benefits of writing clear, well-formatted and documented R code.
+- Use some features of the RStudio interface.
+- Use the R console and R scripts to run R code.
 
 :::
+
+## Loading RStudio and syncing {#sec-open_r}
+
+{{< include ../includes/git_pull.qmd >}}
+
 
 ## The R language {#sec-r_language}
 
@@ -39,7 +44,7 @@ In this session, we will learn the basics of using the programming language **R*
 
 The R language was initially developed by two programmers, Ross Ihaka and Robert Gentleman, in 1993, for teaching introductory statistics. It has become one of the most commonly used languages in scientific computing, particularly amongst biologists.
 
-### Why Learn R?
+### Why learn R?
 
 R provides many of the same functions as spreadsheet tools such as MS Excel and Google Sheets, and statistics and graphing software like SPSS and GraphPad.
 
@@ -49,7 +54,7 @@ However, R has lots of advantages over these tools:
 - It allows you to automate repetitive tasks rather than repeating the same steps manually.
 - It creates reproducible workflows: every step of your analysis can be recorded, checked and repeated by yourself or others.
 
-## Coding in the Console {#sec-coding_in_the_console}
+## Coding in the console {#sec-coding_in_the_console}
 
 [↑ top](#)
 
@@ -58,6 +63,7 @@ Before we go any further, let's try writing some R code.
 When you first open your RStudio project, your screen will look like this.
 
 ![The welcome screen of RStudio](images/rstudio_no_source.png){#fig-rstudio_main width="100%"}
+
 
 We will look at other parts of the screen shortly, but for now let's focus on the **Console**.
 
@@ -91,7 +97,7 @@ However, it can be useful to use the console, for example to quickly try somethi
 
 {{< fa solid anchor >}}
 
-- In your console, create a variable with your first name. The syntax you will need to use is as follows - replace "Mary" with your own name.
+- In your console, create a variable with your first name. The syntax you will need to use is as follows - replace "[Mary]{.red-text}" with your own name.
 
 ```{r name_var}
 my_name <- "Mary"
@@ -108,12 +114,12 @@ print(paste("Hi", my_name, "Welcome to R!"))
 ::: {.callout-important #note-r_prompt}
 ## The R prompt
 
-If R is ready to accept commands, the R console shows a `>` prompt. 
+If R is ready to accept commands, the R console shows a `>` symbol. 
 
-If the console shows a `+` prompt, this means it is waiting for something - you have most likely not 'closed' a parenthesis or quotation, i.e. you don't have the same number of left-parentheses as right-parentheses, or the same number of opening and closing quotation marks. When this happens, and you thought you finished typing your command, click inside the console window and press {{< kbd Escape >}}. This will cancel the incomplete command and return you to the `>` prompt.
+If the console shows a `+` symbol, this means it is waiting for something - you have most likely not 'closed' a parenthesis or quotation, i.e. you don't have the same number of left-parentheses as right-parentheses, or the same number of opening and closing quotation marks. When this happens, and you thought you finished typing your command, click inside the console window and press {{< kbd Escape >}}. This will cancel the incomplete command and return you to the `>` prompt.
 :::
 
-## The RStudio Interface {#sec-rstudio_interface}
+## The RStudio interface {#sec-rstudio_interface}
 
 [↑ top](#)
 
@@ -125,14 +131,14 @@ Now we will learn a bit about the rest of RStudio.
 
 In the image above you can see that the window is divided into three main parts, each with various tabs. In clockwise order we have:
 
-1.  **Console** / Terminal / Background jobs
-2.  **Environment** / History / Connections / Tutorial / **Git**
-3.  Files / Plots / Packages / **Help** / Viewer / Presentation
+1.  **[Console]{.orange-text}** / Terminal / Background jobs
+2.  **[Environment]{.orange-text}** / History / Connections / Tutorial / **[Git]{.orange-text}**
+3.  Files / Plots / Packages / **[Help]{.orange-text}** / Viewer / Presentation
 
-In bold we've highlighted the tabs we'll be using most.
+In orange we've highlighted the tabs we'll be using most.
 
-* In the **Console** we can directly run code, as you did above.
-* The **Environment** shows any information that is stored in R's memory (empty in the figure above). 
+* In the **[Console]{.orange-text}** we can directly run code, as you did above.
+* The **[Environment]{.orange-text}** shows any information that is stored in R's memory (empty in the figure above). 
 
 
 Click on the environment now - you should see two variables: `x`, with a value of 8 and `my_name`, with whatever you entered as your name above.
@@ -140,15 +146,15 @@ Click on the environment now - you should see two variables: `x`, with a value o
 ![The environment tab](images/environment_tab.png){#fig-env_tab width="50%"}
 
 
-* The **Git** tab allows you to interact with Git and GitHub, as we saw above.
+* The **[Git]{.orange-text}** tab allows you to interact with Git and GitHub, as we saw above.
 
-* **Help** is where you can go for help. 
+* **[Help]{.orange-text}** is where you can go for help. 
 
 ::: {.callout-exercise #ex-r_help}
 
 {{< fa solid anchor >}}
 
-In the search box on the Help tab, search for the function `sum()`.
+In the search box on the Help tab, search for the function `sum`.
 
 Using the **Examples** section as a guide, calculate the sum of the numbers 2, 3, 4 in the console.
 
@@ -159,23 +165,17 @@ sum(2, 3, 4)
 :::
 :::
 
-## The console, scripts and Quarto{#sec-console_scripts_quarto}
+## R Scripts {#sec-console_scripts}
 
 [↑ top](#)
 
-The basis of programming is that we create or *code* instructions for the computer to follow. Next, we tell the computer to follow the instructions by *executing* or *running* those instructions.
+The basis of programming is that we create or **code** instructions for the computer to follow.
 
-There are three main ways in which we will interact with the R language: 
-
-* The console - as we discussed above
-* Scripts
-* Quarto
-
-### Scripts
+Next, we tell the computer to follow the instructions by **executing** or **running** those instructions.
 
 In your RStudio window, choose `File` \> `New File` \> `R Script`. This will add a new panel to your RStudio session, the **Source** panel.
 
-![The source and console panels](images/rstudio_with_source.png){#fig-rstudio_labelled}
+![The source and console panels](images/rstudio_with_source.png){.screenshot #fig-rstudio_labelled}
 
 Here, we can save our code as a script. This is a list of commands which the R interpreter will execute in order. The script represents a complete record of what we did, and anyone (including our future selves!) can easily replicate the results on their computer. We can also use a script to repeatedly perform the same or similar tasks.
 
@@ -186,7 +186,7 @@ Here, we can save our code as a script. This is a list of commands which the R i
 | no record | records actions |
 | difficult to trace progress | transparent workflow |
 
-#### Creating a Script
+#### Creating a script
 
 To create a script, we put a list of commands for R to run into the `Source` panel.
 
@@ -211,7 +211,9 @@ my_name <- "Mary"
 print(paste("Hi", my_name, "Welcome to R!"))
 ```
 
-Write a script based on this code but to display, for example, "My name is Jeremy and I am 27 years old", but with your own (or another) name and age. Run your script using the ![source_button](../images/source_button.png){.inline-icon} button.
+Write a script based on this code but to display, for example, "My name is Jeremy and I am 27 years old", but with your own (or another) name and age. Run your script using the ![source_button](../images/source_button.png){.inline-icon} button. 
+
+Save your script as `my_first_script.R` (using `File` > `Save As`). You can save it directly into the **`{{< meta practical >}}`** folder.
 
 ::: {.callout-answer collapse="true" #ex-first_script_ans}
 ```{r first_script_ans}
@@ -220,148 +222,6 @@ my_age <- 27
 print(paste("My name is", my_name, "and I am", my_age, "years old"))
 ```
 :::
-:::
-
-### Quarto
-
-[↑ top](#)
-
-Throughout this course, we will write our code in Quarto documents (.qmd) rather than using the R Console or standalone R scripts. 
-
-* The Console is useful for trying out individual commands, but anything you type there is easily lost.
-* R scripts allow you to save your code, but it is not easy to include explanations, figures, or results in the same file.
-* Quarto documents combine text, code and output into a single file, making it easy to explain what you are doing, present your results, and reproduce your analysis. This helps you keep an organised record of your work and is widely used for teaching, research and data science.
-
-The main reason to use Quarto is to make your research **reproducible**. You will likely have learned about this previously for lab-based research, but reproducibility is just as important for computer-based science.
-
-Optional homework: There is an interesting lecture [here](https://youtu.be/7gYIs7uYbMo?si=uU9m308A8AtqvKCC) about the importance of reproducibility in computational biology.
-
-
-
-#### Creating a Quarto document
-
-To create a new Quarto document in RStudio, select `File` > `New File` > `Quarto Document`. Give the document a title and add your own name as the author, then uncheck the box next to `Use visual markdown editor` and select `Create empty document`.
-
-![New quarto document](images/new_quarto.png){#fig-new_quarto}
-
-You should see something like this:
-
-![Empty quarto document](images/first_quarto.png){#fig-first_quarto .screenshot width="50%"}
-
-In this document, we can combine code, text and images.
-
-We can type explanatory text directly into the document. To add code, click on the `Insert a New Code Chunk` ![chunk_button](../images/source_button.png){.inline-icon} button and choose `R`. Anything within this chunk will be interpreted as R code.
-
-
-Type the following into your Quarto document, below the header.
-
-```markdown
-I have measured the diameter of four bacterial colonies.
-The results were as follows: 2.2mm 1.6mm, 3.3mm, 4.0mm.
-
-I want to calculate the total diameter of these colonies.
-```
-
-Then, using the ![chunk_button](../images/source_button.png){.inline-icon} button, add the following code chunk.
-
-```{r}
-total_colony_diameter <- sum(2.2, 1.6, 3.3, 4.0)
-print(total_colony_diameter)
-```
-You can run just this code chunk by clicking the small play button in the corner of the chunk, or by clicking on it and then pressing  {{< kbd Control >}} + {{< kbd Shift >}} + {{< kbd Enter >}}.
-
-![Run button](images/code_chunk.png){#fig-code_chunk}
-
-Below your code chunk, type the following:
-
-```markdown
-The total diameter of my colonies is 11.1cm.
-```
-Running a code chunk executes only that piece of code. Rendering a Quarto document runs all the code and creates the final report.
-
-Produce a report based on your document by clicking the `Render` button - ![render_button](../images/render_button.png){.inline-icon}. This runs all of the code and formats the document into **html** format, so it is easy to read and share.
-
-Your first Quarto report should open in a new window. A **html** file will also be created in the same folder as your Quarto file, which you can open in a web browser.
-
-![Rendered quarto document](images/first_quarto_rendered.png){#fig-first_quarto_rendered .screenshot}
-
-As our code becomes more complicated, the value of using Quarto will become much clearer.
-
-::: {.callout-exercise #ex-quarto}
-
-{{< fa solid flask >}}
-
-The Human Protein Atlas (HPA) is a research project which was initiated in 2003 with the aim to map all the human proteins in cells, tissues, and organs using  various omics technologies.
-
-We are going to look at a small amount of data from the HPA brain resource, which explores the distribution of proteins in various regions of the mammalian brain.
-
-There is a description of the brain data [here](https://www.proteinatlas.org/humanproteome/brain) and a description of how the data was analysed [here](https://www.proteinatlas.org/humanproteome/brain/method) - you don't need to understand everything for this practical, but it is always good practice to read how your data has been generated.
-
-On the [brain data](https://www.proteinatlas.org/humanproteome/brain) page, the **BRAIN SUMMARY** table shows the number of genes which were categorised as *regionally elevated* in different regions of the brain. Genes were classed as regionally elevated if they showed distinctly higher expression in these regions than in the rest of the brain.
-
-Create a new Quarto document and, based on the brain summary table, using R, calculate the total number of genes with regionally elevated expression in the **forebrain** - that is, the cerebral cortex, basal ganglia, thalamus and hypothalamus - regions in human, pig and mouse. 
-
-In your Quarto document:
-
-* Briefly (1-2 lines of text) describe your method.
-* Show the code used to calculate your results.
-* Write a one line summary of which species had the highest number of genes with regionally elevated expression.
-
-:::
-
-
-## Documenting and formatting your code {#sec-documenting_and_formatting_your_code}
-
-[↑ top](#)
-
-### Documentation
-
-It's always a good idea to add explanations to your code. We can do so in Quarto, by writing a description of what we're trying to do.
-
-Within a code chunk, we can also use  the hash tag `#` symbol to add comments, as shown below.
-
-```{r code_chunk}
-#| eval: false
-
-# This code calculates the sum of two numbers
-1 + 9
-```
-
-It's always a good idea to add lots of comments to your code. What makes sense to you in that moment, might not a week later. Similarly, when sharing code with colleagues and collaborators, it's always good to be as clear as possible.
-
-### Formatting your code
-
-Writing code that is well formatted - arranged neatly on the page with appropriate line breaks and spaces -  makes it easier for you and others to understand, check, and reuse. 
-
-Good formatting helps highlight the structure of your code, makes mistakes easier to spot, and allows collaborators to quickly see what your code is doing. In research and industry, code is often shared between people and revisited months or years later, so clear and consistent formatting is an important part of writing reproducible and maintainable analyses.
-
-In this course, we will use the [tidyverse style guide](https://style.tidyverse.org/syntax.html) where possible. This document contains lots of references to things we haven't covered yet. However, RStudio has an option to automatically style code, which we'll use for now.
-
-In the Quarto document you created above, click on `Addins` on the menu and then `Style active file` - this will automatically change your code to the tidyverse style where possible. 
-
-::: {.callout-important #note-quarto_errors}
-This function will only work if your code is able to run without errors and you've saved your Quarto document
-:::
-
-![Style Active File](images/styler.png){#fig-styler .screenshot width="50%"}
-
-For example, the `Style active file` feature removes the extraneous spaces from the following code.
-
-Before:
-
-![Bad formatting](images/bad_formatting.png){#fig-bad_formatting width="50%"}
-
-After:
-
-![Good formatting](images/good_formatting.png){#fig-good_formatting width="50%"}
-
-Also, where you need to give something a name in R, it is helpful to use a name which describes what it is. For example, rather than `x <- 12` it is preferable to write e.g. `mean_size <- 12`.
-
-::: {.callout-exercise #ex-formatting}
-
-{{< fa solid flask >}}
-
-Format the code in the HPA data Quarto document you created earlier using the `Style active file` feature. It may not change at all, or it may change a lot. Change any variable names to be informative, if they are not already.
 :::
 
 ## Review {#sec-summary_0101}
@@ -374,8 +234,12 @@ Format the code in the HPA data Quarto document you created earlier using the `S
 - **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.
 - We can code interactively in the **console** but it is not easy to track or document.
 - **Scripts** contain simple lists of commands for R to carry out.
-- **Quarto** documents combine text, code and images to make your analysis clear and reproducible.
-- Code **formatting** and **documentation** are important to keep your code readable and reusable.
 :::
+
+For this part of the practical, the main files you have created are:
+
+- `my_first_script.R`
+
+These are the files you should select when making your Git commit.
 
 {{< include ../includes/git_commit.qmd >}}

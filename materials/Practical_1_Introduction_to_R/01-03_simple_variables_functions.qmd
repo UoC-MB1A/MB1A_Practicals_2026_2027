@@ -1,24 +1,26 @@
 ---
 format: html
+practical: Practical_1_Introduction_to_R
+doc-id: "0103"
 ---
 
-```{r setup0102, include=FALSE}
+```{r setup0103, include=FALSE}
 library(gt)
 ```
 
-# Part 2: Functions and Variables {#sec-p2_functions_and_variables}
+# Part 3: Functions and Variables {#sec-p3_functions_and_variables}
 
-::: {.callout-note .partmenu #parts-0102}
+::: {.callout-note .partmenu #parts-0103}
 ## Sections
 - @sec-functions
 - @sec-arguments
 - @sec-variables
 - @sec-variable_types
-- @sec-summary_0102
+- @sec-summary_0103
 
 :::
 
-:::{.callout-tip .objectives #objectives-0102}
+:::{.callout-tip .objectives #objectives-0103}
 ## Learning objectives
 By the end of this part of the practical you should be able to:
 
@@ -28,13 +30,14 @@ By the end of this part of the practical you should be able to:
 - Know the difference between a character, numeric and logical variable.
 
 :::
-For this part of the practical, we recommend that you store your analysis in a single Quarto document, with a brief description above each piece of code explaining what it does.
+
+For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, ``{{< meta practical >}}/prac1_part3_4.qmd`. You can describe the code if you wish, or just label it with the exercise number. For the data analysis exercises in Part 4: exercises 5 and 6, please create a second Quarto document `{{< meta practical >}}/ukhsa_data_analysis.qmd` and briefly describe your analysis.
 
 ## Functions {#sec-functions}
 
 [↑ top](#)
 
-Functions take inputs (called arguments), perform an action, and often return an output. They allow us to perform common tasks without writing the same code repeatedly.
+**Functions** take an input (called an **argument**), perform an action, and often return an output. They allow us to perform common tasks without writing the same code repeatedly.
 
 ![Functions](images/function_illu.png){#fig-functions width='50%'}
 
@@ -45,7 +48,9 @@ We have used some functions already:
 
 Functions allow us to do the same thing multiple times without rewriting code. We can also write our own functions, we'll come to this in a later practical.
 
-A function usually takes one or more inputs called *arguments*. Functions often (but not always) return an output. A typical example would be the function `sqrt()`. The input (the argument) must be a number, and the output is the square root of that number.
+A function usually takes one or more inputs called **arguments**. They often (but not always) return an output.
+
+A typical example would be the function `sqrt()`. The input (the argument) must be a number, and the output is the square root of that number.
 
 ![Functions](images/function_illu_sqrt.png){#fig-func_sqrt width="50%"}
 ```{r square_root}
@@ -75,7 +80,7 @@ round(3.14159)
 
 Arguments allow you to control the behaviour of a function. They can be anything, not only numbers. Exactly what each argument means differs per function and can be looked up in the documentation. 
 
-Some functions take arguments which may either be specified by the user, or, if left out, take on a *default* value: these are called *options*.
+Some functions take arguments which may either be specified by the user, or, if left out, take on a **default** value: these are called **options**.
 
 Options are typically used to alter the way the function operates.
 
@@ -376,11 +381,11 @@ n_after_2 <- 7543
 :::
 :::
 
-## Review {#sec-summary_0102}
+## Review {#sec-summary_0103}
 
 [↑ top](#)
 
-::: {.callout-note #note-summary_0102}
+::: {.callout-note #note-summary_0103}
 ## Summary
 - A **function** performs a specific task, usually taking one or more inputs (called **arguments**) and often returning an output.
 - **Arguments** provide information to a function and control how it behaves. Some arguments are optional and have default values.
@@ -390,4 +395,4 @@ n_after_2 <- 7543
 - The `class()` function tells you what type of data a variable contains.
 :::
 
-{{< include ../includes/git_commit.qmd >}}
+

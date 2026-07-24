@@ -1,6 +1,8 @@
 ---
 title: "Plan and Learning Objectives"
 format: html
+practical: Practical_1_Introduction_to_R
+doc-id: "0100"
 ---
 
 ```{r setup, include=FALSE}
@@ -19,9 +21,21 @@ library(tidyverse)
 - @sec-r_language
 - @sec-coding_in_the_console
 - @sec-rstudio_interface
-- @sec-console_scripts_quarto
+- @sec-console_scripts
+
+#### Learning Objectives
+
+By the end of this part of the practical you should be able to:
+
+- Explain what R is and why it is useful for biological data analysis.
+- Use some features of the RStudio interface
+- Use the R console and R scripts to run R code.
+
+### @sec-p2_quarto
+
+#### Sections
+- @sec-quarto
 - @sec-documenting_and_formatting_your_code
-- @sec-summary_0101
 
 #### Learning Objectives
 
@@ -33,14 +47,14 @@ By the end of this part of the practical you should be able to:
 - Create a simple reproducible analysis using Quarto.
 - Understand the benefits of writing clear, well-formatted and documented R code.
 
-### @sec-p2_functions_and_variables
+
+### @sec-p3_functions_and_variables
 
 #### Sections
 - @sec-functions
 - @sec-arguments
 - @sec-variables
 - @sec-variable_types
-- @sec-summary_0102
 
 #### Learning Objectives
 
@@ -51,7 +65,7 @@ By the end of this part of the practical you should be able to:
 - Explain the concept of a variable and use variables in your code.
 - Know the difference between a character, numeric and logical variable.
 
-### @sec-p3_vectors_data_frames_plots
+### @sec-p4_vectors_data_frames_plots
 
 #### Sections
 - @sec-packages
@@ -59,7 +73,6 @@ By the end of this part of the practical you should be able to:
 - @sec-data_frames
 - @sec-csv
 - @sec-plots
-- @sec-summary_0103
 
 By the end of this part of the practical you should be able to:
 
