@@ -1,0 +1,42 @@
+---
+format: html
+practical: Practical_6_Programming_and_Further_Statistics
+doc-id: "0601"
+author: "Katy Brown"
+---
+# Practical 6 - Programming and Further Statistics
+
+::: {.callout-tip .partmenu #parts-0600}
+
+## Practical 6 - Programming and Further Statistics
+
+### @sec-p1_functions
+
+#### Sections
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+### @sec-p2_conditional_statements
+
+#### Sections
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+### @sec-p3_power_analysis
+
+#### Sections
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+### @sec-p4_bootstrapping
+
+#### Sections
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+
+:::

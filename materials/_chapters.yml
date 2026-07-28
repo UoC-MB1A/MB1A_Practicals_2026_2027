@@ -24,3 +24,11 @@ book:
         - materials/Practical_5_Bioinformatics/05-03_blast.qmd
         - materials/Practical_5_Bioinformatics/05-04_align_phylo.qmd
         - materials/Practical_5_Bioinformatics/05-05_share_data.qmd
+  
+    - part: "Practical 6 - Programming and Further Statistics"
+      chapters:
+       - materials/Practical_6_Programming_and_Further_Statistics/06-00_learning_obj.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-01_functions_and_loops.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-02_conditional_statements.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-03_power_analysis.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-04_bootstrapping.qmd

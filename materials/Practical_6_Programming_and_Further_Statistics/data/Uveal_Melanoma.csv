@@ -1,0 +1,6 @@
+Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
+EIF1AX,Uveal_Melanoma,10,1,10,1
+SF3B1,Uveal_Melanoma,18,0,18,0
+GNAQ,Uveal_Melanoma,41,1,40,1
+GNA11,Uveal_Melanoma,36,0,36,0
+BAP1,Uveal_Melanoma,13,10,13,10

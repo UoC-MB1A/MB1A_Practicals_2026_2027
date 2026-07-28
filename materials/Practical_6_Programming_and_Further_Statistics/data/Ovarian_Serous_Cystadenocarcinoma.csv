@@ -1,0 +1,8 @@
+Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
+TTN,Ovarian_Serous_Cystadenocarcinoma,16,1,10,1
+KMT2C,Ovarian_Serous_Cystadenocarcinoma,9,2,9,2
+RYR1,Ovarian_Serous_Cystadenocarcinoma,7,0,7,0
+TP53,Ovarian_Serous_Cystadenocarcinoma,59,25,56,25
+MUC17,Ovarian_Serous_Cystadenocarcinoma,7,0,7,0
+AHNAK,Ovarian_Serous_Cystadenocarcinoma,12,1,10,1
+DNAH8,Ovarian_Serous_Cystadenocarcinoma,7,2,7,2

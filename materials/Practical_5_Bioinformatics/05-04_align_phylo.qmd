@@ -248,8 +248,6 @@ Save all of the trees as PDFs in your output directory as <code><span style="col
 
 ### Summary
 
-You have:
-
 * `DNAStringSet` and `AAStringSet` objects can be concatenated with the `c()` function
 * The `msa` function can be used to generate multiple sequence alignments from sets of biologist sequences.
 * The IQ-TREE web server is a good way to construct maximum-likelihood phylogenies.

@@ -1,0 +1,4 @@
+Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
+TP53,Prostate_Adenocarcinoma,60,18,57,17
+TTN,Prostate_Adenocarcinoma,104,13,62,9
+SPOP,Prostate_Adenocarcinoma,56,2,55,2

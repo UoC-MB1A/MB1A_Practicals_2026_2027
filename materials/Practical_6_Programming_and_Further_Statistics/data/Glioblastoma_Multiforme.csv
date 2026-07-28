@@ -1,0 +1,13 @@
+Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
+OBSCN,Glioblastoma_Multiforme,80,5,32,4
+TTN,Glioblastoma_Multiforme,235,14,94,11
+FLG,Glioblastoma_Multiforme,57,5,42,5
+PIK3R1,Glioblastoma_Multiforme,36,19,34,18
+NF1,Glioblastoma_Multiforme,52,37,35,29
+RYR2,Glioblastoma_Multiforme,49,1,39,1
+PIK3CA,Glioblastoma_Multiforme,39,10,35,10
+PTEN,Glioblastoma_Multiforme,109,49,104,49
+TP53,Glioblastoma_Multiforme,114,26,94,24
+MUC16,Glioblastoma_Multiforme,109,7,58,5
+EGFR,Glioblastoma_Multiforme,101,1,74,1
+PCLO,Glioblastoma_Multiforme,44,6,34,6

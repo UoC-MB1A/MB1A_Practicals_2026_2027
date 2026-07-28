@@ -1,5 +1,8 @@
 ---
 format: html
+practical: Practical_1_Introduction_to_R
+doc-id: "0002"
+author: "Katy Brown"
 ---
 
 # Setting Up RStudio and GitHub {#sec-p1_setup}

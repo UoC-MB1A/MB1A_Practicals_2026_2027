@@ -1,0 +1,6 @@
+Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
+ATRX,Sarcoma,39,31,37,31
+TTN,Sarcoma,70,6,38,5
+RB1,Sarcoma,28,26,26,24
+TP53,Sarcoma,92,37,87,37
+MUC16,Sarcoma,48,2,33,2

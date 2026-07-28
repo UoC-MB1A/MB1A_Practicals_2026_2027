@@ -1,0 +1,38 @@
+---
+format: html
+practical: Practical_6_Programming_and_Further_Statistics
+doc-id: "0602"
+author: "Katy Brown"
+---
+# Part 2: Conditional Statements {#sec-p2_conditional_statements}
+
+::: {.callout-note .partmenu #parts-0602}
+## Sections
+
+:::
+
+:::{.callout-tip .objectives #objectives-0602}
+
+#### Learning objectives
+By the end of this part of the practical you will have:
+
+:::
+
+## Review {#sec-summary_0602}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0602}
+
+### Summary
+
+You have:
+
+:::
+
+For this part of the practical, the main files you have edited are:
+
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
