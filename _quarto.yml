@@ -51,6 +51,8 @@ book:
       ![](https://creativecommons.org/images/deed/cc_icon_black_x2.png){width=25px} 
   search:
     location: sidebar
+  sidebar:
+    collapse-level: 1
   bread-crumbs: false
   page-navigation: true
   navbar:

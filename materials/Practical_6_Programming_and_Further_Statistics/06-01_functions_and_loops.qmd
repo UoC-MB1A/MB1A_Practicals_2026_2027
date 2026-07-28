@@ -403,9 +403,6 @@ You should now be able to run your function, let's try with the `Lung_Adenocarci
 mutations_lung_ac <- process_cancer_df("Lung_Adenocarcinoma")
 gt(head(mutations_lung_ac))
 ```
-:::
-:::
-
 
 ## Review {#sec-summary_0601}
 
