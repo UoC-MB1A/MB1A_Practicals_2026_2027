@@ -1,6 +1,0 @@
-Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
-TTN,Adrenocortical_Carcinoma,31,3,13,2
-CTNNB1,Adrenocortical_Carcinoma,14,4,14,4
-PKHD1,Adrenocortical_Carcinoma,13,1,10,1
-TP53,Adrenocortical_Carcinoma,20,13,18,12
-MUC16,Adrenocortical_Carcinoma,21,1,14,1

@@ -1,7 +1,0 @@
-Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
-SETD2,Kidney_Renal_Clear_Cell_Carcinoma,56,41,50,37
-TTN,Kidney_Renal_Clear_Cell_Carcinoma,121,16,92,15
-PBRM1,Kidney_Renal_Clear_Cell_Carcinoma,157,129,151,126
-VHL,Kidney_Renal_Clear_Cell_Carcinoma,171,108,164,108
-MUC16,Kidney_Renal_Clear_Cell_Carcinoma,43,1,38,1
-BAP1,Kidney_Renal_Clear_Cell_Carcinoma,41,30,39,29

@@ -1,5 +1,0 @@
-Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
-TTN,Mesothelioma,16,1,16,1
-TP53,Mesothelioma,14,4,14,4
-NF2,Mesothelioma,20,20,19,19
-BAP1,Mesothelioma,19,15,18,15

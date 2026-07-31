@@ -1,8 +1,0 @@
-Gene_ID,Cancer_Type,Gene_Mutation_Count,Gene_Severe_Mutation_Count,Gene_Individuals_with_Mutations_Count,Gene_Individuals_with_Severe_Mutations_Count
-TTN,Breast_Invasive_Carcinoma,275,32,165,23
-PIK3CA,Breast_Invasive_Carcinoma,310,11,272,11
-KMT2C,Breast_Invasive_Carcinoma,98,55,80,50
-CDH1,Breast_Invasive_Carcinoma,106,94,104,93
-GATA3,Breast_Invasive_Carcinoma,101,87,99,87
-TP53,Breast_Invasive_Carcinoma,272,103,265,103
-MUC16,Breast_Invasive_Carcinoma,138,21,97,10
