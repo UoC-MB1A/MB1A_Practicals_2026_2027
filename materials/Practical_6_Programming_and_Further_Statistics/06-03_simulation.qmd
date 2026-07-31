@@ -37,6 +37,7 @@ By the end of this part of the practical you will be able to:
 :::
 
 ::: {.callout-note .partmenu #parts-0603}
+
 ## Sections
 
 - @sec-coding_length
@@ -59,20 +60,20 @@ So - maybe large proteins are just more mutated because there is more space in w
 
 You've been provided with a file, `data/gene_cds_lengths.csv` which contains, for all human protein coding genes, the total length of the **coding sequence** of the main transcript of that gene. 
 
-::: {.callout-note .bonus collapse="true" #bon-biomart}
+:::: {.callout-note .bonus collapse="true" #bon-biomart}
+
 ### Bonus material
 
 The code used to generate this data frame, which pulls data from the [Ensembl Biomart](https://www.ensembl.org/info/data/biomart/how_to_use_biomart.html#introduction) database, is provided [here](06-extra_extracting_from_biomart.html).
 
 There are instructions [here](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html) describing how to use the BiomaRt R package. Based on these instructions, pull data from BioMart regarding your list of 20 genes. For example, you could retrieve the `description` for these genes.
 
-The gene IDs you have correspond to `hgnc_symbol` format, so use `filter = "hgnc_symbol` and a vector of gene IDs as the `values`. 
+The gene IDs you have correspond to `hgnc_symbol` format, so use `filter = "hgnc_symbol"` and a vector of gene IDs as the `values`. 
 
 ::: {.callout-note #note-biomart}
 This package uses a web server which can be slow and often glitches, so if something doesn't run it's usually worth a couple more attempts.
 :::
-
-:::
+::::
 
 
 ::: {.callout-exercise #ex-coding_sequence}
@@ -154,7 +155,7 @@ We can perform a simulation-based analysis to investigate whether coding sequenc
 
 For each cancer type, we will select the same number of genes as appeared in the real dataset. Genes will be selected with a probability proportional to their coding sequence length. We will then count how often each gene appears across the simulated cancer types, just as we did with the real data.
 
-First, lets calculate the proportion of the total coding sequence of all human protein coding genes represented by each individual coding sequence.
+First, let's calculate the proportion of the total coding sequence of all human protein coding genes represented by each individual coding sequence.
 
 ::: {.callout-exercise #ex-prob_mutations}
 
@@ -368,9 +369,12 @@ for (i in seq_len(100)) {
 # each time the notebook is rendered.
 combined_random_genes <- read_lines("data/sim_results.txt")
 ```
-
+:::
+:::
 
 Now we have our simuated data, let's count how many times, out of 100, each gene was in the top 20 "mutated" genes across all of the cancer datasets.
+
+::: {.callout-note .copycode #copy-gene_df}
 
 ### Include this code
 
