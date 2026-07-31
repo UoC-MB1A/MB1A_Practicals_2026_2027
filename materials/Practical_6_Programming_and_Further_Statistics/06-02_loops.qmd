@@ -1,0 +1,364 @@
+---
+format: html
+practical: Practical_6_Programming_and_Further_Statistics
+doc-id: "0602"
+author: "Katy Brown"
+---
+```{r setup_0602, include=FALSE}
+library(tidyverse)
+library(gt)
+library(janitor)
+
+process_cancer_df <- function(cancer_type) {
+  # Read the CSV file
+  gene_mutation_counts <- read_csv(paste0("data/tcga_data/", cancer_type, ".csv"))
+
+  # Extract gene IDs
+  gene_ids <- gene_mutation_counts |> pull(Gene_ID)
+
+  # Return gene_ids variable
+  return(gene_ids)
+}
+```
+
+# Part 2: Loops {#sec-p2_loops}
+
+::: {.callout-note .partmenu #parts-0602}
+
+## Sections
+
+:::
+
+::: {.callout-tip .objectives #objectives-0602}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+- Explain the purpose of a `for` loop in programming.
+- Use a `for` loop to repeat a task.
+- Store results generated using a loop.
+- Apply loops to process multiple datasets.
+
+:::
+
+## For Loops {#sec-loops}
+
+Now that we have our function, we want to apply it to each of our data frames for different cancer types. We could do this manually, but that might take a while, so instead we can use something called a **loop**.
+
+A loop is a way of repeating a task multiple times in a computer program. 
+
+There are two main types of loop, a **for loop**, which runs a fixed number of times, or a **while loop** which runs until a certain condition is met. 
+
+In this part of the practical we will focus on **for loops**, which perform a task a fixed number of times. 
+
+We usually loop over a vector, meaning we perform the task once for each item in the vector.
+
+A common option in R is to use `seq_len(n)` as the sequence over which our for() loop iterates. This generates a sequence of numbers from `1` to `n`. The loop then runs `n` times, once for each number in this sequence. If we run our loop as `for (i in seq_len(n))`, each time we pass through the loop, the value of `i` increases by one.
+
+We refer to each pass through the loop as an **iteration** - we **iterate** over a loop.
+
+In a loop, like in a function, we use curly brackets `{}` to show which code is part of the loop - so everything inside the brackets will be repeated every time we iterate through the loop.
+
+For example:
+
+```{r for_loop_n}
+for (i in seq_len(10)) {
+  print(i)
+}
+```
+We can add steps to our loop to run on each iteration.
+
+```{r for_loop_complex_n}
+for (i in seq_len(10)) {
+  # add 2 to i
+  j <- i + 2
+  # take the square root of j
+  sj <- sqrt(j)
+  # round sj to the nearest whole number
+  rsj <- round(sj)
+  # print rsj
+  print(rsj)
+}
+```
+
+We also don't have to actually use our variable `i` inside the loop, we can just use it to set the number of iterations.
+
+For example, here the `fortune()` function prints a random quote about R, let's print 5 quotes.
+
+```{r for_loop_noi}
+library(fortunes)
+
+for (i in seq_len(5)) {
+  print(fortune())
+}
+```
+
+::: {.callout-exercise #ex-loops_1}
+In your `prac6_exercises.qmd` quarto document, generate two for loops:
+
+1. A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
+
+::: {.callout-note #note-powers}
+
+The operator `^` is used for powers in R, so e.g. 2^2 is 2 squared, 4^12 is 4 to the power of 12.
+
+:::
+
+2. This code snippet generates a random 5 letter character string.
+
+`paste(sample(letters, 5, replace = TRUE), collapse="")`
+
+Using a `for` loop, generate 5 such strings.
+
+::: {.callout-answer collapse="true" #ex-loops_1_ans}
+
+A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
+
+```{r loops_1_ans}
+for (i in seq_len(20)) {
+  print(i^3)
+}
+```
+
+This code snippet generates a random 5 letter character string.
+
+`paste(sample(letters, 5, replace = TRUE), collapse="")`
+
+Using a `for` loop, generate 5 such strings.
+
+```{r loops_2_ans}
+for (i in seq_len(5)) {
+  print(paste(sample(letters, 5, replace = TRUE), collapse = ""))
+}
+```
+
+:::
+:::
+
+You can also use a for loop to do something to each item in a vector.
+
+For example, in the below, we loop through the animals in our vector `wildlife`. Inside the loop, the value of the variable `animal` changes on each iteration.
+
+```{r for_loop_vector}
+wildlife <- c("fox", "otter", "badger", "squirrel", "hedgehog")
+
+for (animal in wildlife) {
+  print(animal)
+}
+```
+
+And, again, you can add as many steps as you like to perform during each iteration.
+
+Here, we check if each animal name ends with the letters `er`.
+
+```{r for_loop_vector_complex}
+wildlife <- c("fox", "otter", "badger", "squirrel", "hedgehog")
+
+for (animal in wildlife) {
+  has_er <- endsWith(animal, "er")
+  print(paste(animal, "ends with er:", has_er))
+}
+```
+
+## Storing results from loops
+
+We sometimes want to store the results of running our loop in a vector or data frame.
+
+For example, here we store all of the cubed numbers from our example above in a vector called `cubed_nums`. Before we start the loop, we create an empty vector using `c()`. Then, each time we pass through the loop, we use `c()` to append the new result to the end of the vector. Once the loop has finished, `cubed_nums` contains the results from every iteration.
+
+
+```{r store_cubes_vec}
+cubed_nums <- c()
+
+for (i in seq_len(20)) {
+  res <- i^3
+  cubed_nums <- c(cubed_nums, res)
+}
+
+print(cubed_nums)
+```
+
+Similarly, we can store the results of our loop in a data frame. On each iteration through the loop, we add a new row with our newly processed data.
+
+```{r store_animals_df}
+animal_df <- tibble()
+
+wildlife <- c("fox", "otter", "badger", "squirrel", "hedgehog")
+
+for (animal in wildlife) {
+  has_er <- endsWith(animal, "er")
+  current_df <- tibble(
+    Animal_Name = animal,
+    Ends_in_ER = has_er
+  )
+  animal_df <- animal_df |> bind_rows(current_df)
+}
+
+gt(animal_df)
+```
+
+## Determining common genes
+
+Now we are ready to answer this question:
+
+**Which 20 genes most commonly have severe mutations across different cancer types??**
+
+Remember that each data frame currently includes all of the genes which have severe mutations in at least 10% of individuals with that cancer type.
+
+We can use the names of the different cancer types as a vector to loop through. You have been provided with these in the file `data/cancer_types.txt`.
+
+This file just has one thing on each line, so we can use the `read_lines()` function instead of `read_csv()`.
+
+::: {.callout-note .copycode #copy-read_list}
+### Include this code
+
+Include this code in your `TCGA_data_analysis.qmd` Quarto file.
+
+```{r read_lines}
+ctypes <- read_lines("data/cancer_types.txt")
+```
+:::
+
+
+Now we can loop through these. For example, if we just wanted to print the name of each cancer type, we could use the following:
+
+
+```{r print_cancer_types}
+for (ctype in ctypes) {
+  print(ctype)
+}
+```
+
+
+::: {.callout-exercise #ex-cancer_readcsv_loop}
+
+In your `TCGA_data_analysis.qmd` Quarto file, using the function you wrote previously, `process_cancer_df()` and a `for` loop as demonstrated above, loop through all of the data frames for different cancer types and retrieve the gene list. Store the results as a vector named `all_genes`.
+
+::: {.callout-note #note-messages}
+If R is printing too much output to the screen, you can click on the gear symbol in the corner of the R chunk and set `Show messages` to off.
+![Turn messages off](images/turn_messages_off.png){#fig-turn_messages_off}
+:::
+
+:::{.callout-answer collapse="true" #ex-cancer_readcsv_loop_ans}
+```{r cancer_readcsv_loop_ans, message=FALSE}
+all_genes <- c()
+for (ctype in ctypes) {
+  current_genes <- process_cancer_df(ctype)
+  all_genes <- c(all_genes, current_genes)
+}
+```
+
+:::
+:::
+
+Now you have all the genes in each file listed in a vector. Genes which are found in multiple types of cancer will occur multiple times in the vector.
+
+Let's convert our vector into a data frame:
+
+::: {.callout-note .copycode #copy-vec_to_tib}
+### Include this code
+
+Include this code in your `TCGA_data_analysis.qmd` Quarto file.
+```{r vec_to_tib}
+all_genes_df <- tibble(Gene_ID = all_genes)
+```
+:::
+
+The data frame function `count()` will count the number of occurrences of each value in a data frame column. Adding the argument `sort = TRUE` sorts the data frame, with the highest number first.
+
+::: {.callout-exercise #ex-cancer_count_genes}
+
+In your `TCGA_data_analysis.qmd` Quarto file, apply the function `count()` with the argument `sort = TRUE` to your data frame `all_genes_df`.
+
+Take the top 20 results using the function `head()` with the argument `n=20` to take the top 20 rows of the data frame, store this in the variable `gene_counts_highest`.
+
+View the resulting table with `gt()`.
+
+Plot the data using `ggplot()` and `geom_col()`. It will be easier to see the gene IDs if you plot `Gene_ID` on the y axis and `n` on the x axis.
+
+::: {.callout-answer collapse="true" #ex-cancer_count_genes_ans}
+```{r count_genes_ans1}
+gene_counts <- all_genes_df |>
+  count(Gene_ID, sort = TRUE)
+
+gene_counts_highest <- gene_counts |> head(20)
+
+gt(gene_counts_highest)
+```
+
+```{r plot_genes_ans2}
+ggplot(
+  gene_counts_highest,
+  aes(x = n, y = Gene_ID)
+) +
+  geom_col()
+```
+:::
+:::
+
+Several of these genes are very commonly mutated! For example, in 19 of our 27 cancer types, TP53 has a severe mutation in at least 10% of samples.
+
+Now we can compare out list of genes to those from the paper, and see if the genes we found are similar to the published ones - the 299 genes identified in [the source publication](https://doi.org/10.1016/j.cell.2018.02.060).
+
+You've been provided with the 200 driver genes identified in this paper in their **Pan cancer** data set - so mutations found in multiple types of cancer - in the file `data/cancer_driver_genes.txt`.
+
+::: {.callout-exercise #ex-cancer_label_genes}
+
+In your `TCGA_data_analysis.qmd` Quarto file, read the list of genes from the paper into a vector. Then, add a column, `Is_Driver`, to your `gene_counts_highest` data frame which shows if the genes are found in this list.
+
+Plot another bar chart based on your new data frame, but add to the `aes` function to colour the bars by whether or not the gene was identified in the paper.
+
+::: {.callout-note #note-in}
+Remember that the operator `%in%` will tell us if a value is present in a vector.
+:::
+
+::: {.callout-answer collapse="true" #ex-cancer_label_genes_ans}
+
+```{r cancer_label_genes_ans}
+# Read the driver gene list
+drivers <- read_lines("data/cancer_driver_genes.txt")
+
+# Add the column to the data frame
+gene_counts_drivers <- gene_counts_highest |>
+  mutate(Is_Driver = Gene_ID %in% drivers)
+
+# Plot
+ggplot(
+  gene_counts_drivers,
+  aes(x = n, y = Gene_ID, fill=Is_Driver)
+) +
+  geom_col()
+```
+:::
+:::
+
+Look at your plot - you'll see that in many cases the genes we have identified are the same ones as in the paper! This is great - our analysis is a very simplified version of the analysis in the paper but is able to generate some similar results.
+
+There are also some differences, we'll discuss these in the next part of the practical.
+
+
+## Review {#sec-summary_0602}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0602}
+
+### Summary
+
+* A `for` loop repeats a task a fixed number of times.
+* Each cycle through a loop is called an **iteration**.
+* You usually use a vector to determine the iterations of the loop.
+* You can store the results of your loop by adding to a vector or data frame in each iteration.
+
+:::
+
+For this part of the practical, the main files you have edited are:
+* `prac6_exercises.qmd`
+* `TCGA_data_analysis.qmd`
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
+
+```{r write_drivers, include=FALSE}
+write_csv(gene_counts_drivers, "output/mutation_counts_drivers.csv")
+```
