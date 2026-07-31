@@ -1,0 +1,433 @@
+---
+format: html
+practical: Practical_6_Programming_and_Further_Statistics
+doc-id: "0603"
+author: "Katy Brown"
+---
+```{r setup_0603, include=FALSE}
+library(tidyverse)
+library(gt)
+gene_counts_drivers <- read_csv("output/mutation_counts_drivers.csv")
+
+ctypes <- read_lines("data/cancer_types.txt")
+
+process_cancer_df <- function(cancer_type) {
+  # Read the CSV file
+  gene_mutation_counts <- read_csv(paste0("data/tcga_data/", cancer_type, ".csv"))
+
+  # Extract gene IDs
+  gene_ids <- gene_mutation_counts |> pull(Gene_ID)
+
+  # Return gene_ids variable
+  return(gene_ids)
+}
+```
+
+# Part 3: Simulating Data {#sec-p3_simulating_data}
+
+:::{.callout-tip .objectives #objectives-0603}
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Use random sampling to generate a simulated dataset.
+* Repeat a simulation using a loop.
+* Compare simulated and observed datasets to investigate a biological hypothesis.
+
+::: {.callout-note .partmenu #parts-0603}
+## Sections
+:::
+
+## Incorporating coding sequence length
+
+In the previous part of the practical, we identified the 20 genes that most frequently contained severe mutations across different cancer types. 15 of these genes were also identified in the published study, but the other 5 were not. Let's consider why.
+
+Firstly, we are not doing exactly the same analysis, we've also built a much simpler data analysis pipeline than that in the paper - if you look how many authors the paper has and note that it was published 12 years after the inception of the TCGA project in 2006, you'll understand that we can't reproduce this in two hours!
+
+However, we may be able to add some additional biological information to make our analysis closer to the one in the paper.
+
+One possible explanation for the additional genes that we've found is that these are just really big genes. For example, if you search online for the gene *TTN*, you'll see that it's described as a "very large protein" or "giant protein" and "the largest protein in the human body" (although this last one is debatable).
+
+So - maybe large proteins are just more mutated because there is more space in which mutations can occur?
+
+You've been provided with a file, `data/gene_cds_lengths.csv` which contains, for all human protein coding genes, the total length of the **coding sequence** of the main transcript of that gene. 
+
+::: {.callout-note .bonus collapse="true" #bon-biomart}
+### Bonus material
+
+The code used to generate this data frame, which pulls data from the [Ensembl Biomart](https://www.ensembl.org/info/data/biomart/how_to_use_biomart.html#introduction) database, is provided [here](06-extra_extracting_from_biomart.html).
+
+There are instructions [here](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html) describing how to use the BiomaRt R package. Based on these instructions, pull data from BioMart regarding your list of 20 genes. For example, you could retrieve the `description` for these genes.
+
+The gene IDs you have correspond to `hgnc_symbol` format, so use `filter = "hgnc_symbol` and a vector of gene IDs as the `values`. 
+
+::: {.callout-note #note-biomart}
+This package uses a web server which can be slow and often glitches, so if something doesn't run it's usually worth a couple more attempts.
+:::
+
+:::
+
+
+::: {.callout-exercise #ex-coding_sequence}
+Why do you think we would use the coding sequence, rather than the full length of the gene here?
+
+::: {.callout-answer collapse="true" #ex-coding_sequence_ans}
+Our severe mutations (described in @sec-dataset06) are all mutations in the coding sequence, so having long introns would not explain the difference we are seeing in the number of severe mutations.
+:::
+:::
+
+::: {.callout-exercise #ex-cds_lengths}
+
+In your `TCGA_data_analysis.qmd` Quarto file:
+
+* Read the CSV file containing the gene CDS lengths.
+* Using an `inner_join()`, join it to the data frame containing your top 20 genes (`gene_counts_drivers`). 
+* Filter to keep only the rows which were not identified in the study - where `Is_Driver` is FALSE. Store the result in a variable, `nonpub_counts_lengths`.
+* Look at your data frame with `gt()`.
+
+::: {.callout-answer collapse="true" #ex-cds_lengths_ans}
+```{r cds_lengths_ans, message=FALSE}
+# Read the data frame
+cds_length_df <- read_csv("data/gene_cds_lengths.csv")
+
+# Join to the gene_counts_drivers data frame
+gene_counts_lengths <- inner_join(gene_counts_drivers, cds_length_df)
+
+# Filter to keep just those not found in the paper
+nonpub_counts_lengths <- gene_counts_lengths |>
+  filter(Is_Driver == FALSE)
+
+# Have a look
+gt(nonpub_counts_lengths)
+```
+:::
+:::
+
+If we plot the distribution of all gene lengths, we can recognise if these values are extreme.
+
+::: {.callout-exercise #ex-hist_cds_lengths}
+
+In your `TCGA_data_analysis.qmd` Quarto file, plot a histogram of coding sequence length of all human protein coding genes, from your `cds_length_df` dataframe. Set the number of bins to 100.
+
+::: {.callout-answer #ex-hist_cds_lengths_ans}
+```{r hist_cds_lengths_ans}
+ggplot(
+  cds_length_df,
+  aes(x = cds_length)
+) +
+  geom_histogram(bins = 100)
+```
+:::
+:::
+
+We can annotate the positions of the genes we found which were not found in the publication using the `geom_vline()` function. First, we pull out cds_length column from our data frame of genes found in our analysis but not the publication. Then, we can draw a vertical line for each of these genes on our histogram, setting the positions with the argument `xintercept`.
+
+```{r plot_gene_lengths_lines}
+ident_genes_lens <- nonpub_counts_lengths |>
+  pull(cds_length)
+
+ggplot(
+  cds_length_df,
+  aes(x = cds_length)
+) +
+  geom_histogram(bins = 100) +
+  geom_vline(
+    xintercept = ident_genes_lens,
+    linetype = "dashed"
+  )
+```
+
+Clearly, these are very big genes! This might explain why they so often have mutations.
+
+If coding sequence length were the only thing affecting whether a gene appeared in our filtered datasets, then large genes should be selected more often simply because they contain more coding DNA.
+
+## Simulation Analysis
+
+We can perform a simulation-based analysis to investigate whether coding sequence length alone could explain which genes appear repeatedly in our filtered datasets.
+
+For each cancer type, we will select the same number of genes as appeared in the real dataset. Genes will be selected with a probability proportional to their coding sequence length. We will then count how often each gene appears across the simulated cancer types, just as we did with the real data.
+
+First, lets calculate the proportion of the total coding sequence of all human protein coding genes represented by each individual coding sequence.
+
+::: {.callout-exercise #ex-prob_mutations}
+
+In your `TCGA_data_analysis.qmd` Quarto file:
+
+* Using your `cds_length_df` data frame, calculate the total coding sequence length across all human protein-coding genes.
+* Add a new column, `Prop`, to your data frame showing the proportion of total coding sequence contributed by each gene.
+
+::: {.callout-answer #ex-prob_mutations_ans}
+```{r prob_mutations_ans}
+total_cds <- sum(pull(cds_length_df, cds_length))
+
+cds_length_df <- cds_length_df |>
+  mutate(Prop = cds_length / total_cds)
+
+gt(head(cds_length_df))
+```
+:::
+:::
+Next, let's use the function `sample` to take a sample. The arguments for this function are:
+
+* `x`: a vector of elements from which to sample
+* `size`: the number of items to choose
+* `replace`: should we replace after sampling
+* `prob`: a vector of **probability weights** corresponding to this vector
+
+For example, if we had a vector `c('Badger', 'MUSHROOM')` and we want to sample 100 times from this vector, with replacement, [selecting `Badger` 95% of the time and `MUSHROOM` 5% of the time](https://www.youtube.com/watch?v=EIyixC9NsLI), we would use this function as follows:
+
+```{r badger_badger_mushroom}
+bm_vec <- c("Badger", "MUSHROOM")
+bm_probs <- c(0.95, 0.05)
+
+my_sample <- sample(bm_vec,
+  size = 100,
+  replace = TRUE,
+  prob = bm_probs
+)
+
+print(my_sample)
+```
+
+Similarly, we can sample our genes using the data in the `Gene_ID` column as our vector of elements from which to sample and the data in our `Prop` column as our vector of probability weights.
+
+::: {.callout-exercise #ex-simulate_genes}
+
+In your `TCGA_data_analysis.qmd` Quarto file, **write a function** named `choose_random_genes()` to take a sample **without** replacement from the genes listed in `cds_length_df` based on the probabilities in the `Prop` column. Pass the number of items to select and the cds_length_df data frame as arguments to your function.
+
+::: {.callout-note #note-mutations}
+We are selecting genes without replacement because, in our original analysis, each gene could appear at most **once** in the filtered list for a given cancer type, regardless of how many mutations occurred within that gene.
+:::
+
+Test your function by choosing 100 genes.
+
+::: {.callout-answer collapse="true" #ex-simulate_genes_ans}
+
+```{r simulate_genes_ans}
+choose_random_genes <- function(ngenes, cds_length_df) {
+  gene_names_vec <- cds_length_df |> pull(Gene_ID)
+  gene_probs_vec <- cds_length_df |> pull(Prop)
+
+  my_sample <- sample(gene_names_vec,
+    size = ngenes,
+    replace = FALSE,
+    prob = gene_probs_vec
+  )
+
+  return(my_sample)
+}
+choose_random_genes(100, cds_length_df)
+```
+:::
+:::
+
+
+Now, for each cancer type, we will count the number of genes in our original filtered data frame. This is the number of genes in which severe mutations were identified in at least 5% of individuals with that cancer type.
+
+We will then use our `choose_random_genes()` function to randomly select the same number of genes, but with the probability of selecting each gene proportional only to its coding sequence length.
+
+This gives us a simulated dataset with the same number of genes as our real dataset, but where the only factor influencing whether a gene is selected is its coding sequence length. By comparing these simulated results with our real results, we can investigate whether coding sequence length alone could explain why some genes appear repeatedly across different cancer types.
+
+::: {.callout-exercise #ex-simulate_loop}
+
+In your `TCGA_data_analysis.qmd` Quarto file, write a for loop which iterates through the 27 cancer types (the `ctypes` variable), counts the number of lines in that file, then uses your `choose_random_genes` function to return a list of genes of the same length as the file. Store your results in a vector, `all_random_genes`.
+
+Remember you can turn off `Messages` for your code chunk if it is writing too much output.
+
+::: {.callout-note #note-countlines}
+To count the number of lines in the file, you could use your existing `process_cancer_df()` function, which returns one gene for each line, in combination with the function `length()` - so `length(process_cancer_df(ctype))`.
+:::
+
+::: {.callout-answer collapse="true" #ex-simulate_loop_ans}
+```{r simulate_loop_ans, message=FALSE}
+all_random_genes <- c()
+for (ctype in ctypes) {
+  # Count the number of genes in the real data
+  ngenes <- length(process_cancer_df(ctype))
+  # Simulate this number of genes
+  sim_gene_list <- choose_random_genes(ngenes, cds_length_df)
+  # Append this to the vector
+  all_random_genes <- c(all_random_genes, sim_gene_list)
+}
+```
+:::
+:::
+
+Our `all_random_genes` vector contains the simulated gene list selected for each cancer type. If the same gene is selected for multiple cancer types, it will appear multiple times in the vector, just as in our real dataset.
+
+We can now analyse this simulated dataset in exactly the same way as we analysed our real data. First, we convert the vector into a data frame and use `count()` to determine how many times each gene appears across all cancer types. We then identify the 20 most common genes and store their Gene_IDs.
+
+```{r count_muts_sim}
+# Convert the vector to a data frame
+all_random_genes_df <- tibble(Gene_ID = all_random_genes)
+
+# Count the number of occurrences of each gene
+sim_gene_counts <- all_random_genes_df |>
+  count(Gene_ID)
+
+# Sort by most occurrences, take the top 20 rows
+sim_gene_counts_highest <- sim_gene_counts |>
+  arrange(desc(n)) |>
+  head(20)
+
+# Extract the Gene_ID column
+gene_ids <- pull(sim_gene_counts_highest, Gene_ID)
+```
+
+However, there is a small problem here - when there are ties (i.e. more than one gene mutated the same number of times), the default for the `arrange()` function is to then sort them alphabetically - so genes earlier in the alphabet will disproportionately occur amongst our top 20 genes.
+
+To fix this, we can add a column of random numbers to our data frame, and use this to sort in the case of ties, instead of gene name.
+
+::: {.callout-note .copycode #copy-read_list}
+
+### Include this code
+
+Include this code in your `TCGA_data_analysis.qmd` Quarto file after your loop from the previous exercise.
+
+```{r count_muts_highest}
+all_random_genes_df <- tibble(Gene_ID = all_random_genes)
+
+# Count the number of occurrences of each gene
+sim_gene_counts <- all_random_genes_df |>
+  count(Gene_ID)
+
+# Add a column of random numbers
+sim_gene_counts <- sim_gene_counts |>
+  mutate(rand_n = runif(nrow(sim_gene_counts)))
+
+# Sort by most occurrences, then by the random column, take the top 20 rows
+sim_gene_counts_highest <- sim_gene_counts |>
+  arrange(desc(n), rand_n) |>
+  head(20)
+
+# Extract the Gene_ID column
+gene_ids <- pull(sim_gene_counts_highest, Gene_ID)
+```
+
+:::
+
+These are the results of running our simulation once. You may or may not see some of your commonly mutated genes from the real dataset in this sample.
+
+However, a single simulation represents just one possible outcome. By repeating the simulation many times, we can see how much the results vary and estimate how often each gene would be expected to appear simply because of its coding sequence length.
+
+In a real research project you might run this 10,000 or 100,000 times, but, in the interests of finishing the practical, let's run it 100 times here.
+
+You can easily run something 100 times using a `for` loop.
+
+::: {.callout-exercise #ex-run_simulations}
+In your `TCGA_data_analysis.qmd` Quarto file, wrap your code from the previous exercise and from the green code block above into a second for loop, and run it for 100 iterations. Store all of the identified gene IDs in a new vector, `combined_mut_genes`.
+
+When you run your function, it might take a few minutes. I would recommend setting `Show messages` to FALSE.
+
+::: {.callout-answer collapse="true" #ex-run_simulations_ans}
+```{r run_simulations_ans, eval=FALSE, message=FALSE}
+combined_random_genes <- c()
+
+for (i in seq_len(100)) {
+  all_random_genes <- c()
+  for (ctype in ctypes) {
+    # Count the number of genes in the real data
+    ngenes <- length(process_cancer_df(ctype))
+    # Simulate this number of genes
+    sim_gene_list <- choose_random_genes(ngenes, cds_length_df)
+    # Append this to the vector
+    all_random_genes <- c(all_random_genes, sim_gene_list)
+  }
+
+  # Convert the vector to a data frame
+  all_random_genes_df <- tibble(Gene_ID = all_random_genes)
+
+  # Count the number of occurrences of each gene
+  sim_gene_counts <- all_random_genes_df |>
+    count(Gene_ID)
+
+  # Add a column of random numbers
+  sim_gene_counts <- sim_gene_counts |>
+    mutate(rand_n = runif(nrow(sim_gene_counts)))
+
+  # Sort by most occurrences, then by the random column, take the top 20 rows
+  sim_gene_counts_highest <- sim_gene_counts |>
+    arrange(desc(n), rand_n) |>
+    head(20)
+
+  # Extract the Gene_ID column
+  gene_ids <- pull(sim_gene_counts_highest, Gene_ID)
+  combined_random_genes <- c(combined_random_genes, gene_ids)
+}
+```
+
+```{r get_mut_genes, include=FALSE}
+# Retrieve the list of genes - so that we don't need to run the simulation
+# each time the notebook is rendered.
+combined_random_genes <- read_lines("data/sim_results.txt")
+```
+
+
+Now we have our simuated data, let's count how many times, out of 100, each gene was in the top 20 "mutated" genes across all of the cancer datasets.
+
+### Include this code
+
+Include this code in your `TCGA_data_analysis.qmd` Quarto file.
+
+```{r count_sim}
+combined_random_genes_df <- tibble(Gene_ID = combined_random_genes)
+counted_sim <- combined_random_genes_df |>
+  count(Gene_ID) |>
+  arrange(desc(n))
+
+gt(head(counted_sim))
+```
+:::
+
+We can now compare our observed results with how often each gene would be expected to appear simply because of its coding sequence length.
+
+If one of the genes we found which is not known to be a cancer driver appears frequently in the simulated top 20, then its large coding sequence may partly explain why it appeared in our real analysis. On the other hand, genes that rarely appear in the simulations, but were identified in the real data, are less likely to be explained by coding sequence length alone.
+
+The counts represent the number of times out of 100 that gene appeared by chance. Your results will vary, but you're likely to see at least a couple of your non-publication genes here.
+
+This analysis **does not** prove that any gene is or is not a cancer driver. Instead, it demonstrates an important principle of biological data analysis: before interpreting a pattern as biologically meaningful, we should first ask whether it could arise from a simpler explanation. In this case, our simpler explanation is gene length.
+
+::: {.callout-exercise #ex-look_at_results}
+In your `TCGA_data_analysis.qmd` Quarto file, have a look at your five "non-publication" genes (`c("TTN", "MUC16", "LRP1B", "CSMD3", "ZFHX4")`) in your simulation data frame and see how often they were identified.
+
+Looking at these results, which of the five genes do you think are most likely to have appeared simply because they are unusually large? Which, if any, do you think might deserve further investigation?
+
+If any genes seem worth investigating further, look them up online. Is there any newer evidence that they might actually be involved in cancer?
+
+::: {.callout-answer collapse="true" #ex-look_at_results_ans}
+
+```{r look_at_results_ans}
+# Create the vector of five genes not in the publication
+non_pub <- c("TTN", "MUC16", "LRP1B", "CSMD3", "ZFHX4")
+
+# Filter the data frame to include only these
+nd_counts_sim <- counted_sim |>
+  filter(Gene_ID %in% non_pub)
+
+gt(nd_counts_sim)
+```
+:::
+:::
+
+
+## Review {#sec-summary_0603}
+
+Throughout this practical, we've gradually extended our analysis. We started by identifying genes that were frequently mutated, then compared our results with the published study based on the same data, and finally asked whether a simple biological factor - coding sequence length - could explain some of the differences. This is a common approach in mathematical biology: begin with a simple analysis, identify possible sources of bias, and test whether they explain the patterns you observe.
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0603}
+
+### Summary
+
+* The `sample()` function takes a sample from a vector based on specified probabilities
+* You can repeatedly sample a population using a for loop
+* Simulation analysis is useful to help establish if your results could be due to chance.
+
+:::
+
+For this part of the practical, the main files you have edited are:
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
