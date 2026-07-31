@@ -12,24 +12,52 @@ author: "Katy Brown"
 
 ### @sec-p1_functions
 
+- @sec-dataset06
+- @sec-writing_functions
+- @sec-process_cancer_data
+- @sec-review0601
+
 #### Sections
 
 #### Learning objectives
 By the end of this part of the practical you will be able to:
+
+* Understand what functions are and when they are used. 
+* Write functions to automate aspects of your analysis.
+* Use a function to run a multi-step analysis on a data frame.
 
 ### @sec-p2_loops
 
 #### Sections
 
+- @sec-loops
+- @sec-storing_results
+- @sec-determining_common_genes
+- @sec-review0602
+
 #### Learning objectives
+
 By the end of this part of the practical you will be able to:
 
-### @sec-p3_power_analysis
+- Explain the purpose of a `for` loop in programming.
+- Use a `for` loop to repeat a task.
+- Store results generated using a loop.
+- Apply loops to process multiple datasets.
+
+### @sec-p3_simulating_data
 
 #### Sections
 
+- @sec-coding_length
+- @sec-simulating_data
+- @sec-review0603
+
 #### Learning objectives
 By the end of this part of the practical you will be able to:
+
+* Use random sampling to generate a simulated dataset.
+* Repeat a simulation using a loop.
+* Compare simulated and observed datasets to investigate a biological hypothesis.
 
 ### @sec-p4_bootstrapping
 
