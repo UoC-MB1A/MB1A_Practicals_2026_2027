@@ -208,6 +208,23 @@ div.callout.copycode > .callout-header::before {
   margin-right: 10px;
 }
 
+/* Bonus callout */
+div.callout.bonus.callout {
+  border-left-color: #DB8FAD;
+}
+
+div.callout.bonus.callout-style-default > .callout-header {
+  background-color: #DB8FAD;
+  color: black;
+}
+
+div.callout.bonus > .callout-header::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  content: "\f0c5";
+  margin-right: 10px;
+}
+
 /*-- Figures & code output ------------------------------------------------*/
 .figure {
   text-align: center;

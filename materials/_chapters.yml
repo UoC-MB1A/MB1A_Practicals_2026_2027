@@ -28,7 +28,7 @@ book:
     - part: "Practical 6 - Programming and Further Statistics"
       chapters:
        - materials/Practical_6_Programming_and_Further_Statistics/06-00_learning_obj.qmd
-       - materials/Practical_6_Programming_and_Further_Statistics/06-01_functions_and_loops.qmd
-       - materials/Practical_6_Programming_and_Further_Statistics/06-02_conditional_statements.qmd
-       - materials/Practical_6_Programming_and_Further_Statistics/06-03_power_analysis.qmd
-       - materials/Practical_6_Programming_and_Further_Statistics/06-04_bootstrapping.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-01_functions.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-02_loops.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-03_bootstrapping.qmd
+       - materials/Practical_6_Programming_and_Further_Statistics/06-04_power_analysis.qmd
