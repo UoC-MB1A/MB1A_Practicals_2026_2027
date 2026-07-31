@@ -15,7 +15,7 @@ author: "Katy Brown"
 - @sec-dataset06
 - @sec-writing_functions
 - @sec-process_cancer_data
-- @sec-review0601
+- @sec-summary_0601
 
 #### Sections
 
@@ -33,7 +33,7 @@ By the end of this part of the practical you will be able to:
 - @sec-loops
 - @sec-storing_results
 - @sec-determining_common_genes
-- @sec-review0602
+- @sec-summary_0602
 
 #### Learning objectives
 
@@ -50,7 +50,7 @@ By the end of this part of the practical you will be able to:
 
 - @sec-coding_length
 - @sec-simulating_data
-- @sec-review0603
+- @sec-summary_0603
 
 #### Learning objectives
 By the end of this part of the practical you will be able to:

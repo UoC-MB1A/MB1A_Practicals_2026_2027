@@ -34,12 +34,14 @@ By the end of this part of the practical you will be able to:
 * Repeat a simulation using a loop.
 * Compare simulated and observed datasets to investigate a biological hypothesis.
 
+:::
+
 ::: {.callout-note .partmenu #parts-0603}
 ## Sections
 
 - @sec-coding_length
 - @sec-simulating_data
-- @sec-review0603
+- @sec-summary_0603
 
 :::
 

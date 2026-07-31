@@ -17,7 +17,7 @@ library(gt)
 - @sec-dataset06
 - @sec-writing_functions
 - @sec-process_cancer_data
-- @sec-review0601
+- @sec-summary_0601
 :::
 
 :::{.callout-tip .objectives #objectives-0601}
