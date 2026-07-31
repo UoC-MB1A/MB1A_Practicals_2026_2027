@@ -1,0 +1,39 @@
+---
+format: html
+practical: Practical_6_Programming_and_Further_Statistics
+doc-id: "0604"
+author: "Katy Brown"
+---
+# Part 4: Conditional Statements and Power Analysis {#sec-p4_conditionals_and_power_analysis}
+
+::: {.callout-note .partmenu #parts-0604}
+## Sections
+
+:::
+
+:::{.callout-tip .objectives #objectives-0604}
+
+#### Learning objectives
+By the end of this part of the practical you will have:
+
+:::
+## Review {#sec-summary_0604}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0604}
+
+### Summary
+
+You have:
+
+:::
+
+For this part of the practical, the main files you have edited are:
+
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
+
+{{< include ../includes/git_push.qmd >}}
