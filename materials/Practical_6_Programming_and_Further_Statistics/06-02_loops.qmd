@@ -26,6 +26,10 @@ process_cancer_df <- function(cancer_type) {
 ::: {.callout-note .partmenu #parts-0602}
 
 ## Sections
+- @sec-loops
+- @sec-storing_results
+- @sec-determining_common_genes
+- @sec-review0602
 
 :::
 
@@ -159,7 +163,7 @@ for (animal in wildlife) {
 }
 ```
 
-## Storing results from loops
+## Storing results from loops {#sec-storing_results}
 
 We sometimes want to store the results of running our loop in a vector or data frame.
 
@@ -196,7 +200,7 @@ for (animal in wildlife) {
 gt(animal_df)
 ```
 
-## Determining common genes
+## Determining common genes {#sec-determining_common_genes}
 
 Now we are ready to answer this question:
 
