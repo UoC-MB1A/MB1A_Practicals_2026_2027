@@ -36,9 +36,14 @@ By the end of this part of the practical you will be able to:
 
 ::: {.callout-note .partmenu #parts-0603}
 ## Sections
+
+- @sec-coding_length
+- @sec-simulating_data
+- @sec-review0603
+
 :::
 
-## Incorporating coding sequence length
+## Incorporating coding sequence length {#sec-coding_length}
 
 In the previous part of the practical, we identified the 20 genes that most frequently contained severe mutations across different cancer types. 15 of these genes were also identified in the published study, but the other 5 were not. Let's consider why.
 
@@ -141,7 +146,7 @@ Clearly, these are very big genes! This might explain why they so often have mut
 
 If coding sequence length were the only thing affecting whether a gene appeared in our filtered datasets, then large genes should be selected more often simply because they contain more coding DNA.
 
-## Simulation Analysis
+## Simulating Data {#sec-simulating_data}
 
 We can perform a simulation-based analysis to investigate whether coding sequence length alone could explain which genes appear repeatedly in our filtered datasets.
 
