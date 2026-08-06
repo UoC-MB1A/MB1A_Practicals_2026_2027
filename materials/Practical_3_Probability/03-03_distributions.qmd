@@ -20,7 +20,7 @@ set.seed(42)
 
 :::
 
-## Part 3: Distribution functions in R {#sec-distributions}
+## Part 3: Using simulation to understand your data {#sec-distributions}
 
 ### Other distributions {#sec-other_distributions}
 
@@ -35,6 +35,8 @@ Another function, `qbinom()`, calculates quantiles, allowing you to determine th
 Helpfully, R uses a consistent naming convention for functions related to probability distributions. The table below shows some of the most commonly used distributions and the functions used to generate random values, calculate probabilities (or densities), calculate cumulative probabilities and calculate quantiles. The arguments differ depending on the parameters of the distribution.
 
 For example:
+
+::: {#sec-distribution_table}
 
 | Distribution | Random samples | Probability / Density | Cumulative probability | Quantiles |
 |--------------|----------------|-----------------------|------------------------|-----------|
@@ -52,6 +54,8 @@ For example:
 | Chi-squared | `rchisq()` | `dchisq()` | `pchisq()` | `qchisq()` |
 | Student's *t* | `rt()` | `dt()` | `pt()` | `qt()` |
 | *F* | `rf()` | `df()` | `pf()` | `qf()` |
+
+:::
 
 This means we can use a lot of what we've learned already to many different probability distributions.
 
@@ -145,7 +149,7 @@ ggplot(dcounts, aes(x = Novel_Mutation_Count)) +
 
 Again, this kind of looks Poisson distributed, but it's hard to be sure.
 
-::: {.callout-note .extension collapse="true" #bon-theoretical_pois}
+::: {.callout-note .extension #bon-theoretical_pois}
 
 ### Extension content: Adding a theoretical distribution
 
@@ -290,16 +294,17 @@ We can use the `rpois` function for this.
 
 First, let's generate simulated mutation counts on chromosome 2R for 17 populations.
 
-```{r}
+```{r simulate_mut_counts_drosophila}
 simulated_counts <- rpois(
   n = n_populations,
   lambda = sample_mean
 )
 print(simulated_counts)
 ```
+
 This vector has a mean and a variance, just like our real counts.
 
-```{r}
+```{r simulate_mean_var_drosophila}
 print(mean(simulated_counts))
 print(var(simulated_counts))
 ```
@@ -370,6 +375,8 @@ You can change the number of bins in the histogram using the argument `bins = n`
 
 Look at your histogram - does our observed value of `r round(sample_diff, 2)` fit within the values observed for small samples pulled from a Poisson distribution?
 
+Calculate the percentage of your simulated samples in which the difference between the sample mean and sample variance is **greater** than the difference observed in the study.
+
 ::: {.callout-answer collapse="true" #ex-plot_sim_drosophila_ans}
 
 ```{r plot_sim_drosophila_ans1}
@@ -379,28 +386,6 @@ ggplot(df_sim, aes(x = diff)) +
 
 The values seen in the study are consistent with what we'd expect for a sample of 17 populations if the mutation counts on chromosome 2R are Poisson distributed.
 
-:::
-:::
-
-::: {.callout-note .extension collapse="true" #bon-lines_mean_var}
-### Extension content: Adding sample difference to the histogram
-
-You can add a vertical line to the plot using the function `geom_vline()` with the mapping  `x_intercept`. ggplot will add a vertical line at the position you give to `x_intercept`.
-
-```{r adding_lines_drosophila}
-ggplot(df_sim, aes(x = diff)) +
-  geom_histogram(bins = 50) +
-  geom_vline(aes(xintercept = sample_diff), color = "red")
-```
-:::
-
-::: {.callout-note .extension collapse="true" #bon-percentile_pois}
-### Extension exercise: Calculating the percentile of the difference between the sample mean and variance
-
-::: {.callout-exercise #ex-percentile_pois}
-In your `drosophila.qmd` Quarto document, calculate the percentage of your simulated samples in which the difference between the sample mean and sample variance is **greater** than the difference observed in the study.
-
-::: {.callout-answer collapse="true" #ex-percentile_pois_ans}
 ```{r percentile_pois_ans}
 greater <- df_sim |> filter(diff > sample_diff)
 prop <- nrow(greater) / nrow(df_sim)
@@ -411,14 +396,18 @@ In my simulation, `r round(prop, 2)*100`% of simulated samples had a difference 
 
 :::
 :::
+
+::: {.callout-note .extension #bon-lines_mean_var}
+### Extension content: Adding sample difference to the histogram
+
+You can add a vertical line to the plot using the function `geom_vline()` with the mapping  `x_intercept`. ggplot will add a vertical line at the position you give to `x_intercept`.
+
+```{r adding_lines_drosophila}
+ggplot(df_sim, aes(x = diff)) +
+  geom_histogram(bins = 50) +
+  geom_vline(xintercept = sample_diff, color = "red")
+```
+
 :::
-
-## Other distributions
-
-Using the skills we've built so far, we can now simulate data from any probability distribution, whether to compare with observed data, test a hypothesis or model a process.
-
-### Exponential Distribution
-
-The data in `data/neuronal_spikes.csv` is real data from [this paper](https://doi.org/10.3389/fncom.2019.00069), published in Frontiers in Computational Neuroscience in 2019. 
 
 

@@ -1,5 +1,0 @@
----
-title: "Part 4: Bayes Theorem"
-format: html
----
-

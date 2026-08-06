@@ -15,7 +15,7 @@ library(patchwork)
 set.seed(42)
 ```
 
-# Part 2: Introduction to Simulation in Probability Analysis {#sec-p2_simulation}
+# Part 2: Using simulation to understand probability  {#sec-p2_simulation}
 
 ::: {.callout-note .partmenu #parts-0301}
 

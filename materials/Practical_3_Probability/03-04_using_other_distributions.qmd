@@ -1,0 +1,152 @@
+---
+format: html
+practical: Practical_3_Probability
+doc-id: "0304"
+---
+
+```{r setup_0304, include=FALSE}
+library(tidyverse)
+library(gt)
+library(patchwork)
+set.seed(42)
+```
+
+## Part 4: Simulation exercises {#sec-using_other_distributions}
+
+Using the skills we've built so far, we can now simulate data from any probability distribution, whether to compare with observed data, test a hypothesis or model a process.
+
+### Distribution 1
+
+The data in `data/neurons.csv` is from [this paper](https://doi.org/10.3389/fncom.2019.00069), published by Koepcke et al. in Frontiers in Computational Neuroscience in 2019. 
+
+These authors investigated whether a single neuron can rapidly detect changes in a sensory stimulus by analysing the time between successive action potentials (interspike intervals). The analysis was performed using multiple neurons.
+
+The data in data/neurons.csv come from a single neuron and contain a series of waiting times between successive spikes, measured in seconds.
+
+::: {.callout-exercise #ex-neurons}
+
+Imagine that you are a researcher and you notice that this neuron seems to fire very regularly. In particular, it never seems to pause for very long between spikes. By estimating the probability distribution of the waiting times and using simulation, investigate whether the longest observed wait is unusually short.
+
+In your `distributions.qmd` Quarto file:
+
+* Read the CSV file containing the data.
+* Plot a **histogram** with an appropriate number of bins showing how the data is distributed.
+* Based on this plot and your knowledge of different probability distributions, consider which distribution you think the data might fit.
+* Find the longest wait time in the observed data.
+* Using the appropriate function from the table in @sec-other_distributions, generate 1000 random datasets with the same number of measurements from the distribution you have selected, generating parameters from your data as needed. Record the longest wait time.
+* Assuming the observed data follows the same distribution as the simulated data, plot a histogram of your simulated maxima and estimate if the maximum observed wait time is unexpectedly short. 
+* Calculate the percentage of your simulated samples in which the maximum wait time is **less** than or equal to the maximum observed in the study.
+
+::: {.callout-note .extension #bon-pexp}
+
+### Extension: Cumulative probability
+* Using the appropriate cumulative probability function, calculate the theoretical probability that a single wait time will be less than or equal to your observed maximum.
+
+:::
+
+::: {.callout-answer #ex-neurons_ans}
+
+[Read the file containing the data.]{.blue-text}
+
+```{r read_data_neurons, message=FALSE}
+neuron_df <- read_csv("data/neurons.csv")
+```
+
+[Plot a **histogram** with an appropriate number of bins showing how the data is distributed.]{.blue-text}
+
+```{r plot_data_neurons}
+ggplot(
+  neuron_df,
+  aes(x = Inter_Spike_Interval)
+) +
+  geom_histogram(bins = 50)
+```
+[Based on this plot and your knowledge of different probability distributions, consider which distribution you think the data might fit.]{.blue-text}
+
+The distribution of waiting times between spikes looks approximately exponential.
+
+If instead we were to count the number of spikes in a fixed interval, the simplest model would be to assume they are Poisson distributed.
+
+* We are counting how many times an event - a spike - occurs.
+* Counts are made over a known interval.
+* Spikes occur independently (we assume).
+* Spikes occur at a constant average rate throughout the interval (again, we assume).
+* The chance of multiple spikes in a very small interval is negligible.
+* There is no fixed upper limit to the count - in theory any number of spikes could occur.
+
+If spike counts follow a Poisson distribution, then the waiting times between successive spikes are expected to follow an exponential distribution. 
+
+[Find the longest wait time in the observed data.]{.blue-text}
+
+```{r max_neurons}
+max_observed <- max(pull(neuron_df, Inter_Spike_Interval))
+print(max_observed)
+```
+[Using the appropriate function from the table in @sec-other_distributions, generate 1000 random datasets with the same number of measurements from the distribution you have selected, generating parameters from your data as needed. Record the longest wait time.]{.blue-text}
+
+```{r calc_rate_neurons}
+sample_mean_wait_time <- mean(pull(neuron_df, Inter_Spike_Interval))
+n_observations <- nrow(neuron_df)
+lambda <- 1 / sample_mean_wait_time
+```
+
+The mean wait time in our dataset is `r round(sample_mean_wait_time, 4)`, so the rate for our exponential distribution is 1/`r round(sample_mean_wait_time, 4)`.
+
+```{r simulate_neurons}
+maxis <- c()
+for (i in seq_len(1000)) {
+  expo <- rexp(
+    n = n_observations,
+    rate = lambda
+  )
+  maxi <- max(expo)
+  maxis <- c(maxis, maxi)
+}
+maxi_df <- tibble(Maximum_Wait_Time = maxis)
+```
+
+[Assuming the observed data follows the same distribution as the simulated data, plot a histogram of your simulated maxima and estimate if the maximum observed wait time is unexpectedly long or short.]{.blue-text}
+
+```{r plot_neurons_max}
+ggplot(
+  maxi_df,
+  aes(x = Maximum_Wait_Time)
+) +
+  geom_histogram(bins = 50) +
+  geom_vline(xintercept = max_observed, color = "red")
+```
+The observed maximum waiting time is towards the lower end of the simulated maxima, but still falls within the range expected under the fitted exponential model.
+
+[Calculate the percentage of your simulated samples in which the maximum wait time is **less** than or equal to the maximum observed in the study.]{.blue-text}
+
+```{r calc_neurons_max}
+filt_maxi <- maxi_df |>
+  filter(Maximum_Wait_Time <= max_observed)
+
+prop <- nrow(filt_maxi) / nrow(maxi_df)
+print(prop)
+```
+::: {.callout-note .extension #bon-pexp_ans}
+### Extension: Cumulative probability - Answer
+
+[Using the appropriate cumulative probability function, calculate the theoretical probability that a single wait time will be less than or equal to your observed maximum.]{.blue-text}
+
+```{r theor_neurons_one}
+prob_one_wt <- pexp(max_observed, rate = lambda)
+print(prob_one_wt)
+```
+
+[Calculate the theoretical probability that **all** `r nrow(neuron_df)` of your observations would be less than this value.]{.blue-text}
+
+```{r theor_neurons_all}
+prob_all_wt <- prob_one_wt^n_observations
+print(prob_all_wt)
+```
+:::
+
+Based on these results, the observed maximum waiting time is shorter than many of the simulated maxima. However, it is still well within the range expected from an exponential distribution, so there is no strong evidence that its behaviour is unusual, assuming our wait times are exponentially distributed.
+
+:::
+
+In this exercise we compared the longest waiting time, because it related to our biological question. In another study we might instead compare the mean, median, variance, or number of waiting times longer than a chosen threshold. Simulation is flexible because it allows us to investigate whichever quantity is most relevant to our question.
+

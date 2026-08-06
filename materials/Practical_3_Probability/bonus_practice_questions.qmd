@@ -1,0 +1,149 @@
+---
+title: "Probability_Question_Sheets"
+---
+
+## Question 1
+
+In a natural habitat, grey wolves, foxes and coyotes co-exist. The current population
+is estimated to be 60 foxes, 30 coyotes and 10 wolves. If each animal is equally likely
+to be sighted first, find the probability of:
+a. a coyote being sighted first
+b. a wolf being sighted first
+c. a fox being sighted second after either a coyote or a wolf has been sighted and
+then removed from the habitat, so they can be fitted with a tracking device
+(Consider: what is the impact of the first sighting on what you see next?)
+
+
+```{r q1}
+animals <- c(
+  rep("fox", 60),
+  rep("coyote", 30),
+  rep("wolf", 10)
+)
+
+samps <- sample(x=animals,
+                size=1000,
+                replace=TRUE)
+```
+
+### a
+Probability that a coyote is sighted first.
+
+```{r q1a}
+n_coy <- sum(samps == 'coyote')
+print (n_coy / length(samps))
+```
+### b
+Probability that a wolf is sighted first.
+
+```{r q1b}
+n_wolves <- sum(samps == 'wolf')
+print (n_wolves / length(samps))
+```
+### c
+Probability of a fox being sighted second after either a coyote or a wolf has been sighted and then removed from the habitat, so they can be fitted with a tracking device.
+
+```{r q1c}
+animals <- c(
+  rep("fox", 60),
+  rep("coyote", 30),
+  rep("wolf", 10)
+)
+
+times_w_c_first = 0
+times_f_second = 0
+for (i in seq_len(10000)){
+  samps <- sample(x=animals,
+                  size=2,
+                  replace=FALSE)
+
+  if ((samps[1] == 'wolf') || (samps[1] == 'coyote')){
+    times_w_c_first = times_w_c_first + 1
+    if (samps[2] == 'fox'){
+      times_f_second = times_f_second + 1
+    }
+  }
+}
+
+print (times_f_second / times_w_c_first)
+```
+
+## Question 2
+A transmitter emits the signals “0” or “1” in the ratio 1:2. Two independent receivers,
+labelled R1 and R2 are set up. If, unknown to the users, receiver R1 is incorrect in 2%
+of the cases and receiver R2 is incorrect in 3% of the cases, find
+
+a. the probability that R1 reports that the transmitted signal is “0”
+b. the probability that R2 reports that the transmitted signal is “1”
+c. following an incoming signal there is some confusion, because R1 reports
+signal “0” and R2 reports signal “1”. Which of the two receivers is most likely
+to be correct?
+
+```{r q2}
+transmitter_probs <- c(1/3, 2/3)
+transmitter_poss_outcomes <- c(0, 1)
+
+transmitter <- sample(x = transmitter_poss_outcomes,
+                      size = 10000,
+                      replace = TRUE,
+                      prob=transmitter_probs)
+R1_probs <- c(0.98, 0.02)
+R2_probs <- c(0.97, 0.03)
+
+R1_0 <- 0
+R2_1 <- 0
+
+R1_correct <- 0
+R2_correct <- 0
+
+n_incidents_c <- 0
+for (correct in transmitter){
+  incorrect = abs(correct - 1)
+  
+  R1_report <- sample(x = c(correct, incorrect),
+                      size = 1,
+                      replace = TRUE,
+                      prob = R1_probs)
+  R2_report <- sample(x = c(correct, incorrect),
+                      size = 1,
+                      replace = TRUE,
+                      prob = R2_probs)
+  if (R1_report == 0){
+    R1_0 = R1_0 + 1
+  }
+  if (R2_report == 1){
+    R2_1 = R2_1 + 1
+  }
+  if ((R1_report == 0 && R2_report == 1)){
+    if (R1_report == correct){
+      R1_correct = R1_correct + 1
+    }
+    else {
+      R2_correct = R2_correct + 1
+    }
+  }
+}
+```
+
+### a
+```{r q2a}
+print (R1_0 / 10000)
+```
+
+### b
+```{r q2b}
+print (R2_1/ 10000)
+```
+
+### c
+c. following an incoming signal there is some confusion, because R1 reports
+signal “0” and R2 reports signal “1”. Which of the two receivers is most likely
+to be correct?
+
+```{r q2c}
+print (R1_correct / (R1_correct + R2_correct))
+print (R2_correct / (R1_correct + R2_correct))
+```
+R2 is more likely to be correct.
+
+

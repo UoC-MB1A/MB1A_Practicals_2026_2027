@@ -39,6 +39,7 @@ In this practical, you will need two Quarto documents:
 * `prac3_exercises.qmd` for basic exercises
 * `squirrels.qmd` for a squirrel based simulation exercise
 * `drosophila.qmd` for investigating mutation counts in Drosophila
+* `distributions.qmd` for quick investigations of different probability distributions
 
 ## For Loops {#sec-loops}
 
