@@ -22,7 +22,6 @@ book:
         - materials/Practical_3_Probability/03-02_intro_to_probability.qmd
         - materials/Practical_3_Probability/03-03_distributions.qmd
         - materials/Practical_3_Probability/03-04_bayes_theorem.qmd
-        - materials/Practical_3_Probability/03-05_sampling.qmd
     - part: "Practical 5 - Bioinformatics"
       chapters:
         - materials/Practical_5_Bioinformatics/05-00_learning_obj.qmd

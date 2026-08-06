@@ -55,7 +55,7 @@ For example:
 
 This means we can use a lot of what we've learned already to many different probability distributions.
 
-## Comparing theoretical distributions with real data
+## Comparing simulated and real data {#sec-comparing_sim_real}
 
 We can use these functions to help establish the distribution of real datasets. 
 
@@ -85,11 +85,9 @@ dcounts <- read_csv("data/drosophila_counts.csv")
 gt(dcounts)
 ```
 
-
 * The `Population_ID` column is the ID of the Drosophila population in which the mutations were counted.
 * The `Novel_Mutation_Count` column is the number of mutations accumulated on chromosome arm 2R in that population.
 
- 
 ::: {.callout-exercise #ex-summary_drosophila}
 
 In your `drosophila.qmd` Quarto file, read the csv file and create a data frame using the function `summarize()` which shows:
@@ -147,7 +145,7 @@ ggplot(dcounts, aes(x = Novel_Mutation_Count)) +
 
 Again, this kind of looks Poisson distributed, but it's hard to be sure.
 
-::: {.callout-note .explore collapse="true" #bon-theoretical_pois}
+::: {.callout-note .extension collapse="true" #bon-theoretical_pois}
 
 ### Adding a theoretical distribution
 
@@ -384,8 +382,8 @@ The values seen in the study are consistent with what we'd expect for a sample o
 :::
 :::
 
-::: {.callout-note .explore collapse="true" #bon-lines_mean_var}
-### Explore content: Adding sample difference to the histogram
+::: {.callout-note .extension collapse="true" #bon-lines_mean_var}
+### Extension content: Adding sample difference to the histogram
 
 You can add a vertical line to the plot using the function `geom_vline()` with the mapping  `x_intercept`. ggplot will add a vertical line at the position you give to `x_intercept`.
 
@@ -396,8 +394,8 @@ ggplot(df_sim, aes(x = diff)) +
 ```
 :::
 
-::: {.callout-note .explore collapse="true" #bon-percentile_pois}
-### Explore exercise: Calculating the percentile of the difference between the sample mean and variance
+::: {.callout-note .extension collapse="true" #bon-percentile_pois}
+### Extension exercise: Calculating the percentile of the difference between the sample mean and variance
 
 ::: {.callout-exercise #ex-percentile_pois}
 In your `drosophila.qmd` Quarto document, calculate the percentage of your simulated samples in which the difference between the sample mean and sample variance is **greater** than the difference observed in the study.
@@ -414,3 +412,5 @@ In my simulation, `r round(prop, 2)*100`% of simulated samples had a difference 
 :::
 :::
 :::
+
+

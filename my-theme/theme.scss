@@ -208,24 +208,22 @@ div.callout.copycode > .callout-header::before {
   margin-right: 10px;
 }
 
-/* Bonus callout */
-div.callout.explore.callout {
+/* Bonus callouts */
+div.callout.extension.callout {
   border-left-color: #F7CBE0;
 }
 
-div.callout.explore.callout-style-default > .callout-header {
+div.callout.extension.callout-style-default > .callout-header {
   background-color: #F7CBE0;
   color: black;
 }
 
-div.callout.explore > .callout-header::before {
+div.callout.extension .callout-icon::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f0c5";
-  margin-right: 10px;
+  content: "\f610";
 }
 
-/* Bonus callout */
 div.callout.bonus.callout {
   border-left-color: #70D1D4;
 }
@@ -235,12 +233,14 @@ div.callout.bonus.callout-style-default > .callout-header {
   color: black;
 }
 
-div.callout.bonus > .callout-header::before {
+div.callout.bonus .callout-icon::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f0c5";
-  margin-right: 10px;
+  content: "\f135";
 }
+
+
+
 
 /*-- Figures & code output ------------------------------------------------*/
 .figure {
