@@ -12,6 +12,7 @@ project:
     - github.qmd
     - materials.md
     - materials/*
+    - function_reference.qmd
     - "!materials/*/no_render"
 
 format:
