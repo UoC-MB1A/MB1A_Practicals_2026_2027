@@ -25,6 +25,16 @@ process_cancer_df <- function(cancer_type) {
 
 # Part 3: Simulating Data {#sec-p3_simulating_data}
 
+::: {.callout-note .partmenu #parts-0603}
+
+## Sections
+
+- @sec-coding_length
+- @sec-simulating_data
+- @sec-summary_0603
+
+:::
+
 :::{.callout-tip .objectives #objectives-0603}
 
 #### Learning objectives
@@ -36,15 +46,6 @@ By the end of this part of the practical you will be able to:
 
 :::
 
-::: {.callout-note .partmenu #parts-0603}
-
-## Sections
-
-- @sec-coding_length
-- @sec-simulating_data
-- @sec-summary_0603
-
-:::
 
 ## Incorporating coding sequence length {#sec-coding_length}
 
@@ -175,29 +176,14 @@ gt(head(cds_length_df))
 ```
 :::
 :::
-Next, let's use the function `sample` to take a sample. The arguments for this function are:
+Next, let's use the function `sample` to take a sample, as introduced in Practical 3 (@. The arguments for this function are:
 
 * `x`: a vector of elements from which to sample
 * `size`: the number of items to choose
 * `replace`: should we replace after sampling
 * `prob`: a vector of **probability weights** corresponding to this vector
 
-For example, if we had a vector `c('Badger', 'MUSHROOM')` and we want to sample 100 times from this vector, with replacement, [selecting `Badger` 95% of the time and `MUSHROOM` 5% of the time](https://www.youtube.com/watch?v=EIyixC9NsLI), we would use this function as follows:
-
-```{r badger_badger_mushroom}
-bm_vec <- c("Badger", "MUSHROOM")
-bm_probs <- c(0.95, 0.05)
-
-my_sample <- sample(bm_vec,
-  size = 100,
-  replace = TRUE,
-  prob = bm_probs
-)
-
-print(my_sample)
-```
-
-Similarly, we can sample our genes using the data in the `Gene_ID` column as our vector of elements from which to sample and the data in our `Prop` column as our vector of probability weights.
+We can sample our genes using the data in the `Gene_ID` column as our vector of elements from which to sample and the data in our `Prop` column as our vector of probability weights.
 
 ::: {.callout-exercise #ex-simulate_genes}
 
@@ -423,21 +409,19 @@ gt(nd_counts_sim)
 
 ## Review {#sec-summary_0603}
 
-Throughout this practical, we've gradually extended our analysis. We started by identifying genes that were frequently mutated, then compared our results with the published study based on the same data, and finally asked whether a simple biological factor - coding sequence length - could explain some of the differences. This is a common approach in mathematical biology: begin with a simple analysis, identify possible sources of bias, and test whether they explain the patterns you observe.
-
 [↑ top](#)
 
 ::: {.callout-note #note-summary_0603}
 
 ### Summary
 
-* The `sample()` function takes a sample from a vector based on specified probabilities
-* You can repeatedly sample a population using a for loop
 * Simulation analysis is useful to help establish if your results could be due to chance.
 
 :::
 
 For this part of the practical, the main files you have edited are:
+
+* `TCGA_data_analysis.qmd`
 
 These are the files you should select when making your Git commit.
 

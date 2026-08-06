@@ -377,6 +377,7 @@ You have applied these skills to data from The Cancer Genome Atlas (TCGA), writi
 :::
 
 For this part of the practical, the main files you have edited are:
+
 * `prac6_exercises.qmd`
 * `TCGA_data_analysis.qmd`
 
