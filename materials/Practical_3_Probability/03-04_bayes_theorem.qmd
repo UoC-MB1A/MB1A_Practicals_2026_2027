@@ -1,5 +1,5 @@
 ---
-title: "03-03_bayesian_theorem"
+title: "Part 4: Bayes Theorem"
 format: html
 ---
 

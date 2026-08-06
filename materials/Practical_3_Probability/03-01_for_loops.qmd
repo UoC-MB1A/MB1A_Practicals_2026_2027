@@ -81,7 +81,7 @@ for (i in seq_len(10)) {
 We also don't have to actually use our variable `i` inside the loop, we can just use it to set the number of iterations.
 
 ::: {.callout-exercise #ex-loops_1}
-In your `prac6_exercises.qmd` quarto document, generate two for loops:
+In your `prac3_exercises.qmd` quarto document, generate two for loops:
 
 1. A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
 
@@ -126,9 +126,7 @@ You can also use a for loop to do something to each item in a vector.
 
 For example, in the below, we loop through the animals in our vector `species`. Inside the loop, the value of the variable `spp` changes on each iteration.
 
-::: {#sec-func_say}
 The cowsay package uses the `say()` function and the argument <code>by = [animal_name]{.orange-text}</code> (where [animal_name]{.orange-text} is the name of an animal) to print ascii art of animals (and their associates) saying things.
-:::
 
 ```{r for_loop_vector}
 library(cowsay)
@@ -154,7 +152,9 @@ for (spp in species) {
 
 Remember that everything inside the brackets is part of the loop, everything outside the brackets is not.
 
-For example, let's write a short story about bird migration, based on what we learned in practical 2. The `cat()` function works like `print()`, but doesn't print each output on a new line.
+For example, let's write a short story about bird migration, based on what we learned in practical 2.
+
+The `cat()` function works like `print()`, but doesn't print each output on a new line.
 
 ```{r bird_story, results="hold"}
 cat("A bird leaves west Africa.\n")

@@ -20,7 +20,9 @@ set.seed(42)
 
 :::
 
-## Distribution functions in R
+## Part 3: Distribution functions in R {#sec-distributions}
+
+### Other distributions {#sec-other_distributions}
 
 In part 2, you used:
 
