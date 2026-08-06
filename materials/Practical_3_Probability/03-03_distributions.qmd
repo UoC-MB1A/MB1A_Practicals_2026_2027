@@ -147,7 +147,7 @@ Again, this kind of looks Poisson distributed, but it's hard to be sure.
 
 ::: {.callout-note .extension collapse="true" #bon-theoretical_pois}
 
-### Adding a theoretical distribution
+### Extension content: Adding a theoretical distribution
 
 It might help to compare this data to a theoretical, perfect, Poisson distribution.
 
@@ -412,5 +412,13 @@ In my simulation, `r round(prop, 2)*100`% of simulated samples had a difference 
 :::
 :::
 :::
+
+## Other distributions
+
+Using the skills we've built so far, we can now simulate data from any probability distribution, whether to compare with observed data, test a hypothesis or model a process.
+
+### Exponential Distribution
+
+The data in `data/neuronal_spikes.csv` is real data from [this paper](https://doi.org/10.3389/fncom.2019.00069), published in Frontiers in Computational Neuroscience in 2019. 
 
 
