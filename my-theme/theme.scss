@@ -209,12 +209,29 @@ div.callout.copycode > .callout-header::before {
 }
 
 /* Bonus callout */
+div.callout.explore.callout {
+  border-left-color: #F7CBE0;
+}
+
+div.callout.explore.callout-style-default > .callout-header {
+  background-color: #F7CBE0;
+  color: black;
+}
+
+div.callout.explore > .callout-header::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  content: "\f0c5";
+  margin-right: 10px;
+}
+
+/* Bonus callout */
 div.callout.bonus.callout {
-  border-left-color: #DB8FAD;
+  border-left-color: #70D1D4;
 }
 
 div.callout.bonus.callout-style-default > .callout-header {
-  background-color: #DB8FAD;
+  background-color: #70D1D4;
   color: black;
 }
 
