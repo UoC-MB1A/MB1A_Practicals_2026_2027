@@ -1,7 +1,0 @@
----
-title: "Function Glossary"
-author: "Katy Brown"
----
-* [`for`](@sec-loops)
-* [`say()`](@sec-func_say)
-* [`cat()`](@sec-func_cat)

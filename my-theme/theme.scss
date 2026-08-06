@@ -356,3 +356,10 @@ img.inline-icon {
   color: darkorange;
 }
 
+.function-table td {
+  vertical-align: top;
+}
+
+.function-table td:nth-child(4) {
+  min-width: 20em;
+}

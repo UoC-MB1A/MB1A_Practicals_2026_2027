@@ -12,7 +12,6 @@ project:
     - github.qmd
     - materials.md
     - materials/*
-    - function_reference.qmd
     - "!materials/*/no_render"
 
 format:
@@ -69,10 +68,6 @@ book:
           href: setup.qmd
         - text: "Setting up Git, GitHub and RStudio"
           href: github.qmd
-    - part: "Extras"
-      chapters:
-        - text: "Function Reference"
-          href: functions.qmd
 
 metadata:
   course-title: MB1A
