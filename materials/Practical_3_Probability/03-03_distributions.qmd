@@ -1,0 +1,414 @@
+---
+format: html
+practical: Practical_3_Probability
+doc-id: "0303"
+---
+
+```{r setup_0303, include=FALSE}
+library(tidyverse)
+library(gt)
+library(patchwork)
+set.seed(42)
+```
+
+:::{.callout-tip .objectives #objectives-0303}
+
+* Describe when a Poisson distribution may be an appropriate model.
+* Use the `rpois()` and `dpois()` functions in R.
+* Calculate summary statistics for real and simulated datasets.
+* Use simulation to investigate whether observed data are consistent with a statistical model
+
+:::
+
+## Distribution functions in R
+
+In part 2, you used:
+
+* `dbinom()` calculates probabilities from a binomial distribution.
+* `rbinom()` generates random values from a binomial distribution.
+* `pbinom()` calculates cumulative probabilities from a binomial distribution.
+
+Another function, `qbinom()`, calculates quantiles, allowing you to determine the value below which a given proportion of observations would be expected to fall.
+
+Helpfully, R uses a consistent naming convention for functions related to probability distributions. The table below shows some of the most commonly used distributions and the functions used to generate random values, calculate probabilities (or densities), calculate cumulative probabilities and calculate quantiles. The arguments differ depending on the parameters of the distribution.
+
+For example:
+
+| Distribution | Random samples | Probability / Density | Cumulative probability | Quantiles |
+|--------------|----------------|-----------------------|------------------------|-----------|
+| Binomial | `rbinom()` | `dbinom()` | `pbinom()` | `qbinom()` |
+| Poisson | `rpois()` | `dpois()` | `ppois()` | `qpois()` |
+| Normal | `rnorm()` | `dnorm()` | `pnorm()` | `qnorm()` |
+| Exponential | `rexp()` | `dexp()` | `pexp()` | `qexp()` |
+| Geometric | `rgeom()` | `dgeom()` | `pgeom()` | `qgeom()` |
+| Hypergeometric | `rhyper()` | `dhyper()` | `phyper()` | `qhyper()` |
+| Negative binomial | `rnbinom()` | `dnbinom()` | `pnbinom()` | `qnbinom()` |
+| Uniform | `runif()` | `dunif()` | `punif()` | `qunif()` |
+| Gamma | `rgamma()` | `dgamma()` | `pgamma()` | `qgamma()` |
+| Beta | `rbeta()` | `dbeta()` | `pbeta()` | `qbeta()` |
+| Log-normal | `rlnorm()` | `dlnorm()` | `plnorm()` | `qlnorm()` |
+| Chi-squared | `rchisq()` | `dchisq()` | `pchisq()` | `qchisq()` |
+| Student's *t* | `rt()` | `dt()` | `pt()` | `qt()` |
+| *F* | `rf()` | `df()` | `pf()` | `qf()` |
+
+This means we can use a lot of what we've learned already to many different probability distributions.
+
+## Comparing theoretical distributions with real data
+
+We can use these functions to help establish the distribution of real datasets. 
+
+First, let's look at some real data which is described as Poisson distributed. This data comes from a [paper](https://doi.org/10.1101/gr.219956.116) by Assaf et al. published in Genome Research in 2017.
+
+In this paper, the authors performed a **mutation accumulation** experiment in the fruit fly, *Drosophila melanogaster*. They allowed 17 populations of Drosophila to accumulate mutations for 36-53 generations, then sequenced them and counted novel mutations per population.
+
+The authors describe the mutation counts on each chromosome arm per population as Poisson distributed (shown in Figure 1B in the paper).
+
+This seems reasonable:
+
+* We are counting how many times an event - a mutation - occurs.
+* Counts are made over a known interval - in this case a defined number of generations.
+* Events occur independently (we assume).
+* Events occur at a constant average rate throughout the interval (again, we assume).
+* The chance of multiple events in a very small interval is negligible.
+* There is no fixed upper limit to the count - in theory any number of mutations could occur.
+
+In this practical, we will just look at data from one chromosome arm, the right arm of chromosome 2.
+
+### Examining the data
+
+This data is provided in a CSV file extracted from the supplementary data associated with the publication - `data/drosophila_counts.csv`. Let's read it.
+
+```{r read_drosophila, message=FALSE}
+dcounts <- read_csv("data/drosophila_counts.csv")
+gt(dcounts)
+```
+
+
+* The `Population_ID` column is the ID of the Drosophila population in which the mutations were counted.
+* The `Novel_Mutation_Count` column is the number of mutations accumulated on chromosome arm 2R in that population.
+
+ 
+::: {.callout-exercise #ex-summary_drosophila}
+
+In your `drosophila.qmd` Quarto file, read the csv file and create a data frame using the function `summarize()` which shows:
+
+* Total novel mutation count  (function `sum()`), in the column `total_nm`.
+* Maximum novel mutation count  (function `max()` in the column `max_nm`)
+* Mean novel mutation count (function `mean()`), in the column `mean_nm`.
+* Variance in novel mutation count (function `var()`), in the column `variance_nm`.
+
+Store your data frame in a variable, `dros_summary` and look at it with `gt()`.
+
+Looking at the mean and variance, do you think that these data are Poisson distributed?
+
+::: {.callout-answer collapse="true" #ex-summary_drosophila_ans}
+
+```{r summary_drosophila_ans, message=FALSE}
+dcounts <- read_csv("data/drosophila_counts.csv")
+
+dros_summary <- dcounts |>
+  summarize(
+    total_nm = sum(Novel_Mutation_Count),
+    max_nm = max(Novel_Mutation_Count),
+    mean_nm = mean(Novel_Mutation_Count),
+    variance_nm = var(Novel_Mutation_Count)
+  )
+
+gt(dros_summary)
+```
+The variance is a bit higher than the mean - maybe the data is not Poisson distributed? We can do some more analysis to find out.
+
+:::
+:::
+
+### Plotting the data
+
+Let's plot a bar chart of our mutation counts and have a look at its distribution.
+
+We can plot the number of occurrences of each value of discrete variable in R by adding a `geom_bar` layer to our ggplot. The mapping function `aes()` for geom_bar only needs one argument, the column to map to the x axis. The y axis will be generated automatically by counting the number of times each value of x occurs.
+
+
+::: {.callout-exercise #ex-bar_drosophila}
+
+In your `drosophila.qmd` Quarto file, plot a bar chart of the number of populations in which each number of mutations was observed, using `ggplot()` and `geom_bar()`.
+
+::: {.callout-answer collapse="true" #ex-bar_drosophila_ans}
+
+```{r bar_drosophila}
+## fill="skyblue", and theme_bw are not essential, just aesthetic
+ggplot(dcounts, aes(x = Novel_Mutation_Count)) +
+  geom_bar(fill = "skyblue") +
+  theme_bw()
+```
+:::
+:::
+
+Again, this kind of looks Poisson distributed, but it's hard to be sure.
+
+::: {.callout-note .explore collapse="true" #bon-theoretical_pois}
+
+### Adding a theoretical distribution
+
+It might help to compare this data to a theoretical, perfect, Poisson distribution.
+
+You have seen the probability mass function for the Poisson distribution in the lectures.
+
+$$
+P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}
+$$
+
+So, to calculate the probability of observing exactly *k* mutations under a Poisson distribution, we have one parameter:
+
+* λ (lambda) - in our case, the mean number of mutations on chromosome arm 2R per population.
+
+`k` is the particular mutation count for which we want to calculate the probability.
+
+We can calculate this using the R function `dpois`.
+
+Let's look at our summary data frame again:
+
+```{r look_summary_drosophila}
+gt(dros_summary)
+```
+
+We have a mean of `r round(pull(dros_summary, mean_nm), 2)` mutations per population. As an example, let's calculate the probability of observing 4 mutations. In this case, lambda = `r round(pull(dros_summary, mean_nm), 2)`  and k = 4.
+
+```{r dpois_one}
+sample_mean <- dros_summary |> pull(mean_nm)
+k <- 4
+prob <- dpois(x = k, lambda = sample_mean)
+print(prob)
+```
+
+The probability is around `r round(prob, 2)`. We can multiply this by the number of populations, `r nrow(dcounts)`, to get the expected number of populations which will have 4 mutations.
+
+```{r dpois_one_mult}
+n_populations <- nrow(dcounts)
+expected_count <- prob * n_populations
+print(expected_count)
+```
+
+So, on chromosome 2R, if the data were perfectly Poisson distributed, we would expect to see 4 mutations in `r round(expected_count, 2)` populations (The expected count does not need to be a whole number. It represents the average number of populations we would expect across many repetitions of the experiment).
+
+Now let's calculate the probability of all possible mutation counts - all possible values of k. The least possible mutations is 0, let's use the maximum observed number of mutations as our maximum, so our theoretical distribution covers our observed range. We have this in our summary table above - the highest novel mutation count in any population is `r pull(dros_summary, max_nm)`.
+
+Helpfully, we can apply `dpois` to multiple values of *k* at once, e.g. to calculate the theoretical number of populations with each mutation count - each value of k - from 0 to `r pull(dros_summary, max_nm)`, we can do the following.
+
+```{r dpois_multi}
+max_k <- dros_summary |> pull(max_nm)
+possible_ks <- seq(0, max_k)
+
+all_theor_probs <- dpois(possible_ks,
+  lambda = sample_mean
+)
+
+print(all_theor_probs)
+```
+
+We can then multiply all of them simultaneously by the number of populations.
+
+```{r dpois_multi_mult}
+all_theor_counts <- all_theor_probs * n_populations
+print(all_theor_counts)
+```
+
+This is our theoretical Poisson distribution over the range of mutation counts observed in our data.
+
+We can add it to our plot. To do so, it needs to be in its own data frame.
+
+```{r data_frame_theor_drosophila}
+theor_df <- tibble(
+  k = possible_ks,
+  Theoretical_Mutation_Count = all_theor_counts
+)
+```
+
+::: {.callout-note .copycode #copy-theoretical}
+### Include this code
+
+Include this code in your `drosophila.qmd` Quarto file.
+
+Combining the steps above, the full code block to generate the theoretical data frame is as follows:
+
+```{r full_theoretical}
+# Find the maximum observed value of k
+max_k <- dros_summary |> pull(max_nm)
+
+# Make a sequence of numbers from 0
+# to the observed maximum k
+possible_ks <- seq(0, max_k)
+
+# Extract the sample mean from the summary data frame
+sample_mean <- dros_summary |> pull(mean_nm)
+
+# Calculate the theoretical distribution
+all_theor_probs <- dpois(possible_ks,
+  lambda = sample_mean
+)
+all_theor_counts <- all_theor_probs * n_populations
+
+# Put the results in a data frame
+theor_df <- tibble(
+  k = possible_ks,
+  Theoretical_Mutation_Count = all_theor_counts
+)
+```
+
+:::
+
+We can now add the theoretical points to our plot using `geom_point()`. We can give this function the new data frame to use instead of `dcounts`. 
+
+::: {.callout-note .copycode #copy-theoretical}
+### Include this code
+
+Include this code in your `drosophila.qmd` Quarto file.
+
+```{r bar_theor_drosophila}
+## fill='skyblue', size=3, and theme_bw are not essential, just aesthetic
+ggplot(data = dcounts, mapping = aes(x = Novel_Mutation_Count)) +
+  geom_bar(fill = "skyblue") +
+  geom_point(data = theor_df, mapping = aes(
+    x = k,
+    y = Theoretical_Mutation_Count
+  ), size = 3) +
+  theme_bw()
+```
+
+Again, the data looks *kind of* Poisson distributed, but it is not particularly definitive.
+:::
+:::
+
+One explanation for the difference between the sample mean and variance is the small sample size. This would also explain why our data don't look like an ideal Poisson distribution.
+
+We only have `r n_populations` populations, so the values we calculate from our sample will not exactly match the true properties of the underlying distribution. Even if the mutations really do follow a Poisson distribution, different random samples of only `r n_populations` populations will likely give slightly different means and variances simply due to chance.
+
+### Simulation
+
+This is another case where simulating data is really helpful. Let's simulate some data sets which are definitely Poisson distributed and have a sample size of `r n_populations`, and see how they look.
+
+We can use the `rpois` function for this. 
+
+First, let's generate simulated mutation counts on chromosome 2R for 17 populations.
+
+```{r}
+simulated_counts <- rpois(
+  n = n_populations,
+  lambda = sample_mean
+)
+print(simulated_counts)
+```
+This vector has a mean and a variance, just like our real counts.
+
+```{r}
+print(mean(simulated_counts))
+print(var(simulated_counts))
+```
+
+By simulating lots of similar datasets, we can establish if the difference between the mean and variance we saw with our real data is consistent with this data, which we know is Poisson distributed.
+
+The difference we saw in our real data is easy to calculate.
+
+```{r diff_mean_var_summary}
+sample_mean <- dros_summary |>
+  pull(mean_nm)
+sample_variance <- dros_summary |>
+  pull(variance_nm)
+
+sample_diff <- abs(sample_mean - sample_variance)
+```
+
+We saw a difference of `r round(sample_diff, 2)` between the two values.
+
+::: {.callout-exercise #ex-sim_drosophila}
+
+In your `drosophila.qmd` Quarto file, simulate the mutation counts on chromosome 2R for 17 populations 1000 times.
+
+Store the mean of each simulation in a vector `mean_sim` and the variance of each simulation in another vector `var_sim`. 
+
+Make a new data frame, stored as the variable `df_sim`, where the column `mean` contains your simulated means and the column `var` contains your simulated variances.
+
+Then, add a third column, `diff`, which shows the absolute value (function `abs()`)  of the difference between the mean and the variance. 
+
+::: {.callout-answer collapse="true" #ex-sim_drosophila_ans}
+```{r sim_drosophila_ans}
+mean_sim <- c()
+var_sim <- c()
+for (i in seq_len(1000)) {
+  # Simulate the counts
+  simulated_counts <- rpois(
+    n = n_populations,
+    lambda = sample_mean
+  )
+
+  # Take the mean and variance of the simulated counts
+  current_mean <- mean(simulated_counts)
+  current_var <- var(simulated_counts)
+
+  # Add these to your vectors
+  mean_sim <- c(mean_sim, current_mean)
+  var_sim <- c(var_sim, current_var)
+}
+
+df_sim <- tibble(
+  mean = mean_sim,
+  var = var_sim,
+  diff = abs(mean_sim - var_sim)
+)
+```
+:::
+:::
+
+Now, let's plot histograms of the 1000 differences between the mean and variance we calculated and see how they compare to our value of `r round(sample_diff, 2)`.
+
+::: {.callout-exercise #ex-plot_sim_drosophila}
+
+In your `drosophila.qmd` Quarto file, using ggplot, plot a histogram showing the difference between the mean and variance values in your simulated data.
+
+You can add a histogram in ggplot using the function `geom_histogram()`. Like `geom_bar()` it only requires one mapping, the x axis variable, in this case `mean` or `var`. The y axis frequencies are calculated from the data.
+
+You can change the number of bins in the histogram using the argument `bins = n`, where `n` is the number of bins.
+
+Look at your histogram - does our observed value of `r round(sample_diff, 2)` fit within the values observed for small samples pulled from a Poisson distribution?
+
+::: {.callout-answer collapse="true" #ex-plot_sim_drosophila_ans}
+
+```{r plot_sim_drosophila_ans1}
+ggplot(df_sim, aes(x = diff)) +
+  geom_histogram(bins = 50)
+```
+
+The values seen in the study are consistent with what we'd expect for a sample of 17 populations if the mutation counts on chromosome 2R are Poisson distributed.
+
+:::
+:::
+
+::: {.callout-note .explore collapse="true" #bon-lines_mean_var}
+### Explore content: Adding sample difference to the histogram
+
+You can add a vertical line to the plot using the function `geom_vline()` with the mapping  `x_intercept`. ggplot will add a vertical line at the position you give to `x_intercept`.
+
+```{r adding_lines_drosophila}
+ggplot(df_sim, aes(x = diff)) +
+  geom_histogram(bins = 50) +
+  geom_vline(aes(xintercept = sample_diff), color = "red")
+```
+:::
+
+::: {.callout-note .explore collapse="true" #bon-percentile_pois}
+### Explore exercise: Calculating the percentile of the difference between the sample mean and variance
+
+::: {.callout-exercise #ex-percentile_pois}
+In your `drosophila.qmd` Quarto document, calculate the percentage of your simulated samples in which the difference between the sample mean and sample variance is **greater** than the difference observed in the study.
+
+::: {.callout-answer collapse="true" #ex-percentile_pois_ans}
+```{r percentile_pois_ans}
+greater <- df_sim |> filter(diff > sample_diff)
+prop <- nrow(greater) / nrow(df_sim)
+print (prop)
+```
+
+In my simulation, `r round(prop, 2)*100`% of simulated samples had a difference between the mean and variance which is greater than the value of `r round(sample_diff, 2)` observed in the study.
+
+:::
+:::
+:::

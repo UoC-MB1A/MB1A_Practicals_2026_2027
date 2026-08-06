@@ -1,0 +1,626 @@
+---
+format: html
+practical: Practical_3_Probability
+doc-id: "0302"
+author: "Katy Brown"
+---
+
+
+```{r setup_0301, include=FALSE}
+library(tidyverse)
+library(gt)
+library(cowsay)
+library(DescTools)
+library(patchwork)
+set.seed(42)
+```
+
+# Part 2: Introduction to Simulation in Probability Analysis {#sec-p2_simulation}
+
+::: {.callout-note .partmenu #parts-0301}
+
+## Sections
+- @sec-simulation
+- @sec-unequal_probabilities
+- @sec-repeating_simulations
+- @sec-binomial
+- @sec-inbuilt_functions
+:::
+
+:::{.callout-tip .objectives #objectives-0301}
+- Use `sample()` to simulate random events with equal or unequal probabilities.
+- Use repeated simulation to estimate probabilities.
+- Use a `for` loop to repeat a simulation.
+- Calculate binomial probabilities using `dbinom()` and `pbinom()`.
+- Generate random values from a binomial distribution using `rbinom()`.
+- Compare an empirical distribution obtained by simulation with a theoretical probability mass function.
+:::
+
+## Simulation {#sec-simulation}
+
+Many biological processes involve an element of chance and therefore involve probability. In R, we can use simulation to generate data that resemble the outcomes of these random processes. These simulated data allow us to investigate probability, test hypotheses and better understand the behaviour of biological systems.
+
+For example, let's perform a tiny simulation, of a coin toss. We are using the function `sample()`, with the arguments `x` - the elements from which to sample, and `size`, the number of samples to take. By default, R assumes that every element is equally probable. 
+
+```{r toss_one_coin}
+coin_toss <- sample(c("Heads", "Tails"), size = 1)
+print(coin_toss)
+```
+
+We can use a for loop to toss multiple coins.
+
+```{r toss_five_coins}
+for (i in seq_len(5)) {
+  coin_toss <- sample(c("Heads", "Tails"),
+                      size=1)
+  print(coin_toss)
+}
+```
+
+We can also do this directly with the sample function by changing `size`. We need to add the argument `replace = TRUE` to tell R to replace the samples - otherwise after two samples, the coin has no remaining sides!
+
+```{r toss_five_coins_sample}
+coin_tosses <- sample(c("Heads", "Tails"),
+                      size=5,
+                      replace = TRUE)
+print(coin_tosses)
+```
+
+To count how many times a specific value occurs in a vector, you can use the operator `==` and the `sum()` function:
+
+```{r count_coins}
+n_successes <- sum(coin_tosses == "Heads")
+print(n_successes)
+```
+
+## Unequal probabilities {#sec-unequal_probabilities}
+
+So far, we've assumed a "fair coin" - with 50% probability of each outcome. However, we can change this by giving an additional argument to the `sample()` function.
+
+This argument is `prob` a vector of **probability weights** corresponding to this vector.
+
+So, if we want the coin to land on heads 70% of the time, we would use:
+
+```{r coin_biased}
+coin_tosses <- sample(c("Heads", "Tails"),
+  size = 5,
+  replace = TRUE,
+  prob = c(0.7, 0.3)
+)
+print(coin_tosses)
+```
+
+If we had a vector `c('Badger', 'Mushroom')` and we want to sample 100 times from this vector, with replacement, [selecting `Badger` 95% of the time, and `Mushroom` 5% of the time](https://www.youtube.com/watch?v=EIyixC9NsLI), we would use this function as follows:
+
+```{r badger_badger_mushroom}
+bm_vec <- c("Badger", "Mushroom")
+bm_probs <- c(0.95, 0.05)
+
+my_sample <- sample(bm_vec,
+  size = 100,
+  replace = TRUE,
+  prob = bm_probs
+)
+print(my_sample)
+```
+
+::: {.callout-exercise #ex-sample_binom}
+
+A squirrel has a 30% success rate at stealing seeds from a bird feeder. He tries 150 times.
+
+In your `squirrels.qmd` Quarto file, using the `sample()` function, take 150 samples with a 30% probability of a successful heist. Calculate the total number of successful heists and store it as a variable named `n_successes`.
+
+Have a squirrel announce the results of your simulation (the number of times he was successful) using the function `say()` and the argument `by="squirrel"`.
+
+::: {.callout-answer collapse="true" #ex_sample_binom_ans}
+```{r sample_binom_ans}
+is_success <- sample(c("SUCCESS", "FAILURE"),
+  size = 150,
+  replace = TRUE,
+  prob = c(0.3, 0.7)
+)
+n_successes <- sum(is_success == "SUCCESS")
+
+say(paste("I was successful", n_successes, "times!"), by = "squirrel")
+```
+:::
+:::
+
+## Repeating simulations {#sec-repeating_simulations}
+
+If you run this simulation several times, you'll see that the result often changes. 
+
+We can formalise this using a for loop, running the simulation a fixed number of times.
+
+Let's say we have 75 squirrels, all making 150 attempts, with the same fixed probability of success of 30%.
+
+```{r for_loop_squirrels}
+combined_successes <- c()
+for (i in seq_len(75)) {
+  is_success <- sample(c("SUCCESS", "FAILURE"),
+    size = 150,
+    replace = TRUE,
+    prob = c(0.3, 0.7)
+  )
+  n_successes <- sum(is_success == "SUCCESS")
+  combined_successes <- c(combined_successes, n_successes)
+}
+print(combined_successes)
+```
+
+We now know how many times each squirrel was successful, out of 150.
+
+Let's count how many squirrels have each number of successful heists - i.e. how many of our 75 squirrels stole seeds once, twice, three times etc.
+
+We can use the data frame function `count()` on our `n_successes` column to do this.
+
+First, we convert our vector into a data frame with a row for each squirrel.
+
+```{r data_frame_squirrels}
+combined_successes_df <- tibble(n_successes = combined_successes)
+```
+
+Then, using `count()`, we can count how many squirrels had each number of successes.
+
+```{r count_squirrels}
+successes_75 <- combined_successes_df |>
+  count(n_successes)
+gt(head(successes_75))
+```
+
+The column name `n` isn't very informative, we can change it with the `rename()` function.
+
+```{r rename_squirrels}
+successes_75 <- successes_75 |>
+  rename(squirrel_count_with_n_successes = n)
+gt(head(successes_75))
+```
+
+We can then divide this by 75 to get the proportion of squirrels with each number of successes.
+
+The `mutate()` function adds a new column to a data frame, which can be a transformation of an existing column.
+
+```{r prop_squirrels}
+successes_75 <- successes_75 |>
+  mutate(squirrel_prop_with_n_successes = squirrel_count_with_n_successes / 75)
+gt(head(successes_75))
+```
+
+The `squirrel_prop_with_n_successes` column in our data frame should total 1, let's check.
+
+```{r check_sum}
+print(sum(pull(successes_75, squirrel_prop_with_n_successes)))
+```
+Now, let's plot the number of squirrels with each proportion of successful heists.
+
+The `geom_col()` function in `ggplot` plots a bar chart.
+
+We can store our plot to view again later by assigning it to a variable, here `plot_75`. We then need to type the name of the variable to see the plot in our Quarto document.
+
+
+```{r}
+plot_75 <- ggplot(
+  successes_75,
+  aes(
+    x = n_successes,
+    y = squirrel_prop_with_n_successes
+  )
+) +
+  geom_col()
+
+plot_75
+```
+
+You can see that a distribution is emerging here - the squirrels are likely to be successful around 40 to 55 times out of 150. 
+
+## The binomial distribution {#sec-binomial}
+
+As you may have recognised, this is a binomial distribution:
+
+* We have a fixed number of trials - 150.
+* We have a binary outcome - success or failure.
+* Our trials are independent.
+* The probability of success is constant across trials.
+
+The number of successes announced by the squirrel above is the random variable - the number of successes, *k* out of 150 trials.
+
+If we run our simulation more times, our empirical approximation will get closer to a theoretical binomial distribution.
+
+
+::: {.callout-note .copycode #copy-read_list}
+### Include this code
+
+Include this code in your `squirrels.qmd` Quarto file.
+
+Combining the steps above, the full code block to run the simulation with 75 repeats, calculate the proportion of squirrels succeeding each number of times and plot the results is as follows.
+
+```{r run_squirrels_75}
+# 75 squirrels
+
+# Make an empty vector to store the results
+combined_successes <- c()
+
+# For each of the 75 squirrels
+for (i in seq_len(75)) {
+  # Have the squirrel attempt to steal seeds 150 times with
+  # a 30% probability of success
+  is_success <- sample(c("SUCCESS", "FAILURE"),
+    size = 150,
+    replace = TRUE,
+    prob = c(0.3, 0.7)
+  )
+  # Count the number of successes
+  n_successes <- sum(is_success == "SUCCESS")
+  # Store the result in our vector
+  combined_successes <- c(combined_successes, n_successes)
+}
+# Convert the results into a data frame
+combined_successes_df <- tibble(n_successes = combined_successes)
+
+# Count the number of squirrels with each number of successes
+successes_75 <- combined_successes_df |>
+  count(n_successes)
+
+# Rename the n column
+successes_75 <- successes_75 |>
+  rename(squirrel_count_with_n_successes = n)
+
+# Divide by the number of attempts
+successes_75 <- successes_75 |>
+  mutate(
+    squirrel_prop_with_n_successes = squirrel_count_with_n_successes / 75
+  )
+
+# Plot the results
+plot_75 <- ggplot(
+  successes_75,
+  aes(
+    x = n_successes,
+    y = squirrel_prop_with_n_successes
+  )
+) +
+  geom_col()
+```
+:::
+
+
+::: {.callout-exercise #ex-big_binom}
+In your `squirrels.qmd` Quarto document, make a second copy of the code block above and edit it to perform the simulation with 750 squirrels, and again plot the results. Store the results in a data frame variable named `successes_750`, and the plot as a plot variable, `plot_750`.
+
+::: {.callout-answer collapse="true" #ex_big_binom_ans}
+```{r more_squirrels}
+# 750 squirrels
+# Make an empty vector to store the results
+combined_successes <- c()
+
+# For each of 750 squirrels
+for (i in seq_len(750)) {
+  # Have the squirrel attempt to steal seeds 150 times with
+  # a 30% probability of success
+  is_success <- sample(c("SUCCESS", "FAILURE"),
+    size = 150,
+    replace = TRUE,
+    prob = c(0.3, 0.7)
+  )
+  # Count the number of successes
+  n_successes <- sum(is_success == "SUCCESS")
+  # Store the result in our vector
+  combined_successes <- c(combined_successes, n_successes)
+}
+
+# Convert the results into a data frame
+combined_successes_df <- tibble(n_successes = combined_successes)
+
+# Count the number of squirrels with each number of successes
+successes_750 <- combined_successes_df |>
+  count(n_successes)
+
+# Rename the n column
+successes_750 <- successes_750 |>
+  rename(squirrel_count_with_n_successes = n)
+
+# Divide by the number of attempts
+successes_750 <- successes_750 |>
+  mutate(
+    squirrel_prop_with_n_successes = squirrel_count_with_n_successes / 750
+  )
+
+# Plot the results
+plot_750 <- ggplot(
+  successes_750,
+  aes(
+    x = n_successes,
+    y = squirrel_prop_with_n_successes
+  )
+) +
+  geom_col()
+plot_750
+```
+
+:::
+:::
+
+Your new plot should look even closer to a binomial distribution.
+
+As you learned in the lectures, the **probability mass function** (PMF) for the binomial distribution is:
+
+$$
+P(X = k) =
+\binom{n}{k}
+p^k
+(1-p)^{n-k}
+$$
+
+
+This is implemented in R with the function `dbinom()`.
+
+The arguments for this function are:
+
+* `x`: calculate the number of this number of successes - *k* in the equation, 
+* `size`: number of trials, *n* in the equation, in our case 150 attempts per squirrel
+* `prob`: probability of success in each trial - *p* in the equation, the probability of squirrel success, 0.3, in our case.
+
+Let's estimate the probability that a squirrel succeeds 48 times.
+
+
+```{r pmf_once}
+n <- 150
+k <- 48
+p <- 0.3
+
+prob_X_equals_k <- dbinom(k, n, p)
+print(prob_X_equals_k)
+```
+
+We would expect this result around 6% of the time.
+
+Let's compare this with the observed result from our simulation. Using filter, we can view the row showing how many squirrels succeeded 48 times.
+
+```{r observed_squirrels}
+prop_48 <- successes_750 |> filter(n_successes == 48)
+gt(prop_48)
+```
+
+In my version of the simulation, 42 out of 750 squirrels succeeded 48/150 times, your results might vary.
+
+```{r calc_prop}
+print(42 / 750)
+```
+This is around 6% of the squirrels - not far off the estimate using the PMF.
+
+Now, using a for loop, we can try this for every value of `k` - i.e. every number of successes, from 0 to 150.
+
+```{r pmf_probs}
+n <- 150
+p <- 0.3
+probs <- c()
+for (k in seq(0, n, 1)) {
+  prob_X_equals_k <- dbinom(k, n, p)
+  probs <- c(probs, prob_X_equals_k)
+}
+probs
+```
+
+As above, let's convert our results into a data frame. We know our results correspond to values of k from 0 to 150, so we can add these as a column.
+
+```{r pmf_df}
+df_probs <- tibble(
+  k = seq(0, n, 1),
+  probability = probs
+)
+```
+
+And now we can make a bar plot of these probabilities.
+
+```{r pmf_bar_plot}
+plot_pmf <- ggplot(
+  df_probs,
+  aes(
+    x = k,
+    y = probability
+  )
+) +
+  geom_col()
+plot_pmf
+```
+
+Now let's compare our three plots. In order to compare them easily, let's set all three to have the same axis limits, using `coord_cartesian()` and give each a title using `ggtitle()`.
+
+We can display our plots one above the other by listing our plot variable names, separated by `/`. We could also display them next to each other by separating them with `+`.
+
+```{r all_plots_binom, fig.height=15}
+plot_75_xl <- plot_75 +
+  coord_cartesian(xlim = c(25, 65)) +
+  ggtitle("75 Squirrels")
+
+plot_750_xl <- plot_750 +
+  coord_cartesian(xlim = c(25, 65)) +
+  ggtitle("750 Squirrels")
+
+plot_pmf_xl <- plot_pmf +
+  coord_cartesian(xlim = c(25, 65)) +
+  ggtitle("PMF")
+
+plot_75_xl / plot_750_xl / plot_pmf_xl
+```
+
+As you can see, we've successfully recreated a binomial distribution using random sampling. With even more squirrels, our approximation would be even closer.
+
+## Inbuilt functions {#sec-inbuilt_functions}
+
+R is often used for simulation, so there are inbuilt functions to help us.
+
+Up to this point, we have simulated each individual attempt and then counted the number of successes. Because this type of experiment is so common, R provides a function that generates the number of successes directly.
+
+We could have avoided most of the above (sorry) by using the function `rbinom()`, which automatically draws samples from a binomial distribution.
+
+This function takes three arguments:
+
+* `n`: number of observations, in our case 750 squirrels
+* `size`: number of trials, in our case 150 attempts per squirrel
+* `prob`: probability of success, in our case 0.3 (30% chance of stealing seeds successfully)
+
+
+```{r use_rbinom}
+count_squirrels <- rbinom(n = 750, size = 150, prob = 0.3)
+print(count_squirrels)
+```
+
+This gives us our counts per squirrel, just like we calculated in @ex-big_binom above.
+
+We have already used the function `dbinom()`, which gives us the probability of a specific number of successes, given specified values of k, n and p.
+
+Another function, `pbinom()` calculates the probability that there will be **no more than** a specific number of successes. This is known as the cumulative distribution function. The arguments are similar to `dbinom`:
+
+* `q`: calculate the probability of no more than this number of successes.
+* `size`: number of trials - *n* in the equation, the number of squirrels, 150, in our case.
+* `prob`: probability of success in each trial - *p* in the equation, the probability of squirrel success, 0.3, in our case.
+
+```{r pbinom}
+prob_up_to_48 <- pbinom(48, 150, 0.3)
+print(prob_up_to_48)
+```
+
+We can verify this with our `count_squirrels` vector generated with `rbinom`.
+
+
+```{r check_pbinom}
+print(sum(count_squirrels <= 48) / length(count_squirrels))
+```
+
+::: {.callout-exercise #ex-rbinom_flowers}
+
+A botanist studies a plant species in which each flower has a 60% probability of having been pollinated. She needs 125 pollinated flowers for her experiment, but she can't tell which flowers are pollinated until she gets back to the lab. She picks 200 flowers.
+
+Using simulation, estimate the probability she has enough flowers for her experiment.
+
+Please solve this problem using the `rbinom()` function in your `prac3_exercises.qmd` Quarto file.
+
+::: {.callout-note #note-sumif}
+To count how many numbers in a numeric vector, <code>[vec]{.orange_text}, are less than or equal to a certain value, <code>[val]{.blue_text} you can use <code>sum([vec]{.orange_text} <= [val]{.blue_text})</code>. This syntax also works with other operators (@sec-filter), e.g. `<`, `>`, `>=`, `==`, `!=`.
+:::
+
+::: {.callout-answer collapse="true" #ex_rbinom_flowers_ans}
+
+
+```{r rbinom_flowers_ans1}
+n_sims <- 1000
+n_flowers_per_sim <- 200
+
+flowers <- rbinom(
+  n = n_sims,
+  size = n_flowers_per_sim,
+  prob = 0.6
+)
+
+times_successful <- sum(flowers >= 125)
+prop_successful <- times_successful / n_sims
+print(prop_successful)
+```
+Based on this simulation, there is an estimated 26% probability she has 125 pollinated flowers.
+
+We can check this using `pbinom()`.
+
+```{r rbinom_flowers_ans2}
+prob_under_125 <- pbinom(124, 200, 0.6)
+prob_125_or_over <- 1 - prob_under_125
+
+print(prob_125_or_over)
+```
+:::
+
+::: {.callout-note .bonus collapse="true" #bon-binomial}
+
+### Bonus exercise
+
+Estimate the smallest number of flowers she would need to collect to have at least a 95% probability of obtaining 125 pollinated flowers.
+
+::: {.callout-answer collapse="true` #bon-binomial_ans}
+Option 1: Using simulation
+
+```{r rbinom_flowers_ans4}
+n_sims <- 1000
+props <- c()
+for (i in seq(200, 250, 1)) {
+  flowers <- rbinom(
+    n = n_sims,
+    size = i,
+    prob = 0.6
+  )
+  times_successful <- sum(flowers >= 125)
+  prop_successful <- times_successful / n_sims
+  props <- c(props, prop_successful)
+}
+
+prop_df <- tibble(
+  npicked = seq(200, 250, 1),
+  psuccess = props
+)
+
+prop_df_filt <- prop_df |>
+  filter(psuccess >= 0.95)
+
+gt(prop_df_filt)
+```
+
+In my version of the simulation, she needs to pick 230 flowers.
+
+Option 2: Using `pbinom`
+
+```{r rbinom_flowers_ans5}
+probs <- c()
+
+for (i in seq(200, 250, 1)) {
+  prob_under_125 <- pbinom(124, i, 0.6)
+  prob_125_or_over <- 1 - prob_under_125
+  probs <- c(probs, prob_125_or_over)
+}
+
+prob_df <- tibble(
+  npicked = seq(200, 250, 1),
+  psuccess = probs
+)
+
+prob_df_filt <- prob_df |>
+  filter(psuccess >= 0.95)
+
+gt(prob_df_filt)
+```
+
+She needs to pick 228 flowers.
+
+:::
+:::
+:::
+
+
+## Review {#sec-summary_0301}
+
+[↑ top](#)
+
+In this practical we used simulation to estimate probabilities and then compared these estimates with exact mathematical results. When an exact solution exists, it is usually preferable to calculate it directly. However, many biological problems involve more complicated models where no simple equation exists. In these cases, simulation is an essential tool for estimating probabilities and investigating the behaviour of biological systems.
+
+::: {.callout-note #note-summary_0301}
+
+### Programming summary
+
+* `sample()` generates random samples with equal or unequal probabilities.
+* `for` loops can be used to repeat a simulation many times.
+* `count()` is used to count the frequency of values in a data frame column.
+* `rename()` is used to rename data frame columns.
+* `mutate()` is used to create new columns.
+* `dbinom()` calculates probabilities from a binomial distribution.
+* `pbinom()` calculates cumulative probabilities from a binomial distribution.
+* `rbinom()` generates random values from a binomial distribution
+
+:::
+
+
+For this part of the practical, the main files you have edited are:
+
+* `prac3_exercises.qmd`
+* `squirrels.qmd`
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}

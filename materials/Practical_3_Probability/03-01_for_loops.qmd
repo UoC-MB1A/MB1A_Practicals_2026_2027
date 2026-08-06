@@ -1,0 +1,216 @@
+---
+format: html
+practical: Practical_3_Probability
+doc-id: "0301"
+author: "Katy Brown"
+---
+
+```{r setup_0301, include=FALSE}
+library(tidyverse)
+library(gt)
+library(cowsay)
+```
+
+# Part 1: Loops {#sec-p2_loops}
+
+::: {.callout-note .partmenu #parts-0301}
+
+## Sections
+- @sec-loops
+- @sec-storing_results
+- @sec-repeat_samples
+- @sec-summary_0301
+
+:::
+
+::: {.callout-tip .objectives #objectives-0301}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+- Explain the purpose of a `for` loop in programming.
+- Use a `for` loop to repeat a task.
+- Store results generated using a loop.
+- Apply loops to process multiple datasets.
+
+:::
+
+In this practical, you will need two Quarto documents:
+
+* `prac3_exercises.qmd` for basic exercises
+* `squirrels.qmd` for a squirrel based simulation exercise
+* `drosophila.qmd` for investigating mutation counts in Drosophila
+
+## For Loops {#sec-loops}
+
+A loop is a way of repeating a task multiple times in a computer program. 
+
+There are two main types of loop, a **for loop**, which runs once for every item in a vector (or other sequence), or a **while loop** which runs until a certain condition is met. 
+
+In this part of the practical we will focus on **for loops**, which perform a task a fixed number of times. 
+
+We usually loop over a vector, meaning we perform the task once for each item in the vector.
+
+To repeat a task `n` times, we can use `seq_len(n)`. This creates a sequence from `1` to `n`. The loop then runs `n` times, once for each number in this sequence. If we run our loop as `for (i in seq_len(n))`, each time we pass through the loop, the value of `i` increases by one.
+
+We refer to each pass through the loop as an **iteration** - we **iterate** over a loop.
+
+In a loop, like in a function, we use curly brackets `{}` to show which code is part of the loop - so everything inside the brackets will be repeated every time we iterate through the loop.
+
+For example:
+
+```{r for_loop_n}
+for (i in seq_len(10)) {
+  print(i)
+}
+```
+We can add steps to our loop to run on each iteration.
+
+```{r for_loop_complex_n}
+for (i in seq_len(10)) {
+  # add 2 to i
+  j <- i + 2
+  # take the square root of j
+  sj <- sqrt(j)
+  # round sj to the nearest whole number
+  rsj <- round(sj)
+  # print rsj
+  print(rsj)
+}
+```
+
+We also don't have to actually use our variable `i` inside the loop, we can just use it to set the number of iterations.
+
+::: {.callout-exercise #ex-loops_1}
+In your `prac6_exercises.qmd` quarto document, generate two for loops:
+
+1. A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
+
+::: {.callout-note #note-powers}
+
+The operator `^` is used for powers in R, so e.g. 2^2 is 2 squared, 4^12 is 4 to the power of 12.
+
+:::
+
+2. This code snippet generates a random 5 letter character string.
+
+`paste(sample(letters, 5, replace = TRUE), collapse="")`
+
+Using a `for` loop, generate 5 such strings.
+
+::: {.callout-answer collapse="true" #ex-loops_1_ans}
+
+A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
+
+```{r loops_1_ans}
+for (i in seq_len(20)) {
+  print(i^3)
+}
+```
+
+This code snippet generates a random 5 letter character string.
+
+`paste(sample(letters, 5, replace = TRUE), collapse="")`
+
+Using a `for` loop, generate 5 such strings.
+
+```{r loops_2_ans}
+for (i in seq_len(5)) {
+  print(paste(sample(letters, 5, replace = TRUE), collapse = ""))
+}
+```
+
+:::
+:::
+
+You can also use a for loop to do something to each item in a vector.
+
+For example, in the below, we loop through the animals in our vector `species`. Inside the loop, the value of the variable `spp` changes on each iteration.
+
+::: {#sec-func_say}
+The cowsay package uses the `say()` function and the argument <code>by = [animal_name]{.orange-text}</code> (where [animal_name]{.orange-text} is the name of an animal) to print ascii art of animals (and their associates) saying things.
+:::
+
+```{r for_loop_vector}
+library(cowsay)
+species <- c("frog", "stegosaurus", "squirrel", "ghost")
+
+for (spp in species) {
+  say(paste("I am your friend, a", spp), by = spp)
+}
+```
+
+As before, you can add as many steps as you like to perform during each iteration.
+
+Here, we check if each "species" name starts with the letter `s`.
+
+```{r for_loop_vector_complex}
+species <- c("monkey", "shark", "turkey", "snowman")
+
+for (spp in species) {
+  has_s <- startsWith(spp, "s")
+  say(paste("Do I start with an s?", has_s), by = spp)
+}
+```
+
+Remember that everything inside the brackets is part of the loop, everything outside the brackets is not.
+
+For example, let's write a short story about bird migration, based on what we learned in practical 2. The `cat()` function works like `print()`, but doesn't print each output on a new line.
+
+```{r bird_story, results="hold"}
+cat("A bird leaves west Africa.\n")
+
+for (i in seq_len(25)) {
+  cat("flap ")
+}
+
+cat("The bird arrives in Europe\n")
+cat("6 months later...\n")
+cat("A bird leaves Europe\n")
+
+for (i in seq_len(100)) {
+  cat("flap ")
+}
+cat("\nThe bird arrives in west Africa.")
+```
+
+Everything inside the brackets is repeated, everything outside of the brackets is not.
+
+## Storing results from loops {#sec-storing_results}
+
+We sometimes want to store the results of running our loop in a vector or data frame.
+
+For example, here we store all of the cubed numbers from our example above in a vector called `cubed_nums`. Before we start the loop, we create an empty vector using `c()`. Then, each time we pass through the loop, we use `c()` again to append the new result to the end of the vector. Once the loop has finished, `cubed_nums` contains the results from every iteration.
+
+```{r store_cubes_vec}
+cubed_nums <- c()
+
+for (i in seq_len(20)) {
+  res <- i^3
+  cubed_nums <- c(cubed_nums, res)
+}
+
+print(cubed_nums)
+```
+
+## Review {#sec-summary_0301}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0301}
+
+### Programming summary
+
+* A `for` loop repeats a task a fixed number of times.
+* Each cycle through a loop is called an **iteration**.
+* You usually use a vector to determine the iterations of the loop.
+* You can store the results of your loop by adding to a vector in each iteration.
+
+:::
+
+For this part of the practical, the main files you have edited are:
+
+* `prac3_exercises.qmd`
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
