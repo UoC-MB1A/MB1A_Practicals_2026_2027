@@ -39,3 +39,7 @@ book:
        - materials/Practical_6_Programming_and_Further_Statistics/06-02_loops.qmd
        - materials/Practical_6_Programming_and_Further_Statistics/06-03_simulation.qmd
        - materials/Practical_6_Programming_and_Further_Statistics/06-04_conditionals_and_power_analysis.qmd
+
+    - part: "R Reference"
+      chapters:
+       - R_reference.qmd
