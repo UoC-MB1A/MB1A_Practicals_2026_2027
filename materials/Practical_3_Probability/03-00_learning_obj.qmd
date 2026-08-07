@@ -1,5 +1,6 @@
 ---
-title: "03-00_learning_objectives"
+title: "Plan and Learning Objectives"
 format: html
+practical: Practical_3_Probability
+doc-id: "0200"
 ---
-

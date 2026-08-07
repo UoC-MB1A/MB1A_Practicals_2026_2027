@@ -12,7 +12,7 @@ $link-color: #D65B42;
 
 /* Callout colours */
 $callout-color-note: #D6EFFF;
-$callout-color-tip: #F5B427;
+$callout-color-tip: #D6EFFF;
 $callout-color-caution: #9C3359;
 $callout-color-warning: #9C3359;
 $callout-color-important: #F5B427;
@@ -210,11 +210,11 @@ div.callout.copycode > .callout-header::before {
 
 /* Bonus callouts */
 div.callout.extension.callout {
-  border-left-color: #CBEDF7;
+  border-left-color: #F7B686;
 }
 
 div.callout.extension.callout-style-default > .callout-header {
-  background-color: #CBEDF7;
+  background-color: #F7B686;
   color: black;
 }
 
@@ -222,6 +222,10 @@ div.callout.extension .callout-icon::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   content: "\f610";
+}
+
+div.callout.extension > .callout-header {
+  padding: 0.55rem 0.8rem;
 }
 
 div.callout.bonus.callout {
