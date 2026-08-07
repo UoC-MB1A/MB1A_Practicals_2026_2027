@@ -68,13 +68,13 @@ format_gt_df <- function(df) {
 }
 ```
 
-# R Reference
+# R Reference {#sec-glossary}
 
 ```{r read_function_csv, include=FALSE, message=FALSE}
 funcs <- read_csv("R_glossary.csv")
 ```
 
-## Language and Syntax
+## Language and Syntax {#sec-language_syntax_glos}
 
 ```{r language_syntax_glos, echo=FALSE}
 subsec <- funcs |>
@@ -83,7 +83,7 @@ subsec <- funcs |>
 format_gt_df(subsec)
 ```
 
-## Basic R functions
+## Basic R functions {#sec-basic_functions_glos}
 
 ```{r basic_functions_glos, echo=FALSE}
 subsec <- funcs |>
@@ -92,7 +92,7 @@ subsec <- funcs |>
 format_gt_df(subsec)
 ```
 
-## Mathematical and summary functions
+## Mathematical and summary functions {#sec-mathematical_glos}
 
 ```{r mathematical_glos, echo=FALSE}
 subsec <- funcs |>
@@ -101,7 +101,7 @@ subsec <- funcs |>
 format_gt_df(subsec)
 ```
 
-## Importing and exporting data
+## Importing and exporting data  {#sec-import_export_glos}
 
 ```{r import_export_glos, echo=FALSE}
 subsec <- funcs |>
@@ -110,7 +110,7 @@ subsec <- funcs |>
 format_gt_df(subsec)
 ```
 
-## Data frames
+## Data frames  {#sec-data_frames_glos}
 
 ```{r data_frames_glos, echo=FALSE}
 subsec <- funcs |>
@@ -119,7 +119,7 @@ subsec <- funcs |>
 format_gt_df(subsec)
 ```
 
-## Plotting
+## Plotting  {#sec-plotting_glos}
 
 ```{r plotting_glos, echo=FALSE}
 subsec <- funcs |>
@@ -128,16 +128,16 @@ subsec <- funcs |>
 format_gt_df(subsec)
 ```
 
-## Probability distributions
+## Probability and Simulation  {#sec-prob_sim_glos}
 
 ```{r prob_distributions_glos, echo=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Probability distributions') |>
+  filter(Subset == 'Probability and Simulation') |>
   select(!Subset)
 format_gt_df(subsec)
 ```
 
-## Bioinformatics
+## Bioinformatics  {#sec-bioinformatics_glos}
 
 ```{r bioinformatics_glos, echo=FALSE}
 subsec <- funcs |>
@@ -146,7 +146,7 @@ subsec <- funcs |>
 format_gt_df(subsec)
 ```
 
-## Miscellaneous
+## Miscellaneous {#sec-misc_glos}
 
 ```{r misc_glos, echo=FALSE}
 subsec <- funcs |>
