@@ -146,11 +146,11 @@ If you run this simulation several times, you'll see that the result often chang
 
 We can formalise this using a for loop, running the simulation a fixed number of times.
 
-Let's say we have 75 squirrels, each making 150 attempts, with the same fixed probability of success of 30%.
+Let's say we have 1000 squirrels, each making 150 attempts, with the same fixed probability of success of 30%.
 
 ```{r for_loop_squirrels}
 combined_successes <- c()
-for (i in seq_len(75)) {
+for (i in seq_len(1000)) {
   is_success <- sample(c("SUCCESS", "FAILURE"),
     size = 150,
     replace = TRUE,
@@ -164,25 +164,25 @@ print(combined_successes)
 
 We now know how many successful heists each squirrel had, out of 150.
 
-Let's visualise how many squirrels have each number of successful heists - i.e. how many of our 75 squirrels stole seeds once, twice, three times etc.
+Let's visualise how many squirrels have each number of successful heists - i.e. how many of our 1000 squirrels stole seeds once, twice, three times etc.
 
 First, we need to convert our vector into a data frame.
 
 ```{r vec_data_frame_squirrels}
-df_squirrels_75 <- tibble("N_Successful_Heists" = combined_successes)
-gt(head(df_squirrels_75))
+df_squirrels <- tibble("N_Successful_Heists" = combined_successes)
+gt(head(df_squirrels))
 ```
 
-The we can create a plot showing how many squirrels had each number of successful heists.
+Then we can create a plot showing how many squirrels had each number of successful heists.
 
 The [`geom_bar()`](../../R_reference.qmd#sec-plotting_glos) function in `ggplot` counts how many times each value occurs in a column of a data frame and displays the result as a bar chart.
 
-`geom_bar()` just only needs the x axis to be specified - in this case the `N_Successful_Heists` column, as the y axis will be calculated.
+`geom_bar()` just needs the x axis to be specified - in this case the `N_Successful_Heists` column, as the y axis will be calculated.
 
 
-```{r plot_squirrels_75}
+```{r plot_squirrels}
 ggplot(
-  df_squirrels_75,
+  df_squirrels,
   aes(
     x = N_Successful_Heists)
 ) +
@@ -190,15 +190,15 @@ ggplot(
 ```
 ```{r store_75, include=FALSE}
 # store the plot to display later
-squirrels_75 <- ggplot(
-  df_squirrels_75,
+squirrels <- ggplot(
+  df_squirrels,
   aes(
     x = N_Successful_Heists)
 ) +
   geom_bar()
 ```
 
-You can see that a distribution is emerging here - the squirrels are likely to be successful around 40 to 55 times out of 150. 
+You can see that a distribution is emerging here - the squirrels are likely to be successful around 40 to 55 times out of 150.
 
 This is called an **empirical distribution** because it is based on simulated observations rather than a mathematical formula.
 
@@ -216,58 +216,6 @@ The number of successes announced by the squirrel above is the random variable -
 Increasing the number of simulations reduces the random variation in our estimate, bringing it closer to the theoretical distribution. Therefore, if we run our simulation more times, our empirical approximation should get closer to a theoretical binomial distribution.
 
 
-::: {.callout-exercise #ex-big_binom}
-In your `squirrels.qmd` Quarto document, adapt the code to perform the simulation with 750 squirrels, and again plot the results.
-
-::: {.callout-answer collapse="true" #ex_big_binom_ans}
-```{r more_squirrels}
-# 750 squirrels
-# Make an empty vector to store the results
-combined_successes <- c()
-
-# For each of 750 squirrels
-for (i in seq_len(750)) {
-  # Have the squirrel attempt to steal seeds 150 times with
-  # a 30% probability of success
-  is_success <- sample(c("SUCCESS", "FAILURE"),
-    size = 150,
-    replace = TRUE,
-    prob = c(0.3, 0.7)
-  )
-  # Count the number of successes
-  n_successes <- sum(is_success == "SUCCESS")
-  # Store the result in our vector
-  combined_successes <- c(combined_successes, n_successes)
-}
-
-# Convert the results into a data frame
-combined_successes_df <- tibble(n_successes = combined_successes)
-
-df_squirrels_750 <- tibble("N_Successful_Heists" = combined_successes)
-
-# Plot the results
-ggplot(
-  df_squirrels_750,
-  aes(
-    x = N_Successful_Heists)
-) +
-  geom_bar()
-```
-```{r store_750, include=FALSE}
-# store the plot to display later
-squirrels_750 <- ggplot(
-  df_squirrels_750,
-  aes(
-    x = N_Successful_Heists)
-) +
-  geom_bar()
-```
-
-:::
-:::
-
-Your new plot should look even closer to a binomial distribution.
-
 ## Using probability functions in R
 
 As you learned in the lectures, the **probability mass function** (PMF) for the binomial distribution is:
@@ -284,7 +232,7 @@ This is implemented in R with the function `dbinom()`.
 
 The arguments for this function are:
 
-* `x`: calculate the number of this number of successes - *k* in the equation, 
+* `x`: calculate the number of successes - *k* in the equation, 
 * `size`: number of trials, *n* in the equation, in our case 150 attempts per squirrel
 * `prob`: probability of success in each trial - *p* in the equation, the probability of squirrel success, 0.3, in our case.
 
@@ -305,17 +253,17 @@ We would expect this result around 6% of the time.
 Let's compare this with the observed result from our simulation. Using filter, we can view the row showing how many squirrels succeeded 48 times.
 
 ```{r observed_squirrels}
-n_successes <- pull(df_squirrels_750, N_Successful_Heists)
+n_successes <- pull(df_squirrels, N_Successful_Heists)
 prop_48 <- sum(n_successes == 48)
 print (prop_48)
 ```
 
-In my version of the simulation, `r prop_48` out of 750 squirrels succeeded 48/150 times, your results might vary.
+In my version of the simulation, `r prop_48` out of 1000 squirrels succeeded 48/150 times, your results might vary.
 
 ```{r calc_prop}
-print(prop_48 / 750)
+print(prop_48 / 1000)
 ```
-This is around `r round((prop_48 / 750) * 100)`% of the squirrels - not far off the estimate using the PMF.
+This is around `r round((prop_48 / 1000) * 100)`% of the squirrels - not far off the estimate using the PMF.
 
 ::: {.callout-note .extension #bon-theoretical_binom}
 
@@ -345,7 +293,7 @@ df_probs <- tibble(
 
 And now we can make a bar plot of these probabilities.
 
-This time, instead of using [`geom_bar()`](../../R_reference.qmd#sec-plotting_glos), which calculates the number of occurances of each value in a column, we already have already calculated the heights we want for the bars in our bar chart - the probability of each number of successes. Therefore, we can use the function [`geom_col()`](../../R_reference.qmd#sec-plotting_glos) which draws a bar chart based directly on the values in a data frame column.
+This time, instead of using [`geom_bar()`](../../R_reference.qmd#sec-plotting_glos), which calculates the number of occurrences of each value in a column, we already have already calculated the heights we want for the bars in our bar chart - the probability of each number of successes. Therefore, we can use the function [`geom_col()`](../../R_reference.qmd#sec-plotting_glos) which draws a bar chart based directly on the values in a data frame column.
 
 `geom_col()` just  needs the x and y axes to be specified - in this case `N_Successful_Heists` on the x axis and `Probability` on the y axis. as the y axis will be calculated.
 
@@ -376,22 +324,18 @@ This plot shows how the data would be distributed under a perfect, theoretical b
 
 :::
 
-Now let's compare the plots based on our two simulations with the theoretical distribution. In order to compare them easily, I have set all three to have the same axis limits and given each a title.
+Now let's compare the plots based on our simulation with the theoretical distribution. In order to compare them easily, I have set both to have the same axis limits and given each a title.
 
 ```{r all_plots_binom, fig.height=12, echo=FALSE}
-plot_75_xl <- squirrels_75 +
+plot_obs <- squirrels +
   coord_cartesian(xlim = c(25, 65)) +
-  ggtitle("75 Squirrels")
+  ggtitle("1000 Simulated Squirrels")
 
-plot_750_xl <- squirrels_750 +
-  coord_cartesian(xlim = c(25, 65)) +
-  ggtitle("750 Squirrels")
-
-plot_pmf_xl <- squirrels_pmf +
+plot_pmf <- squirrels_pmf +
   coord_cartesian(xlim = c(25, 65)) +
   ggtitle("PMF")
 
-plot_75_xl / plot_750_xl / plot_pmf_xl
+plot_obs / plot_pmf
 ```
 
 As you can see, we've successfully recreated a binomial distribution using random sampling. With even more squirrels, our approximation would be even closer.
@@ -406,17 +350,17 @@ With this binomially distributed data, we could have avoided most of the above (
 
 This function takes three arguments:
 
-* `n`: number of observations, in our case e.g. 750 squirrels
+* `n`: number of observations, in our case e.g. 1000 squirrels
 * `size`: number of trials, in our case 150 attempts per squirrel
 * `prob`: probability of success, in our case 0.3 (30% chance of stealing seeds successfully)
 
 
 ```{r use_rbinom}
-count_squirrels <- rbinom(n = 750, size = 150, prob = 0.3)
+count_squirrels <- rbinom(n = 1000, size = 150, prob = 0.3)
 print(count_squirrels)
 ```
 
-This gives us our counts per squirrel, just like we calculated in @ex-big_binom above, and we can plot it in the same way.
+This gives us our counts per squirrel, just like we calculated above, and we can plot it in the same way.
 
 ```{r plot_rbinom}
 rb_df <- tibble(N_Successful_Heists = count_squirrels)
@@ -429,7 +373,7 @@ We have already used the function [`dbinom()`](../../R_reference.qmd#sec-prob_si
 Another function, [`pbinom()`](../../R_reference.qmd#sec-prob_sim_glos) calculates the probability that there will be **no more than** a specific number of successes. This is known as the cumulative probability. The arguments are similar to `dbinom`:
 
 * `q`: calculate the probability of no more than this number of successes.
-* `size`: number of trials - *n* in the equation, the number of squirrels, 150, in our case.
+* `size`: number of trials - *n* in the equation, the number of attempts per squirrel, 150, in our case.
 * `prob`: probability of success in each trial - *p* in the equation, the probability of squirrel success, 0.3, in our case.
 
 For example, to calculate the probability that a squirrel will succeed no more than 48 times:
@@ -465,7 +409,7 @@ n_sims <- 1000
 n_flowers_per_sim <- 200
 
 # Simulate 1000 datasets of 200 flowers with
-# a 60% chanec of being pollinated
+# a 60% chance of being pollinated
 flowers <- rbinom(
   n = n_sims,
   size = n_flowers_per_sim,
@@ -497,7 +441,7 @@ prob_125_or_over <- 1 - prob_under_125
 print(prob_125_or_over)
 ```
 
-`r round(prob_125_or_over*100)`% - similar to the simulated value. Running more simulations would make the estiamte more accurate.
+`r round(prob_125_or_over*100)`% - similar to the simulated value. Running more simulations would make the estimate more accurate.
 
 :::
 :::
@@ -508,7 +452,7 @@ print(prob_125_or_over)
 
 Estimate the smallest number of flowers the botanist would need to collect to have at least a 95% probability of obtaining 125 pollinated flowers.
 
-::: {.callout-answer collapse="true` #bon-binomial_ans}
+::: {.callout-answer collapse="true" #bon-binomial_ans}
 Option 1: Using simulation
 
 ```{r rbinom_flowers_ans4}
