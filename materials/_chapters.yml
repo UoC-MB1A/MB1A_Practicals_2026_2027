@@ -23,7 +23,7 @@ book:
         - materials/Practical_3_Probability/03-02_intro_to_probability.qmd
         - materials/Practical_3_Probability/03-03_distributions.qmd
         - materials/Practical_3_Probability/03-04_using_other_distributions.qmd
-        - materials/Practical_3_Probability/03-05_bayes_theorem.qmd
+        - materials/Practical_3_Probability/03-05_bonus_non_standard_distributions.qmd
 
     - part: "Practical 5 - Bioinformatics"
       chapters:
