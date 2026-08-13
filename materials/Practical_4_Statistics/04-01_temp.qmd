@@ -5,12 +5,13 @@ format: html
 ```{r setup_0401, message=FALSE}
 library(tidyverse)
 library(gt)
+insects <- read_csv("data/ukpoms_1kmpantrapdata_2017-2021_insects.csv")
+
 ```
 
 In the **Samples** CSV file - `data/ukpoms_1kmpantrapdata_2017-2021_samples.csv`, each row represents one sample, in which there can be any number of observations, including zero. The data frame contains information about the geographical location, land use and climate at the sample site, the date the sample was taken and the number of observations of various types of insects in that specific sample.
 
 In the **Insects** CSV file - `data/ukpoms_1kmpantrapdata_2017-2021_insects.csv`, each row represents one  observation of a specific species of hoverfly, bee or wasp pollinator, from a specific sample. 
-
 
 
 
@@ -23,7 +24,8 @@ In your `insects.qmd` Quarto file:
 * Find the ID of the sample with the highest total number of observations - this corresponds to how many times the `sample_id` is seen in the Insects data frame.
 * Count how many samples in the Samples table have a `sample_id` not found in the Insects table - these represent samples with no observations. Remember that the operator `%in%` can be used with `filter()` on a data frame column (see @sec-divide) to keep only values found in a vector.  
 
-::: {.callout-note note-count}
+::: {.callout-note #note-count}
+
 The data frame function `count()` will count the number of occurrences of each value in a data frame column. Adding the argument `sort = TRUE` sorts the data frame, with the highest number first
 
 For example, if we wanted to count the number of times each taxonomic **order** of bees and hoverflies - Diptera (flies) or Hymenoptera (bees and wasps) occurs in the Insects data frame, we would do the following:
@@ -38,14 +40,14 @@ gt(order_counts)
 
 ::: {.callout-answer #ex_summarise_bees_ans}
 
-Read the insect and sample CSV files
+[Read the insect and sample CSV files]{.blue-text}
 
 ```{r summarise_bees_ans1, message=FALSE}
 samples <- read_csv("data/ukpoms_1kmpantrapdata_2017-2021_samples.csv")
 insects <- read_csv("data/ukpoms_1kmpantrapdata_2017-2021_insects.csv")
 ```
 
-Count how many samples and how many observations there are.
+[Count how many samples and how many observations there are.]{.blue-text}
 
 ```{r summarise_bees_ans2, message=FALSE}
 sample_count <- nrow(samples)
@@ -56,7 +58,7 @@ print(paste("Insects", insect_count))
 ```
 There are `r sample_count` samples and `r insect_count` observations.
 
-Count how many unique insect species were observed - the species name is in the `taxon_source` column.
+[Count how many unique insect species were observed - the species name is in the `taxon_source` column.]{.blue-text}
 
 ```{r summarise_bees_ans3, message=FALSE}
 unique_insects <- insects |> 
@@ -68,28 +70,28 @@ print (n_unique_insects)
 ```
 There are `r n_unique_insects` unique insect species.
 
-Find the insect species which was observed most frequently and how many times it was observed.
+[Find the insect species which was observed most frequently and how many times it was observed.]{.blue-text}
 
-```{r summarise_bees_ans3, message=FALSE}
+```{r summarise_bees_ans4, message=FALSE}
 insect_counts <- insects |> 
   count(taxon_source, sort=TRUE)
-gt(insect_counts)
+gt(head(insect_counts))
 ```
 
 The most commonly observed species was `r pull(insect_counts, taxon_source)[1]`, which was observed `r pull(insect_counts, n)[1]` times.
 
-Find the ID of the sample with the highest total number of observations - this corresponds to how many times the `sample_id` is seen in the Insects data frame.
+[Find the ID of the sample with the highest total number of observations - this corresponds to how many times the `sample_id` is seen in the Insects data frame.]{.blue-text}
 
-```{r summarise_bees_ans4, message=FALSE}
+```{r summarise_bees_ans5, message=FALSE}
 sample_counts <- insects |> 
   count(sample_id, sort=TRUE)
 gt(head(sample_counts))
 ```
 The sample with the most observations was `r pull(sample_counts, sample_id)[1]`, with `r pull(sample_counts, n)[1]` observations.
 
-Count how many samples in the Samples table have a `sample_id` not found in the Insects table - these represent samples with no observations. Remember that the operator `%in%` can be used with `filter()` on a data frame column (see @sec-divide) to keep only values found in a vector.  
+[Count how many samples in the Samples table have a `sample_id` not found in the Insects table - these represent samples with no observations. Remember that the operator `%in%` can be used with `filter()` on a data frame column (see @sec-divide) to keep only values found in a vector.]{.blue-text}
 
-```{r summarise_bees_ans5}
+```{r summarise_bees_ans6}
 insect_sample_ids <- insects |> 
   distinct(sample_id) |>
   pull(sample_id)
