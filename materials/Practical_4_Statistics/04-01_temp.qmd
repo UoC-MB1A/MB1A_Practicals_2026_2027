@@ -2,7 +2,7 @@
 title: "04-01_temp"
 format: html
 ---
-```{r setup_0401, message=FALSE}
+```{r setup_0401, include=FALSE}
 library(tidyverse)
 library(gt)
 insects <- read_csv("data/ukpoms_1kmpantrapdata_2017-2021_insects.csv")
@@ -17,6 +17,7 @@ In the **Insects** CSV file - `data/ukpoms_1kmpantrapdata_2017-2021_insects.csv`
 
 ::: {.callout-exercise #ex_summarise_bees}
 In your `insects.qmd` Quarto file:
+
 * Read the insect and sample CSV files.
 * Count how many samples and how many observations there are.
 * Count how many unique insect species were observed - the species name is in the `taxon_source` column.
