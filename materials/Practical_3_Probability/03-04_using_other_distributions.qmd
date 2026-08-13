@@ -250,3 +250,12 @@ print(prop_counted_islets_100_150)
 
 :::
 :::
+
+For this part of the practical, the main files you have edited are:
+
+* `distributions.qmd`
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
+

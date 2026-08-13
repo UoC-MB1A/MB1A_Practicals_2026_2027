@@ -1,11 +1,20 @@
 ---
-title: "Probability Question Sheets"
+format: html
+practical: Practical_3_Probability
+doc-id: "0307"
+toc-depth: 4
 ---
+# Probability Problem Sheets
+
+These solutions use primarily simulation to solve the problems, rather than calculating exact mathematical solutions.
+
+```{r setup_0307}
+library(tidyverse)
+library(Runuran)
+library(DescTools)
+```
 
 ## Problem Sheet 1
-
-These solutions use only simulation to solve the problems, rather than calculating exact mathematical solutions.
-
 We will use 10,000 simulations, unless otherwise specified.
 
 ```{r set_sims}
@@ -53,7 +62,7 @@ ans <- n_coy / length(samps)
 print(ans)
 ```
 
-The probability a coyote is signed first is `r round(ans, 4)` 
+The probability a coyote is sighted first is `r round(ans, 4)` 
 
 #### b
 Probability that a wolf is sighted first.
@@ -129,18 +138,18 @@ signal “0” and R2 reports signal “1”. Which of the two receivers is most
 to be correct?
 
 ```{r q2}
-# Run the transmitter 10,000 times, with a 1/3 probability of success
+# Run the transmitter 10,000 times, with a 2/3 probability of success
 # where success == 1
 transmitter <- rbinom(n = n_sim, size = 1, prob = 2 / 3)
 
 # Run R1 10,000 times, with a 98% probability of success
 # 1 - correct
-# 2 - incorrect
+# 0 - incorrect
 R1_correct <- rbinom(n = n_sim, size=1, prob = 0.98)
 
-# Run R2 10,000 times, with a 98% probability of success
+# Run R2 10,000 times, with a 97% probability of success
 # 1 - correct
-# 2 - incorrect
+# 0 - incorrect
 R2_correct <- rbinom(n = n_sim, size=1, prob = 0.97)
 
 ```
@@ -153,15 +162,21 @@ The probability that R1 reports that the transmitted signal is “0”
 # R1 reports 0 when either the signal is 0
 # and it is correct or the signal is 1
 # and it is incorrect
-zero_and_correct <- sum(transmitter == 0 & R1_correct == 1)
-one_and_incorrect <- sum(transmitter == 1 & R1_correct == 0)
+zero_and_correct <- transmitter == 0 & R1_correct == 1
+one_and_incorrect <- transmitter == 1 & R1_correct == 0
 
-# Sum the two options
-output_of_one <- zero_and_correct + one_and_incorrect
-ans_a <- output_of_one / n_sim
+# Find times when either of these are true
+# | = OR
+R1_output_of_zero <- zero_and_correct | one_and_incorrect
+
+# Count how many times either were true
+count_R1_output_of_zero <- sum(R1_output_of_zero)
+
+# Convert to a proportion
+ans_a <- count_R1_output_of_zero / n_sim
 print(ans_a)
 ```
-The probability that R1 reports that the transmitted signal is “0” is `r round(ans, 4)`
+The probability that R1 reports that the transmitted signal is “0” is `r round(ans_a, 4)`
 
 #### b
 
@@ -171,55 +186,44 @@ The probability that R2 reports that the transmitted signal is “1”
 # R2 reports 1 when either the signal is 1
 # and it is correct or the signal is 0
 # and it is incorrect
-one_and_correct <- sum(transmitter == 1 & R2_correct == 1)
-zero_and_incorrect <- sum(transmitter == 0 & R2_correct == 0)
+one_and_correct <- transmitter == 1 & R2_correct == 1
+zero_and_incorrect <- transmitter == 0 & R2_correct == 0
 
-# Sum the two options
-output_of_one <- one_and_correct + zero_and_incorrect
-ans_b <- output_of_one / n_sim
+# Find times when either of these are true
+R2_output_of_one <- one_and_correct | zero_and_incorrect
+
+# Count how many times either were true
+count_R2_output_of_one <- sum(R2_output_of_one)
+ans_b <- count_R2_output_of_one / n_sim
 
 print(ans_b)
 ```
-The probability that R2 reports that the transmitted signal is “1” is `r round(ans, 4)`
+The probability that R2 reports that the transmitted signal is “1” is `r round(ans_b, 4)`
 
 #### c
 
-c. following an incoming signal there is some confusion, because R1 reports
-signal “0” and R2 reports signal “1”. Which of the two receivers is most likely
-to be correct?
+c. following an incoming signal there is some confusion, because R1 reports signal “0” and R2 reports signal “1”. Which of the two receivers is most likely to be correct?
 
 ```{r q2c}
+# Find when R1 reports 0 and R2 reports 1
+R1_0_R2_1 <- (R1_output_of_zero == 1) & (R2_output_of_one == 1)
 
-# Count how many times R1 reports 0 and is correct
-R1_reports_zero_correctly <- sum(transmitter == 0 & R1_correct == 1)
+# Count how many of these times R1 reports 0 and is correct
+R1_reports_zero_correctly <- sum(R1_correct == 1 & R1_0_R2_1 == 1)
 
-# Count how many times R1 reports 0 and is incorrect
-R1_reports_zero_incorrectly <- sum(transmitter == 1 & R1_correct == 0)
+# Count how many of these times R1 reports 0 and is correct
+R2_reports_one_correctly <- sum(R2_correct == 1 & R1_0_R2_1 == 1)
 
-# Count how many times R1 reports 0 overall
-R1_reports_zero <- R1_reports_zero_correctly + R1_reports_zero_incorrectly
+# Calculate the proportion of times R1 is correct
+R1_correct_prop <- R1_reports_zero_correctly / sum(R1_0_R2_1 == 1)
+R2_correct_prop <- R2_reports_one_correctly / sum(R1_0_R2_1 == 1)
 
-# Calculate the proportion of times that R1 reports 0
-# and is correct
-prop_R1_reports_zero_correctly <- R1_reports_zero_correctly / R1_reports_zero
 
-# Count how many times R2 reports 1 and is correct
-R2_reports_one_correctly <- sum(transmitter == 1 & R2_correct == 1)
-
-# Count how many times R2 reports 1 and is incorrect
-R2_reports_one_incorrectly <- sum(transmitter == 0 & R2_correct == 0)
-
-# Count how many times R2 reports 1 overall
-R2_reports_one <- R2_reports_one_correctly + R2_reports_one_incorrectly
-
-# Calculate the proportion of times that R2 reports 1
-# and is correct
-prop_R2_reports_one_correctly <- R2_reports_one_correctly / R2_reports_one
-
-print (paste("R1 = ", prop_R1_reports_zero_correctly))
-print (paste("R2 = ", prop_R2_reports_one_correctly))
+print (paste("R1 = ", R1_correct_prop))
+print (paste("R2 = ", R2_correct_prop))
 ```
-R2 is more likely to be correct, with a probability of `r round(prop_R2_reports_one_correctly, 4)`, compared to `r round(prop_R1_reports_zero_correctly, 4)` for R1.
+
+Given that R1 has reported 0 and R2 has reported 1, R2 is more likely to be correct, with a probability of `r round(R2_correct_prop, 4)`, compared to `r round(R1_correct_prop, 4)` for R1.
 
 ### Question 3
 
@@ -239,6 +243,10 @@ could have been chosen at random from the batch to give this result?
 
 d. What is the probability the sample of five, chosen at random from the batch
 consists only of healthy trees?
+
+::: {.callout-note #note-choose}
+For a and c, this simulation will usually give approximately the right number of combinations, but it may not find every answer.
+:::
 
 #### a
 
@@ -459,16 +467,16 @@ b. A new drug is discovered that can cure the disease but can only be
 administered in a way that has a success rate of reaching the affected area of
 0.6. There usually are four doses of the drug administered. Find the chances
 of:
-i. three doses successfully administered
-ii. no doses successfully administered
-iii. at least one dose successfully administered
-iv. at most two doses successfully administered
+  i. three doses successfully administered
+  ii. no doses successfully administered
+  iii. at least one dose successfully administered
+  iv. at most two doses successfully administered
 
 #### a
 The survival rate of a specific disease is forty percent. In a certain day eight patients are admitted into hospital with that disease. What are the chances that three will survive?
 ```{r q6a}
 # Sample 8 individuals from a binomial distribution 
-# 10,000 times with a 0.4% probability of survival
+# 10,000 times with a 40% probability of survival
 survival <- rbinom(n_sim, 8, 0.4)
 
 # Calculate the number of simulated values which are
@@ -522,7 +530,7 @@ At most two doses successfully administered
 ans_iv <- sum(success <= 2) / 10000
 print (ans_iv)
 ```
-The probability that at least two doses were successfully administered is `r round(ans_iv, 4)`
+The probability that at most two doses were successfully administered is `r round(ans_iv, 4)`
 
 ### Question 7
 
@@ -535,8 +543,6 @@ she finds one with a tracking device?
 
 b. What is the probability that she must select more than 6 dolphins before she
 finds one with a tracking device?
-
-
 
 ```{r q7}
 # Simulate a geometric distribution with 10,000 data points, with a 
@@ -563,7 +569,8 @@ b. What is the probability that she must select more than 6 dolphins before she 
 ans_b <- sum(dolphins >= 6) / n_sim
 print (ans_b)
 ```
-There is a `r round(ans_b, 6)` probability that she will have to select at least 6 dolphins before finding one with a tracking device.
+
+There is a `r round(ans_b, 6)` probability that she will have to select more than 6 dolphins before finding one with a tracking device.
 
 ### Question 8
 
@@ -598,3 +605,413 @@ ans_b <- sum(results_per_2min >= 2) / n_sim
 print (ans_b)
 ```
 The probability at least two results will come in a given 2 minute period is `r round(ans_b, 4)`.
+
+## Problem Sheet 2
+
+### Question 1
+
+On average, a certain spectrophotometer part lasts 10 years. The length of time that the
+part lasts is exponentially distributed.
+a) What is the probability that the spectrophotometer part lasts more than 7 years?
+b) On the average, how long would 5 of these parts last if they were used one after
+another?
+
+```{r qq1}
+# Rate per year if it lasts 10 years on average
+rate = 1 / 10
+
+# Simulate an exponential distribution with this
+# rate and 10,000 observations
+distri <- rexp(n_sim, rate=rate)
+```
+
+#### a
+What is the probability that the spectrophotometer part lasts more than 7 years?
+```{r qq1a}
+# Proportion of intervals > 7
+ans_a <- sum(distri > 7) / n_sim
+print (ans_a)
+```
+There is an `r round(ans_a, 4)` probability the part lasts more than 7 years.
+
+#### b
+On the average, how long would 5 of these parts last if they were used one after another?
+```{r qq1b}
+# Average time based on simulation
+average_time <- mean(distri)
+
+# Multiply by 5
+total_time <- average_time * 5
+
+print (total_time)
+```
+On average, 5 parts would last `r round(total_time, 4)` years.
+
+### Question 2
+
+A drug is produced in a chamber with temperature X, where X is a random variable that follows a normal distribution with μ = 21°C and σ = 5°C. If X<25°C, the production cost per unit is £20, whereas if X≥25°C the production cost per unit is £30. Find the expected production cost per unit for this drug.
+
+```{r qq2}
+# Simulate a normal distribution where μ = 21°C and σ = 5°C
+drug_dist <- rnorm(n_sim, 21, 5)
+
+# Count how many times X is < 25
+cold <- sum(drug_dist < 25)
+
+# Count how many times X is >= 25
+hot <- sum(drug_dist >= 25)
+
+# Calculate the total cost for cold production
+cold_cost <- cold * 20
+
+# Calculate the total cost for hot production
+hot_cost <- hot * 30
+
+# Calculate the total cost for all production
+total_cost <- cold_cost + hot_cost
+
+# Convert to a proportion of the number of units
+ans_2 <- total_cost / n_sim
+
+print (ans_2)
+```
+The expected production cost per unit for this drug is £`r round(ans_2, 2)` per unit.
+
+### Question 3
+
+A box contains 3 green and 5 red balls. If we pick balls and then replace them, find:
+a) The probability that the third time we pick a ball, we get a red ball for the second time.
+b) The probability that the 4th time we pick a ball, a red ball appears for the first time
+c) The expected number of times we pick a ball until we get a red ball for the second time.
+
+
+#### a
+The probability that the third time we pick a ball, we get a red ball for the second time.
+```{r qq3a}
+# Draw two balls 10,000 times and count how many
+# are red
+first_two <- rbinom(n_sim, size = 2, prob = 5/8)
+
+# Draw one ball 10,000 times and count how many
+# are red
+third <- rbinom(n_sim, size = 1, prob = 5/8)
+
+# How many times is either ball 1 or ball 2 red
+# but not both and ball 3 is red
+count <- sum(first_two == 1 & third == 1)
+
+# As a proportion
+prop <- count / n_sim
+
+print (prop)
+```
+The probability that the third time we pick a ball, we get a red ball for the second time is `r round(prop, 4)`.
+
+#### b
+The probability that the 4th time we pick a ball, a red ball appears for the first time
+```{r qq3b}
+# Draw three balls 10,000 times and count how many
+# are red
+first_three <- rbinom(n_sim, size = 3, prob = 5/8)
+
+# Draw one ball 10,000 times and count how many
+# are red
+fourth <- rbinom(n_sim, size = 1, prob = 5/8)
+
+# How many times are none of the first three balls
+# red but ball 4 is red
+count <- sum(first_three == 0 & fourth == 1)
+
+# As a proportion
+prop <- count / n_sim
+
+print (prop)
+```
+The probability that the 4th time we pick a ball, a red ball appears for the first time is `r round(prop, 4)`.
+
+#### c
+The expected number of times we pick a ball until we get a red ball for the second time.
+
+```{r qq3c}
+# Simulate the number of green balls picked before the first red
+# twice
+ball_1 <- rgeom(n_sim, 5/8)
+ball_2 <- rgeom(n_sim, 5/8)
+
+# Add them together - add two for the two red balls then picked
+combined_balls <- ball_1 + ball_2 + 2
+
+# The mean of these values is the expectation
+expected <- mean(combined_balls)
+
+print (expected)
+```
+The expected number of times we pick a ball until we get a red ball for the second time is `r round(expected, 4)`.
+
+
+### Question 4
+For a group of 100 students, find:
+a) The expected number of days of the year that are birthdays of exactly 3 people.
+b) The expected number of distinct birthdays
+
+
+```{r qq4}
+prob_bday <- 1 / 365
+
+bdays_per_day <- rbinom(1000000, 100, prob_bday)
+```
+
+```{r qq4a}
+prob_3_bdays <- sum(bdays_per_day == 3) / 1000000
+
+n_days <- 365 * prob_3_bdays
+
+print (n_days)
+```
+
+```{r qq4b}
+prop_distinct <- sum(bdays_per_day != 0) / 1000000
+n_distinct <- 365 * prop_distinct
+
+print (n_distinct)
+```
+
+### Question 5
+
+::: {.callout-note #note-non_standard_dist}
+Answering this question using simulation depends on the bonus material in @sec-non-standard.
+:::
+
+A continuous random variable X has the following probability density function:
+$$
+f(x) =
+\begin{cases}
+\displaystyle\frac{4x(9-x^2)}{81}, & \text{if } 0 \leq x \leq 3 \\[6pt]
+0, & \text{otherwise}
+\end{cases}
+$$
+
+a. Verify that f(x) is a valid probability density function.
+b. Find (a) the mean of f(x), (b) the mode of f(x) and (c) the median of f(x)
+
+
+#### a
+
+Verify that f(x) is a valid probability density function.
+
+```{r qq5a}
+# Calculate the area under the curve
+area <- integrate(function (x) {((4 * x) * (9 - x^2)) / 81},
+                  lower=0,
+                  upper=3)
+print(area)
+```
+The area under the curve is `r area$value` so the PDF is valid.
+
+#### b
+
+Find (a) the mean of f(x), (b) the mode of f(x) and (c) the median of f(x)
+
+```{r qq5b}
+# Make a random number generator using this function
+rand_gen <- pinv.new(
+  pdf = function(x) {((4 * x) * (9 - x^2)) / 81},
+  lb = 0,
+  ub = 3
+)
+
+# Generate 10,000 random points
+simu <- ur(rand_gen, n_sim)
+
+# Calcualte the mean and median of the points
+mean_simu <- mean(simu)
+median_simu <- median(simu)
+
+# Mean
+print(mean_simu)
+
+# Median
+print (median_simu)
+```
+The simulated mean is `r round(mean_simu, 4)`.
+
+The simulated median is `r round(median_simu, 4)`.
+
+The mode is trickier, as R doesn't by default calculate the mode for continuous data. It's easiest to do this visually based on a histogram.
+
+```{r mode_cont}
+# Convert to a data frame
+simu_df <- tibble(simulated_data = simu)
+
+# Plot a histogram
+ggplot(simu_df, aes(x = simulated_data)) + 
+  geom_histogram(bins=50)
+```
+The peak is apparent on this plot at about 1.7.
+
+### Question 6
+
+::: {.callout-note #note-non_standard_dist}
+Answering this question using simulation depends on the bonus material in @sec-non-standard.
+:::
+
+### a
+Let X be a continuous random variable with probability density function:
+
+$$
+f(x) =
+\begin{cases}
+4x^3, & \text{if } 0 < x \leq 1 \\
+0, & \text{otherwise}
+\end{cases}
+$$
+
+Find
+
+$$
+P\left(X \leq \frac{2}{3} \mid X > \frac{1}{3}\right).
+$$
+```{r qq6a}
+# Create a random number generator for this distribution
+rand_gen <- pinv.new(
+  pdf = function(x) {4 * x^3},
+  lb = 0,
+  ub = 1
+)
+
+# Generate 10,000 random points
+simu <- ur(rand_gen, n_sim)
+
+# Convert to a data frame
+rand_df <- tibble(points = simu)
+
+# Extract the points where x > 1/3
+# within this interval
+rand_df_2_3 <- rand_df |> 
+  filter(points <= (2/3),
+         points > 1/3)
+
+# Extract the points where x > 1/3
+rand_df_1_3 <- rand_df |> 
+  filter(points > (1/3))
+
+# Calculate the proportion of points within the interval
+prop_between <-
+  nrow(rand_df_2_3) / nrow(rand_df_1_3)
+
+print (prop_between)
+```
+
+### b
+
+Let \(X\) be a continuous random variable with probability density function:
+
+$$
+f(x) =
+\begin{cases}
+x^2\left(2x+\frac{3}{2}\right), & \text{if } 0 < x \leq 1 \\
+0, & \text{otherwise}
+\end{cases}
+$$
+
+If
+
+$$
+Y = \frac{2}{X} + 3,
+$$
+
+find
+
+$$
+\operatorname{Var}(Y).
+$$
+```{r qq6b}
+# Create a random number generator for this function
+rand_gen <- pinv.new(
+  pdf = function(x) {x^2 * (2*x + (3/2))},
+  lb = 0,
+  ub = 1
+)
+
+# Generate 100,000 random points
+# This one isn't very stable so use a bigger number
+simu <- ur(rand_gen, 100000)
+
+# Calculate the Y value for each point and store it.
+simu_y <- c()
+for (sim_x in simu){
+  y = (2 / sim_x) + 3
+  simu_y <- c(simu_y, y)
+}
+
+# Find the variance of Y
+var_y <- var(simu_y)
+
+print (var_y)
+```
+The variance of Y is `r round(var_y, 4)`.
+
+The simulated estimate of the variance may differ noticeably from the exact answer of approximately 1.97, because values of X close to zero produce very large values of Y, making the sample variance relatively unstable.
+
+### Question 8
+
+A polar bear is hunting for food. From its current position, there are three different
+routes. The first one brings it back to the same point after 1 hours of walking. The
+second route brings it back to the same point after 6 hours of walking. The last route
+leads to the food source after 2 hours of walking. Assuming that the probability the
+bear chooses route 1 is 0.25, route 2 is 0.25 and route 3 is 0.5, what is the expected
+time it will take for the bear gets some food?
+
+::: {.callout-note #note-while_loops}
+
+This solution uses conditional statements **if** and **else**, along with a  **while** loop - a loop which runs over and over again until something becomes true. We haven't covered these yet, but we will in Practicals 4 and 6. 
+:::
+
+```{r qq8}
+# Length of each route
+route1 <- 1
+route2 <- 6
+route3 <- 2
+
+# Probability of each route
+prob1 <- 0.25
+prob2 <- 0.25
+prob3 <- 0.5
+
+# Currently, the bear has no food
+food <- FALSE
+
+# Vector to track the time taken in each simulation
+total_times <- c()
+
+for (i in seq_len(n_sim)){
+  total_time <- 0
+  food = FALSE
+  # Keep running these steps until he finds food
+  while (!food) {
+    # Randomly, based on the probabilities above, choose a route
+    which_route <- sample(seq_len(3), 1, prob = c(prob1, prob2, prob3))
+    
+    # If it is route 1, add 1 hour to the total time
+    if (which_route == 1){
+      total_time <- total_time + route1
+    }
+    # If it is route 2, add 6 hours to the total time
+    else if (which_route == 2){
+      total_time <- total_time + route2
+    }
+    # If it is route 3, add 2 hours to the total time
+    # then stop the loop because he has found food.
+    else if (which_route == 3){
+      total_time <- total_time + route3
+      food = TRUE
+    }
+  }
+  # Store the total time taken
+  total_times <- c(total_times, total_time)
+}
+# Calculate the mean of the time taken over the 10,000 simulations
+mean_total <- mean(total_times)
+print (mean_total)
+```
+The mean time for the polar bear to find food is `r round(mean_total, 4)`.

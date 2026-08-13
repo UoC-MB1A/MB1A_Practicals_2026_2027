@@ -40,6 +40,7 @@ In this practical, you will need two Quarto documents:
 * `squirrels.qmd` for a squirrel based simulation exercise
 * `drosophila.qmd` for investigating mutation counts in Drosophila
 * `distributions.qmd` for quick investigations of different probability distributions
+* `hpv.qmd` for analysing human papillomavirus data
 
 ## For Loops {#sec-loops}
 
@@ -193,6 +194,28 @@ for (i in seq_len(20)) {
 print(cubed_nums)
 ```
 
+We can also store the results of each iteration of a loop in a data frame. One way to do this is to create an empty data frame before starting the loop using `tibble()`. During each iteration, we create a new one-row data frame containing the results from that iteration, then add it to the results data frame using `bind_rows()`.
+
+Each time the loop runs, current_row is replaced with the results for the current species, while species_df grows by one row.
+
+For example, we can adapt our animal loop above to store both the species name and whether it starts with "s":
+
+```{r bind_rows}
+species <- c("monkey", "shark", "turkey", "snowman")
+species_df <- tibble()
+
+for (spp in species) {
+  has_s <- startsWith(spp, "s")
+  
+  
+  current_row <- tibble(Species=spp,
+                        Starts_with_S = has_s)
+  species_df <- species_df |> bind_rows(current_row)
+}
+gt(species_df)
+```
+
+
 ## Review {#sec-summary_0301}
 
 [↑ top](#)
@@ -205,7 +228,7 @@ print(cubed_nums)
 * Each cycle through a loop is called an **iteration**.
 * You usually use a vector to determine the iterations of the loop.
 * You can store the results of your loop by adding to a vector in each iteration.
-
+* You can also store the results by adding a new row to a data frame in each iteration using `bind_rows()`.
 :::
 
 For this part of the practical, the main files you have edited are:
