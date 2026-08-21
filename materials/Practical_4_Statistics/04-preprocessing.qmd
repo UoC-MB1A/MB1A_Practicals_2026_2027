@@ -1,0 +1,350 @@
+---
+title: "Preprocessing Bee Data"
+format: html
+---
+
+Import relevant libraries
+
+```{r libraries_bee_data, message=FALSE}
+library(tidyverse)
+library(osbng)
+library(sf)
+library(terra)
+```
+
+Read the raw data.
+
+```{r import_bee_data, message=FALSE}
+samples <- read_csv("data/ukpoms_1kmpantrapdata_2017-2021_samples.csv")
+insects <- read_csv("data/ukpoms_1kmpantrapdata_2017-2021_insects.csv")
+flowers <- read_csv("data/ukpoms_1kmpantrapdata_2017-2021_flowers.csv")
+```
+
+Check the grid references in the sample table are valid, remove any which are not.
+
+```{r check_grid}
+# Convert the text column to BNG reference objects, remove any which are NA
+samples <- samples |>
+  mutate(grid_ref = as_bng_reference(x1km_square)) |>
+  filter(!is.na(grid_ref))
+```
+
+Remove extra information in square or round brackets from insect species names and any extra suffix, filter out anything only identified at genus level.
+
+```{r clean_insect_names}
+
+# Remove suffices and anything in brackets from taxon_source
+# filter anything without two words remaining
+# and put the result in a new column, species
+insects <- insects |>
+  mutate(
+    species = str_extract(
+      taxon_source,
+      "^[A-Z][a-z]+(?: \\([A-Z][a-z]+\\))? [a-z]+"
+    ),
+    species = str_remove(
+      species,
+      " \\([A-Z][a-z]+\\)"
+    )
+  ) |>
+  filter(!is.na(species))
+
+# Same for the flower species
+flowers <- flowers |>
+  mutate(
+    species = str_extract(
+      taxon_source,
+      "^[A-Z][a-z]+(?: \\([A-Z][a-z]+\\))? [a-z]+"
+    ),
+    species = str_remove(
+      species,
+      " \\([A-Z][a-z]+\\)"
+    )
+  ) |>
+  filter(!is.na(species))
+```
+
+For each insect species and 1km square, count the number of times each insect occurred, including if it occurred 0 times. 
+
+```{r counts_insects_per_square}
+# List the unique insect species
+species <- insects |>
+  distinct(species)
+
+# List unique combinations of sample ID and site
+sample_info <- samples |>
+  distinct(sample_id, x1km_square)
+
+# List unique combinations of square and date
+survey_events <- samples |>
+  distinct(x1km_square)
+
+# Merge the sample info into the insect data frame 
+insects_plus_samples <- insects |>
+  left_join(sample_info, by = "sample_id")
+
+# Count the number of occurrences of each combo of square, date, species
+species_counts <- insects_plus_samples |> count(
+    x1km_square,
+    species,
+    name = "n_observed"
+  )
+
+# Get every combination of species and sampling events
+combos <- survey_events |> crossing(species)
+
+# Merge this with the data frame of the number of occurrences
+insects_by_square <- combos |>
+  left_join(
+    species_counts,
+    by = c("x1km_square", "species")
+  )
+
+# Replace NA with 0
+insects_by_square <- insects_by_square |>
+  mutate(n_observed = replace_na(n_observed, 0))
+```
+
+For flowers - for each flower species and 1km square, mark each flower species as present or absent.
+
+```{r flowers_per_square}
+# List the unique flower species
+flower_species <- flowers |>
+  distinct(species)
+
+# Merge the sample info into the insect data frame 
+flowers_plus_samples <- flowers |>
+  inner_join(sample_info, by = "sample_id")
+
+# Find occurrences of each combo of flower, species
+flowers_found <- flowers_plus_samples |>
+  distinct(
+    x1km_square,
+    species
+  ) |>
+  mutate(present = TRUE)
+
+# Get every combination of species and sampling events
+combos_flowers <- survey_events |> crossing(flower_species)
+
+# Merge this with the data frame of the present species
+flowers_by_square <- combos_flowers |>
+  left_join(
+    flowers_found,
+    by = c("x1km_square", "species")
+  )
+
+# Replace NA with FALSE
+flowers_by_square <- flowers_by_square |>
+  mutate(present = replace_na(present, FALSE))
+```
+
+In the samples table, convert Ordance Survey grid reference (BNG reference) locations to latitude and longitude.
+
+```{r convert_refs_bee_data, message=FALSE}
+# Convert these to x and y easting and northing references
+samples <- samples |> mutate(xy = bng_to_xy(grid_ref, position = "centre"))
+
+# Split x and y
+samples <- samples |>
+  mutate(
+    x = xy[, 1],
+    y = xy[, 2]
+  )
+
+# Convert these to latitude and longitude on a 4326 map projection
+coords <- st_as_sf(
+  samples,
+  coords = c("x", "y"),
+  crs = 27700
+) |>
+  st_transform(4326)
+
+# Extract the co-ordinates
+lonlat <- st_coordinates(coords)
+
+# Put latitude and longitude in separate columns in the samples table
+samples <- samples |>
+  mutate(
+    longitude = lonlat[, 1],
+    latitude = lonlat[, 2],
+    .before = 3
+  )
+```
+
+Reduce the number of columns in the sample table to just those we might need. The temperature etc. measurements are not very useful as they're just on that specific day and the volunteers are told to take them on warm days during summer - use WORLDCLIM data instead.
+
+```{r select_bee_data}
+
+samples_sel <- samples |> select(
+  country,
+  longitude,
+  latitude,
+  x1km_square,
+  land_cover,
+  habitat_main,
+)
+
+```
+
+Summarise the sample sites per square - where there are multiple samples taken from the same square take the mean of numerical values and the most common of categorical values.
+
+```{r group_samples_bee_data}
+sample_summ <- samples_sel |> group_by(x1km_square) |> summarise(
+  country = first(country),
+  longitude = first(longitude),
+  latitude = first(latitude),
+  habitat = names(sort(table(habitat_main), decreasing = TRUE))[1],
+  land_cover = names(sort(table(land_cover), decreasing = TRUE))[1])
+```
+
+Select the most relevant columns from the insect and flower tables. Add a column to the samples table showing the most common insect family and species at the site.
+
+```{r select_insects_bee_data}
+# Select columns and deduplicate
+insects_sel <- insects |> select(species, english_name, order, family)  |>
+  distinct(species, english_name, order, family)
+
+# Select columns and deduplicate
+flowers_sel <- flowers |> select(species, english_name, order, family)  |>
+  distinct(species, english_name, order, family)
+
+# Find the most common insect family per square
+dominant_family <- insects_by_square |>
+  inner_join(insects_sel) |>
+  group_by(x1km_square, family) |>
+  summarise(n = sum(n_observed), .groups = "drop") |>
+  group_by(x1km_square) |>
+  slice_max(n, n = 1, with_ties = FALSE) |>
+  select(x1km_square, dominant_family = family)
+
+insects_sel <- insects_sel |>
+  mutate(genus = word(species, 1))
+
+# Find the most common insect species per square
+dominant_species <- insects_by_square |>
+  group_by(x1km_square, species) |>
+  summarise(n = sum(n_observed))  |>
+  slice_max(n, n = 1, with_ties = FALSE) |>
+  select(x1km_square, dominant_species = species)
+
+sample_summ <- inner_join(sample_summ, dominant_species) |>
+  inner_join(dominant_family)
+```
+
+Add data about insect body size to the insects data frame based on the `pollimetry` R package.
+
+```{r pollimetry}
+poll <- tibble(pollimetry_dataset)
+poll <- poll |> 
+  mutate(species = Species,
+         dry_mass = Spec.wgt,
+         intertegular_distance = IT) |>
+  select(species, dry_mass, intertegular_distance) |>
+  group_by(species) |>
+  summarise(mean_dry_mass = mean(dry_mass),
+            mean_intertegular_distance = mean(intertegular_distance)) |>
+  mutate(species = str_replace_all(species, "_", " "))
+
+insects_sel <- insects_sel |> left_join(poll)
+```
+
+Save all the outputs.
+
+```{r save_data}
+write_csv(insects_sel, "data/insect_metadata.csv")
+write_csv(flowers_sel, "data/flower_metadata.csv")
+write_csv(insects_by_square, "data/insect_counts.csv")
+write_csv(flowers_by_square, "data/flower_counts.csv")
+```
+
+Read the [WorldClim](https://nordata.physics.utoronto.ca/en/annexes-datasets-descriptions/72-precipitation/worldclim-version-2/) data, which has climate data by square averaged from 1970-2000. These are 2.5km squares but should be close enough for our purposes.
+
+Take the [19 bioclim variables](https://www.nccs.nasa.gov/bioclim/) plus temperature for each month and elevation.
+
+Data was originally downloaded using the package `worldclim`: https://search.r-project.org/CRAN/refmans/geodata/html/worldclim.html on 17/08/26.
+
+```{r read_worldclim}
+# Find worldclim bioclim data
+bio_files <- list.files(
+  "/home/katy/WorldClim_data_unzipped/",
+  pattern = ".*bio.*.tif$",
+  full.names = TRUE
+)
+
+# Find worldclim temperature data
+temp_files <- list.files(
+  "/home/katy/WorldClim_data_unzipped/",
+  pattern = ".*tavg.*.tif$",
+  full.names = TRUE
+)
+
+# Find worldclim elevation data
+elev_files <- list.files(
+  "/home/katy/WorldClim_data_unzipped/",
+  pattern = ".*elev.*.tif$",
+  full.names = TRUE
+)
+
+# Get the longitude and latitude of the sample sites
+sites <- distinct(select(sample_summ, c(x1km_square, longitude, latitude)))
+
+# Convert to a vector, match the projection to the WC data.
+sites_vect <- vect(
+  sites,
+  geom = c("longitude", "latitude"),
+  crs = "EPSG:4326"
+)
+
+bioclim <- rast(bio_files)
+bio_values <- extract(bioclim, sites_vect)
+
+bioclim_temp <- rast(temp_files)
+temp_values <- extract(bioclim_temp, sites_vect)
+
+bioclim_elev <- rast(elev_files)
+elev_values <- extract(bioclim_elev, sites_vect)
+```
+
+Clean this data - pick the variables we are interested in, rename so the names are informative.
+
+```{r tibble_worldclim}
+# Convert to data frames
+world_clim <- tibble(bio_values)
+world_temp <- tibble(temp_values)
+world_elev <- tibble(elev_values)
+
+# Create two variables directly - number of
+# months >= 15C and elevation.
+months_over_15 <- rowSums(world_temp >= 15)
+elevation <- pull(world_elev, wc2.1_10m_elev)
+
+world_clim <- world_clim |> mutate(
+  x1km_square = sites_vect$x1km_square,
+  annual_mean_temp = wc2.1_10m_bio_1,
+  max_temp_warmest_month = wc2.1_10m_bio_5,
+  min_temp_coldest_month =  wc2.1_10m_bio_6,
+  temp_annual_range = wc2.1_10m_bio_7,
+  annual_total_prec = wc2.1_10m_bio_12,
+  total_prec_wettest_month = wc2.1_10m_bio_13,
+  total_prec_driest_month = wc2.1_10m_bio_14
+) |> select(x1km_square,
+            annual_mean_temp,
+            max_temp_warmest_month,
+            min_temp_coldest_month,
+            temp_annual_range,
+            annual_total_prec,
+            total_prec_wettest_month,
+            total_prec_driest_month) |>
+  mutate(n_months_at_least_15C = months_over_15,
+         elevation = elevation)
+```
+
+Merge the site data with the worldclim data and save.
+
+```{r export_samples}
+sample_summ <- sample_summ |> full_join(world_clim)
+write_csv(sample_summ, "data/site_metadata.csv")
+```
+
+

@@ -1,0 +1,465 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0401"
+---
+
+```{r setup_0401, include=FALSE}
+library(tidyverse)
+library(gt)
+library(osbng)
+library(sf)
+library(maps)
+insect_metadata <- read_csv("data/insect_metadata.csv")
+```
+
+# Part 1: Estimators
+
+## The dataset
+
+The dataset we will use in this practical is [pan-trap survey data](https://catalogue.ceh.ac.uk/documents/9df83130-e98f-48b0-bbfc-32f5920eedb0) from the UK Pollinator Monitoring Scheme. In this scheme, multiple [pan-traps](https://en.wikipedia.org/wiki/Pan_trap) are set in each of a set of specific 1km squares across the UK. On four days each summer, volunteers will set out traps for six hours, then send the insects to be counted. Flowering plants within a 2m radius of the trap are also recorded.
+
+[comment]: todo_katy link to the preprocessing.
+
+The data from the scheme is provided as data per trap, for this practical we have amalgamated the data across all dates and across each 1km square. The preprocessing of the data is described in XXXX. 
+
+You have been provided with four data files:
+
+* In the **insect counts** CSV file - `data/insect_counts.csv` each row represents a combination of an insect species and a sampling site, and the total number of times that insect was observed at that site. Many of the counts will be zero.
+
+* In the **flower counts** CSV file - `data/flower_counts.csv` each row reprsents a combination of a flower species and a sampling site, plus TRUE or FALSE depending if that flower was ever observed within 2m of the site.
+
+* In the **site metadata** CSV file - `data/site_metadata.csv`, each row represents a single 1km square sampling site. The data frame contains information about the geographical location, plus land use and climate at the sample site.
+
+* In the **insect metadata** CSV file - `data/insect_metadata.csv`, each row represents a single species of bee or hoverfly and its common name (where available), order and family.
+
+* In the **flower metadata** CSV file - `data/flower_metadata.csv`, each row represents a single species of plant and its common name (where available), order and family.
+
+::: {.callout-exercise #ex_summarise_bees}
+In your `insects.qmd` Quarto file:
+
+* Read the five CSV files:
+
+  * `data/insect_counts.csv`
+  * `data/flower_counts.csv`
+  * `data/site_metadata.csv`
+  * `data/insect_metadata.csv`
+  * `data/flower_metadata.csv`
+
+* Count how many unique sites there are. Site ID is in the `x1km_square` column of the insect counts data frame and site metadata data frame. 
+* Count how many unique observations of insects there are - including multiple observations of the same insect at the same site, on the same day. Number of observations is in the `n_observed` column os the insect counts data frame.
+* Find the insect species which was observed most frequently and how many times it was observed. Insect species is in the column `species` of the insect counts data frame and the insect metadata data frame.
+
+::: {.callout-answer #ex_summarise_bees_ans}
+
+[Read the five CSV files]{.blue-text}
+
+```{r summarise_bees_ans1, message=FALSE}
+insect_counts <- read_csv("data/insect_counts.csv")
+flower_counts <- read_csv("data/flower_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+insect_metadata <- read_csv("data/insect_metadata.csv")
+flower_metadata <- read_csv("data/flower_metadata.csv")
+```
+
+[Count how many unique sites there are. Site ID is in the `x1km_square` column of the insect counts data frame and site metadata data frame. ]{.blue-text}
+
+```{r summarise_bees_ans2, message=FALSE}
+site_count <- nrow(site_metadata)
+print(site_count)
+```
+There are `r site_count` sites.
+
+[Count how many unique observations of insects there are - including multiple observations of the same insect at the same site. Number of observations is in the `n_observed` column os the insect counts data frame]{.blue-text}
+
+```{r summarise_bees_ans3, message=FALSE}
+total_insect_obs <- insect_counts |>
+  pull(n_observed) |>
+  sum()
+print(total_insect_obs)
+```
+There are `r format(total_insect_obs, scientific=FALSE)` unique insect observations.
+
+[Find the insect species which was observed most frequently and how many times it was observed. Insect species is in the column `species` of the insect counts data frame and the insect metadata data frame.]{.blue-text}
+
+```{r summarise_bees_ans4, message=FALSE}
+insect_totals <- insect_counts |>
+  group_by(species) |>
+  summarise(n_obs = sum(n_observed))
+
+insect_totals <- insect_totals |>
+  arrange(desc(n_obs))
+
+gt(head(insect_totals))
+```
+
+The most commonly observed species was `r pull(insect_totals, species)[1]`, which was observed `r pull(insect_totals, n_obs)[1]` times.
+
+:::
+:::
+
+## Estimators
+
+Let's concentrate on a single aspect of the data for now - the species richness, measured as the number of unique species.
+
+Across the whole dataset, we know the total number of unique species - we have one species for each row in our insect metadata data frame.
+
+```{r count_unique_species, message=FALSE}
+n_unique_species <- nrow(insect_metadata)
+print(n_unique_species)
+```
+There are `r n_unique_species` unique species.
+
+The data we have here is only a sample of the whole population, but for this exercise, we will treat the complete dataset as a pseudo-population and explore what happens when we take samples from this population.
+
+Let's say we wanted to estimate the total species richness across the full data set based on 20 sites and we have three possible estimators:
+
+* Observed richness - total number of unique species across 20 sites
+* Scaled observed richness - total number of unique species across 20 sites * (total number of sites / 20)
+* The Chao1 richness estimator, which uses the number of rare species in the sample to estimate how many species may have gone undetected.
+
+First let's take a sample of 20 random sites.
+
+```{r take_sample}
+random_sites <- site_metadata |>
+  distinct(x1km_square) |>
+  slice_sample(n = 20) |>
+  pull(x1km_square)
+```
+
+Now we can extract these rows from our insect counts data frame. For this part of the practical, we're not interested in insects with a count of 0.
+
+```{r count_species_sample}
+insect_sample <- insect_counts |>
+  filter(
+    x1km_square %in% random_sites,
+    n_observed != 0
+  )
+
+gt(head(insect_sample))
+```
+
+#### Observed richness
+
+The observed richness is just the total number of unique species observed across all sites.
+
+```{r observed_richness}
+obs_rich <- insect_sample |>
+  distinct(species) |>
+  pull(species)
+n_obs_rich <- length(obs_rich)
+print(n_obs_rich)
+```
+The  observed richness estimator for this sample is `r round(n_obs_rich)`.
+
+#### Scaled observed richness
+
+The scaled observed richness is the total number of unique species observed across all sites, multiplied by 
+(total number of sites / number of sites in sample).
+
+```{r scaled_observed_richness}
+n_sites_sample <- 20
+scaled_obs_rich <- n_obs_rich * (site_count / n_sites_sample)
+print(scaled_obs_rich)
+```
+The scaled observed richness estimator for this sample is `r round(scaled_obs_rich)`.
+
+#### Chao1 estimator
+
+The Chao1 estimator estimates unseen species based on the number of species represented only once or twice in your sample.
+
+$$
+\hat{S}_{Chao1} = S_{obs} + \frac{f_1^2}{2f_2}
+$$
+
+where:
+
+- $S_{obs}$ is the number of species observed in the sample.
+- $f_1$ is the number of species observed exactly once (singletons).
+- $f_2$ is the number of species observed exactly twice (doubletons).
+
+::: {.callout-note #note-chao}
+You do not need to remember this - it is just an example of an estimator. 
+:::
+
+```{r chao}
+obs_per_insect <- insect_sample |>
+  group_by(species) |>
+  summarise(n_total = sum(n_observed))
+
+once <- obs_per_insect |> filter(n_total == 1)
+twice <- obs_per_insect |> filter(n_total == 2)
+
+n_once <- nrow(once)
+n_twice <- nrow(twice)
+
+chao <- n_obs_rich + ((n_once^2) / (2 * n_twice))
+print(chao)
+```
+The chao1 estimator for this sample is `r round(chao)`.
+
+None of these did a particularly good job of finding our real value of `r n_unique_species`.
+
+However, you can't measure how good an estimator is based on a single sample. Let's try simulation and generate multiple samples.
+
+Remember (from the lectures): An unbiased estimator gives the correct value on average across repeated samples. The efficiency of an estimator is determined by its variance: estimators with lower variance give more consistent estimates. Mean square error (MSE) combines bias and variance and measures how far, overall, estimates tend to be from the true value.
+
+::: {.callout-exercise #ex-simulate_estimators}
+
+Using a for loop, with 10,000 iterations (this might take a minute or two to run).
+
+* Take a sample of 20 sites, then extract the insect counts for these sites from the data frame.
+* Calculate observed richness, scaled observed richness and chao1 for each sample.
+* Store the results for each estimator in a separate vector.
+* Combine these into a data frame.
+* For each estimator:
+  * Calculate the bias, as the difference between the mean value across samples and the real value from our pseudo population.
+  * Calculate the variance.
+  * Calculate the mean square error.
+* Which estimator would you use, if any?
+
+::: {.callout-answer collapse="true" #ex-simulate_estimators_ans}
+
+[Take a sample of 20 sites, then extract the insect counts for these sites from the data frame.]{.blue-text}
+
+[Calculate observed richness, scaled observed richness and chao1 for each sample.]{.blue-text}
+
+[Store the results for each estimator in a separate vector.]{.blue-text}
+
+```{r simulate_estimators_ans1, eval=FALSE}
+obs_rich_vec <- c()
+scaled_obs_rich_vec <- c()
+chao_vec <- c()
+
+# Loop for 10,000 iterations
+for (i in seq_len(10000)) {
+  # Sample 20 sites
+  random_sites <- site_metadata |>
+    distinct(x1km_square) |>
+    slice_sample(n = 20) |>
+    pull(x1km_square)
+
+  # Extract the insect counts for these sites
+  insect_sample <- insect_counts |>
+    filter(
+      x1km_square %in% random_sites,
+      n_observed != 0
+    )
+
+  # Calculate observed richness
+  obs_rich <- insect_sample |>
+    distinct(species) |>
+    pull(species)
+  n_obs_rich <- length(obs_rich)
+  # Store
+  obs_rich_vec <- c(obs_rich_vec, n_obs_rich)
+
+  # Calculate the scaled observed richness
+  scaled_obs_rich <- n_obs_rich * (site_count / 20)
+  # Store
+  scaled_obs_rich_vec <- c(scaled_obs_rich_vec, scaled_obs_rich)
+
+  # Calculate Chao1
+  obs_per_insect <- insect_sample |>
+    group_by(species) |>
+    summarise(n_total = sum(n_observed))
+
+  once <- obs_per_insect |> filter(n_total == 1)
+  twice <- obs_per_insect |> filter(n_total == 2)
+
+  n_once <- nrow(once)
+  n_twice <- nrow(twice)
+
+  chao <- n_obs_rich + ((n_once^2) / (2 * n_twice))
+  # Store
+  chao_vec <- c(chao_vec, chao)
+}
+```
+
+[Combine these into a data frame.]{.blue-text}
+
+```{r simulate_estimators_ans2, eval=FALSE}
+estimator_df <- tibble(
+  Observed = obs_rich_vec,
+  Scaled_Observed = scaled_obs_rich_vec,
+  Chao1 = chao_vec)
+```
+
+```{r read_sim, include=FALSE, message=FALSE}
+# Read the data instead of generating it above - saves time when rendering
+estimator_df = read_csv("data/estimator_df.csv")
+```
+
+[For each estimator:]{.blue-text}
+
+[Calculate the bias]{.blue-text}
+
+[Calculate the efficiency]{.blue-text}
+
+[Calculate the mean square error.]{.blue-text}
+
+```{r simulate_estimators_ans3}
+estimator_summary <- estimator_df |>
+  summarise(
+    Bias_Observed = mean(Observed) - n_unique_species,
+    Bias_Scaled_Observed = mean(Scaled_Observed) - n_unique_species,
+    Bias_Chao1 = mean(Chao1) - n_unique_species,
+    Eff_Observed = var(Observed),
+    Eff_Scaled_Observed = var(Scaled_Observed),
+    Eff_Chao1 = var(Chao1),
+    MSE_Observed = mean((Observed - n_unique_species)^2),
+    MSE_Scaled_Observed =mean((Scaled_Observed - n_unique_species)^2),
+    MSE_Chao1 = mean((Chao1 - n_unique_species)^2)
+  )
+gt(estimator_summary)
+```
+
+[Which estimator would you use, if any?]{.blue-text}
+
+Of the three, the Chao1 estimator has the lowest mean square error, however it is still has a negative bias and a low efficiency.
+
+:::
+:::
+
+Plotting our simulated estimators also provides a lot of information.
+
+We can combine all three estimators into a single plot, first we need to convert the data from wide to long format (see @sec-long_wide).
+
+The function `everything()` tells R to pivot all of the columns in the table. A new column, `estimator` will be created to specify if each row is an observed, scaled observed or chao1 estimator.
+
+```{r pivot_estimators}
+estimator_long <- estimator_df |>
+  pivot_longer(
+    everything(),
+    names_to = "estimator",
+    values_to = "estimate"
+  )
+
+gt(head(estimator_long))
+```
+
+Now, let's plot the values of each estimator as histograms. 
+
+The function `facet_wrap()` splits the data from a single data frame into multiple plots, based on the values in a categorical column. The first argument should be the variable you would like to facet by, preceded by a `~` symbol. The argument `scales = "free"` means that each plot can have a different scale bar - by default they are all the same.
+
+The function `geom_vline()` adds a vertical line at a specific point, specified by the argument `xintercept`. In this case, the line is at our pseudo-population total species richness.
+
+```{r plot_simulated_estimators}
+ggplot(estimator_long, aes(x = estimate)) +
+  geom_histogram(bins=50) +
+  facet_wrap(~ estimator, scales = "free") +
+  geom_vline(xintercept = n_unique_species, color='red')
+```
+Here it is clear again that none of these are great estimators, but that Chao1 is probably the best. 
+
+Sometimes an estimator is bad because the sample size is too small, sometimes it's just bad. Let's try taking 50 sites per sample, instead of 20.
+
+The code below is identical to the above except for samples of 50 sites.
+
+```{r simulate_estimators_sample_50, eval=FALSE}
+
+obs_rich_vec_50 <- c()
+scaled_obs_rich_vec_50 <- c()
+chao_vec_50 <- c()
+
+# Loop for 10,000 iterations
+for (i in seq_len(10000)) {
+  # Sample 50 sites
+  random_sites <- site_metadata |>
+    distinct(x1km_square) |>
+    slice_sample(n = 50) |>
+    pull(x1km_square)
+
+  # Extract the insect counts for these sites
+  insect_sample <- insect_counts |>
+    filter(
+      x1km_square %in% random_sites,
+      n_observed != 0
+    )
+
+  # Calculate observed richness
+  obs_rich <- insect_sample |>
+    distinct(species) |>
+    pull(species)
+  n_obs_rich <- length(obs_rich)
+  # Store
+  obs_rich_vec_50 <- c(obs_rich_vec_50, n_obs_rich)
+
+  # Calculate the scaled observed richness
+  scaled_obs_rich <- n_obs_rich * (site_count / 50)
+  # Store
+  scaled_obs_rich_vec_50 <- c(scaled_obs_rich_vec_50, scaled_obs_rich)
+
+  # Calculate Chao1
+  obs_per_insect <- insect_sample |>
+    group_by(species) |>
+    summarise(n_total = sum(n_observed))
+
+  once <- obs_per_insect |> filter(n_total == 1)
+  twice <- obs_per_insect |> filter(n_total == 2)
+
+  n_once <- nrow(once)
+  n_twice <- nrow(twice)
+
+  chao <- n_obs_rich + ((n_once^2) / (2 * n_twice))
+  # Store
+  chao_vec_50 <- c(chao_vec_50, chao)
+}
+
+estimator_df_50 <- tibble(
+  Observed = obs_rich_vec_50,
+  Scaled_Observed = scaled_obs_rich_vec_50,
+  Chao1 = chao_vec_50)
+```
+
+```{r read_sim_50, include=FALSE, message=FALSE}
+# Read the data instead of generating it above - saves time when rendering
+estimator_df_50 = read_csv("data/estimator_df_50.csv")
+```
+
+Now we can look at the results.
+
+```{r simulate_estimators_sample_50_df}
+estimator_summary_50 <- estimator_df_50 |>
+  summarise(
+    Bias_Observed = mean(Observed) - n_unique_species,
+    Bias_Scaled_Observed = mean(Scaled_Observed) - n_unique_species,
+    Bias_Chao1 = mean(Chao1) - n_unique_species,
+    Eff_Observed = var(Observed),
+    Eff_Scaled_Observed = var(Scaled_Observed),
+    Eff_Chao1 = var(Chao1),
+    MSE_Observed = mean((Observed - n_unique_species)^2),
+    MSE_Scaled_Observed =mean((Scaled_Observed - n_unique_species)^2),
+    MSE_Chao1 = mean((Chao1 - n_unique_species)^2)
+  )
+gt(estimator_summary_50)
+```
+
+These are still not great, but they have improved quite a lot. Chao1 still looks best.
+
+```{r simulate_estimators_sample_50_ggplot}
+estimator_long_50 <- estimator_df_50 |>
+  pivot_longer(
+    everything(),
+    names_to = "estimator",
+    values_to = "estimate"
+  )
+
+ggplot(estimator_long_50, aes(x = estimate)) +
+  geom_histogram(bins=50) +
+  geom_vline(xintercept = n_unique_species, color='red') +
+  facet_wrap(~ estimator, scales = "free")
+```
+Chao1 actually looks pretty good here - it is generating an approximately unbiased estimate of the pseudo-population, although it has a higher variance, and therefore lower efficiency, than either other estimator. 
+
+::: {.callout-note #uk_poms_citation}
+**Data citation**
+
+UK Pollinator Monitoring Scheme (2024). 1km square pan trap data from the UK Pollinator Monitoring Scheme, 2017-2021. NERC EDS Environmental Information Data Centre. (Dataset).
+
+The UK Pollinator Monitoring Scheme (PoMS) is a partnership funded jointly by UKCEH and JNCC (through funding from Defra, Scottish Government, Welsh Government, and DAERA). UKCEH’s contribution is funded by the Natural Environment Research Council award number NE/R016429/1 as part of the UK-SCAPE programme delivering National Capability. Between 2017 and 2021, PoMS was funded by UKCEH and Defra (England), Welsh Government, Scottish Government, DAERA (Northern Ireland), and JNCC.
+PoMS is indebted to the many volunteers who carry out surveys and contribute data to the scheme.
+
+:::
+
+

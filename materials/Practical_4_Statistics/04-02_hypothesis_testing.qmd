@@ -1,0 +1,512 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0402"
+---
+
+```{r setup_0402, include=FALSE}
+library(tidyverse)
+library(gt)
+library(maps)
+library(patchwork)
+insect_counts <- read_csv("data/insect_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+```
+
+# Part 2: Hypothesis Testing 
+
+## Examining data
+
+Now we can start to test some hypotheses based on this dataset.
+
+For now, let's concentrate on a single species, the "bronze furrow bee" *Halictus tumulorum*. This is a relatively common bee species in the UK. It is a species of sweat bee, named because they are often attracted to sweat (although the UK ones usually aren't).
+
+![*Halictus tumulorum*](images/bee.jpg){#fig-bee width="50%"}
+
+We can plot the distribution of this bee on a map, using the methods we learned in @sec-p3_visualisation.
+
+First, let's filter our insect counts data frame to keep only the observations for this species.
+
+```{r subset_spp}
+spp_counts <- insect_counts |>
+  filter(species == "Halictus tumulorum")
+gt(head(spp_counts))
+```
+
+We can create a boolean (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.
+
+We also need to join with the site metadata table to get the additional info about the sampling sites.
+
+```{r check_spp, message=FALSE}
+spp_presence <- spp_counts |>
+  mutate(detected = n_observed > 0) |>
+  left_join(site_metadata)
+
+gt(head(spp_presence))
+```
+
+Now let's draw our map. We want a scatter plot (`geom_point()`) with longitude on the x axis and latitude on the y axis. We can colour the dots based on whether *H. tumulorum* is present or absent.
+
+We can use the function `annotation_borders()` with the argument `regions = "UK"` to generate a UK map. [Remember](@sec-adding_map_features) that `coord_quickmap()` adjusts the axis co-ordinates so the map doesn't appear skewed. `theme_bw()` is optional - it's just aesthetics, making the background white instead of grey.
+
+```{r map_spp}
+spp_map <- ggplot(spp_presence, aes(
+  x = longitude, y = latitude,
+  color = detected
+)) +
+  geom_point() +
+  annotation_borders(regions = "UK", linewidth = 0.2) +
+  coord_quickmap() +
+  theme_bw()
+
+spp_map
+```
+
+These bees seem to favour the south-east of the UK - possibly to avoid the coldest regions?
+
+We have a column in our site metadata data frame which can help us establish if this is true - the `min_temp_coldest_month` column. This is a BIOCLIM climate variable describing the lowest temperature in the coldest month in the map square and is the mean from 1970-2000. Technically, the lowest tempeature in the coldest month might not be the overall lowest temperature, however, for brevity from here forward we will refer to this just as **minimum temperature** (rather than mean lowest temperature in coldest month).
+
+We can compare this minimum temperature for the sites where the bees are present and absent using a box plot.
+
+:::{.callout-exercise #ex-boxplot_bees}
+In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `min_temp_coldest_month` in your `spp_presence` data frame for the regions with and without these bees (i.e. based on the `detected` column).
+
+The R function `geom_boxplot()` draws a box plot. The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the argument `x = detected` and `y = min_temp_coldest_month`. 
+
+:::{.callout-answer collapse="true" #ex-boxplot_bees_ans}
+```{r boxplot_spp}
+ggplot(
+  spp_presence,
+  aes(x = detected, y = min_temp_coldest_month, fill = detected)
+) +
+  geom_boxplot() +
+  theme_bw()
+```
+:::
+:::
+
+Based on this box plot, perhaps these bees don't like the cold.
+
+Let's summarise our data frame, for convenience later. We can calculate the number of observations, mean, standard deviation and variance for `min_temp_coldest_month` for each sample.
+
+```{r summarise_bees}
+spp_summary <- spp_presence |>
+  group_by(detected) |>
+  summarise(
+    count = n(),
+    mean = mean(min_temp_coldest_month),
+    var = var(min_temp_coldest_month),
+    sd = sd(min_temp_coldest_month)
+  )
+
+present <- spp_summary |> filter(detected == TRUE)
+absent <- spp_summary |> filter(detected == FALSE)
+gt(spp_summary)
+```
+
+## Choosing a test
+
+Now we have a hypothesis to investigate:
+
+* Alternative hypothesis: Minimum temperature is different at sites where *H. tumulorum* is present than at sites where it is absent.
+* Null hypothesis: Mean minimum temperature is the same at sites where *H. tumulorum* is present and absent.
+
+:::{.callout-important #note-harking}
+We developed our hypothesis that *H. tumulorum* prefers sites with a higher minimum temperature after looking at these data, and we're about to use the same data to test that hypothesis. This is sometimes called **HARKing** — Hypothesizing After the Results are Known.
+
+Ideally, we would now test our hypothesis using a new dataset. However, given the limitations of this practical, we will instead look for evidence of an association in this dataset.
+:::
+
+We have a **continuous response variable** and a **categorical explanatory variable** - maybe we can use a t-test.
+
+If the following assumptions are true, we can use a two-sample, two-sided, unpaired t-test:
+
+* The values of this measurement in each of the two groups should be drawn from approximately normal distributions with approximately equal variance.
+* The observations should be independent of one another. 
+
+In our dataset, each observation represents a different 1-km sampling square. We will assume that observations from different squares are sufficiently independent for this analysis.
+
+We can check the other two assumptions directly.
+
+::: {.callout-exercise #ex-poms_distributions}
+
+In your `pollinators.qmd` Quarto file:
+
+* Plot a histogram of the distribution of `min_temp_coldest_month` for the sites with and without *H. tumulorum*. Use the function `facet_wrap()` to separate the sites where `detected` is TRUE versus FALSE.
+
+::: {.callout-answer #ex-poms_distributions_ans}
+
+```{r poms_distributions_ans}
+ggplot(spp_presence, aes(x = min_temp_coldest_month, fill = detected)) +
+  geom_histogram(bins = 10) +
+  ggtitle("Temperature") +
+  facet_wrap(~detected, scales = "free") +
+  theme_bw()
+```
+:::
+:::
+
+These are clearly not perfectly normally distributed but, given that we only have a sample size of `r sum(pull(spp_presence, detected))` for "present" sites and  `r nrow(spp_presence) - sum(pull(spp_presence, detected))` for "absent" sites, it is difficult to tell if they are drawn from a normal distribution. 
+
+Later, we will learn different ways to check for normality but for now, given that they do look reasonably symmetrical, unimodal and without extreme outliers, we will treat the normality assumption as reasonable for this analysis.
+
+We have our variances already in the summary table above: `r round(pull(present, var), 4)` for present and `r round(pull(absent, var), 4)` for absent. Although the variances are not identical, they are similar. There is no strict threshold for deciding whether variances are sufficiently similar. As a rough rule of thumb for this practical, we will consider a ratio of the largest to smallest variance below 2 to indicate reasonably similar variances, particularly when group sizes are similar.
+
+Our group sizes are `r pull(present, count)` and `r pull(absent, count)` and our ratio is `r round(max(pull(spp_summary, var)) / min(pull(spp_summary, var)), 4)` - so we can proceed with our t-test.
+
+::: {.callout-note .extension #ext-sim_norm_poms}
+
+### Extension: Plotting similar data
+
+For fun (maybe not everyone's kind of fun), let's try simulating data drawn from a normal distribution with `r pull(present, count)` samples, 12 times, with the same mean and standard deviation as our "present" data, and see how it looks.
+
+```{r sim_norm_poms}
+# Find the relevant statistics - number of samples, mean and sd
+n_samples <- pull(present, count)
+mean_detected <- pull(present, mean)
+sd_detected <- pull(present, sd)
+
+# Create a data frame to store the results
+df_norm <- tibble()
+
+# Repeat 12 times
+for (i in seq_len(12)) {
+  # Generate a random sample
+  norm <- rnorm(
+    n_samples,
+    mean = mean_detected,
+    sd = sd_detected
+  )
+  # Put it into a data frame row
+  this_sim <- tibble(
+    simulation = i,
+    temp = norm
+  )
+  # Add the row to the results data frame
+  df_norm <- bind_rows(df_norm, this_sim)
+}
+
+# Plot the results
+ggplot(df_norm, aes(x = temp)) +
+  geom_histogram(bins = 10) +
+  facet_wrap(~simulation)
+```
+
+Some of these look pretty similar to our data - we at least can't say that our data is definitely not drawn from a normal distribution, based on this analysis.
+
+:::
+
+## Running statistical tests in R
+
+In R statistical functions, `~` is used to specify a formula describing the relationship between variables.
+
+The basic structure is `response ~ explanatory`, which you can read as "response as a function of explanatory variable".
+
+In our example above, the response variable is minimum temperature and the explanatory variable is presence or absence of *H. tumulorum* bees. 
+
+:::{.callout-note #note-explanatory}
+
+"Explanatory" here means the variable we're using to explain/describe variation in the response statistically, not necessarily a biological cause - we're not claiming that the bees are affecting the temperature.
+
+:::
+
+To run a t-test in R, the function is `t.test()`. 
+
+The first argument is our formula - `response ~ explanatory`, or in this case, `min_temp_coldest_month ~ detected`.
+We need two additional arguments:
+* `data = spp_presence` - this is the data frame containing the data.
+* `var.equal = TRUE` - run a standard t-test, the default in R is to assume unequal variance and run a Welch's t-test.
+
+
+```{r ttest_temp}
+spp_ttest <- t.test(min_temp_coldest_month ~ detected,
+  data = spp_presence,
+  var.equal = TRUE
+)
+print(spp_ttest)
+```
+
+Here we have a p-value of `r format(spp_ttest$p.value, scientific = TRUE, digits = 3)`, meaning we can reject our null hypothesis. There is evidence that mean minimum temperature is different at sites where *H. tumulorum* is present than at sites where it is absent. This doesn't mean that our alternative hypothesis is definitely true for the population, but based on this sample the evidence supports it.
+
+### Confidence intervals
+
+It is also worth looking at our **confidence interval** here.
+
+Lower: `r round(spp_ttest$conf.int[1], 4)`
+
+Upper: `r round(spp_ttest$conf.int[2], 4)`
+
+A 95% confidence interval means that if we repeatedly sampled from the population and calculated a 95% confidence interval in the same way each time, 95% of those intervals would contain the true population value. In this case, the true population value is the true difference between the mean minimum annual temperature at sites where *H. tumulorum* is present and at sites where it is absent.
+
+For a two-sided test at the 5% significance level, if the 95% confidence interval for the difference between the means does not contain zero, we can reject the null hypothesis that the mean difference is zero. Here, our confidence interval does not contain zero, which agrees with the conclusion based on the p-value.
+
+::: {.callout-exercise #ex-cis}
+
+*"A 95% confidence interval means that if we repeatedly sampled from the population and calculated a 95% confidence interval in the same way each time, 95% of those intervals would contain the true population value. In this case, the true population value is the true difference between the mean minimum annual temperature at sites where H. tumulorum is present and at sites where it is absent."*
+
+Let's check using simulation. If we simulate samples from populations with known means, we know the "true" difference between means of the source populations.
+
+In your `pollinators.qmd` Quarto file:
+
+* 1,000 times:
+  * Simulate two samples drawn from a normal distribution:
+      * one with the same mean, standard deviation and sample size as the sites with *H. tumulorum*
+      * one with the same mean, standard deviation and sample size as the sites without *H. tumulorum*. 
+  * Put the data for the two samples into a data frame in long format as follows:
+
+  ```{r fake_samples, include=FALSE}
+s1 <- rnorm(pull(present, count),
+  mean = pull(present, mean),
+  sd = pull(present, sd)
+)
+s2 <- rnorm(pull(absent, count),
+  mean = pull(absent, mean),
+  sd = pull(absent, sd)
+)
+  ```
+
+  ```{r sample_df}
+# Let's assume your vectors are in variables named s1 and s2
+# rep is used to add the sample names to the data frame
+# by repeating "sample_1" and then "sample_2".
+
+df <- tibble(
+  sample = c(
+    rep("sample_1", length(s1)),
+    rep("sample_2", length(s2))
+  ),
+  min_temp_coldest_month = c(s1, s2)
+)
+  ```
+  * For each pair of simulated samples, use a t-test to calculate the difference between the sample means and its 95% confidence interval.
+  * Extract the confidence interval
+
+  ```{r extract_conf_ttest, include=FALSE}
+ttest_res <- t.test(min_temp_coldest_month ~ sample,
+  data = df
+)
+  ```
+
+  ```{r extract_conf}
+# If the result of your t-test is stored as ttest_res
+ci_lower <- ttest_res$conf.int[1]
+ci_upper <- ttest_res$conf.int[2]
+  ```
+
+  * Record whether the confidence interval contains the **true difference** between the two population means. Because we specified the means of our simulated populations ourselves, we know what this value is: `r round(pull(present, mean) - pull(absent, mean), 4)`
+  
+  :::{.callout-note}
+  The function <code>between([value]{.red-text}, [lower]{.orange-text}, [upper]{.blue-text})</code> will tell you if <code>[value]{.red-text}</code> is between <code>[lower]{.orange-text}</code> and <code>[upper]{.blue-text}</code>.
+  :::
+  
+  * Store TRUE or FALSE in a vector depending on the result.
+* Calculate the percentage of the 1,000 confidence intervals that contain the true difference.
+
+:::{.callout-answer collapse="true" #ex-cis_ans}
+
+[1,000 times:]{.blue-text}
+
+* [Simulate two samples drawn from a normal distribution:]{.blue-text}
+    * [one with the same mean, standard deviation and sample size as the sites with *H. tumulorum*]{.blue-text}
+    * [one with the same mean, standard deviation and sample size as the sites without *H. tumulorum*.]{.blue-text}
+* [Put the data for the two samples into a data frame in long format.]{.blue-text}
+* [For each pair of simulated samples, use a t-test to calculate the difference between the sample means and its 95% confidence interval.]{.blue-text}
+* [Extract the confidence interval.]{.blue-text}
+* [Determine whether the confidence interval contains the **true difference** between the two population means.]{.blue-text}
+* [Store TRUE or FALSE in a vector depending on the result.]{.blue-text}
+
+```{r cis_ans1}
+# Find the real difference for comparison
+true_diff <- pull(present, mean) - pull(absent, mean)
+
+# Vector to store the results
+res_vec <- c()
+
+for (i in seq_len(1000)) {
+  # Simulate the two samples
+  sample_present <- rnorm(pull(present, count), mean = pull(present, mean), sd = pull(present, sd))
+  sample_absent <- rnorm(pull(absent, count), mean = pull(absent, mean), sd = pull(absent, sd))
+
+  # Put the results into a data frame
+  df <- tibble(
+    sample = c(
+      rep("sample_1", length(sample_present)),
+      rep("sample_2", length(sample_absent))
+    ),
+    min_temp_coldest_month = c(sample_present, sample_absent)
+  )
+
+  # Run the t-test
+  ttest_res <- t.test(min_temp_coldest_month ~ sample,
+    data = df,
+    var.equal = TRUE
+  )
+
+  # Extract the confidence interval
+  ci_lower <- ttest_res$conf.int[1]
+  ci_upper <- ttest_res$conf.int[2]
+
+  # Check if the result is in the confidence interval or not
+  res_in_ci <- between(true_diff, ci_lower, ci_upper)
+
+  # Store the result
+  res_vec <- c(res_vec, res_in_ci)
+}
+```
+
+[Calculate the percentage of the 1,000 confidence intervals that contain the true difference.]{.blue-text}
+```{r cis_ans2}
+perc <- (sum(res_vec) / length(res_vec)) * 100
+print(perc)
+```
+
+In this simulation, the confidence interval included the true difference `r round(perc, 3)`% of the time - very similar to our expectation.
+
+:::
+:::
+
+## Linear models
+
+The comparison we have just made can also be represented using a linear model.
+
+As you know, a simple linear model can be written as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$
+where:
+
+- $y$ is the response variable - minimum temperature
+- $x$ is the explanatory variable - *H. tumulorum* present or absent.
+- $\beta_0$ is the intercept
+- $\beta_1$ is the coefficient (or slope)
+- $\epsilon$ represents the variation not explained by the model
+
+In our case, the value of $x$ (`detected`, the explanatory variable) - can only be TRUE or FALSE. It is usual in this case to assign FALSE a value of 0 and TRUE a value of 1.
+
+* If *H. tumulorum* is absent, $x$ equals 0.
+* When $x$ is zero, the line intercepts the y axis - so the intercept $\beta_0$ is the minimum temperature when *H. tumulorum* is absent.
+* If *H. tumulorum* is present, $x$ equals 1.
+* The slope is the change in $y$ over one unit of $x$. So, the change in minimum temperature between $x$ = 0 and $x$ = 1, or the difference in mean temperature when *H. tumulorum* is present, compared to when it is absent.
+
+We know these numbers already:
+```{r}
+gt(spp_summary |> select(detected, mean))
+```
+
+The difference between the two means is:
+
+```{r diff_means}
+diff <- pull(present, mean) - pull(absent, mean)
+print(diff)
+```
+
+When the bee is absent, $x = 0$:
+
+$$
+y = `r round(pull(absent, mean), 2)` + (`r round(diff, 2)` \times 0) + \epsilon
+$$
+
+so:
+
+$$
+y = `r round(pull(absent, mean), 2)` + \epsilon
+$$
+
+When the bee is present, $x = 1$:
+
+$$
+y = `r round(pull(absent, mean), 2)` + (`r round(diff, 2)` \times 1) + \epsilon
+$$
+
+so:
+
+$$
+y = `r round(pull(present, mean), 2)` + \epsilon
+$$
+Our **t-test** tests whether there is evidence that the difference between the mean values of the two groups is different from zero.
+
+Our **linear model** tests whether there is evidence that the slope of the line is different from zero.
+
+They are therefore testing exactly the same thing.
+
+### Fitting linear models in R
+
+Let's see if this is correct by fitting a linear model to our data in R. We do this with the function `lm()` and the same formula we used previously - `response ~ explanatory`.
+
+We can summarise the linear model using the function `summary()`.
+
+```{r linear_model_spp}
+linear_model <- lm(min_temp_coldest_month ~ detected,
+  data = spp_presence
+)
+print(summary(linear_model))
+```
+
+This function gives us a lot of information, including the numbers we calculated above.
+
+* The estimated intercept is our mean minimum temperature without *H. tumulorum*
+* The estimated slope (listed as `detectedTRUE`) is the difference in minimum temperature with and without *H. tumulorum*. 
+* The p-value for the slope is identical to the p-value we calculated earlier with our t-test.
+
+We can extract the 95% confidence intervals from our linear model with the function `confint()` with one argument - the fitted model.
+
+```{r confint_lm}
+ci <- confint(linear_model)
+print(ci)
+```
+The second confidence interval here is the confidence interval of the slope of the line - and again it's identical to our t-test values above.
+
+### Visualising linear models in R
+
+We can easily visualise our linear model in ggplot.
+
+First, we plot a scatter plot with our `detected` variable on the x-axis and minimum temperature on the y-axis.
+
+We need to convert our `detected` column to show 0 for FALSE and 1 for TRUE. To convert a column to numeric, we use the function `as.numeric()`. For a boolean column, it will automatically do what we want - convert FALSE to 0 and TRUE to 1.
+
+We can then use the function `geom_smooth()` to apply and plot a linear model to the data. This corresponds to plotting a line between `r round(pull(absent, mean), 2)` when x is 0 and `r round(pull(present, mean), 2)` when x is 1.
+
+Let's also add a horizontal line using `geom_hline()` showing a slope of 0 and the same mean for both groups.
+
+```{r lm_lowest_temp}
+spp_presence <- spp_presence |>
+  mutate(detected_num = as.numeric(detected))
+
+overall_mean <- spp_presence |>
+  pull(min_temp_coldest_month) |>
+  mean()
+
+ggplot(spp_presence, aes(
+  x = detected_num,
+  y = min_temp_coldest_month
+)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() +
+  geom_hline(aes(yintercept = overall_mean), color = "red")
+```
+
+
+## ANOVA
+
+With exactly two groups, a classical one-way ANOVA is also mathematically equivalent to either of these tests. 
+
+A one-way ANOVA with two groups is testing:
+
+*Does allowing the two groups to have different means explain significantly more variation than assuming they have the same mean*
+
+This can be simplified to - is there evidence that these two means are not equal?
+
+This is asking the same question we've already asked twice, in a different way.
+
+Let's try an ANOVA. We run ANOVA in R on an existing linear model - which we already created above, using the function `anova()`.
+
+```{r anova_temp}
+anova_lm <- anova(linear_model)
+anova_lm
+```
+
+As you can see, we've again found an identical p-value. As it's the same linear model, our confidence intervals are, by definition, also the same.
+
+The advantage of ANOVA is that, unlike a t-test, we can use it when our categorical explanatory variable has more than two groups - we'll come to this in the next section.
