@@ -27,7 +27,9 @@ book:
         - materials/Practical_3_Probability/03-06_bonus_non_standard_distributions.qmd
     - part: "Practical 4 - Statistics"
       chapters:
-        - materials/Practical_4_Statistics/04-01_temp.qmd
+        - materials/Practical_4_Statistics/04-01_estimators.qmd
+        - materials/Practical_4_Statistics/04-02_hypothesis_testing.qmd
+        - materials/Practical_4_Statistics/04-03_temp.qmd
     - part: "Practical 5 - Bioinformatics"
       chapters:
         - materials/Practical_5_Bioinformatics/05-00_learning_obj.qmd
