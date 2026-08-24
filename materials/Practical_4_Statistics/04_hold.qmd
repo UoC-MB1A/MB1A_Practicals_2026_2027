@@ -1,0 +1,131 @@
+---
+title: "04_hold"
+format: html
+---
+```{r}
+model <- lm(annual_total_prec~dominant_family, data=site_metadata)
+```
+
+```{r}
+
+lasio_map <- ggplot(site_metadata) +
+  geom_point(aes(
+    x = longitude, y = latitude,
+    color = dominant_family
+  )) +
+  annotation_borders(regions = "UK", linewidth = 0.2) +
+  coord_quickmap() +
+  theme_bw()
+
+lasio_map
+```
+
+```{r}
+flower_counts |>
+  group_by(species) |>
+  summarise(n = sum(present)) |>
+  arrange(desc(n))
+```
+
+```{r}
+dominant_family <- insect_counts |>
+  inner_join(insect_metadata, by = "species") |>
+  group_by(x1km_square, family) |>
+  summarise(n = sum(n_observed), .groups = "drop") |>
+  group_by(x1km_square) |>
+  slice_max(n, n = 1, with_ties = FALSE) |>
+  select(x1km_square, dominant_family = family)
+
+insect_metadata <- insect_metadata |>
+  mutate(genus = word(species, 1))
+
+dominant_species <- insect_counts |>
+  group_by(x1km_square, species) |>
+  summarise(n = sum(n_observed))  |>
+  slice_max(n, n = 1, with_ties = FALSE) |>
+  select(x1km_square, dominant_species = species)
+
+site_metadata <- inner_join(site_metadata, dominant_species) |>
+  inner_join(dominant_family)
+#common <- summ_insect_counts |>
+#  filter(n >= 15) |> 
+#  pull(species)
+```
+
+```{r}
+taxa <- insect_metadata |>
+  pull(species) |>
+  unique()
+
+all_pairs <- crossing(species_1 = taxa,
+                      species_2 = taxa)
+
+all_pairs <- all_pairs |>
+  filter(species_1 < species_2)
+
+insects_present <- insect_counts |>
+  filter(n_observed != 0) |> 
+  distinct(x1km_square, species)
+
+
+insect_pairs_found <- insects_present |>
+  inner_join(
+    insects_present,
+    by = "x1km_square",
+    suffix = c("_1", "_2")
+  )
+
+insect_pairs_found <- insect_pairs_found |>
+  filter(species_1 < species_2)
+
+insect_pair_counts <- insect_pairs_found |>
+  count(
+    species_1,
+    species_2,
+    name = "n_shared_sites"
+  )
+
+all_pairs <- all_pairs |>
+  left_join(
+    insect_pair_counts,
+    by = c("species_1", "species_2")
+  ) |>
+  mutate(
+    n_shared_sites = replace_na(n_shared_sites, 0))
+
+pairs_common <- all_pairs |>
+  filter(species_1 %in% common,
+         species_2 %in% common,
+         n_shared_sites == 0)
+
+pairs_common
+```
+Andrena flavipes
+Bombus jonellus
+Eristalis abusivus
+cooccur <- flower_counts |>
+  filter(present) |>
+  inner_join(
+    flower_counts |> filter(present),
+    by = c("x1km_square"),
+    suffix = c("_1", "_2")
+  ) |>
+  filter(species_1 < species_2) |>
+  count(
+    species_1,
+    species_2,
+    name = "n_cooccur"
+  )
+
+all_pairs |>
+  left_join(
+    cooccur,
+    by = c(
+      "species_1" = "species_1",
+      "species_2" = "species_2"
+    )
+  ) |>
+  mutate(n_cooccur = replace_na(n_cooccur, 0))
+```
+
+

@@ -1,0 +1,299 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0403"
+author: "Katy Brown"
+---
+
+```{r setup_0403, include=FALSE}
+library(tidyverse)
+library(gt)
+library(maps)
+library(patchwork)
+insect_counts <- read_csv("data/insect_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+```
+
+# Part 3: Hypothesis Testing 2
+
+## Adding additional columns
+
+::: {.callout-exercise #ex-extra_columns}
+
+We can derive some additional statistics to make our bee data frame more interesting.
+
+In your `pollinators.qmd` Quarto file, add the following columns to your `site_metadata` data frame. 
+
+* `n_insects`: Total number of insects caught
+* `n_flowers`: Number of flower species present nearby
+* `n_unique_insects`: Number of unique insect species caught
+
+You will need need to use the `group_by()` and `summarize()` (@sec-summary_stats) functions on the `insect_counts` and `flower_counts` data frames to calculate the statistics and then the `left_join()` (@sec-merge) function to merge the newly created summary data frame with the `site_metadata` data frame. 
+
+The function `n_distinct()` counts the number of unique values in a column in each group  (or the total number of unique values in a column in an un-grouped data frame). To use this function to count the number of unique insect species, you will need to filter rows with no observations, using the `filter()` function.
+::: {.callout-answer #ex-extra_columns_ans1}
+
+#### `n_insects`, `n_unique_insects`
+
+```{r extra_columns_ans1}
+# Group by 1km square, filter 0 counts, sum the number of observations
+# count the number of distinct species
+insect_summ <- insect_counts |>
+  group_by(x1km_square) |>
+  filter(n_observed != 0) |>
+  summarize(n_insects = sum(n_observed),
+            n_unique_insects = n_distinct(species))
+
+# Join with the site_metadata data frame
+site_metadata <- site_metadata |>
+  left_join(insect_summ)
+```
+#### `n_flowers`
+
+```{r extra_columns_ans1}
+# Group by 1km square, sum the number of 
+# types of flower that were present
+flower_summ <- flower_counts |>
+  group_by(x1km_square) |>
+  summarize(n_flowers = sum(present))
+
+# Merge with the site data
+site_metadata <- site_metadata |>
+  left_join(flower_summ)
+```
+:::
+:::
+
+
+In this part of the practical, I will briefly introduce how to perform a number of other statistical tests in R, then, in the next part, you will choose hypotheses to address using these tests.
+
+## ANOVA
+
+### One-way ANOVA with more than two groups
+
+In the previous section, we used one-way ANOVA to look at the difference between two groups.
+
+ANOVA expands easily to take into account an explanatory variable with more than two levels (i.e. a categorical variable with three or more options).
+
+We already know about using `response ~ explanatory` as a formula in R to investigate response as a function of explanatory variable. If you are using a data frame as the input to this function and the explanatory variable is categorical, R will automatically treat the different values in the column as different levels of that variable.
+
+Let's say we've conducted an experiment where participants drank one of three types of coffee, then their reaction time to a stimulus was recorded, and generated the following results:
+
+```{r coffee_example, echo=FALSE}
+coffee_df <- tibble(
+  coffee_type = rep(
+    c("decaf", "latte", "espresso"),
+    each = 5
+  ),
+  reaction_time = c(
+    312, 298, 325, 305, 318,
+    288, 301, 279, 294, 285,
+    251, 264, 247, 258, 243
+  )
+)
+```
+
+```{r show_coffee}
+gt(coffee_df)
+```
+
+Here, we would define the linear model as `lm(reaction_time ~ coffee_type, data=coffee_df)`. 
+
+We could then just look at our linear model directly - in which case it would take one category - in this case `decaf` to be the reference level and compare each of the other levels - `latte` and `espresso` to decaf. It would not compare `latte` to `espresso` as neither is the reference.
+
+Let's try it:
+
+```{r coffee_lm}
+coffee_lm = lm(reaction_time ~ coffee_type, data = coffee_df)
+summary(coffee_lm)
+```
+This tells us:
+
+* There is evidence that reaction time is different after drinking an espresso than after drinking decaf.
+* There is evidence that reaction time is different after drinking a latte than after drinking decaf.
+
+The p-values are identical to if we performed two separate t-tests (standard t-tests assuming equal variance).
+
+However, if we perform an ANOVA on this data, it will compare a model in which all three coffee types have the same mean reaction time with a model in which the three coffee types are allowed to have different means. 
+
+```{r coffee_anova}
+anova(coffee_lm)
+```
+Here, we can conclude that there is evidence that mean reaction time differs between the coffee types. The ANOVA tells us that at least one of the group means is different, but does not tell us which groups differ from one another.
+
+
+### Multi-way ANOVA
+
+ANOVA can also be extended to include multiple categorical explanatory variables. This is called multi-way ANOVA (or factorial ANOVA). A model with two categorical explanatory variables is a two-way ANOVA, one with three is a three-way ANOVA, and so on.
+
+We can add additional explanatory variables using `+` - `response ~ explanatory1 + explanatory2 + explanatory3` etc.
+
+e.g. let's expand our coffee experiment, and see if presence or absence of a biscuit impacts the results.
+
+```{r coffee_biscuit_example, echo=FALSE}
+coffee_df <- tibble(
+  coffee_type = rep(
+    c("decaf", "latte", "espresso"),
+    each = 5
+  ),
+  biscuit = c(
+    "yes", "no", "yes", "no", "yes",
+    "no", "yes", "no", "yes", "no",
+    "yes", "no", "yes", "no", "yes"
+  ),
+  reaction_time = c(
+    312, 298, 325, 305, 318,
+    288, 301, 279, 294, 285,
+    251, 264, 247, 258, 243
+  )
+)
+```
+
+```{r coffee_biscuit_show_df}
+gt(coffee_df)
+```
+
+We define our linear model as follows:
+
+```{r coffee_biscuit_lm}
+coffee_lm = lm(reaction_time ~ coffee_type + biscuit, data = coffee_df)
+summary(coffee_lm)
+```
+
+As before, this tests each group against the baseline for that variable, so espresso vs decaf, latte vs decaf, biscuit vs no biscuit.The model estimates the relationship between each explanatory variable and the response while also including the other explanatory variables in the model. This helps separate variation associated with coffee type from variation associated with having a biscuit.
+
+With ANOVA, we can test if mean reaction type differs between coffee types and if mean reaction times differs between participants who did and did not have a biscuit.
+
+```{r coffee_biscuit_anova}
+anova(coffee_lm)
+```
+
+In this particular test mean reaction time did differ between the coffee types. Mean reaction time did not differ between participants who did and did not have a biscuit.
+
+When we use `+` to include multiple explanatory variables, we are assuming that their relationships with the response are additive. This means that the relationship between one explanatory variable and the response is the same at every level of the other explanatory variable. So for example, coffee can contribute some change to reaction time, and biscuit can contribute some change, and you can add those contributions together.
+
+However, sometimes the relationship between one explanatory variable and the response depends on the value of another explanatory variable. This is called an interaction.
+
+We can add interactions between variables using `*` - `response ~ explanatory1 * explanatory2`. The ANOVA will then look at the association between each factor (coffee_type, biscuit) and the response individually, but also whether the association with one factor varies depending on the other. For example, does drinking espresso change reaction time by the same amount with and without a biscuit?
+
+```{r coffee_biscuit_int_lm}
+coffee_lm = lm(reaction_time ~ coffee_type * biscuit, data = coffee_df)
+anova(coffee_lm)
+```
+
+Based on this analysis, mean reaction time differs between coffee types, and there is also evidence of an interaction between coffee type and biscuit presence: the relationship between coffee type and reaction time differs depending on whether a participant had a biscuit. There is no evidence of an overall association between biscuit presence and reaction time.
+
+## Linear Regression
+
+We've now used all sorts of linear models, but how about a standard linear regression between two continuous variables? You already have the skills needed to do this - you can fit the model using `lm()` and then view the results using `summary()`.
+
+For example, let's say these data are from a study measuring the amount of hot sauce added to a meal, and the amount of water drunk alongside that meal.
+
+```{r hot_sauce_df, echo=FALSE}
+hot_sauce_df <- tibble(
+  hot_sauce_ml = c(2, 5, 8, 10, 14, 17, 20, 24, 27, 30),
+  water_ml = c(180, 240, 210, 330, 370, 410, 390, 520, 490, 610)
+)
+```
+
+```{r view_hot_sauce_df}
+gt(hot_sauce_df)
+```
+
+We can easily apply and visualise our linear model:
+
+```{r lm_hot_sauce}
+lm_hot_sauce <- lm(water_ml~hot_sauce_ml, data=hot_sauce_df)
+summary(lm_hot_sauce)
+```
+There is evidence of an association between the volume of hot sauce used and the amount of water drunk. The positive coefficient for hot_sauce_ml tells us that the amount of water drunk tends to increase as the volume of hot sauce increases.
+
+### Multiple linear regression
+
+Just as we included multiple explanatory variables in our ANOVA, we can include multiple continuous explanatory variables in a linear regression. This is called multiple linear regression.
+
+For example, perhaps the temperature of the room also affects how much water someone drinks. We can include both hot_sauce_ml and room_temp in our model:
+
+```{r hot_sauce_room_df, echo=FALSE}
+hot_sauce_df <- tibble(
+  hot_sauce_ml = c(2, 5, 8, 10, 14, 17, 20, 24, 27, 30),
+  room_temp = c(18, 24, 19, 22, 25, 20, 23, 27, 21, 26),
+  water_ml = c(180, 240, 210, 330, 370, 410, 390, 520, 490, 610)
+)
+```
+
+```{r view_hot_sauce_room}
+gt(hot_sauce_df)
+```
+
+Let's fit and view our linear model.
+
+```{r line}
+lm_hot_sauce_multiple <- lm(
+  water_ml ~ hot_sauce_ml + room_temp,
+  data = hot_sauce_df
+)
+summary(lm_hot_sauce_multiple)
+```
+
+There is evidence of an association between the volume of hot sauce used and the amount of water drunk, after accounting for room temperature. The positive coefficient for hot_sauce_ml tells us that the amount of water drunk tends to increase as the volume of hot sauce increases. There is no evidence of an association between room temperature and the amount of water drunk after accounting for the volume of hot sauce used.
+
+## Chi-squared
+
+For completeness, let's do a quick chi-squared. Unlike all of our other friends, this is not a linear model!
+
+Chi-squared looks for an association between two categorical variables.
+
+In this imaginary study, researchers looked for the association between seat choice and travel sickness in 160 airline passengers. Here our null hypothesis is that seat choice and travel sickness are independent - knowing someone's seat choice gives us no information about whether they experience travel sickness. Our alternative hypothesis is that there is an association between seat choice and travel sickness.
+
+```{r seats_df}
+seat_df <- tibble(
+  seat_choice = c(rep("window", 80), rep("aisle", 80)),
+  travel_sick = c(
+    rep("yes", 24), rep("no", 56),
+    rep("yes", 10), rep("no", 70)
+  )
+) |> slice_sample(prop = 1)
+```
+
+```{r show_seat_df}
+gt(head(seat_df))
+```
+
+The input for the `chisq.test()` function is a contingency table, showing the number of participants who fell into each combination of categories.
+
+|travel_sickness|aisle|window|
+|---|---|---|
+|yes|count|count|
+|no|count|count|
+
+We already know how to generate these counts from the data using `summarize()` but the `chisq.test()` function is a little picky about the input, so instead we will use another function, `xtabs()`, which is specifically made to use to create contingency tables.
+
+`xtabs()` uses the same formula syntax as many R stats functions, as follows:
+
+```{r cont_table_seats}
+seat_table <- xtabs(
+  ~ seat_choice + travel_sick,
+  data = seat_df
+)
+print(seat_table)
+```
+Now we can run the chi-squared test.
+
+```{r chisq_seats}
+chisq_seats <- chisq.test(seat_table)
+print (chisq_seats)
+```
+
+There is evidence of an association between seat choice and travel sickness.
+
+With the chi-squared test, we can also see the expected counts for each category - the counts we would expect if the null hypothesis were true.
+
+```{r chisq_expected}
+print(chisq_seats$expected)
+```
+
+The chi-squared test compares these expected counts with our observed counts. The greater the differences between the observed and expected counts, the greater the evidence against the null hypothesis.
+
+
+

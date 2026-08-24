@@ -2,6 +2,7 @@
 format: html
 practical: Practical_4_Statistics
 doc-id: "0402"
+author: "Katy Brown"
 ---
 
 ```{r setup_0402, include=FALSE}

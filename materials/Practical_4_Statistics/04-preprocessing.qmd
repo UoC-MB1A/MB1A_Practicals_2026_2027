@@ -10,6 +10,7 @@ library(tidyverse)
 library(osbng)
 library(sf)
 library(terra)
+library(rnaturalearth)
 ```
 
 Read the raw data.
@@ -32,7 +33,6 @@ samples <- samples |>
 Remove extra information in square or round brackets from insect species names and any extra suffix, filter out anything only identified at genus level.
 
 ```{r clean_insect_names}
-
 # Remove suffices and anything in brackets from taxon_source
 # filter anything without two words remaining
 # and put the result in a new column, species
@@ -79,16 +79,16 @@ sample_info <- samples |>
 survey_events <- samples |>
   distinct(x1km_square)
 
-# Merge the sample info into the insect data frame 
+# Merge the sample info into the insect data frame
 insects_plus_samples <- insects |>
   left_join(sample_info, by = "sample_id")
 
 # Count the number of occurrences of each combo of square, date, species
 species_counts <- insects_plus_samples |> count(
-    x1km_square,
-    species,
-    name = "n_observed"
-  )
+  x1km_square,
+  species,
+  name = "n_observed"
+)
 
 # Get every combination of species and sampling events
 combos <- survey_events |> crossing(species)
@@ -112,7 +112,7 @@ For flowers - for each flower species and 1km square, mark each flower species a
 flower_species <- flowers |>
   distinct(species)
 
-# Merge the sample info into the insect data frame 
+# Merge the sample info into the insect data frame
 flowers_plus_samples <- flowers |>
   inner_join(sample_info, by = "sample_id")
 
@@ -175,7 +175,6 @@ samples <- samples |>
 Reduce the number of columns in the sample table to just those we might need. The temperature etc. measurements are not very useful as they're just on that specific day and the volunteers are told to take them on warm days during summer - use WORLDCLIM data instead.
 
 ```{r select_bee_data}
-
 samples_sel <- samples |> select(
   country,
   longitude,
@@ -184,29 +183,33 @@ samples_sel <- samples |> select(
   land_cover,
   habitat_main,
 )
-
 ```
 
 Summarise the sample sites per square - where there are multiple samples taken from the same square take the mean of numerical values and the most common of categorical values.
 
 ```{r group_samples_bee_data}
-sample_summ <- samples_sel |> group_by(x1km_square) |> summarise(
-  country = first(country),
-  longitude = first(longitude),
-  latitude = first(latitude),
-  habitat = names(sort(table(habitat_main), decreasing = TRUE))[1],
-  land_cover = names(sort(table(land_cover), decreasing = TRUE))[1])
+sample_summ <- samples_sel |>
+  group_by(x1km_square) |>
+  summarise(
+    country = first(country),
+    longitude = first(longitude),
+    latitude = first(latitude),
+    habitat = names(sort(table(habitat_main), decreasing = TRUE))[1],
+    land_cover = names(sort(table(land_cover), decreasing = TRUE))[1]
+  )
 ```
 
 Select the most relevant columns from the insect and flower tables. Add a column to the samples table showing the most common insect family and species at the site.
 
 ```{r select_insects_bee_data}
 # Select columns and deduplicate
-insects_sel <- insects |> select(species, english_name, order, family)  |>
+insects_sel <- insects |>
+  select(species, english_name, order, family) |>
   distinct(species, english_name, order, family)
 
 # Select columns and deduplicate
-flowers_sel <- flowers |> select(species, english_name, order, family)  |>
+flowers_sel <- flowers |>
+  select(species, english_name, order, family) |>
   distinct(species, english_name, order, family)
 
 # Find the most common insect family per square
@@ -224,7 +227,7 @@ insects_sel <- insects_sel |>
 # Find the most common insect species per square
 dominant_species <- insects_by_square |>
   group_by(x1km_square, species) |>
-  summarise(n = sum(n_observed))  |>
+  summarise(n = sum(n_observed)) |>
   slice_max(n, n = 1, with_ties = FALSE) |>
   select(x1km_square, dominant_species = species)
 
@@ -236,19 +239,38 @@ Add data about insect body size to the insects data frame based on the `pollimet
 
 ```{r pollimetry}
 poll <- tibble(pollimetry_dataset)
-poll <- poll |> 
-  mutate(species = Species,
-         dry_mass = Spec.wgt,
-         intertegular_distance = IT) |>
+poll <- poll |>
+  mutate(
+    species = Species,
+    dry_mass = Spec.wgt,
+    intertegular_distance = IT
+  ) |>
   select(species, dry_mass, intertegular_distance) |>
   group_by(species) |>
-  summarise(mean_dry_mass = mean(dry_mass),
-            mean_intertegular_distance = mean(intertegular_distance)) |>
+  summarise(
+    mean_dry_mass = mean(dry_mass),
+    mean_intertegular_distance = mean(intertegular_distance)
+  ) |>
   mutate(species = str_replace_all(species, "_", " "))
 
 insects_sel <- insects_sel |> left_join(poll)
 ```
 
+Summarise the biomass data across sites.
+
+```{r biomass}
+insect_biomass <- insect_counts |> 
+  filter(n_observed != 0) |>
+  left_join(insect_metadata) |>
+  mutate(total_biomass = n_observed * mean_dry_mass) |>
+  group_by(x1km_square) |>
+  summarise(n_insects = sum(n_observed),
+            total_biomass = sum(total_biomass, na.rm = TRUE),
+            mean_biomass = total_biomass / n_insects)
+
+sample_summ <- sample_summ |> left_join(insect_biomass)
+
+```
 Save all the outputs.
 
 ```{r save_data}
@@ -319,32 +341,78 @@ world_elev <- tibble(elev_values)
 months_over_15 <- rowSums(world_temp >= 15)
 elevation <- pull(world_elev, wc2.1_10m_elev)
 
-world_clim <- world_clim |> mutate(
-  x1km_square = sites_vect$x1km_square,
-  annual_mean_temp = wc2.1_10m_bio_1,
-  max_temp_warmest_month = wc2.1_10m_bio_5,
-  min_temp_coldest_month =  wc2.1_10m_bio_6,
-  temp_annual_range = wc2.1_10m_bio_7,
-  annual_total_prec = wc2.1_10m_bio_12,
-  total_prec_wettest_month = wc2.1_10m_bio_13,
-  total_prec_driest_month = wc2.1_10m_bio_14
-) |> select(x1km_square,
-            annual_mean_temp,
-            max_temp_warmest_month,
-            min_temp_coldest_month,
-            temp_annual_range,
-            annual_total_prec,
-            total_prec_wettest_month,
-            total_prec_driest_month) |>
-  mutate(n_months_at_least_15C = months_over_15,
-         elevation = elevation)
+world_clim <- world_clim |>
+  mutate(
+    x1km_square = sites_vect$x1km_square,
+    annual_mean_temp = wc2.1_10m_bio_1,
+    max_temp_warmest_month = wc2.1_10m_bio_5,
+    min_temp_coldest_month = wc2.1_10m_bio_6,
+    temp_annual_range = wc2.1_10m_bio_7,
+    annual_total_prec = wc2.1_10m_bio_12,
+    total_prec_wettest_month = wc2.1_10m_bio_13,
+    total_prec_driest_month = wc2.1_10m_bio_14
+  ) |>
+  select(
+    x1km_square,
+    annual_mean_temp,
+    max_temp_warmest_month,
+    min_temp_coldest_month,
+    temp_annual_range,
+    annual_total_prec,
+    total_prec_wettest_month,
+    total_prec_driest_month
+  ) |>
+  mutate(
+    n_months_at_least_15C = months_over_15,
+    elevation = elevation
+  )
+```
+
+Calculate the distance to the coast from each point.
+
+```{r coast_distance}
+# Get the position of the UK coastline - from the rnaturalearth package
+coast <- ne_coastline(
+  scale = "medium",
+  returnclass = "sf"
+) |>
+  st_crop(
+    xmin = -10,
+    xmax = 4,
+    ymin = 49,
+    ymax = 61
+  ) |>
+  st_transform(27700)
+
+# Transform the site co-ordinates into the same co-ordinate system
+# as the coastline
+sites_sf <- sample_summ |>
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  ) |> st_transform(27700)
+
+# Calculate the distance between each point and each section of
+# coastline
+
+distance_to_coast <- st_distance(
+  sites_sf,
+  coast
+)
+
+# Find the shortest, convert to km
+distance_to_coast_km <- apply(
+  distance_to_coast,
+  1,
+  min
+) |>
+  as.numeric() / 1000
 ```
 
 Merge the site data with the worldclim data and save.
 
 ```{r export_samples}
-sample_summ <- sample_summ |> full_join(world_clim)
+sample_summ <- sample_summ |> full_join(world_clim) |>
+  mutate(distance_to_coast = distance_to_coast_km)
 write_csv(sample_summ, "data/site_metadata.csv")
 ```
-
-
