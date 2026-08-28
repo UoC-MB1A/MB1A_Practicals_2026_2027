@@ -1,0 +1,206 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0403"
+author: "Katy Brown"
+---
+
+```{r setup_0404, include=FALSE}
+
+library(tidyverse)
+library(gt)
+library(maps)
+library(patchwork)
+
+insect_counts <- read_csv("data/insect_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+spp_presence <- insect_counts |>
+  filter(species == "Halictus tumulorum") |>
+  mutate(detected = n_observed > 0) |>
+  left_join(site_metadata)
+
+spp_summary <- spp_presence |>
+  group_by(detected) |>
+  summarise(
+    count = n(),
+    mean = mean(min_temp_coldest_month),
+    var = var(min_temp_coldest_month),
+    sd = sd(min_temp_coldest_month)
+  )
+
+present <- spp_summary |> filter(detected == TRUE)
+absent <- spp_summary |> filter(detected == FALSE)
+```
+
+# Part 4: Testing Assumptions of Linear Models
+
+T-tests, ANOVA and linear regression are all based on the same general linear-model framework and therefore share many assumptions.
+
+| Assumption | t-test | ANOVA | Linear regression |
+|---|:---:|:---:|:---:|
+| Independent observations | ✓ | ✓ | ✓ |
+| Continuous response | ✓ | ✓ | ✓ |
+| Normally distributed residuals | ✓ | ✓ | ✓ |
+| Constant variance of residuals | ✓* | ✓ | ✓ |
+| Linear relationship with continuous explanatory variables | — | — | ✓ |
+
+* For a standard two-sample t-test, equal variance is assumed. Welch's t-test does not assume equal variance.
+
+## Independent observations
+
+Each observation should be independent of the others. For example, repeated measurements from the same site should not usually be treated as independent observations. Whether observations are independent depends primarily on how the data were collected. This is a study design step rather than an analysis step.
+
+## Continuous response
+
+The response variable should be continuous, such as mass, temperature or distance. Standard linear models assume that the response can vary continuously around the value predicted by the model. Binary responses, categorical responses and counts generally require different types of model.
+
+## Normally distributed residuals
+
+The **residuals** — the differences between the observed values and the values predicted by the model — should be approximately normally distributed.
+
+Let's go back to our first linear model - for the hypothesis that minimum temperature is different at sites where *H. tumulorum* is present than at sites where it is absent. 
+
+```{r lm_ht}
+# Regenerate the presence / absence data frame
+spp_presence <- insect_counts |>
+  filter(species == "Halictus tumulorum") |>
+  mutate(detected = n_observed > 0) |>
+  left_join(site_metadata)
+
+# Refit the linear model
+linear_model_ht <- lm(min_temp_coldest_month ~ detected,
+  data = spp_presence
+)
+print(summary(linear_model_ht))
+```
+
+
+Here is the plot again showing the model and the results:
+
+```{r redraw_plot_lm_ht}
+spp_presence <- spp_presence |>
+  mutate(detected_num = as.numeric(detected))
+
+overall_mean <- spp_presence |>
+  pull(min_temp_coldest_month) |>
+  mean()
+
+ggplot(spp_presence, aes(
+  x = detected_num,
+  y = min_temp_coldest_month
+)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() +
+  geom_hline(aes(yintercept = overall_mean), color = "red")
+```
+
+The residuals are the differences between the observed values and the values predicted by the linear model.
+
+In the case of a t-test, the predicted values are just the means for each group - shown here where the blue line intercepts 0 (absent) and 1 (present). The residuals are the differences between the observed values and these means.
+
+The mean minimum temperature when *H. tumulorum* is absent is `r pull(absent, mean)`, and the residuals for sites where *H. tumulorum* is absent are the observed values minus `r pull(absent, mean)`.
+
+The mean minimum temperature when *H. tumulorum* is present is `r pull(present, mean)`, and the residuals for sites where *H. tumulorum* is present are the observed values minus `r pull(present, mean)`.
+
+We could calculate these directly by grouping detected and undetected rows in the data frame, then calculating a group mean for each and subtracting it from each observed value in that group. However, we don't need to - R has already calculated them. We can access them by running the function `residuals()` on our existing linear model.
+
+```{r residuals_auto}
+residuals_ht <- residuals(linear_model_ht)
+print(residuals_ht)
+```
+
+We can also access the fitted (predicted) values directly from the model using the function fitted(). In this example they are not especially interesting, because there are only two possible fitted values: the mean minimum temperature for sites where *H. tumulorum* is absent and the mean for sites where it is present.
+
+Nevertheless, let's put our fitted and residual values into a data frame, to make our diagnostic plots easier.
+
+Note: Here I am using the function `tail()` to see the bottom of the data frame instead of using `head()` to see the top - just because in this specific data frame the top 10 rows all have FALSE for the `detected` column, so they are less illustrative.
+
+```{r diagnostics_ht}
+model_diagnostics <- tibble(
+  x1km_square = pull(spp_presence, x1km_square),
+  detected = pull(spp_presence, detected),
+  min_temp_coldest_month = pull(spp_presence, min_temp_coldest_month),
+  fitted = fitted(linear_model_ht),
+  residual = residuals(linear_model_ht)
+)
+gt(tail(model_diagnostics, 10))
+```
+
+Let's plot the distribution of our residuals.
+
+```{r plot_residuals}
+ggplot(model_diagnostics,
+       aes(x = residual)) +
+         geom_histogram(bins=15) +
+  theme_bw()
+```
+
+These look reasonably close to a normal distribution.
+
+However, there is more we can do.
+
+A Q–Q (quantile–quantile) plot compares two distributions by plotting their quantiles against each other. In this case, the quantiles of the residuals are compared with the theoretical quantiles of a normal distribution. If the residuals are approximately normally distributed, the points should approximately follow the straight line.
+
+To plot the Q-Q plot, we can use the functions `stat_qq()` and `stat_qq_line()`. `stat_qq()` creates the Q–Q plot and `stat_qq_line()` adds a reference line showing the pattern expected if the residuals follow the theoretical distribution.
+
+```{r plot_qq_ht}
+ggplot(model_diagnostics, aes(sample = residual)) +
+  stat_qq() +
+  stat_qq_line() +
+  theme_bw()
+```
+
+If the residuals are approximately normally distributed, the points should lie approximately along the straight line.
+
+Here the points lie reasonably close to the straight line, so there is no strong evidence that the residuals deviate from a normal distribution.
+
+### ANOVA
+
+Because they're based on linear models, this assumption is identical for a linear regression, multiple regression and a one or two way ANOVA.
+
+We can check using the data from the previous section.
+
+Here is our one way ANOVA, to test the hypothesis that sites dominated by different insect families have the same mean mass.
+
+```{r lm_bee_mass}
+bee_lm = lm(mean_insect_mass ~ dominant_family, data=site_metadata)
+summary(bee_lm)
+```
+
+Here, our fitted values are just the mean values of `mean_insect_mass` for each dominant family, and our residuals for each dominant family would be the observed values minus the mean for that family.
+
+```{r diagnostics_bee_mass}
+model_diagnostics <- tibble(
+  x1km_square = pull(site_metadata, x1km_square),
+  dominant_family = pull(site_metadata, dominant_family),
+  mean_insect_mass = pull(site_metadata, mean_insect_mass),
+  fitted = fitted(bee_lm),
+  residual = residuals(bee_lm)
+)
+gt(head(model_diagnostics))
+```
+
+Let's plot the distribution of our residuals.
+
+```{r plot_residuals}
+ggplot(model_diagnostics,
+       aes(x = residual)) +
+         geom_histogram(bins=15) +
+  theme_bw()
+```
+These again look broadly consistent with a normal distribution.
+
+```{r plot_qq_ht}
+ggplot(model_diagnostics, aes(sample = residual)) +
+  stat_qq() +
+  stat_qq_line() +
+  theme_bw()
+```
+
+
+
+## Constant variance of residuals
+
+Constant variance (or homoscedasticity) is the assumption that the amount of unexplained variation is roughly the same across the range of values predicted by the model.
+

@@ -52,16 +52,16 @@ insects <- insects |>
 # Same for the flower species
 flowers <- flowers |>
   mutate(
-    species = str_extract(
+    flower_species = str_extract(
       taxon_source,
       "^[A-Z][a-z]+(?: \\([A-Z][a-z]+\\))? [a-z]+"
     ),
-    species = str_remove(
-      species,
+    flower_species = str_remove(
+      flower_species,
       " \\([A-Z][a-z]+\\)"
     )
   ) |>
-  filter(!is.na(species))
+  filter(!is.na(flower_species))
 ```
 
 For each insect species and 1km square, count the number of times each insect occurred, including if it occurred 0 times. 
@@ -103,6 +103,10 @@ insects_by_square <- combos |>
 # Replace NA with 0
 insects_by_square <- insects_by_square |>
   mutate(n_observed = replace_na(n_observed, 0))
+
+# Add genus column
+insects_by_square <- insects_by_square |>
+  mutate(genus = word(species, 1))
 ```
 
 For flowers - for each flower species and 1km square, mark each flower species as present or absent.
@@ -110,33 +114,34 @@ For flowers - for each flower species and 1km square, mark each flower species a
 ```{r flowers_per_square}
 # List the unique flower species
 flower_species <- flowers |>
-  distinct(species)
+  distinct(flower_species)
 
 # Merge the sample info into the insect data frame
 flowers_plus_samples <- flowers |>
-  inner_join(sample_info, by = "sample_id")
+  left_join(sample_info, by = "sample_id")
 
-# Find occurrences of each combo of flower, species
-flowers_found <- flowers_plus_samples |>
-  distinct(
-    x1km_square,
-    species
-  ) |>
-  mutate(present = TRUE)
+# Count the number of occurrences of each combo of square and species
+flower_species_counts <- flowers_plus_samples |>
+  group_by(x1km_square, flower_species) |>
+  summarise(n_observed_flowers = sum(total_floral_units))
 
 # Get every combination of species and sampling events
-combos_flowers <- survey_events |> crossing(flower_species)
+combos <- survey_events |> crossing(flower_species)
 
-# Merge this with the data frame of the present species
-flowers_by_square <- combos_flowers |>
+# Merge this with the data frame of the number of occurrences
+flowers_by_square <- combos |>
   left_join(
-    flowers_found,
-    by = c("x1km_square", "species")
+    flower_species_counts,
+    by = c("x1km_square", "flower_species")
   )
 
-# Replace NA with FALSE
+# Replace NA with 0
 flowers_by_square <- flowers_by_square |>
-  mutate(present = replace_na(present, FALSE))
+  mutate(n_observed_flowers = replace_na(n_observed_flowers, 0))
+
+flowers_by_square <- flowers_by_square |>
+  mutate(flower_genus = word(flower_species, 1))
+
 ```
 
 In the samples table, convert Ordance Survey grid reference (BNG reference) locations to latitude and longitude.
@@ -209,8 +214,8 @@ insects_sel <- insects |>
 
 # Select columns and deduplicate
 flowers_sel <- flowers |>
-  select(species, english_name, order, family) |>
-  distinct(species, english_name, order, family)
+  select(flower_species, english_name, order, family) |>
+  distinct(flower_species, english_name, order, family)
 
 # Find the most common insect family per square
 dominant_family <- insects_by_square |>
@@ -231,8 +236,42 @@ dominant_species <- insects_by_square |>
   slice_max(n, n = 1, with_ties = FALSE) |>
   select(x1km_square, dominant_species = species)
 
+insect_summ <- insects_by_square |>
+  group_by(x1km_square) |>
+  filter(n_observed != 0) |>
+  summarize(n_unique = n_distinct(species))
+
 sample_summ <- inner_join(sample_summ, dominant_species) |>
-  inner_join(dominant_family)
+  inner_join(dominant_family) |>
+  inner_join(insect_summ)
+
+# Find the most common flower family per square
+dominant_flower_order <- flowers_by_square |>
+  inner_join(flowers_sel) |>
+  group_by(x1km_square, order) |>
+  summarise(n = sum(n_observed_flowers), .groups = "drop") |>
+  group_by(x1km_square) |>
+  slice_max(n, n = 1, with_ties = FALSE) |>
+  select(x1km_square, dominant_flower_order = order)
+
+flowers_sel <- flowers_sel |>
+  mutate(genus = word(flower_species, 1))
+
+# Find the most common flower species per square
+dominant_flower_species <- flowers_by_square |>
+  group_by(x1km_square, flower_species) |>
+  summarise(n = sum(n_observed_flowers)) |>
+  slice_max(n, n = 1, with_ties = FALSE) |>
+  select(x1km_square, dominant_flower_species = flower_species)
+
+flower_summ <- flowers_by_square |>
+  group_by(x1km_square) |>
+  filter(n_observed_flowers != 0) |>
+  summarize(n_unique_flowers = n_distinct(flower_species))
+
+sample_summ <- inner_join(sample_summ, dominant_flower_species) |>
+  inner_join(dominant_flower_order) |>
+  inner_join(flower_summ)
 ```
 
 Add data about insect body size to the insects data frame based on the `pollimetry` R package.
@@ -262,15 +301,32 @@ Summarise the biomass data across sites.
 insect_biomass <- insect_counts |> 
   filter(n_observed != 0) |>
   left_join(insect_metadata) |>
+  filter(!is.na(mean_dry_mass)) |>
   mutate(total_biomass = n_observed * mean_dry_mass) |>
   group_by(x1km_square) |>
-  summarise(n_insects = sum(n_observed),
-            total_biomass = sum(total_biomass, na.rm = TRUE),
-            mean_biomass = total_biomass / n_insects)
-
+  summarise(
+    n_insects = sum(n_observed),
+    total_insect_biomass = sum(total_biomass),
+    mean_insect_mass = total_insect_biomass / n_insects
+  )
 sample_summ <- sample_summ |> left_join(insect_biomass)
+```
+Subset habitat types:
+```{r subset_habitats}
+sample_summ <- sample_summ |>
+  mutate(
+    broad_habitat = case_when(
+      str_detect(habitat, "^H(16|17|18|19|21)") ~ "grassland/herbaceous",
+      str_detect(habitat, "^H(25|26|27|32)") ~ "woodland",
+      str_detect(habitat, "^H(10|12|13)") ~ "wetland",
+      str_detect(habitat, "^H(20|23)") ~ "heathland",
+      str_detect(habitat, "^H(35|38)") ~ "arable"
+    )
+  )
+
 
 ```
+
 Save all the outputs.
 
 ```{r save_data}

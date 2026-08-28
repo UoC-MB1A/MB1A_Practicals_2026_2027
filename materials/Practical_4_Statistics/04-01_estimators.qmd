@@ -30,9 +30,9 @@ You have been provided with four data files:
 
 * In the **flower counts** CSV file - `data/flower_counts.csv` each row reprsents a combination of a flower species and a sampling site, plus TRUE or FALSE depending if that flower was ever observed within 2m of the site.
 
-* In the **site metadata** CSV file - `data/site_metadata.csv`, each row represents a single 1km square sampling site. The data frame contains information about the geographical location, plus land use and climate at the sample site.
+* In the **site metadata** CSV file - `data/site_metadata.csv`, each row represents a single 1km square sampling site. The data frame contains information about the geographical location, plus land use and climate at the sample site. Additional climate data has been added based  [WorldClim](https://nordata.physics.utoronto.ca/en/annexes-datasets-descriptions/72-precipitation/worldclim-version-2/) data, which has detailed climate data by square averaged from 1970-2000. Various additional statistics have been calculated based on the information in the original data frame.
 
-* In the **insect metadata** CSV file - `data/insect_metadata.csv`, each row represents a single species of bee or hoverfly and its common name (where available), order and family.
+* In the **insect metadata** CSV file - `data/insect_metadata.csv`, each row represents a single species of bee or hoverfly and its common name (where available), order and family. Additional data about the mass and length of the insects has been added from the [pollimetry](https://www.rdocumentation.org/packages/pollimetry/versions/1.0.1) R package.
 
 * In the **flower metadata** CSV file - `data/flower_metadata.csv`, each row represents a single species of plant and its common name (where available), order and family.
 

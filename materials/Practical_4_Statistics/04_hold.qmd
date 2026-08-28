@@ -3,6 +3,31 @@ title: "04_hold"
 format: html
 ---
 ```{r}
+bee = 'Bombus pascuorum' 
+current <- insect_counts |>
+  filter(species == bee) |>
+  mutate(detected = n_observed > 0) |>
+  left_join(site_metadata)
+has_bee <- current |> filter(detected == TRUE)
+no_bee <- current |> filter(detected == FALSE)
+  
+```
+```{r}
+
+lasio_map <- ggplot(current) +
+  geom_point(aes(
+    x = longitude, y = latitude,
+    color = detected,
+  )) +
+  annotation_borders(regions = "UK", linewidth = 0.2) +
+  coord_quickmap() +
+  theme_bw()
+
+lasio_map
+```
+
+
+```{r}
 model <- lm(annual_total_prec~dominant_family, data=site_metadata)
 ```
 
@@ -11,7 +36,7 @@ model <- lm(annual_total_prec~dominant_family, data=site_metadata)
 lasio_map <- ggplot(site_metadata) +
   geom_point(aes(
     x = longitude, y = latitude,
-    color = dominant_family
+    color = dominant_species,
   )) +
   annotation_borders(regions = "UK", linewidth = 0.2) +
   coord_quickmap() +
@@ -47,9 +72,6 @@ dominant_species <- insect_counts |>
 
 site_metadata <- inner_join(site_metadata, dominant_species) |>
   inner_join(dominant_family)
-#common <- summ_insect_counts |>
-#  filter(n >= 15) |> 
-#  pull(species)
 ```
 
 ```{r}
@@ -128,4 +150,80 @@ all_pairs |>
   mutate(n_cooccur = replace_na(n_cooccur, 0))
 ```
 
+If the following assumptions are true, we can use a two-sample, two-sided, unpaired t-test:
+
+* The values of this measurement in each of the two groups should be drawn from approximately normal distributions with approximately equal variance.
+* The observations should be independent of one another. 
+
+In our dataset, each observation represents a different 1-km sampling square. We will assume that observations from different squares are sufficiently independent for this analysis.
+
+We can check the other two assumptions directly.
+
+::: {.callout-exercise #ex-poms_distributions}
+
+In your `pollinators.qmd` Quarto file:
+
+* Plot a histogram of the distribution of `min_temp_coldest_month` for the sites with and without *H. tumulorum*. Use the function `facet_wrap()` to separate the sites where `detected` is TRUE versus FALSE.
+
+::: {.callout-answer #ex-poms_distributions_ans}
+
+```{r poms_distributions_ans}
+ggplot(spp_presence, aes(x = min_temp_coldest_month, fill = detected)) +
+  geom_histogram(bins = 10) +
+  ggtitle("Temperature") +
+  facet_wrap(~detected, scales = "free") +
+  theme_bw()
+```
+:::
+:::
+
+These are clearly not perfectly normally distributed but, given that we only have a sample size of `r sum(pull(spp_presence, detected))` for "present" sites and  `r nrow(spp_presence) - sum(pull(spp_presence, detected))` for "absent" sites, it is difficult to tell if they are drawn from a normal distribution. 
+
+Later, we will learn different ways to check for normality but for now, given that they do look reasonably symmetrical, unimodal and without extreme outliers, we will treat the normality assumption as reasonable for this analysis.
+
+We have our variances already in the summary table above: `r round(pull(present, var), 4)` for present and `r round(pull(absent, var), 4)` for absent. Although the variances are not identical, they are similar. There is no strict threshold for deciding whether variances are sufficiently similar. As a rough rule of thumb for this practical, we will consider a ratio of the largest to smallest variance below 2 to indicate reasonably similar variances, particularly when group sizes are similar.
+
+Our group sizes are `r pull(present, count)` and `r pull(absent, count)` and our ratio is `r round(max(pull(spp_summary, var)) / min(pull(spp_summary, var)), 4)` - so we can proceed with our t-test.
+
+::: {.callout-note .extension #ext-sim_norm_poms}
+
+### Extension: Plotting similar data
+
+For fun (maybe not everyone's kind of fun), let's try simulating data drawn from a normal distribution with `r pull(present, count)` samples, 12 times, with the same mean and standard deviation as our "present" data, and see how it looks.
+
+```{r sim_norm_poms}
+# Find the relevant statistics - number of samples, mean and sd
+n_samples <- pull(present, count)
+mean_detected <- pull(present, mean)
+sd_detected <- pull(present, sd)
+
+# Create a data frame to store the results
+df_norm <- tibble()
+
+# Repeat 12 times
+for (i in seq_len(12)) {
+  # Generate a random sample
+  norm <- rnorm(
+    n_samples,
+    mean = mean_detected,
+    sd = sd_detected
+  )
+  # Put it into a data frame row
+  this_sim <- tibble(
+    simulation = i,
+    temp = norm
+  )
+  # Add the row to the results data frame
+  df_norm <- bind_rows(df_norm, this_sim)
+}
+
+# Plot the results
+ggplot(df_norm, aes(x = temp)) +
+  geom_histogram(bins = 10) +
+  facet_wrap(~simulation)
+```
+
+Some of these look pretty similar to our data - we at least can't say that our data is definitely not drawn from a normal distribution, based on this analysis.
+
+:::
 

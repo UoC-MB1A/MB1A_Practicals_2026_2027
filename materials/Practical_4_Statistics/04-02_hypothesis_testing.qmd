@@ -26,32 +26,32 @@ For now, let's concentrate on a single species, the "bronze furrow bee" *Halictu
 
 We can plot the distribution of this bee on a map, using the methods we learned in @sec-p3_visualisation.
 
-First, let's filter our insect counts data frame to keep only the observations for this species.
+First, let's filter our insect counts data frame to keep only the observations for this species. 
 
-```{r subset_spp}
-spp_counts <- insect_counts |>
+```{r subset_ht}
+ht_counts <- insect_counts |>
   filter(species == "Halictus tumulorum")
-gt(head(spp_counts))
+gt(head(ht_counts))
 ```
 
-We can create a boolean (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.
+We can create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected. 
 
-We also need to join with the site metadata table to get the additional info about the sampling sites.
+We also need to join with the site metadata table to get the additional info about the sampling sites. The code below will give us one row for each site including a column, `detected` which is FALSE if *H. tumulorum* is absent and TRUE if it is present.
 
-```{r check_spp, message=FALSE}
-spp_presence <- spp_counts |>
+```{r presence_absence_ht, message=FALSE}
+ht_df <- ht_counts |>
   mutate(detected = n_observed > 0) |>
   left_join(site_metadata)
 
-gt(head(spp_presence))
+gt(head(ht_df))
 ```
 
 Now let's draw our map. We want a scatter plot (`geom_point()`) with longitude on the x axis and latitude on the y axis. We can colour the dots based on whether *H. tumulorum* is present or absent.
 
 We can use the function `annotation_borders()` with the argument `regions = "UK"` to generate a UK map. [Remember](@sec-adding_map_features) that `coord_quickmap()` adjusts the axis co-ordinates so the map doesn't appear skewed. `theme_bw()` is optional - it's just aesthetics, making the background white instead of grey.
 
-```{r map_spp}
-spp_map <- ggplot(spp_presence, aes(
+```{r map_ht}
+spp_map <- ggplot(ht_df, aes(
   x = longitude, y = latitude,
   color = detected
 )) +
@@ -69,15 +69,23 @@ We have a column in our site metadata data frame which can help us establish if 
 
 We can compare this minimum temperature for the sites where the bees are present and absent using a box plot.
 
+For clarity, let's select only the relevant columns in our data frame, using the `select()` function.
+
+```{r select_ht}
+ht_temp_df <- ht_df |>
+  select(x1km_square, detected, min_temp_coldest_month)
+gt(head(ht_temp_df))
+```
+
 :::{.callout-exercise #ex-boxplot_bees}
-In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `min_temp_coldest_month` in your `spp_presence` data frame for the regions with and without these bees (i.e. based on the `detected` column).
+In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `min_temp_coldest_month` in your `ht_df` data frame for the regions with and without these bees (i.e. based on the `detected` column).
 
 The R function `geom_boxplot()` draws a box plot. The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the argument `x = detected` and `y = min_temp_coldest_month`. 
 
 :::{.callout-answer collapse="true" #ex-boxplot_bees_ans}
-```{r boxplot_spp}
+```{r boxplot_ht}
 ggplot(
-  spp_presence,
+  ht_df,
   aes(x = detected, y = min_temp_coldest_month, fill = detected)
 ) +
   geom_boxplot() +
@@ -87,23 +95,6 @@ ggplot(
 :::
 
 Based on this box plot, perhaps these bees don't like the cold.
-
-Let's summarise our data frame, for convenience later. We can calculate the number of observations, mean, standard deviation and variance for `min_temp_coldest_month` for each sample.
-
-```{r summarise_bees}
-spp_summary <- spp_presence |>
-  group_by(detected) |>
-  summarise(
-    count = n(),
-    mean = mean(min_temp_coldest_month),
-    var = var(min_temp_coldest_month),
-    sd = sd(min_temp_coldest_month)
-  )
-
-present <- spp_summary |> filter(detected == TRUE)
-absent <- spp_summary |> filter(detected == FALSE)
-gt(spp_summary)
-```
 
 ## Choosing a test
 
@@ -120,82 +111,7 @@ Ideally, we would now test our hypothesis using a new dataset. However, given th
 
 We have a **continuous response variable** and a **categorical explanatory variable** - maybe we can use a t-test.
 
-If the following assumptions are true, we can use a two-sample, two-sided, unpaired t-test:
-
-* The values of this measurement in each of the two groups should be drawn from approximately normal distributions with approximately equal variance.
-* The observations should be independent of one another. 
-
-In our dataset, each observation represents a different 1-km sampling square. We will assume that observations from different squares are sufficiently independent for this analysis.
-
-We can check the other two assumptions directly.
-
-::: {.callout-exercise #ex-poms_distributions}
-
-In your `pollinators.qmd` Quarto file:
-
-* Plot a histogram of the distribution of `min_temp_coldest_month` for the sites with and without *H. tumulorum*. Use the function `facet_wrap()` to separate the sites where `detected` is TRUE versus FALSE.
-
-::: {.callout-answer #ex-poms_distributions_ans}
-
-```{r poms_distributions_ans}
-ggplot(spp_presence, aes(x = min_temp_coldest_month, fill = detected)) +
-  geom_histogram(bins = 10) +
-  ggtitle("Temperature") +
-  facet_wrap(~detected, scales = "free") +
-  theme_bw()
-```
-:::
-:::
-
-These are clearly not perfectly normally distributed but, given that we only have a sample size of `r sum(pull(spp_presence, detected))` for "present" sites and  `r nrow(spp_presence) - sum(pull(spp_presence, detected))` for "absent" sites, it is difficult to tell if they are drawn from a normal distribution. 
-
-Later, we will learn different ways to check for normality but for now, given that they do look reasonably symmetrical, unimodal and without extreme outliers, we will treat the normality assumption as reasonable for this analysis.
-
-We have our variances already in the summary table above: `r round(pull(present, var), 4)` for present and `r round(pull(absent, var), 4)` for absent. Although the variances are not identical, they are similar. There is no strict threshold for deciding whether variances are sufficiently similar. As a rough rule of thumb for this practical, we will consider a ratio of the largest to smallest variance below 2 to indicate reasonably similar variances, particularly when group sizes are similar.
-
-Our group sizes are `r pull(present, count)` and `r pull(absent, count)` and our ratio is `r round(max(pull(spp_summary, var)) / min(pull(spp_summary, var)), 4)` - so we can proceed with our t-test.
-
-::: {.callout-note .extension #ext-sim_norm_poms}
-
-### Extension: Plotting similar data
-
-For fun (maybe not everyone's kind of fun), let's try simulating data drawn from a normal distribution with `r pull(present, count)` samples, 12 times, with the same mean and standard deviation as our "present" data, and see how it looks.
-
-```{r sim_norm_poms}
-# Find the relevant statistics - number of samples, mean and sd
-n_samples <- pull(present, count)
-mean_detected <- pull(present, mean)
-sd_detected <- pull(present, sd)
-
-# Create a data frame to store the results
-df_norm <- tibble()
-
-# Repeat 12 times
-for (i in seq_len(12)) {
-  # Generate a random sample
-  norm <- rnorm(
-    n_samples,
-    mean = mean_detected,
-    sd = sd_detected
-  )
-  # Put it into a data frame row
-  this_sim <- tibble(
-    simulation = i,
-    temp = norm
-  )
-  # Add the row to the results data frame
-  df_norm <- bind_rows(df_norm, this_sim)
-}
-
-# Plot the results
-ggplot(df_norm, aes(x = temp)) +
-  geom_histogram(bins = 10) +
-  facet_wrap(~simulation)
-```
-
-Some of these look pretty similar to our data - we at least can't say that our data is definitely not drawn from a normal distribution, based on this analysis.
-
-:::
+There are various **assumptions** which underlie a t-test - we'll come back to these later in the practical. For the moment, assume these assumptions are met.
 
 ## Running statistical tests in R
 
@@ -215,31 +131,170 @@ To run a t-test in R, the function is `t.test()`.
 
 The first argument is our formula - `response ~ explanatory`, or in this case, `min_temp_coldest_month ~ detected`.
 We need two additional arguments:
-* `data = spp_presence` - this is the data frame containing the data.
+
+* `data = ht_temp_df` - this is the data frame containing the data.
 * `var.equal = TRUE` - run a standard t-test, the default in R is to assume unequal variance and run a Welch's t-test.
 
 
-```{r ttest_temp}
-spp_ttest <- t.test(min_temp_coldest_month ~ detected,
-  data = spp_presence,
+```{r ttest_ht}
+ttest_ht_temp <- t.test(min_temp_coldest_month ~ detected,
+  data = ht_temp_df,
   var.equal = TRUE
 )
-print(spp_ttest)
+print(ttest_ht_temp)
 ```
 
-Here we have a p-value of `r format(spp_ttest$p.value, scientific = TRUE, digits = 3)`, meaning we can reject our null hypothesis. There is evidence that mean minimum temperature is different at sites where *H. tumulorum* is present than at sites where it is absent. This doesn't mean that our alternative hypothesis is definitely true for the population, but based on this sample the evidence supports it.
+The p-value for a t-test is the probability of a test statistic at least as far from zero as the value calculated from our data, if we drew values from a t-distribution with the specified number of degrees of freedom.
+
+For a standard two-sample t-test, the degrees of freedom are the total number of observations minus the number of group means estimated. Here we have 76 observations and estimate two means, so the degrees of freedom are 76 - 2 = 74.
+
+So, to fully describe our t-test output we need to include at least the following:
+
+* **Test statistic:** `t`
+* **Degrees of freedom:** `df`
+* **p-value:** `p-value`
+
+In addition to the test statistic, degrees of freedom and p-value, we should describe the size and direction of the observed difference. R reports the two group means, from which we can calculate the difference between the means.
+
+```{r vals_ht, include=FALSE}
+# Test statistic
+ht_t <- round(ttest_ht_temp$statistic, 2)
+
+# Degrees of freedom
+ht_t_df <- round(ttest_ht_temp$parameter)
+
+# p-value
+ht_t_p <- ttest_ht_temp$p.value
+
+# Confidence interval
+ht_ci_lower <- round(ttest_ht_temp$conf.int[1], 2)
+ht_ci_upper <- round(ttest_ht_temp$conf.int[2], 2)
+
+# Group means
+ht_mean_absent <- round(ttest_ht_temp$estimate[1], 2)
+ht_mean_present <- round(ttest_ht_temp$estimate[2], 2)
+
+# Difference between means (FALSE - TRUE, matching the t-test)
+ht_mean_diff <- round(
+  ttest_ht_temp$estimate[1] - ttest_ht_temp$estimate[2],
+  2
+)
+```
+
+We could therefore report our results here as:
+
+::: {.highlight-box}
+
+There is evidence that mean minimum temperature is higher at sites where *H. tumulorum* is present than at sites where it is absent ($t$(`r ht_t_df`) = `r ht_t`, $p$ = `r formatC(ttest_ht_temp$p.value, format = "e", digits = 2)`, mean difference [absent − present] = `r ht_mean_diff`°C). This means we can reject our null hypothesis.
+
+:::
+
+This doesn't mean that our alternative hypothesis is definitely true for the population, but based on this sample the evidence supports it.
+
+::: {.callout-note .extension #ext-t_distribution}
+### Extension exercise - the t-distribution
+
+I stated above that: "*The p-value for a t-test is the probability of a test statistic at least as far from zero as the value calculated from our data, if we drew values from a t-distribution with the specified number of degrees of freedom*".
+
+The t-distribution is just a probability distribution, so we can simulate and visualise it in R using the same methods we learned for other probability distributions (@sec-using_other_distributions).
+
+
+In your `pollinators.qmd` Quarto file:
+
+* Simulate a sample of 1000 observations from t-distribution with 74 degrees of freedom. You can draw a random sample from a t-distribution with the function `rt` with the arguments `n` - number of observations and `df` degrees of freedom. 
+* Create a dataframe where this set of observations forms a column.
+* Plot the results using the ggplot layer `geom_density()`.
+* Calculate an approximated p-value using your simulated data - the proportion of observations which are at least `r round(abs(ttest_ht_temp$statistic), 3)` from zero **in either direction**. You can extract the test statistic from the t-test as `ttest_ht_temp$statistic`.
+* Calculate the exact p-value using the t-distribution cumulative probability function `pt()`. 
+
+::: {.callout-answer collapse="true" #ex-t_dist_ans}
+
+[Simulate a sample of 1000 observations from t-distribution with 74 degrees of freedom. You can draw a random sample from a t-distribution with the function `rt` with the arguments `n` - number of observations and `df` degrees of freedom.]{.blue-text}
+
+```{r t_dist_ans1}
+df74 <- rt(1000, df = 74)
+```
+
+[Create a dataframe where this set of observations forms a column.]{.blue-text}
+
+```{r t_dist_ans2}
+t_dist <- tibble(simulated = df74)
+```
+
+[Plot the results using the ggplot layer `geom_density()`.]{.blue-text}
+
+```{r t_dist_ans3}
+ggplot(
+  t_dist,
+  aes(x = simulated)
+) +
+  geom_density() +
+  geom_vline(xintercept = c(ttest_ht_temp$statistic, -ttest_ht_temp$statistic), color = "red")
+```
+
+[Calculate an approximated p-value using your simulated data - the proportion of observations which are at least `r round(abs(ttest_ht_temp$statistic), 3)` from zero **in either direction**. You can extract the test statistic from the t-test as `ttest_ht_temp$statistic`.]{.blue-text}
+
+```{r t_dist_ans4}
+p_lower_sim <- sum(t_dist$simulated <= ttest_ht_temp$statistic)
+p_upper_sim <- sum(t_dist$simulated >= -ttest_ht_temp$statistic)
+
+p_sim <- (p_lower_sim + p_upper_sim) / nrow(t_dist)
+
+print(p_sim)
+```
+
+With 1000 simulations your value will almost certainly be zero. 
+
+:::{.callout-note .bonus #bon_pvalue_ttest}
+### Bonus question: Probability
+
+What is the probability of getting a value which is not zero here given the p-value calculated by R above of `r formatC(ttest_ht_temp$p.value, format = "e", digits = 2)`.
+
+:::{.callout-answer collapse="true" #bon_pvalue_ttest_ans}
+```{r pvalue_ttest_ans}
+prob_no_extreme <- (1 - ttest_ht_temp$p.value)^1000
+prob_at_least_one <- 1 - prob_no_extreme
+
+print(prob_at_least_one)
+```
+There is a `r round(prob_at_least_one * 100, 4)`% probability of observing at least one simulated value this extreme when drawing 1,000 points from a t-distribution with 74 degrees of freedom.
+:::
+:::
+
+[Calculate the exact p-value using the t-distribution cumulative probability function `pt()`.]{.blue-text}
+
+```{r t_dist_ans5}
+p_lower <- pt(ttest_ht_temp$statistic, 74)
+p_upper <- 1 - pt(-ttest_ht_temp$statistic, 74)
+
+pval <- p_lower + p_upper
+
+print(pval)
+```
+This should be the exact p-value calculated in our t-test.
+
+:::
+:::
 
 ### Confidence intervals
 
-It is also worth looking at our **confidence interval** here.
+In our description of the t-test output above, something is missing - it is also worth looking at our **confidence interval** here. This data is provided in our t-test summary above.
 
-Lower: `r round(spp_ttest$conf.int[1], 4)`
+Lower: `r round(ttest_ht_temp$conf.int[1], 4)`
 
-Upper: `r round(spp_ttest$conf.int[2], 4)`
+Upper: `r round(ttest_ht_temp$conf.int[2], 4)`
 
 A 95% confidence interval means that if we repeatedly sampled from the population and calculated a 95% confidence interval in the same way each time, 95% of those intervals would contain the true population value. In this case, the true population value is the true difference between the mean minimum annual temperature at sites where *H. tumulorum* is present and at sites where it is absent.
 
-For a two-sided test at the 5% significance level, if the 95% confidence interval for the difference between the means does not contain zero, we can reject the null hypothesis that the mean difference is zero. Here, our confidence interval does not contain zero, which agrees with the conclusion based on the p-value.
+For a two-sided test at the 5% significance level, if the 95% confidence interval for the difference between the means does not contain zero, we can reject the null hypothesis that the mean difference is zero. Here, our confidence interval does not contain zero, which agrees with our conclusion based on the p-value.
+
+We should add this to our conclusion above:
+
+::: {.highlight-box}
+
+There is evidence that mean minimum temperature is higher at sites where *H. tumulorum* is present than at sites where it is absent ($t$(`r ht_t_df`) = `r ht_t`, $p$ = `r formatC(ttest_ht_temp$p.value, format = "e", digits = 2)`, mean difference [absent − present] = `r ht_mean_diff`°C, 95% CI [`r ht_ci_lower`, `r ht_ci_upper`]°C). This means we can reject our null hypothesis.
+
+:::
 
 ::: {.callout-exercise #ex-cis}
 
@@ -247,7 +302,28 @@ For a two-sided test at the 5% significance level, if the 95% confidence interva
 
 Let's check using simulation. If we simulate samples from populations with known means, we know the "true" difference between means of the source populations.
 
-In your `pollinators.qmd` Quarto file:
+To simplify this process, let's first calculate the mean, standard deviation and sample size for sites with and without *H. tumulorum*. This is straightforward using the `group_by()` and `summarise()` functions.
+
+```{r summary_ht}
+ht_temp_summ <- ht_temp_df |>
+  group_by(detected) |>
+  summarise(
+    mean = mean(min_temp_coldest_month),
+    sd = sd(min_temp_coldest_month),
+    count = n()
+  )
+
+# Separate present and absent sites
+present <- ht_temp_summ |>
+  filter(detected == TRUE)
+
+absent <- ht_temp_summ |>
+  filter(detected == FALSE)
+
+gt(ht_temp_summ)
+```
+
+Next, in your `pollinators.qmd` Quarto file:
 
 * 1,000 times:
   * Simulate two samples drawn from a normal distribution:
@@ -255,7 +331,7 @@ In your `pollinators.qmd` Quarto file:
       * one with the same mean, standard deviation and sample size as the sites without *H. tumulorum*. 
   * Put the data for the two samples into a data frame in long format as follows:
 
-  ```{r fake_samples, include=FALSE}
+  ```{r norm_samples_ht, include=FALSE}
 s1 <- rnorm(pull(present, count),
   mean = pull(present, mean),
   sd = pull(present, sd)
@@ -266,10 +342,9 @@ s2 <- rnorm(pull(absent, count),
 )
   ```
 
-  ```{r sample_df}
+  ```{r norm_samples_df_ht}
 # Let's assume your vectors are in variables named s1 and s2
 # rep is used to add the sample names to the data frame
-# by repeating "sample_1" and then "sample_2".
 
 df <- tibble(
   sample = c(
@@ -279,16 +354,16 @@ df <- tibble(
   min_temp_coldest_month = c(s1, s2)
 )
   ```
-  * For each pair of simulated samples, use a t-test to calculate the difference between the sample means and its 95% confidence interval.
+  * For each pair of simulated samples, use a t-test to calculate the difference between the sample means, and its 95% confidence interval.
   * Extract the confidence interval
 
-  ```{r extract_conf_ttest, include=FALSE}
+  ```{r ttest_norm_ht, include=FALSE}
 ttest_res <- t.test(min_temp_coldest_month ~ sample,
   data = df
 )
   ```
 
-  ```{r extract_conf}
+  ```{r conf_norm_ht}
 # If the result of your t-test is stored as ttest_res
 ci_lower <- ttest_res$conf.int[1]
 ci_upper <- ttest_res$conf.int[2]
@@ -366,6 +441,92 @@ In this simulation, the confidence interval included the true difference `r roun
 :::
 :::
 
+::: {.callout-note .extension #ext-t_distribution_conf}
+### Extension - the t-distribution and confidence intervals
+
+We can revisit our simulated t-distribution above to understand how confidence intervals are calculated. 
+
+For a 95% confidence interval, we want the central 95% of the t-distribution. This leaves 2.5% of the distribution in each tail.
+
+In our `t_dist` data frame there are 1,000 observations sampled from a t-distribution with 74 degrees of freedom.
+
+```{r t_dist_replot}
+ggplot(
+  t_dist,
+  aes(x = simulated)
+) +
+  geom_density()
+```
+To calculate our confidence interval, we want the middle 95% of values from this distribution. 
+
+With our simulated data, we can extract these using `summarize()` and then the `quantile()` function with the data column as the first argument and the quantile we want to extract as the second. The $x$ quantile is the value below which $x$ proportion of the observations fall. 
+
+
+```{r t_dist_quantiles}
+quantile_df <- t_dist |>
+  summarise(
+    lower = quantile(simulated, 0.025),
+    upper = quantile(simulated, 0.975)
+  )
+gt(quantile_df)
+```
+
+Let's add these to our density plot.
+
+```{r t_dist_quantiles_plot}
+ggplot(
+  t_dist,
+  aes(x = simulated)
+) +
+  geom_density() +
+  geom_vline(xintercept = c(pull(quantile_df, lower), pull(quantile_df, upper)), color = "blue")
+```
+We can also calculate the exact values using the function `qt()`.
+
+```{r t_dist_qt}
+lower_exact <- qt(0.025, 74)
+upper_exact <- qt(0.975, 74)
+
+print(lower_exact)
+print(upper_exact)
+```
+The absolute values of these exact values should be identical to each other.
+
+```{r t_dist_quantiles_exact}
+ggplot(
+  t_dist,
+  aes(x = simulated)
+) +
+  geom_density() +
+  geom_vline(xintercept = c(lower_exact, upper_exact), color = "orange")
+```
+Because the t-distribution is symmetric, the two exact quantiles have the same absolute value. This value is called the critical t-value, often written $t*$. These values are measured on the t-distribution. To calculate a confidence interval for our estimated difference between means, we need to convert $t*$ into the units of our response variable.
+
+We do this by multiplying $t*$ by the standard error of our t-test. We can access from our t-test above using `ttest_ht_temp$stderr`.
+
+```{r t_dist_stderr}
+tstar <- upper_exact
+SE <- ttest_ht_temp$stderr
+
+confint_rv_units <- tstar * SE
+
+print(confint_rv_units)
+```
+This tells us how far we need to go above and below our estimated difference between means to obtain the 95% confidence interval.
+
+```{r t_dist_confint_man}
+diff_means <- pull(absent, mean) - pull(present, mean)
+
+lower_cint <- diff_means - confint_rv_units
+upper_cint <- diff_means + confint_rv_units
+
+print(c(lower_cint, upper_cint))
+```
+
+This gives us our lower value of `r round(lower_cint, 4)` and upper value of `r round(upper_cint, 4)` as above.
+
+:::
+
 ## Linear models
 
 The comparison we have just made can also be represented using a linear model.
@@ -386,13 +547,13 @@ where:
 In our case, the value of $x$ (`detected`, the explanatory variable) - can only be TRUE or FALSE. It is usual in this case to assign FALSE a value of 0 and TRUE a value of 1.
 
 * If *H. tumulorum* is absent, $x$ equals 0.
-* When $x$ is zero, the line intercepts the y axis - so the intercept $\beta_0$ is the minimum temperature when *H. tumulorum* is absent.
+* When $x$ is zero, the line intercepts the y axis - so the intercept $\beta_0$ is the mean minimum temperature when *H. tumulorum* is absent.
 * If *H. tumulorum* is present, $x$ equals 1.
-* The slope is the change in $y$ over one unit of $x$. So, the change in minimum temperature between $x$ = 0 and $x$ = 1, or the difference in mean temperature when *H. tumulorum* is present, compared to when it is absent.
+* The slope is the change in $y$ over one unit of $x$. So, the change in mean minimum temperature between $x$ = 0 and $x$ = 1, or the difference in mean temperature when *H. tumulorum* is present, compared to when it is absent.
 
 We know these numbers already:
 ```{r}
-gt(spp_summary |> select(detected, mean))
+gt(ht_temp_summ |> select(detected, mean))
 ```
 
 The difference between the two means is:
@@ -425,6 +586,7 @@ so:
 $$
 y = `r round(pull(present, mean), 2)` + \epsilon
 $$
+
 Our **t-test** tests whether there is evidence that the difference between the mean values of the two groups is different from zero.
 
 Our **linear model** tests whether there is evidence that the slope of the line is different from zero.
@@ -437,11 +599,12 @@ Let's see if this is correct by fitting a linear model to our data in R. We do t
 
 We can summarise the linear model using the function `summary()`.
 
-```{r linear_model_spp}
-linear_model <- lm(min_temp_coldest_month ~ detected,
-  data = spp_presence
+```{r lm_ht_spp}
+lm_ht <- lm(min_temp_coldest_month ~ detected,
+  data = ht_temp_df
 )
-print(summary(linear_model))
+summ_lm_ht <- summary(lm_ht)
+print(summ_lm_ht)
 ```
 
 This function gives us a lot of information, including the numbers we calculated above.
@@ -453,10 +616,60 @@ This function gives us a lot of information, including the numbers we calculated
 We can extract the 95% confidence intervals from our linear model with the function `confint()` with one argument - the fitted model.
 
 ```{r confint_lm}
-ci <- confint(linear_model)
+ci <- confint(lm_ht)
 print(ci)
 ```
+
 The second confidence interval here is the confidence interval of the slope of the line - and again it's identical to our t-test values above.
+
+As discussed above, for a linear regression, we are interested in whether the coefficient (slope) for our explanatory variable differs from zero. We still use the t-statistic, which is calculated by dividing the estimated coefficient by its standard error.
+
+The p-value is obtained from a t-distribution specified by the residual degrees of freedom. For a simple linear regression, we estimate two parameters: the intercept and the slope. Here we have 76 observations, so the residual degrees of freedom are 76 - 2 = 74.
+
+We therefore need to look for the following values in the linear model output:
+
+* **Coefficient (slope):** `Estimate`
+* **Test statistic:** `t value`
+* **Degrees of freedom:** residual degrees of freedom
+* **p-value:** `Pr(>|t|)`
+* **Proportion of variation explained:** `Multiple R-squared`
+
+```{r get_vals_lm_ht, include=FALSE}
+# Coefficient
+ht_beta <- round(summ_lm_ht$coefficients["detectedTRUE", "Estimate"], 2)
+
+# Test statistic
+ht_lm_t <- round(summ_lm_ht$coefficients["detectedTRUE", "t value"], 2)
+
+# Degrees of freedom
+ht_lm_df <- lm_ht$df.residual
+
+# p-value
+ht_lm_p <- summ_lm_ht$coefficients["detectedTRUE", "Pr(>|t|)"]
+
+# 95% confidence interval for the coefficient
+ht_lm_ci <- confint(lm_ht, "detectedTRUE")
+
+ht_lm_ci_lower <- round(ht_lm_ci[1], 2)
+ht_lm_ci_upper <- round(ht_lm_ci[2], 2)
+
+# R-squared
+ht_lm_rsq <- round(summ_lm_ht$r.squared, 3)
+
+# Percentage of variation explained
+ht_lm_var_explained <- round(summ_lm_ht$r.squared * 100, 1)
+```
+
+For a linear model with a categorical explanatory variable like this, we can also report the difference in means between the two conditions.
+
+For the linear model above, we could report:
+
+:::{.highlight-box}
+
+There is evidence that minimum temperature differs according to the presence or absence of *H. tumulorum* ($\beta$ = `r ht_beta`°C, 95% CI [`r ht_lm_ci_lower`, `r ht_lm_ci_upper`]°C, $t$(`r ht_lm_df`) = `r ht_lm_t`, $p$ = `r formatC(ht_lm_p, format = "e", digits = 2)`, $R^2$ = `r ht_lm_rsq`). Sites where *H. tumulorum* is present have a mean minimum temperature approximately `r ht_beta`°C higher than sites where it is absent. The model explains approximately `r ht_lm_var_explained`% of the variation in minimum temperature.
+
+:::
+
 
 ### Visualising linear models in R
 
@@ -464,21 +677,21 @@ We can easily visualise our linear model in ggplot.
 
 First, we plot a scatter plot with our `detected` variable on the x-axis and minimum temperature on the y-axis.
 
-We need to convert our `detected` column to show 0 for FALSE and 1 for TRUE. To convert a column to numeric, we use the function `as.numeric()`. For a boolean column, it will automatically do what we want - convert FALSE to 0 and TRUE to 1.
+We need to convert our `detected` column to show 0 for FALSE and 1 for TRUE. To convert a column to numeric, we use the function `as.numeric()`. For a logical column, it will automatically do what we want - convert FALSE to 0 and TRUE to 1.
 
 We can then use the function `geom_smooth()` to apply and plot a linear model to the data. This corresponds to plotting a line between `r round(pull(absent, mean), 2)` when x is 0 and `r round(pull(present, mean), 2)` when x is 1.
 
 Let's also add a horizontal line using `geom_hline()` showing a slope of 0 and the same mean for both groups.
 
 ```{r lm_lowest_temp}
-spp_presence <- spp_presence |>
+ht_temp_df <- ht_temp_df |>
   mutate(detected_num = as.numeric(detected))
 
-overall_mean <- spp_presence |>
+overall_mean <- ht_temp_df |>
   pull(min_temp_coldest_month) |>
   mean()
 
-ggplot(spp_presence, aes(
+ggplot(ht_temp_df, aes(
   x = detected_num,
   y = min_temp_coldest_month
 )) +
@@ -504,10 +717,62 @@ This is asking the same question we've already asked twice, in a different way.
 Let's try an ANOVA. We run ANOVA in R on an existing linear model - which we already created above, using the function `anova()`.
 
 ```{r anova_temp}
-anova_lm <- anova(linear_model)
+anova_lm <- anova(lm_ht)
 anova_lm
 ```
 
 As you can see, we've again found an identical p-value. As it's the same linear model, our confidence intervals are, by definition, also the same.
+
+For an ANOVA, we report our results a little differently. The p-value here is obtained from an F distribution specified by two degrees-of-freedom values: the numerator and denominator degrees of freedom. The numerator degrees of freedom are associated with the explanatory variable. Here there are two groups (present and absent), so this is 2 − 1 = 1. The denominator degrees of freedom are the residual degrees of freedom. We have 76 observations and estimate two parameters (the intercept and slope), so this is 76 − 2 = 74.
+
+As with the t-test, the p-value is calculated from a probability distribution. For ANOVA, this is the F-distribution rather than the t-distribution. The F-statistic compares the variation explained by the model with the unexplained variation; unusually large F-values provide evidence against the null hypothesis.
+
+So, we need to look for the following values in our ANOVA output.
+
+* **Test statistic:** `F value`
+* **Numerator degrees of freedom:** `Df` for the explanatory variable
+* **Denominator degrees of freedom:** `Df` for the residuals
+* **p-value:** `Pr(>F)`
+
+![Interpreting ANOVA results](images/anova_1way_stats.png){#fig-a1wstats width="100%"}
+
+Additionally, we can report the proportion of variation explained by the model relative to the total variation in the response variable. We can calculate this from the sum of square values in the ANOVA output.
+
+```{r calc_prop_var_temp}
+SS_model <- anova_lm["detected", "Sum Sq"]
+SS_res <- anova_lm["Residuals", "Sum Sq"]
+
+prop_var <- SS_model / (SS_res + SS_model)
+print(prop_var)
+```
+Conveniently, this is the same as our $R^2$ value in the linear model we used above.
+
+```{r lm_again}
+print(summary(lm_ht))
+```
+```{r get_anova_vals, include=FALSE}
+ann <- anova(lm_ht)
+
+# Degrees of freedom
+ht_df <- ann["detected", "Df"]
+ht_resid_df <- ann["Residuals", "Df"]
+
+# F-statistic
+ht_f <- round(ann["detected", "F value"], 2)
+
+# p-value
+ht_p <- ann["detected", "Pr(>F)"]
+
+ht_rsq <- round(summary(lm_ht)$r.squared, 3)
+ht_perc_explained <- round(ht_rsq * 100, 1)
+```
+
+So, we would report:
+
+:::{.highlight-box}
+
+There is evidence that minimum temperature in the coldest month differs between sites where *H. tumulorum* is present and sites where it is absent ($F$(`r ht_df`, `r ht_resid_df`) = `r ht_f`, $p$ = `r formatC(ht_p, format = "e", digits = 2)`, $R^2$ = `r ht_rsq`). The model explains approximately `r ht_perc_explained`% of the variation in minimum temperature in the coldest month.
+
+:::
 
 The advantage of ANOVA is that, unlike a t-test, we can use it when our categorical explanatory variable has more than two groups - we'll come to this in the next section.
