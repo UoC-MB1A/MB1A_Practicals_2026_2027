@@ -1,0 +1,443 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0404"
+author: "Katy Brown"
+---
+
+```{r setup_0404, include=FALSE}
+library(tidyverse)
+library(gt)
+library(maps)
+library(patchwork)
+library(GGally)
+insect_counts <- read_csv("data/insect_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+set.seed(42)
+```
+
+# Part 4: Linear regression and Chi-Squared
+
+## Linear Regression
+
+We've now used all sorts of linear models, but how about a standard linear regression between two continuous variables? You already have the skills needed to do this - you can fit the model using `lm()` and then view the results using `summary()`, and you basically know how to interpret the results. 
+
+As we discussed in the previous section, for a linear model we should report the following:
+
+* **Coefficient (slope):** `Estimate` – the expected change in the response variable associated with a one-unit increase in that explanatory variable, holding the other explanatory variables constant.
+* **Test statistic:** `t value`
+* **Degrees of freedom:** residual degrees of freedom
+* **p-value:** `Pr(>|t|)`
+* **Proportion of variation explained:** `Multiple R-squared`
+
+For a linear regression with two continuous variables, we can also report the amount the mean of the response variable changes when the explanatory variable changes by one unit.
+
+Let's use the pollinator data again and look at a straightforward regression question - how is total annual precipitation (column `annual_total_prec`) associated with mean annual temperature (column `annual_mean_temp`)?
+
+### Hypotheses
+
+* Null: There is no association between total annual precipitation and mean annual temperature.
+* Alternative: Total annual precipitation is associated with mean annual temperature.
+
+### Plot
+
+A scatter plot is the most common plot to compare two continuous variables. We can use `geom_smooth(method = "lm")` to add a linear model to the plot.
+
+```{r plot_temp_prec}
+ggplot(site_metadata,
+       aes(x = annual_mean_temp,
+           y = annual_total_prec)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+## Multiple linear regression
+
+Just as we included multiple explanatory variables in our ANOVA, we can include multiple continuous explanatory variables in a linear regression. This is called multiple linear regression. We can also add interaction terms.
+
+For example, we could ask if precipitation is associated with temperature, elevation or the interaction between the two, using `annual_total_prec ~ annual_mean_temp * elevation`.
+
+There is one complication here - by default, a multiple regression containing an interaction will determine the association with each explanatory variable **when the value of the other explanatory variables is zero**. This is not the case for an additive model, where the association with each explanatory variable is estimated while holding the other explanatory variables constant.
+
+So, in our case, our model `annual_total_prec ~ annual_mean_temp * elevation` will tell us:
+
+* Is precipitation associated with annual mean temperature **when elevation is 0**?
+* Is precipitation associated with elevation **when annual mean temperature is 0**?
+* Does the association between annual mean temperature and precipitation depend on elevation?
+
+The first two questions are not usually quite what we want to ask. Better questions might be:
+
+* Is precipitation associated with annual mean temperature **at the mean elevation**.
+* Is precipitation associated with elevation **at the mean annual temperature**.
+
+We can ask this by **centring** our data for elevation and temperature - subtracting our mean value from all observations to create a new set of centred observations with mean zero. The shape and spread of the variables remains the same, but the model is now answering more useful questions.
+
+Let's add these new columns to our data frame.
+
+```{r centre_elev_temp}
+site_metadata_cent <- site_metadata |>
+  mutate(
+    annual_mean_temp_cent = annual_mean_temp - mean(annual_mean_temp),
+    elevation_cent = elevation - mean(elevation)
+  )
+```
+
+### Hypotheses
+
+So, now our hypotheses are:
+
+Annual mean temperature:
+
+* Null: At the mean elevation, there is no association between annual mean temperature and precipitation.
+* Alternative: At the mean elevation, there is an association between annual mean temperature and precipitation.
+
+Elevation:
+
+* Null: At the mean annual temperature, there is no association between elevation and precipitation.
+* Alternative: At the mean annual temperature, there is an association between elevation and precipitation.
+
+Interaction:
+
+* Null: The association between annual mean temperature and precipitation does not depend on elevation.
+* Alternative: The association between annual mean temperature and precipitation depends on elevation.
+
+### Plot
+
+A scatter plot is again a good visualisation here, and we can use the function `facet_wrap()` again to separate the data into two plots, one for annual mean temperature vs annual total precipitation, and one for elevation vs annual total precipitation.
+
+```{r plot_lm_elev_temp}
+
+# Extract relevant columns and convert to long format
+elev_temp_long <- site_metadata |>
+  select(x1km_square, annual_total_prec,
+         annual_mean_temp, elevation) |>
+  pivot_longer(
+    c(
+      annual_mean_temp,
+      elevation
+    ),
+    names_to = "variable",
+    values_to = "value"
+  )
+
+# Plot
+ggplot(elev_temp_long,
+       aes(x = value,
+           y = annual_total_prec)) +
+  geom_point() +
+  facet_wrap(~variable, scale='free_x') +
+  geom_smooth(method = "lm")
+
+```
+
+### Statistical test
+
+Now we can fit our linear model using these new columns.
+
+```{r lm_elev_temp}
+lm_elev_temp <- lm(annual_total_prec ~ annual_mean_temp_cent * elevation_cent, data = site_metadata_cent)
+summ_lm_elev_temp <- summary(lm_elev_temp)
+print(summ_lm_elev_temp)
+```
+
+### Conclusion
+
+```{r get_vals_elev_temp, include=FALSE}
+# Temperature
+temp_coef <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent", "Estimate"]
+temp_t <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent", "t value"]
+temp_p <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent", "Pr(>|t|)"]
+
+# Elevation
+elev_coef <- summ_lm_elev_temp$coefficients["elevation_cent", "Estimate"]
+elev_t <- summ_lm_elev_temp$coefficients["elevation_cent", "t value"]
+elev_p <- summ_lm_elev_temp$coefficients["elevation_cent", "Pr(>|t|)"]
+
+# Interaction
+interaction_coef <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent:elevation_cent", "Estimate"]
+interaction_t <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent:elevation_cent", "t value"]
+interaction_p <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent:elevation_cent", "Pr(>|t|)"]
+
+# Degrees of freedom and R-squared
+lm_df <- summ_lm_elev_temp$df[2]
+lm_r_squared <- summ_lm_elev_temp$r.squared
+```
+
+::: {.highlight-box}
+There is no evidence of an association between mean annual temperature and total annual precipitation at the mean elevation ($b$ = `r round(temp_coef, 2)`, $t$(`r lm_df`) = `r round(temp_t, 2)`, $p$ = `r round(temp_p, 3)`). There is evidence of a positive association between elevation and total annual precipitation at the mean annual temperature ($b$ = `r round(elev_coef, 2)`, $t$(`r lm_df`) = `r round(elev_t, 2)`, $p$ = `r formatC(elev_p, format = "e", digits = 2)`). There is no evidence of an interaction between mean annual temperature and elevation ($b$ = `r round(interaction_coef, 3)`, $t$(`r lm_df`) = `r round(interaction_t, 2)`, $p$ = `r round(interaction_p, 3)`), so there is no evidence that the association between temperature and precipitation changes with elevation. Overall, the model explains `r round(lm_r_squared * 100, 1)`% of the variation in total annual precipitation ($R^2$ = `r round(lm_r_squared, 3)`).
+:::
+
+## Multicollinearity
+
+This result seems strange at first — precipitation was strongly associated with annual mean temperature when temperature was the only explanatory variable, but there is no longer strong evidence for that association once elevation is included.
+
+**Multicollinearity** occurs when two or more explanatory variables in a multiple regression are strongly associated with each other.
+
+For example, we are trying to explain variation in precipitation using both temperature and elevation. But if elevation and temperature are closely related - for example, if higher sites tend to be colder - the model is trying to separate the associations with two variables which tend to change together.
+
+* If only temperature is in the model, we are asking - does temperature explain variation in precipitation?
+* If both temperature and elevation are in the model, we are asking - does temperature explain variation in precipitation over and above the variation associated with elevation?
+
+If temperature and elevation are highly correlated, there may not be much independent information with which to separate their associations with precipitation. Consequently, the estimated individual coefficients can become less precise, their standard errors can become larger, and their p-values can increase.
+
+This does not necessarily mean that the multiple regression model is worse at explaining precipitation. Rather, multicollinearity makes it more difficult to determine the individual association between each explanatory variable and the response.
+
+Let's check the correlation between the annual mean temperature and elevation. We can calculate the correlation coefficient using the R function `cor`·
+
+```{r corr}
+correlation <- site_metadata |>
+  summarise(correlation = cor(annual_mean_temp, elevation))
+
+gt(correlation)
+```
+
+We can also visualise this:
+
+```{r plot_corr_mcl}
+ggplot(site_metadata, 
+       aes(x = annual_mean_temp, y = elevation)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+These two variables are clearly highly correlated ($r$ = `r round(correlation, 2)), so multicollinearity is a plausible explanation for the much higher p-value for temperature when elevation is included in the model.
+
+::: {.callout-note .bonus collapse="true" #bon-multicollinearity}
+
+### Bonus content: Investigating multicollinearity
+
+We can investigate the effect of multicollinearity by explicitly controlling the correlation between our explanatory variables.
+
+Since at this point in the practical I think we need a picture of a hedgehog, let's say we want to predict if the weight of a hedgehog in grams is associated with:
+
+1) How much water it drinks per day in millilitres.
+2) How much food it eats per day in grams. 
+
+![A hedgehog eating](images/hedgehog.jpg){#fig-hog width="50%"}
+
+Let's say that:
+
+* For each 100 ml of water the hedgehog drinks per day, its weight is **30 g** heavier on average.
+* For each 100 g of food the hedgehog eats per day, its weight is **50 g** heavier on average.
+* The effects are additive with no interaction.
+
+$$
+\text{weight}_i = 500 + 0.3\,\text{water}_i + 0.5\,\text{food}_i + \epsilon_i
+$$
+
+Let's say we have 50 hedgehogs, and hedgehog water intake is a normal distribution with mean 70 ml and standard deviation 40 ml. There is also random noise with a mean of 0g and a standard deviation of 30 g. 
+
+```{r setup_vars_hogs}
+n_hedgehogs <- 50
+water <- rnorm(n_hedgehogs, 70, 40)
+noise <- rnorm(n_hedgehogs, 0, 30)
+```
+
+To investigate multicollinearity, we will simulate food and water consumption with different strengths of association - i.e. with different values of $R^2$ - between food and water intake.
+
+We can do this by constructing food consumption with a proportion of variation associated with water consumption and a proportion of random variation. As we increase the extent to which food consumption is associated with water consumption, $R^2$ between the two explanatory variables increases.
+
+Importantly, we **will not change the relationship between food, water and hedgehog weight**. This allows us to investigate what happens to our regression estimates as multicollinearity increases.
+
+First, we centre and scale the variation in water consumption so it has a mean of 0 and a standard deviation of 1. We can also generate random noise with a mean of 0 and a standard deviation of 1.
+
+```{r standardise_water_hogs}
+water_z <- (water - mean(water)) / sd(water)
+noise_food <- rnorm(n_hedgehogs, 0, 1)
+```
+
+Here, $R^2$ is the squared correlation between food and water intake, and describes the proportion of variation in food intake associated with variation in water intake.
+
+For example, to simulate $R^2$ = 0.3, we construct food intake so that 30% of its variance comes from the component associated with water intake and 70% comes from random variation.
+
+```{r calculate_food_standard_hogs}
+rsq <- 0.3
+
+food_var_water <- sqrt(rsq) * water_z
+food_var_noise <- sqrt(1 - rsq) * noise_food
+
+food_var_total <- food_var_water + food_var_noise
+```
+
+We can then scale these standardised values so that food intake has a mean of 100 g per day and a standard deviation of 50 g.
+
+```{r calculate_food_hogs}
+mean_food <- 100
+food_sd <- 50
+food <- mean_food + (food_var_total * food_sd)
+```
+
+This gives us 50 food data points which have a mean of approx 100g, a standard deviation of approx 50g and an $R^2$ of approx 0.3 with water intake.
+
+```{r check_stats_hogs}
+print(paste("mean = ", mean(food)))
+print(paste("sd = ", sd(food)))
+print(paste("R2 = ", cor(food, water)^2))
+```
+
+Now we can run this analysis with $R^2$ values ranging from 0 to 0.99, with an increment of 0.01.
+
+```{r change_r2_hogs}
+hog_results <- tibble()
+
+for (rsq in seq(0, 0.99, 0.01)) {
+  # Calculate the food values based on the water values
+  # plus noise
+  food_var_water <- sqrt(rsq) * water_z
+  food_var_noise <- sqrt(1 - rsq) * noise_food
+  food_var_total <- food_var_water + food_var_noise
+
+  # Scale up food values
+  food <- mean_food + (food_var_total * food_sd)
+
+  # Apply the model to calculate hedgehog weight
+  hogs <- 500 + (water * 0.3) + (food * 0.5) + noise
+
+  # Put the three columns into a data frame
+  hog_df <- tibble(
+    weight = hogs,
+    water = water,
+    food = food
+  )
+
+  # Fit and summarise the linear model
+  lm_hogs_both <- summary(lm(weight ~ water + food, data = hog_df))
+
+  # Store the results of the lm
+  hog_results <- bind_rows(
+    hog_results,
+    tibble(
+      rsq = rsq,
+      observed_rsq = cor(water, food)^2,
+      water_estimate = lm_hogs_both$coefficients["water", "Estimate"],
+      water_se = lm_hogs_both$coefficients["water", "Std. Error"],
+      water_p = lm_hogs_both$coefficients["water", "Pr(>|t|)"],
+      food_estimate = lm_hogs_both$coefficients["food", "Estimate"],
+      food_se = lm_hogs_both$coefficients["food", "Std. Error"],
+      food_p = lm_hogs_both$coefficients["food", "Pr(>|t|)"],
+      model_rsq = lm_hogs_both$r.squared
+    )
+  )
+}
+```
+
+Now we can convert the data frame to long format, to make plotting easier.
+
+```{r long_format_hogs}
+hog_results_long <- hog_results |>
+  pivot_longer(
+    cols = c(
+      water_estimate, water_se, water_p,
+      food_estimate, food_se, food_p
+    ),
+    names_to = c("predictor", "statistic"),
+    names_sep = "_",
+    values_to = "value"
+  )
+```
+
+We can then plot the following at each $R^2$:
+
+* The `estimate` - the estimated slope for each explanatory variable: the expected change in the response variable associated with a one-unit increase in that explanatory variable, holding the other explanatory variables constant.
+* The `p-value`
+* The standard error
+
+```{r plot_results_hogs}
+#| fig-width: 6
+
+ggplot(hog_results_long, aes(x = rsq, y = value, color = predictor)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~statistic, scale = "free_y") +
+  theme_bw()
+```
+
+It is very clear from these plots that at high values of \(R^2\), the coefficient estimates become less stable and their standard errors increase. As a result, the test statistics tend to become smaller and the p-values larger, making it more difficult to detect the individual associations of food and water intake with hedgehog weight.
+
+This doesn't mean the model is useless, and we can see this if we plot the model $R^2$ - the total proportion of variance explained by the model.
+
+```{r plot_r2_hogs}
+ggplot(hog_results, aes(x = rsq, y = model_rsq)) +
+  geom_point() +
+  geom_line() +
+  theme_bw()
+```
+
+Even when the explanatory variables are highly correlated, the model as a whole can still explain a large proportion of the variation in hedgehog weight. Multicollinearity mainly makes it difficult to estimate and interpret the individual coefficients reliably.
+
+:::
+
+## Chi-squared
+
+Chi-squared looks for an association between two categorical variables. Unlike all the other tests we've covered so far, it is not based on a linear model.
+
+For a chi-squared we typically report:
+* $X^2$ test statistic
+* Degrees of freedom
+* p-value
+
+### Hypotheses
+
+In our pollinator data set, let's investigate the following hypothesis:
+
+* Alternative: There is an association between land cover (agricultural or semi-natural, all of our sites are in one of these two categories) and UK country (England, Scotland or Wales, this dataset doesn't cover Northern Ireland) amongst the sites in the POMS dataset.
+* Null: There is no association between land cover and UK country amongst the sites in the POMS dataset.
+
+### Plot
+
+For chi-squared, we need to count the number of observations with each combination of variables. We can do this using the `count()` function.
+
+```{r count_country_habitat}
+country_habitat_counts <- site_metadata |>
+  count(land_cover, country)
+
+gt(country_habitat_counts)
+```
+
+A useful visualisation is a stacked bar chart, where the y axis is count, and each bar represents one categorial variable and has different coloured sections representing the other categorical variable.
+
+```{r bar_chart_country_habitat}
+ggplot(country_habitat_counts,
+       aes(x = country, y = n, fill=land_cover)) +
+  geom_col()
+```
+### Contingency table
+
+The input for the `chisq.test()` function is a contingency table, showing the number of observations with each combination of categories.
+
+||agricultural|semi-natural|
+|---|---|---|---|---|
+|England|count|count|
+|Scotland|count|count|
+|Wales|count|count|
+
+We already know how to generate these counts - we have them above - but the `chisq.test()` function is a little picky about the input, so instead we will use another function, `xtabs()`, which is specifically made to use to create contingency tables.
+
+`xtabs()` uses the same formula syntax as many R stats functions, as follows:
+
+```{r cont_table_country_habitat}
+cont_table_country_habitat <- xtabs(
+  ~ country + land_cover,
+  data = site_metadata
+)
+print(cont_table_country_habitat)
+```
+
+### Statistical test
+
+Now we can run the chi-squared test.
+
+```{r chisq_seats}
+chisq_country_habitat <- chisq.test(cont_table_country_habitat)
+print(chisq_country_habitat)
+```
+
+There was strong evidence of an association between country and habitat type ($\chi^2$(2) = 19.40, $p$ = 6.13 × 10^-5^).
+
+With the chi-squared test, we can also see the expected counts for each category - the counts we would expect if the null hypothesis were true.
+
+```{r chisq_expected}
+print(chisq_country_habitat$expected)
+```
+
+The chi-squared test compares these expected counts with our observed counts. The greater the differences between the observed and expected counts, the greater the evidence against the null hypothesis.

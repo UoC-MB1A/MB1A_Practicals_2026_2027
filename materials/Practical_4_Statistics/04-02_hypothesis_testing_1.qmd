@@ -14,7 +14,7 @@ insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
 ```
 
-# Part 2: Comparing the Mean of Two Groups
+# Part 2: Hypothesis Testing 
 
 ## Examining data
 

@@ -16,15 +16,11 @@ site_metadata <- read_csv("data/site_metadata.csv")
 set.seed(42)
 ```
 
-# Part 3: Hypothesis Testing 2
+# Part 3: ANOVA
 
-In this part of the practical, I will briefly introduce how to perform a number of other statistical tests in R, then, in the next part, you will choose hypotheses to address using these tests. With the exception of chi-squared, these tests are based on linear models.
+In the previous section, we used one-way ANOVA to look at the difference between two levels of a single explanatory variable. However, ANOVA can easily be expanded to look at multiple groups and multiple explanatory variables.
 
-## ANOVA
-
-### One-way ANOVA with more than two groups
-
-In the previous section, we used one-way ANOVA to look at the difference between two groups.
+## One-way ANOVA with more than two groups
 
 ANOVA expands easily to take into account an explanatory variable with more than two levels (i.e. a categorical variable with three or more options).
 
@@ -34,7 +30,9 @@ One of the measurements in our pollinator data frame is `mean_insect_mass` - the
 
 It seems feasible that this would be affected by the types of pollinators present - some pollinators are much bigger than others. 
 
-Using our pollinator data, let's investigate the following hypothesis:
+### Hypothesis
+
+Using our pollinator data, let's investigate the following hypothesis using a one-way ANOVA.
 
 * Null hypothesis: Sites dominated by different insect families have the same mean mass.
 * Alternative hypothesis: At least one dominant insect family is associated with sites with a different mean mass.
@@ -47,6 +45,24 @@ print(unique_fams)
 ```
 
 All sites are dominated by one of these four families.
+
+### Plot
+
+A box plot is a typical way to visualise the type of data which is suitable for ANOVA analysis.
+
+```{r plot_domfam}
+ggplot(
+  site_metadata,
+  aes(
+    x = dominant_family, y = mean_insect_mass,
+    fill = dominant_family
+  )
+) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+### Statistical Test
 
 We can test the association between mean insect mass and dominant family with a one-way ANOVA, and we define it exactly as before.
 
@@ -78,10 +94,14 @@ In your `pollinators.qmd` markdown file, perform an ANOVA on the linear model de
 
 :::{.callout-answer collapse="true" #ex-anova_domfam_ans}
 
+### Statistical Test
+
 ```{r anova_mass_domfam}
 anova_mass_domfam <- anova(lm_mass_domfam)
 print(anova_mass_domfam)
 ```
+
+### Conclusion
 
 ```{r vals_mass_domfam, include=FALSE}
 mass_domfam_df <- anova_mass_domfam["dominant_family", "Df"]
@@ -174,13 +194,58 @@ This should be the exact p-value calculated in our ANOVA.
 :::
 
 
-### Multi-way ANOVA
+## Multi-way ANOVA
 
 ANOVA can also be extended to include multiple categorical explanatory variables. This is called multi-way ANOVA (or factorial ANOVA). A model with two categorical explanatory variables is a two-way ANOVA, one with three is a three-way ANOVA, and so on.
 
 We can add additional explanatory variables using `+` - `response ~ explanatory1 + explanatory2 + explanatory3` etc.
 
 The ANOVA tests whether each explanatory variable is associated with the response in turn. So, in the case above, explanatory1 would be tested first, followed by whether explanatory2 explains additional variation after explanatory1 has been included, and so forth.
+
+### Hypothesis
+
+Using our pollinator data, let's investigate the following hypotheses:
+
+Dominant insect family:
+
+* Null hypothesis: mean insect mass is the same at sites dominated by different insect families
+* Alternative hypothesis: mean insect mass differs for at least one dominant insect family.
+
+Broad habitat type:
+
+* Null hypothesis: after taking dominant insect family into account, mean insect mass is the same across different broad habitat types.
+* Alternative hypothesis: after taking dominant insect family into account, mean insect mass differs for at least one broad habitat type.
+
+### Plot
+
+A box plot is again a typical visualisation to use here, this time using `facet_wrap()` to separate our different variables.
+
+```{r plot_domfam_habitat, fig.width = 6}
+# Take the relevant columns from the data frame
+domfam_habitat_sel <- site_metadata |>
+  select(x1km_square, dominant_family, broad_habitat, mean_insect_mass)
+
+# Pivot to long format
+domfam_habitat_long <- domfam_habitat_sel |>
+  pivot_longer(
+    c(
+      dominant_family,
+      broad_habitat
+    ),
+    names_to = "variable",
+    values_to = "value"
+  )
+
+# Plot the boxplot
+ggplot(
+  domfam_habitat_long,
+  aes(x = value, y = mean_insect_mass, fill = variable)
+) +
+  geom_boxplot() +
+  facet_wrap(~variable, scales = "free_x") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) # rotate x labels so they fit
+```
 
 ::: {.callout-exercise #ex-anova_twoway}
 
@@ -191,6 +256,8 @@ In your `pollinators.qmd` Quarto file:
 * Draw a conclusion based on your findings, including the appropriate statistical evidence to support your conclusion.
 
 ::: {.callout-answer collapse="true" #ex_anova_twoway_ans}
+
+### Statistical Test
 
 We define our linear model as follows:
 
@@ -229,6 +296,8 @@ habitat_p <- round(
 resid_df <- anova_domfam_habitat_mass["Residuals", "Df"]
 ```
 
+### Conclusion
+
 ::: {.highlight-box}
 There is evidence that mean insect mass differs among dominant insect families ($F$(`r family_df`, `r resid_df`) = `r family_f`, $p$ = `r formatC(family_p, format = "e", digits = 2)`). After accounting for dominant insect family, there is no evidence that broad habitat type explains additional variation in mean insect mass ($F$(`r habitat_df`, `r resid_df`) = `r habitat_f`, $p$ = `r round(habitat_p, 2)`).
 :::
@@ -236,7 +305,7 @@ There is evidence that mean insect mass differs among dominant insect families (
 :::
 
 
-#### Interactions
+## Interactions
 
 When we use `+` to include multiple explanatory variables, we are assuming that their relationships with the response are additive. This means that the relationship between one explanatory variable and the response is the same at every level of the other explanatory variable. So for example, the dominant insect family can be associated with a difference in mean insect mass, and habitat can be associated with a difference, and these differences can be added together.
 
@@ -270,6 +339,23 @@ Their mean finishing times are as follows:
 * Spoon + Soup = 11 minutes
 * Fork + Soup = 25 minutes
 
+The hypotheses here are:
+
+Utensil:
+
+* Null: There is no association between utensil choice and finishing time.
+* Alternative: Utensil choice is associated with finishing time.
+
+Food:
+
+* Null: There is no association between food choice and finishing time, after taking into account the association with utensil choice.
+* Alternative: Food choice is associated with finishing time, after taking into account the association with utensil choice.
+
+Interaction:
+
+* Null: The association between utensil choice and finishing time does not vary depending on food choice.
+* Alternative: The association between utensil choice and finishing time varies depending on food choice.
+
 In your `prac4_exercises.qmd` Quarto file:
 
 * Generate four simulated populations, each of 10 students, with response times normally distributed around these means and a standard deviation of 3.
@@ -279,6 +365,8 @@ In your `prac4_exercises.qmd` Quarto file:
 * Run an ANOVA on the linear model.
 
 :::{.callout-answer #ex_simulate_interaction_ans}
+
+### Data
 
 [Generate four simulated populations, each of 10 students, with response times normally distributed around these means and a standard deviation of 3.]{.blue-text}
 
@@ -292,21 +380,29 @@ fork_soup <- rnorm(10, 25, 3)
 [Convert each of these into a data frame with the columns `utensil`, `food` and `time`.]{.blue-text}
 
 ```{r data_frames_forky_spoony}
-df_sp <- tibble(utensil = "Spoon",
-                food = "Pasta",
-                time = spoon_pasta)
+df_sp <- tibble(
+  utensil = "Spoon",
+  food = "Pasta",
+  time = spoon_pasta
+)
 
-df_fp <- tibble(utensil = "Fork",
-                food = "Pasta",
-                time = fork_pasta)
+df_fp <- tibble(
+  utensil = "Fork",
+  food = "Pasta",
+  time = fork_pasta
+)
 
-df_ss <- tibble(utensil = "Spoon",
-                food = "Soup",
-                time = spoon_soup)
+df_ss <- tibble(
+  utensil = "Spoon",
+  food = "Soup",
+  time = spoon_soup
+)
 
-df_fs <- tibble(utensil = "Fork",
-                food = "Soup",
-                time = fork_soup)
+df_fs <- tibble(
+  utensil = "Fork",
+  food = "Soup",
+  time = fork_soup
+)
 ```
 
 [Convert these to a single data frame using the function `bind_rows()`. You can pass any number of data frames as arguments to this function and it will return a single data frame combining all of the rows (assuming the data frames all have the same columns).]{.blue-text}
@@ -315,21 +411,26 @@ df_fs <- tibble(utensil = "Fork",
 df_food <- bind_rows(df_sp, df_fp, df_ss, df_fs)
 ```
 
+### Statistical test
+
 [Fit a linear model with `time` as the response variable and `utensil`, `food` and their interaction as explanatory variables.]{.blue-text}
 
 ```{r lm_forky_spoony}
-lm_lunch <- lm(time ~ utensil * food, data = df_food) 
+lm_lunch <- lm(time ~ utensil * food, data = df_food)
 ```
 
 [Run an ANOVA on the linear model.]{.blue-text}
 
 ```{r anova_forky_spoony}
 anova_lunch <- anova(lm_lunch)
-print (anova_lunch)
+print(anova_lunch)
 ```
 
-```{r get_vals_forky_spoony, include=FALSE}
+:::
 
+### Conclusion
+
+```{r get_vals_forky_spoony, include=FALSE}
 # Utensil
 utensil_df <- anova_lunch["utensil", "Df"]
 utensil_f <- round(anova_lunch["utensil", "F value"], 2)
@@ -352,10 +453,7 @@ interaction_p <- anova_lunch["utensil:food", "Pr(>F)"]
 resid_df <- anova_lunch["Residuals", "Df"]
 ```
 
-:::
-
 Here, we need to report the F-statistic, degrees of freedom and p-value for both explanatory variables and for the interaction.
-
 
 ::: {.highlight-box}
 There is evidence that eating time differs according to the utensil used ($F$(`r utensil_df`, `r resid_df`) = `r utensil_f`, $p$ = `r formatC(utensil_p, format = "e", digits = 2)`) and according to the type of food being eaten ($F$(`r food_df`, `r resid_df`) = `r food_f`, $p$ = `r formatC(food_p, format = "e", digits = 2)`).
@@ -374,7 +472,6 @@ Change the population means so that there is no interaction between food and ute
 For example
 
 ```{r simulate_no_interation_forky_spoony}
-
 # Simulate the populations
 spoon_pasta <- rnorm(10, 8, 3)
 fork_pasta <- rnorm(10, 12, 3)
@@ -382,36 +479,48 @@ spoon_soup <- rnorm(10, 14, 3)
 fork_soup <- rnorm(10, 18, 3)
 
 # Make the data frames
-df_sp <- tibble(utensil = "Spoon",
-                food = "Pasta",
-                time = spoon_pasta)
+df_sp <- tibble(
+  utensil = "Spoon",
+  food = "Pasta",
+  time = spoon_pasta
+)
 
-df_fp <- tibble(utensil = "Fork",
-                food = "Pasta",
-                time = fork_pasta)
+df_fp <- tibble(
+  utensil = "Fork",
+  food = "Pasta",
+  time = fork_pasta
+)
 
-df_ss <- tibble(utensil = "Spoon",
-                food = "Soup",
-                time = spoon_soup)
+df_ss <- tibble(
+  utensil = "Spoon",
+  food = "Soup",
+  time = spoon_soup
+)
 
-df_fs <- tibble(utensil = "Fork",
-                food = "Soup",
-                time = fork_soup)
+df_fs <- tibble(
+  utensil = "Fork",
+  food = "Soup",
+  time = fork_soup
+)
 
 # Combine the data frames
 df_food <- bind_rows(df_sp, df_fp, df_ss, df_fs)
+```
 
+### Statistical Test
+
+```{r lm_forky_spoony_bonus}
 # Fit the linear model
-lm_lunch <- lm(time ~ utensil * food, data = df_food) 
+lm_lunch <- lm(time ~ utensil * food, data = df_food)
 
 # Run the ANOVA
 anova_lunch <- anova(lm_lunch)
-print (anova_lunch)
-
+print(anova_lunch)
 ```
 
-```{r get_vals_forky_spoony_bonus, include=FALSE}
+### Conclusion
 
+```{r get_vals_forky_spoony_bonus, include=FALSE}
 # Utensil
 utensil_df <- anova_lunch["utensil", "Df"]
 utensil_f <- round(
@@ -440,6 +549,7 @@ interaction_p <- anova_lunch["utensil:food", "Pr(>F)"]
 resid_df <- anova_lunch["Residuals", "Df"]
 ```
 
+
 ::: {.highlight-box}
 There is evidence that eating time differs according to the utensil used ($F$(`r utensil_df`, `r resid_df`) = `r utensil_f`,
 $p$ = `r formatC(utensil_p, format = "e", digits = 2)`) and according to the type of food being eaten ($F$(`r food_df`, `r resid_df`) = `r food_f`, $p$ = `r formatC(food_p, format = "e", digits = 2)`).
@@ -451,28 +561,88 @@ However, there is no evidence of an interaction between utensil and food ($F$(`r
 :::
 :::
 
-Now, let's try this with our real data
+### Hypotheses
+
+Now, let's try this with our real data. Here, our hypotheses are:
+
+Dominant insect family:
+
+* Null: There is no association between mean insect mass and dominant insect family.
+* Alternative: Mean insect mass is associated with dominant insect family.
+
+Dominant flower order:
+
+* Null: There is no association between mean insect mass and dominant flower order, once dominant insect family has been taken into account.
+* Alternative: Mean insect mass is associated with dominant flower order, once dominant insect family has been taken into account.
+
+Interaction:
+
+* Null: The association between dominant insect family and mean insect mass does not vary depending on dominant flower order.
+* Alternative: The association between dominant insect family and mean insect mass varies depending on dominant flower order.
 
 ::: {.callout-exercise #ex-anova_interaction}
 
 In your `pollinators.qmd` Quarto file:
 
+* Draw a box plot showing the distribution of mean insect mass by dominant family and dominant flower order. You will need to convert the data to long format and use the `facet_wrap()` function to divide it into two separate plots. For this plot there's no need to worry about the interaction.
 * Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.
 * Run an ANOVA on this model and view the results.
 * Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.
 
 ::: {.callout-answer collapse="true" #ex_anova_twoway_ans}
 
+### Plot
+
+[Draw a box plot showing the distribution of mean insect mass by dominant family and dominant flower order. You will need to convert the data to long format and use the `facet_wrap()` function to divide it into two separate plots. For this plot there's no need to worry about the interaction.]{.blue-text}
+
+```{r mass_fam_plot}
+# Take the relevant columns from the data frame
+mass_fam_sel <- site_metadata |>
+  select(
+    x1km_square, dominant_family, dominant_flower_order,
+    mean_insect_mass
+  )
+
+# Pivot to long format
+mass_fam_long <- mass_fam_sel |>
+  pivot_longer(
+    c(
+      dominant_family,
+      dominant_flower_order
+    ),
+    names_to = "variable",
+    values_to = "value"
+  )
+
+# Plot the boxplot
+ggplot(
+  mass_fam_long,
+  aes(x = value, y = mean_insect_mass, fill = variable)
+) +
+  geom_boxplot() +
+  facet_wrap(~variable, scales = "free_x") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) # rotate x labels so they fit
+```
+
+### Statistical test
+
+[Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.]{.blue-text}
+
+[Run an ANOVA on this model and view the results.]{.blue-text}
+
 ```{r mass_fam_flower_lm}
 # Fit the model
 mass_fam_flower_lm <- lm(mean_insect_mass ~ dominant_family * dominant_flower_order,
-                         data = site_metadata)
+  data = site_metadata
+)
 # Run the ANOVA
 mass_fam_flower_anova <- anova(mass_fam_flower_lm)
 
 print(mass_fam_flower_anova)
 ```
 
+### Conclusion
 
 ```{r get_vars_mass_fam_flower, include=FALSE}
 # Dominant insect family
@@ -513,6 +683,8 @@ interaction_p <- mass_fam_flower_anova[
 resid_df <- mass_fam_flower_anova["Residuals", "Df"]
 ```
 
+[Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.]{.blue-text}
+
 :::{.highlight-box}
 
 There is evidence that mean insect mass differs among dominant insect families ($F$(`r family_df`, `r resid_df`) = `r family_f`,
@@ -527,31 +699,18 @@ There is also no evidence of an interaction between dominant insect family and d
 :::
 :::
 
-
-## Linear Regression
-
-We've now used all sorts of linear models, but how about a standard linear regression between two continuous variables? You already have the skills needed to do this - you can fit the model using `lm()` and then view the results using `summary()`, and you basically know how to interpret the results. 
-
-As we discussed in the previous section, for a linear model we should report the following:
-
-* **Coefficient (slope):** `Estimate`
-* **Test statistic:** `t value`
-* **Degrees of freedom:** residual degrees of freedom
-* **p-value:** `Pr(>|t|)`
-* **Proportion of variation explained:** `Multiple R-squared`
-
-For a linear regression with two continuous variables, we can also report the amount the mean of the response variable changes when the explanatory variable changes by one unit.
-
-Let's use the pollinator data again and look at a straightforward regression question - how is total annual precipitation (column `annual_total_prec`) associated with mean annual temperature (column `annual_mean_temp`)?
-
 :::{.callout-exercise #ex_temp_prec}
 
 In your `pollinators.qmd` Quarto file:
+
 * Fit a linear model to the `site_metadata` data frame with `annual_total_prec` as the response variable and `annual_mean_temp` as the explanatory variable.
 * Use the function `summary()` to view the results.
 * Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.
 
 ::: {.callout-answer collapse="true" #ex_temp_prec_ans}
+
+### Statistical test
+
 [Fit a linear model to the `site_metadata` data frame with `annual_total_prec` as the response variable and `annual_mean_temp` as the explanatory variable.]{.blue-text}
 
 [Use the function `summary()` to view the results.]{.blue-text}
@@ -562,13 +721,14 @@ summ_lm_temp_prec <- summary(lm_temp_prec)
 print(summ_lm_temp_prec)
 ```
 ```{r get_vals_temp_prec, include=FALSE}
-
 slope <- summ_lm_temp_prec$coefficients["annual_mean_temp", "Estimate"]
 slope_t <- summ_lm_temp_prec$coefficients["annual_mean_temp", "t value"]
 slope_p <- summ_lm_temp_prec$coefficients["annual_mean_temp", "Pr(>|t|)"]
 slope_df <- summ_lm_temp_prec$df[2]
 r_squared <- summ_lm_temp_prec$r.squared
 ```
+
+### Conclusion
 
 [Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.]{.blue-text}
 
@@ -580,227 +740,4 @@ There is evidence of a negative association between mean annual temperature and 
 :::
 :::
 
-### Multiple linear regression
 
-Just as we included multiple explanatory variables in our ANOVA, we can include multiple continuous explanatory variables in a linear regression. This is called multiple linear regression. We can also add interaction terms.
-
-For example, we could ask if precipitation is associated with temperature, elevation or the interaction between the two, using `annual_total_prec ~ annual_mean_temp * elevation`.
-
-There is one complication here - by default, a multiple regression containing an interaction will determine the association with each explanatory variable **when the value of the other explanatory variables is zero**. This is not the case for an additive model, where the association with each explanatory variable is estimated while holding the other explanatory variables constant.
-
-So, in our case, our model `annual_total_prec ~ annual_mean_temp * elevation` will tell us:
-
-* Is precipitation associated with annual mean temperature when elevation is 0?
-* Is precipitation associated with elevation when annual mean temperature is 0?
-* Does the association between annual mean temperature and precipitation depend on elevation?
-
-The first two questions are not usually quite what we want to ask. Better questions might be:
-
-* Is precipitation associated with annual mean temperature **at the mean elevation**.
-* Is precipitation associated with elevation **at the mean annual temperature**.
-
-We can ask this by **centring** our data for elevation and temperature - subtracting our mean value from all observations to create a new set of centred observations with mean zero. The shape and spread of the variables remains the same, but the model is now answering more useful questions.
-
-Let's add these new columns to our data frame.
-
-```{r centre_elev_temp}
-site_metadata_cent <- site_metadata |>
-  mutate(annual_mean_temp_cent = annual_mean_temp - mean(annual_mean_temp),
-         elevation_cent = elevation - mean(elevation))
-```
-
-Now we can fit our linear model using these new columns.
-
-```{r lm_elev_temp}
-lm_elev_temp <- lm(annual_total_prec ~ annual_mean_temp_cent * elevation_cent, data = site_metadata_cent)
-summ_lm_elev_temp <- summary(lm_elev_temp)
-print (summ_lm_elev_temp)
-```
-```{r get_vals_elev_temp, include=FALSE}
-# Temperature
-temp_coef <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent", "Estimate"]
-temp_t <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent", "t value"]
-temp_p <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent", "Pr(>|t|)"]
-
-# Elevation
-elev_coef <- summ_lm_elev_temp$coefficients["elevation_cent", "Estimate"]
-elev_t <- summ_lm_elev_temp$coefficients["elevation_cent", "t value"]
-elev_p <- summ_lm_elev_temp$coefficients["elevation_cent", "Pr(>|t|)"]
-
-# Interaction
-interaction_coef <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent:elevation_cent", "Estimate"]
-interaction_t <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent:elevation_cent", "t value"]
-interaction_p <- summ_lm_elev_temp$coefficients["annual_mean_temp_cent:elevation_cent", "Pr(>|t|)"]
-
-# Degrees of freedom and R-squared
-lm_df <- summ_lm_elev_temp$df[2]
-lm_r_squared <- summ_lm_elev_temp$r.squared
-```
-
-::: {.highlight-box}
-There is no evidence of an association between mean annual temperature and total annual precipitation at the mean elevation ($b$ = `r round(temp_coef, 2)`, $t$(`r lm_df`) = `r round(temp_t, 2)`, $p$ = `r round(temp_p, 3)`). There is evidence of a positive association between elevation and total annual precipitation at the mean annual temperature ($b$ = `r round(elev_coef, 2)`, $t$(`r lm_df`) = `r round(elev_t, 2)`, $p$ = `r formatC(elev_p, format = "e", digits = 2)`). There is no evidence of an interaction between mean annual temperature and elevation ($b$ = `r round(interaction_coef, 3)`, $t$(`r lm_df`) = `r round(interaction_t, 2)`, $p$ = `r round(interaction_p, 3)`), so there is no evidence that the association between temperature and precipitation changes with elevation. Overall, the model explains `r round(lm_r_squared * 100, 1)`% of the variation in total annual precipitation ($R^2$ = `r round(lm_r_squared, 3)`).
-:::
-
-### Multicollinearity
-
-This result seems strange at first - precipitation was strongly associated with annual mean temperature when we had just one explanatory variable, but now there is no strong association?
-
-Multicollinearity occurs when two or more explanatory variables in a multiple regression are strongly associated with each other.
-
-For example, we are trying to explain variation in precipitation using both temperature and elevation. But if elevation and temperature are closely related - for example, if higher sites tend to be colder - the model is trying to separate the associations with two variables which tend to change together.
-
-* If only temperature is in the model, we are asking - does temperature explain variation in precipitation?
-* If both temperature and elevation are in the model, we are asking - does temperature explain variation in precipitation over and above the variation associated with elevation?
-
-If temperature and elevation are highly correlated, there may not be much independent information with which to separate their associations with precipitation. Consequently, the estimated individual coefficients can become less precise, their standard errors can become larger, and their p-values can increase.
-
-This does not necessarily mean that the multiple regression model is worse at explaining precipitation. Rather, multicollinearity makes it more difficult to determine the individual association between each explanatory variable and the response.
-
-::: {.callout-note .extension #ex-multicollinearity}
-
-We can test how well multiple regression performs by explicitly correlating our explanatory variables.
-
-Since at this point in the practical I think we need a picture of a hedgehog, let's say we want to predict if the weight of a hedgehog in grams is associated with:
-
-1) How much water it drinks per day in millilitres.
-2) How much food it eats per day in grams. 
-
-![A hedgehog eating](images/hedgehog.jpg){#fig-bee width="50%"}
-
-Let's say that:
-* For each 100ml of water the hedgehog drinks per day, its weight is 30g heavier on average.
-* For each 100g of food the hedgehog eats per day, its weight is 50g heavier on average.
-* The effects are additive with no interaction.
-
-
-$$
-\text{weight}_i = 500 + 0.3\,\text{water}_i + 0.5\,\text{food}_i + \epsilon_i
-$$
-First, let's generate some non-correlated data. Let's say hedgehog water intake is a normal distribution with mean 70g and standard deviation 30g and hedgehog food intake is a normal distribution with mean 100g and standard deviation 50g.
-
-
-
-
-
-```{r change_r2_hogs}
-
-n_hedgehogs <- 100
-water_mean <- 70
-water_sd <- 40
-food_mean <- 100
-food_sd <- 50
-noise_mean <- 0
-noise_sd <- 30
-
-res_water <- list()
-res_food <- list()
-res_both <- list()
-
-counter <- 1
-
-water <- rnorm(
-  n_hedgehogs,
-  mean = water_mean,
-  sd = water_sd
-)
-
-water_z <- (water - mean(water)) / sd(water)
-
-noise <- rnorm(
-  n_hedgehogs,
-  mean = noise_mean,
-  sd = noise_sd)
-
-results <- tibble()
-
-for (rsq in seq(0, 0.99, 0.01)){
-
-  
-  food_z <- sqrt(rsq) * water_z +
-    sqrt(1 - rsq) * rnorm(n_hedgehogs)
-  
-  food <- food_mean + food_sd * food_z
-
-  hogs <- 500 + (water * 0.3) + (food * 0.5) + noise
-
-  hog_df <- tibble(
-  water = water,
-  food = food,
-  weight = hogs)
-
-  lm_hogs_both <- summary(lm(weight ~ water + food, data = hog_df))
-
-  results <- bind_rows(
-    results,
-    tibble(
-      rsq = rsq,
-      observed_rsq = cor(water, food)^2,
-      water_estimate = lm_hogs_both$coefficients["water", "Estimate"],
-      water_se = lm_hogs_both$coefficients["water", "Std. Error"],
-      water_p = lm_hogs_both$coefficients["water", "Pr(>|t|)"],
-      food_estimate = lm_hogs_both$coefficients["food", "Estimate"],
-      food_se = lm_hogs_both$coefficients["food", "Std. Error"],
-      food_p = lm_hogs_both$coefficients["food", "Pr(>|t|)"],
-      model_rsq = lm_hogs_both$r.squared
-    ))
-}
-
-```
-```
-
-## Chi-squared
-
-For completeness, let's do a quick chi-squared. Unlike all of our other friends, this is not a linear model!
-
-Chi-squared looks for an association between two categorical variables.
-
-In this imaginary study, researchers looked for the association between seat choice and travel sickness in 160 airline passengers. Here our null hypothesis is that seat choice and travel sickness are independent - knowing someone's seat choice gives us no information about whether they experience travel sickness. Our alternative hypothesis is that there is an association between seat choice and travel sickness.
-
-```{r seats_df}
-seat_df <- tibble(
-  seat_choice = c(rep("window", 80), rep("aisle", 80)),
-  travel_sick = c(
-    rep("yes", 24), rep("no", 56),
-    rep("yes", 10), rep("no", 70)
-  )
-) |> slice_sample(prop = 1)
-```
-
-```{r show_seat_df}
-gt(head(seat_df))
-```
-
-The input for the `chisq.test()` function is a contingency table, showing the number of participants who fell into each combination of categories.
-
-|travel_sickness|aisle|window|
-|---|---|---|
-|yes|count|count|
-|no|count|count|
-
-We already know how to generate these counts from the data using `summarize()` but the `chisq.test()` function is a little picky about the input, so instead we will use another function, `xtabs()`, which is specifically made to use to create contingency tables.
-
-`xtabs()` uses the same formula syntax as many R stats functions, as follows:
-
-```{r cont_table_seats}
-seat_table <- xtabs(
-  ~ seat_choice + travel_sick,
-  data = seat_df
-)
-print(seat_table)
-```
-Now we can run the chi-squared test.
-
-```{r chisq_seats}
-chisq_seats <- chisq.test(seat_table)
-print(chisq_seats)
-```
-
-There is evidence of an association between seat choice and travel sickness.
-
-With the chi-squared test, we can also see the expected counts for each category - the counts we would expect if the null hypothesis were true.
-
-```{r chisq_expected}
-print(chisq_seats$expected)
-```
-
-The chi-squared test compares these expected counts with our observed counts. The greater the differences between the observed and expected counts, the greater the evidence against the null hypothesis.
