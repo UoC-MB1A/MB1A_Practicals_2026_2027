@@ -595,6 +595,9 @@ print (skew_prop_more_than_obs)
 
 The observed skewness is therefore consistent with what we might expect from a sample of this size drawn from a normal distribution - i.e. if the body length of the whole population of *Geotria* is normally distributed.
 
+:::
+:::
+
 ## Review {#sec-summary_0303}
 
 [↑ top](#)

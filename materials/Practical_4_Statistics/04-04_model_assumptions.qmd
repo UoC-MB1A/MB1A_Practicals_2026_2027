@@ -129,7 +129,7 @@ gt(tail(model_diagnostics, 10))
 
 Let's plot the distribution of our residuals.
 
-```{r plot_residuals}
+```{r plot_dist_residuals}
 ggplot(model_diagnostics,
        aes(x = residual)) +
          geom_histogram(bins=15) +
@@ -191,7 +191,7 @@ ggplot(model_diagnostics,
 ```
 These again look broadly consistent with a normal distribution.
 
-```{r plot_qq_ht}
+```{r plot_qq_domfam}
 ggplot(model_diagnostics, aes(sample = residual)) +
   stat_qq() +
   stat_qq_line() +

@@ -302,6 +302,7 @@ This means that, based on this sample, for example, 1.5% of people aged 20-29 wi
 Extend your simulation to calculate the probability that a 24 year old who is HPV positive and has a cervix would be diagnosed with cervical cancer on further testing (assuming prevalence is constant across the 20-29 age group).
 
 ::: {.callout-answer collapse="true" #ex-cc_ans}
+
 ```{r cc_ans}
 results_cc <- tibble()
 prop_cc_given_abnormal <- 0.015
@@ -357,6 +358,7 @@ Under this simplified model, we estimate that `r round(prop_cc*100, 2)`% of HPV-
 
 This is a simplified model designed to explore conditional probability and should not be interpreted as a model of an individual's clinical risk.
 
+:::
 :::
 :::
 

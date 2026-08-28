@@ -678,66 +678,19 @@ $$
 $$
 First, let's generate some non-correlated data. Let's say hedgehog water intake is a normal distribution with mean 70g and standard deviation 30g and hedgehog food intake is a normal distribution with mean 100g and standard deviation 50g.
 
-```{r weight_hedgehog}
 
 
 
-water <- rnorm(
-  n_hedgehogs,
-  mean = water_mean,
-  sd = water_sd
-)
-
-food <- rnorm(
-  n_hedgehogs,
-  mean = food_mean,
-  sd = food_sd
-)
-
-noise <- rnorm(
-  n_hedgehogs,
-  mean = noise_mean,
-  sd = noise_sd
-)
-
-hogs <- 500 + (water * 0.3) + (food * 0.5) + noise
-
-hog_df <- tibble(
-  water = water,
-  food = food,
-  weight = hogs
-)
-
-hog_df_long <- hog_df |>
-  pivot_longer(
-    everything(),
-    names_to = 'variable',
-    values_to = 'value')
-
-ggpairs(hog_df)
-```
-```{r lm_hogs_water}
-lm_hogs_water <- lm(weight ~ water, data = hog_df)
-print(summary(lm_hogs_water))
-```
-```{r lm_hogs_food}
-lm_hogs_food <- lm(weight ~ water, data = hog_df)
-print(summary(lm_hogs_food))
-```
-```{r lm_hogs_both}
-lm_hogs_both <- lm(weight ~ water + food, data = hog_df)
-print(summary(lm_hogs_both))
-```
 
 ```{r change_r2_hogs}
 
 n_hedgehogs <- 100
 water_mean <- 70
-water_sd <- 30
+water_sd <- 40
 food_mean <- 100
 food_sd <- 50
 noise_mean <- 0
-noise_sd <- 50
+noise_sd <- 30
 
 res_water <- list()
 res_food <- list()
@@ -760,7 +713,7 @@ noise <- rnorm(
 
 results <- tibble()
 
-for (rsq in seq(0, 0.9, 0.1)){
+for (rsq in seq(0, 0.99, 0.01)){
 
   
   food_z <- sqrt(rsq) * water_z +
