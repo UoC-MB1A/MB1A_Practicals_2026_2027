@@ -28,10 +28,11 @@ book:
     - part: "Practical 4 - Statistics"
       chapters:
         - materials/Practical_4_Statistics/04-01_estimators.qmd
-        - materials/Practical_4_Statistics/04-02_hypothesis_testing.qmd
+        - materials/Practical_4_Statistics/04-02_hypothesis_testing_1.qmd
         - materials/Practical_4_Statistics/04-03_hypothesis_testing_2.qmd
-        - materials/Practical_4_Statistics/04-04_model_assumptions.qmd
-        - materials/Practical_4_Statistics/04-05_hypothesis_testing_exercises.qmd
+        - materials/Practical_4_Statistics/04-04_hypothesis_testing_3.qmd
+        - materials/Practical_4_Statistics/04-05_model_assumptions.qmd
+        - materials/Practical_4_Statistics/04-06_hypothesis_testing_exercises.qmd
     - part: "Practical 5 - Bioinformatics"
       chapters:
         - materials/Practical_5_Bioinformatics/05-00_learning_obj.qmd
