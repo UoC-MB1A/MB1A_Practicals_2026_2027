@@ -1,0 +1,6 @@
+---
+title: "Plan and Learning Objectives"
+format: html
+practical: Practical_6_Further_Statistics
+doc-id: "0600"
+---

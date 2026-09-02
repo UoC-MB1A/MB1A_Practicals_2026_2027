@@ -1,0 +1,12 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0405"
+author: "Katy Brown"
+---
+
+# Part 5: Generalised Linear Models
+
+As you may have noticed, all of our tests so far (except for chi-squared) expect a continous response variable.
+
+However, not everything is continuous! In particular, in many cases we will have presence / absence or 

@@ -1,0 +1,697 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0601"
+author: "Katy Brown"
+---
+
+```{r setup_0601, include=FALSE}
+library(tidyverse)
+library(gt)
+library(maps)
+library(patchwork)
+
+insect_counts <- read_csv("data/insect_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+
+ht_df <- insect_counts |>
+  filter(species == "Halictus tumulorum") |>
+  mutate(detected = n_observed > 0) |>
+  left_join(site_metadata)
+
+ht_temp_df <- ht_df |>
+  select(x1km_square, detected, min_temp_coldest_month)
+
+ht_temp_summ <- ht_temp_df |>
+  group_by(detected) |>
+  summarise(
+    mean = mean(min_temp_coldest_month),
+    sd = sd(min_temp_coldest_month),
+    count = n()
+  )
+
+present <- ht_temp_summ |> filter(detected == TRUE)
+absent <- ht_temp_summ |> filter(detected == FALSE)
+```
+
+# Part 2: Testing Assumptions of Linear Models
+
+As we discussed in @sec-p4_hypothesis_testing_1, T-tests, ANOVA and linear regression are all based on the same general linear-model framework and therefore share many assumptions.
+
+| Assumption | t-test | ANOVA | Linear regression |
+|---|:---:|:---:|:---:|
+| Independent observations | ✓ | ✓ | ✓ |
+| Continuous response | ✓ | ✓ | ✓ |
+| Normally distributed residuals | ✓ | ✓ | ✓ |
+| Constant variance of residuals | ✓* | ✓ | ✓ |
+| Linear relationship with continuous explanatory variables | — | — | ✓ |
+
+* For a standard two-sample t-test, equal variance is assumed. Welch's t-test does not assume equal variance.
+
+In the previous practical, we assumed the assumptions of all our models had been met, however, in reality we should always check this before carrying out a test.
+
+## Independent observations
+
+Each observation should be independent of the others. For example, repeated measurements from the same site should not usually be treated as independent observations. Whether observations are independent depends primarily on how the data were collected. This is a study design step rather than an analysis step.
+
+## Continuous response
+
+The response variable should be continuous, e.g. mass, temperature, distance. Standard linear models assume that the response can vary continuously around the value predicted by the model. Binary responses, categorical responses and counts generally require different types of model.
+
+## Normally distributed residuals
+
+The **residuals** — the differences between the observed values and the values predicted by the model — should be approximately normally distributed.
+
+Let's go back to our first linear model from @sec-p4_hypothesis_testing_1 - for the hypothesis that minimum temperature is different at sites where the bee *H. tumulorum* is present than at sites where it is absent. 
+
+```{r lm_ht, message=FALSE}
+# Regenerate the presence / absence data frame
+ht_df <- insect_counts |>
+  filter(species == "Halictus tumulorum") |>
+  mutate(detected = n_observed > 0) |>
+  left_join(site_metadata)
+
+# Refit the linear model
+linear_model_ht <- lm(min_temp_coldest_month ~ detected,
+  data = ht_df,
+)
+print(summary(linear_model_ht))
+```
+
+Here is the plot again showing the model and the results:
+
+```{r redraw_plot_lm_ht, message=FALSE}
+ht_df <- ht_df |>
+  mutate(detected_num = as.numeric(detected))
+
+overall_mean <- ht_df |>
+  pull(min_temp_coldest_month) |>
+  mean()
+
+ggplot(ht_df, aes(
+  x = detected_num,
+  y = min_temp_coldest_month
+)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() +
+  geom_hline(aes(yintercept = overall_mean), color = "red")
+```
+
+The residuals are the differences between the observed values and the values predicted by the linear model.
+
+In the case of a t-test, the predicted values are just the means for each group - shown here where the blue line intercepts 0 (absent) and 1 (present). The residuals are the differences between the observed values and these means - so the distances between the tips of the blue line and the black dots.
+
+* The mean minimum temperature when *H. tumulorum* is absent is `r pull(absent, mean)`, the residuals for sites where *H. tumulorum* is absent are the observed values minus `r pull(absent, mean)`.
+* The mean minimum temperature when *H. tumulorum* is present is `r pull(present, mean)`, the residuals for sites where *H. tumulorum* is present are the observed values minus `r pull(present, mean)`.
+
+We could calculate these directly, however, we don't need to - R has already calculated them. We can access them by running the function `residuals()` on our existing linear model.
+
+```{r residuals_auto}
+residuals_ht <- residuals(linear_model_ht)
+print(residuals_ht)
+```
+
+We can also access the fitted (predicted) values directly from the model using the function `fitted()`. In this example they are not especially interesting, because there are only two possible fitted values: the mean minimum temperature for sites where *H. tumulorum* is absent and the mean for sites where it is present.
+
+Nevertheless, let's put our fitted and residual values into a data frame, to make our diagnostic plots easier.
+
+We're going to do this several times, so let's write a function to make it easier. We can also add two more outputs of the model which we will need for later plots:
+* Standardised residuals - these express each residual relative to its expected variability, making residuals easier to compare with one another, and can be extracted using the R function `rstandard()`.
+* Square root of absolute value of standardised residuals.
+
+This function takes the linear model fitted to the data as its input and returns a data frame of the diagnostic statistics.
+
+```{r diagnostics_func}
+get_diagnostic_stats <- function(linear_model){
+  diag_stats <- tibble(
+    fitted = fitted(linear_model),
+    residual = residuals(linear_model),
+    standardised_residual = rstandard(linear_model),
+    sqrt_abs_standardised_residual = sqrt(abs(standardised_residual))
+  )
+  return (diag_stats)
+}
+```
+
+Let's try it:
+
+```{r diagnostics_ht}
+ht_diagnostics <- get_diagnostic_stats(linear_model_ht)
+gt(head(ht_diagnostics, 10))
+```
+
+In this case, it would be helpful to know which residual is for which data point, so let's add that back into our data frame.
+
+```{r add_data_diagnostics_ht}
+ht_diagnostics <- ht_diagnostics |>
+  mutate(x1km_square = pull(ht_df, x1km_square),
+         mean_annual_temp = pull(ht_df, min_temp_coldest_month),
+         detected = pull(ht_df, detected),
+         .before = 1)
+gt(head(ht_diagnostics))
+```
+
+Let's plot the distribution of our residuals.
+
+```{r plot_dist_residuals}
+ggplot(
+  ht_diagnostics,
+  aes(x = residual)
+) +
+  geom_histogram(bins = 15) +
+  theme_bw()
+```
+
+These look reasonably close to a normal distribution.
+
+
+### Q-Q Plot
+
+However, there is more we can do to check this assumption.
+
+A Q–Q (quantile–quantile) plot compares two distributions by plotting their quantiles against each other. In this case, the quantiles of the residuals are compared with the theoretical quantiles of a normal distribution. If the residuals are approximately normally distributed, the points should approximately follow the straight line.
+
+To plot the Q-Q plot, we can use the functions `stat_qq()` and `stat_qq_line()`. `stat_qq()` creates the Q–Q plot and `stat_qq_line()` adds a reference line showing the pattern expected if the residuals follow the theoretical distribution.
+
+```{r plot_qq_ht}
+ggplot(ht_diagnostics, aes(sample = residual)) +
+  stat_qq() +
+  stat_qq_line() +
+  theme_bw()
+```
+
+If the points lie approximately along a straight line, the data are reasonably consistent with a normal distribution. Small deviations are expected, particularly at the ends of the plot. Clear systematic patterns, such as strong curvature or points far from the line, suggest that the normality assumption may not be appropriate.
+
+Here the points lie reasonably close to the straight line, so there is no strong evidence that the residuals deviate from a normal distribution.
+
+### How normal is normal?
+
+Linear models are generally robust to moderate deviations from normality, particularly with larger sample sizes. However, substantial deviations from normality or extreme outliers may make hypothesis tests and confidence intervals less reliable.
+
+What does this actually mean?
+
+### Writing a function
+
+We are going to repeat the same steps several times in this exercise, so, let's write another function.
+
+Let's take a vector of data points as the input to our function, and have the function:
+* Put the points into a data frame.
+* Plot a histogram of the distribution of the points.
+* Draw a Q-Q plot.
+
+Note that in this exercise we are just looking whether a set of data points is normally distributed, rather than specifically residuals, so we don't need our diagnostic statistics.
+
+```{r diagnostic_qq_func}
+diag_normal <- function(data_points) {
+  # Make the data frame
+  df_points <- tibble(observations = data_points)
+  # Plot a histogram of the distribution of the points
+  histo <- ggplot(
+    df_points,
+    aes(x = observations)
+  ) +
+    geom_histogram(bins = 25)
+  # Plot the Q-Q plot
+  qq <- ggplot(
+    df_points,
+    aes(sample = observations)
+  ) +
+    stat_qq() +
+    stat_qq_line() +
+    theme_bw()
+  # todo_katy - teach patchwork somewhere
+  return (histo + qq)
+}
+```
+
+
+#### Normal distribution
+
+First, let's simulate a sample of 30 data points drawn from a normal distribution. Let's say these are moustache lengths from a sample of schnauzer dogs and they have a mean of 20 cm and a standard deviation of 5 cm.
+
+![A schnauzer](images/dog1.jpg){#fig-dog width="50%"}
+
+::: {.callout-exercise #ex-normality_norm}
+
+In your `prac6_exercises.qmd` Quarto file:
+
+* Generate 30 data points from a normal distribution with mean 20cm and standard deviation 5cm.
+* Pass your simulated data to the `diag_normal()` function to plot its distribution and Q-Q plot.
+
+Repeat the analysis with 100 and 1000 data points.
+
+::: {.callout-answer collapse="true" #ex-normality_norm_ans}
+
+```{r plot_normality}
+# Generate data
+moustache_lengths <- rnorm(30, 20, 5)
+
+# Run diag_normal
+norm_30 <- diag_normal(moustache_lengths)
+print (norm_30)
+```
+[Repeat the analysis with 100 data points.]{.blue-text}
+
+```{r normality_100}
+moustache_lengths <- rnorm(100, 20, 5)
+
+norm_100 <- diag_normal(moustache_lengths)
+print (norm_100)
+```
+
+[Repeat the analysis with 1000 data points.]{.blue-text}
+
+```{r normality_1000}
+# Generate data
+moustache_lengths <- rnorm(1000, 20, 5)
+
+norm_1000 <- diag_normal(moustache_lengths)
+print (norm_1000)
+```
+
+:::
+:::
+
+With only 30 data points, the shape of the sample may not look particularly normal, even though the data were explicitly drawn from a normal distribution. The Q–Q plot may also show noticeable deviations from the line simply due to random sampling. As the sample size increases to 100 and then 1000, the shape of the sample should generally become more clearly normal and the points on the Q–Q plot should tend to follow the line more closely.
+
+
+#### Mixed populations
+
+Now, let's say some schnauzers have a gene mutation which causes excessive moustache growth - on average, their moustaches are 20cm longer than standard schnauzers. This mutation occurs in 10% of dogs.
+
+![A schnauzer with a long moustache](images/dog2.jpg){#fig-dog2 width="50%"}
+
+::: {.callout-exercise #ex-normality_mixed}
+
+In your `prac6_exercises.qmd` Quarto file:
+
+* Generate 900 data points from a normal distribution with mean 20cm and SD 5cm.
+* Generate 100 data points from a normal distribution with mean 40cm and SD 10cm.
+* Combine these points into a single vector
+  
+  To do this, you can use the function `c()`, for example if your vectors are named `short_hair_dogs` and `long_hair_dogs` you could combine them as follows
+  
+  ```{r make_var_combine_vectors, include=FALSE}
+short_hair_dogs <- rnorm(900, 20, 5)
+long_hair_dogs <- rnorm(100, 40, 10)
+  ```
+
+  ```{r combine_vectors}
+all_dogs <- c(short_hair_dogs, long_hair_dogs)
+  ```
+* Pass your simulated data to the `diag_normal()` function to plot its distribution and Q-Q plot.
+
+::: {.callout-answer collapse="true" #ex-normality_mixed_ans}
+
+```{r normality_mixed}
+# Generate data
+moustache_lengths_short <- rnorm(900, 20, 5)
+moustache_lengths_long <- rnorm(100, 40, 10)
+
+moustache_lengths_mixed <- c(moustache_lengths_short, moustache_lengths_long)
+
+# Run diag_normal
+mixed_diag <- diag_normal(moustache_lengths_mixed)
+print (mixed_diag)
+```
+:::
+:::
+
+This time, you should be able to see the systematic deviation from normality towards the right-hand side of the Q–Q plot. Unlike the small random deviations we saw when sampling from a normal distribution, a number of consecutive points systematically move away from the line.
+
+#### Skewed data
+
+Now, let's see what happens if our data is skewed. For example, most of our dogs have been to the hairdresser for a trim, with a few exceptions, so the data is skewed to the right (Note: A right skew means that the right-hand tail of the distribution is longer; most observations are therefore towards the left.)
+
+![A schnauzer with a neat trim](images/dog3.jpg){#fig-dog3 width="50%"}
+
+This data would not be an exponential distribution - these dogs' moustache lengths are not the waiting times between events in a Poisson distribution. However, an exponential distribution is a good shortcut to a right-skewed distribution.
+
+::: {.callout-exercise #ex-normality_exp}
+In your `prac6_exercises.qmd` Quarto file:
+
+* Generate 1000 data points from an exponential distribution with a rate parameter of 0.05.
+* Pass your simulated data to the `diag_normal()` function to plot its distribution and Q-Q plot.
+
+::: {.callout-answer collapse="true" #ex-normality_exp_ans}
+
+```{r normality_exp}
+# Generate data
+moustache_lengths_skewed <- rexp(1000, 0.05)
+
+# Run diag_normal
+skewed_diag <- diag_normal(moustache_lengths_skewed)
+print (skewed_diag)
+```
+
+:::
+:::
+
+Right-skewed data produces a characteristic systematic curve in the Q–Q plot. The largest observations lie increasingly above the Q–Q line, reflecting the long right tail of the distribution. Left-skewed data produces the opposite pattern.
+
+#### Data with few extremes 
+
+Some non-normal distributions are symmetric but have fewer extreme observations than a normal distribution. These are described as having lighter tails than the normal distribution, or as being platykurtic.
+
+Perhaps very long and very short moustaches have gone out of style. We can recreate this using a uniform distribution.
+
+::: {.callout-exercise #ex-normality_unif}
+In your `prac6_exercises.qmd` Quarto file:
+
+* Generate 1000 data points from a uniform distribution with a minimum of 10 and a maximum of 30.
+* Pass your simulated data to the `diag_normal()` function to plot its distribution and Q-Q plot.
+
+::: {.callout-answer collapse="true" #ex-normality_unif_ans}
+
+```{r normality_unif}
+# Generate data
+moustache_lengths_few_extremes <- runif(1000, 10, 30)
+
+few_extremes_diag <- diag_normal(moustache_lengths_few_extremes)
+print (few_extremes_diag)
+```
+:::
+:::
+
+This is known as an S-shape curve and is indicative of the results having fewer extreme values than would be expected for a normal distribution.
+
+#### Data with lots of extremes 
+
+Some non-normal distributions are symmetric but have more extreme observations than a normal distribution. These are described as having heavier tails than the normal distribution, or as being leptokurtic.
+
+Perhaps very long and very short moustaches have come back into style amongst a few fashionable dogs. We can recreate this using a t-distribution with low degrees of freedom.
+
+::: {.callout-exercise #ex-normality_t}
+In your `prac6_exercises.qmd` Quarto file:
+
+* Generate 1000 data points from a t-distribution with 3 degrees of freedom.
+* Pass your simulated data to the `diag_normal()` function to plot its distribution and Q-Q plot.
+
+::: {.callout-answer collapse="true" #ex-normality_t_ans}
+
+```{r normality_t}
+# Generate data
+moustache_lengths_many_extremes <- rt(1000, 3)
+
+# Rescale
+moustache_lengths_many_extremes <- (moustache_lengths_many_extremes * 2) + 30
+
+# Run diag_normal
+many_extremes_diag <- diag_normal(moustache_lengths_many_extremes)
+print (many_extremes_diag)
+```
+This is another S-shaped curve in the opposite direction, and is indicative of the results having more extreme values than would be expected for a normal distribution.
+
+
+:::
+:::
+
+Notice that we can now repeat the same analysis on different datasets with a single function call, rather than repeating all of the code used to construct the plots.
+
+## Constant variance of residuals
+
+Constant variance (or homoscedasticity) is the assumption that the amount of unexplained variation is roughly the same across the range of values predicted by the model.
+
+For our model comparing sites where *H. tumulorum* was detected or not detected, there are only two fitted values: the mean for each group. Therefore, we can initially investigate this assumption simply by comparing the spread of residuals in the two groups.
+
+```{r plot_variance_ht}
+ggplot(
+  ht_diagnostics,
+  aes(x = residual)
+) +
+  geom_histogram(bins = 15) +
+  facet_wrap(~detected) +
+  theme_bw()
+```
+These look reasonably similar, especially given the number of observations in each group.
+
+We can also look directly at the standard deviation for the two groups.
+
+```{r view_variance_ht}
+summ_ht <- ht_df |>
+  group_by(detected) |>
+  summarise(sd = sd(min_temp_coldest_month))
+gt(summ_ht)
+```
+
+Again, these values are reasonably similar.
+
+### Residuals vs fitted
+
+When the explanatory variable is continuous, we do not have distinct groups in which to compare the spread of residuals. Instead, we often plot our fitted values against our residuals.
+
+We can visualise this using the results of our linear regression in the previous part of the practical, where we looked at the relationship between annual mean temperature and annual total precipitation.
+
+First, let's recreate this linear model and re-draw our plot.
+
+
+```{r temp_prec_rerun}
+lm_temp_prec <- lm(
+  annual_total_prec ~ annual_mean_temp,
+  data = site_metadata
+)
+print(summary(lm_temp_prec))
+```
+
+```{r temp_prec_replot}
+ggplot(
+  site_metadata,
+  aes(
+    x = annual_mean_temp,
+    y = annual_total_prec
+  )
+) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+As for the categorical data, we can extract our fitted and residual values from the model. In this case the fitted values are the values which would be on the line and the residuals are the distances between the black dots and the line.
+
+::: {.callout-exercise #ex-temp_prec_diag}
+
+In your `pollinators.qmd` Quarto file:
+
+* Create a diagnostic data frame for the `lm_temp_prec` fitted model using the function `get_diagnostic_stats()`.
+* Plot a scatter plot with fitted values on the x axis and residual values on the y axis.
+* Add a smoothed trend line to the scatter plot using the function `geom_smooth()` with the argument `se = FALSE`. This will draw a smoothed trend line (not a regression line) through the data, making systematic patterns easier to see. We previously used this function to draw a regression line by adding the argument `method = "lm"`, but this is not what we want here.
+
+::: {.callout-answer collapse="true" #ex-temp_prec_diag_ans}
+
+[Create a diagnostic data frame for the `lm_temp_prec` fitted model using the function `get_diagnostic_stats()]{.blue-text}
+
+```{r temp_prec_diag_ans1}
+temp_prec_diagnostics <- get_diagnostic_stats(lm_temp_prec)
+gt(head(temp_prec_diagnostics))
+```
+
+[Plot a scatter plot with fitted values on the x axis and residual values on the y axis.]{.blue-text}
+
+```{r temp_prec_diag_ans2}
+ggplot(
+  temp_prec_diagnostics,
+  aes(x = fitted, y = residual)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_bw()
+```
+:::
+:::
+
+If the constant variance assumption is met, the vertical spread of the residuals should be roughly similar across the range of fitted values. Here, there is no obvious increase or decrease in the spread of the residuals, so the assumption of constant variance appears reasonable.
+
+### Scale-Location
+
+An alternative diagnostic is the Scale–Location plot. This plots the square root of the absolute standardised residuals against the fitted values. Standardised residuals express each residual relative to its expected variability, making residuals easier to compare with one another.
+
+In some cases, this makes changes in residual variability easier to see
+
+We already calculated these values above using our `get_diagnostic_stats()` function - we extracted them from the model using the R function `rstandard()`, then applied the `abs()` function to get the absolute values, then the `sqrt()` function to get the square root.
+
+We can now plot the square root of the absolute values of the standardised residuals against our fitted values.
+
+```{r plot_diag_stand_temp_prec}
+ggplot(
+  temp_prec_diagnostics,
+  aes(x = fitted, y = sqrt_abs_standardised_residual)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_bw()
+```
+
+Again, this looks like the equal variance assumption has been met.
+
+If the assumption of equal variance is not met, the plot will look a bit different.
+
+For example, let's simulate a dataset for where plant biomass is the response variable and age is the explanatory variable, and increase the standard deviation with increasing age. It is common in biological systems for the magnitude of the variability in a measurement to naturally increase as the expected value increases.
+
+```{r simulate_plant_biomass}
+plant_data <- tibble(
+  age = runif(200, 1, 10),
+  biomass = 10 + 5 * age +
+    rnorm(200, mean = 0, sd = age * 2)
+)
+```
+
+::: {.callout-exercise #ex_plant_biomass}
+
+In your `prac6_exercises.qmd` Quarto file:
+
+* Fit a linear model to this data.
+* Make a diagnostic data frame based on the fitted model using the `get_diagnostic_stats()` function.
+* Plot fitted against residual values, add a smoothed trend line to the plot.
+* Plot fitted against the square root of the absolute standardised residual values, add a smoothed trend line to the plot.
+
+::: {.callout-answer collapse="true" #ex_plant_biomass_ans}
+
+[Fit a linear model to this data.]{.blue-text}
+
+```{r plant_biomass_ans1}
+lm_plant_biomass <- lm(biomass ~ age, plant_data)
+print(summary(lm_plant_biomass))
+```
+
+[Make a diagnostic data frame based on the fitted model using the `get_diagnostic_stats()` function.]{.blue-text}
+
+```{r plant_biomass_ans2}
+plant_biomass_diagnostics <- get_diagnostic_stats(lm_plant_biomass)
+gt(head(plant_biomass_diagnostics))
+```
+
+[Plot fitted against residual values.]{.blue-text}
+
+```{r plant_biomass_ans3}
+ggplot(
+  plant_biomass_diagnostics,
+  aes(x = fitted, y = residual)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_bw()
+```
+
+[Plot fitted against scaled residual values.]{.blue-text}
+
+```{r plant_biomass_ans4}
+ggplot(
+  plant_biomass_diagnostics,
+  aes(x = fitted, y = sqrt_abs_standardised_residual)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_bw()
+```
+:::
+:::
+
+In the first plot you can see a characteristic “funnel” shape, with the spread of the residuals increasing as the fitted values increase. This suggests that the constant-variance assumption is not met. In the Scale–Location plot, the smooth line increases as the fitted values increase, again indicating that residual variability increases across the fitted values.
+
+### Linear relationship with continuous explanatory variables
+
+For linear regression, we also assume that the relationship between the response variable and each continuous explanatory variable is appropriately described as linear.
+
+The Residuals vs Fitted plot can be re-used to assess this assumption. If a linear model is appropriate, there should be no systematic pattern in the residuals, and the smoothed line should remain approximately horizontal around zero. A curved pattern suggests that the relationship has not been adequately described by a straight line.
+
+Let's revisit our temperature vs precipitation residuals vs fitted plot again.
+
+```{r temp_prec_diag_plot_redo}
+ggplot(
+  temp_prec_diagnostics,
+  aes(x = fitted, y = residual)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_bw()
+```
+
+Here, the smoothed line shows some curvature rather than remaining completely horizontal around zero. This suggests that the relationship may not be perfectly linear, although the deviations are relatively modest and are particularly pronounced towards the ends of the range where there are fewer observations.
+
+Let's also look at our plant biomass data again:
+
+```{r plant_biomass_plot_redo}
+ggplot(
+  plant_biomass_diagnostics,
+  aes(x = fitted, y = residual)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_bw()
+```
+
+Here, although the variance is not constant, there is no obvious systematic curvature in the residuals. The linearity assumption therefore appears reasonable.
+
+Let's deliberately simulate a non-linear relationship, by making our y value a function of $x^2$, plus some random noise.
+
+```{r curved_sim}
+curved_data <- tibble(
+  x = runif(100, 0, 10),
+  y = x^2 + rnorm(100, 0, 5)
+)
+
+curved_model <- lm(y ~ x, data = curved_data)
+```
+
+If we plot the residual vs fitted plot, it is clear that there is an issue.
+
+```{r}
+curved_diagnostics <- get_diagnostic_stats(curved_model)
+
+ggplot(curved_diagnostics, aes(x = fitted, y = residual)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_bw()
+```
+
+The smoothed line here is clearly a curve, suggesting that the relationship is not linear. A simple linear model may therefore not fully describe the relationship between these variables.
+
+## Influential observations
+
+The assumptions we have considered so far apply to the model as a whole. However, individual observations can also have a large influence on the results of a linear model.
+
+An observation has high **leverage** if it has an unusual value, or combination of values, for the explanatory variables.
+
+An observation with high leverage does not necessarily cause a problem. However, an observation that has both high leverage and a large residual may have a substantial influence on the fitted model.
+
+We need to add two more columns to our diagnostics for our temperature / precipitation regression:
+
+* Leverage - a measure of the unusualness of the value of the explanatory variable (or combination of variables).
+* Cook's distance - a measure of how much the regression would change if this point was not included
+
+We can extract both of these from the model, using the functions `hatvalues()` for leverage and `cooks.distance()` for Cook's distance.
+
+```{r temp_prec_diagnostics_influ}
+temp_prec_diagnostics_influ <- temp_prec_diagnostics |>
+  mutate(
+    leverage = hatvalues(lm_temp_prec),
+    cooks_distance = cooks.distance(lm_temp_prec),
+  )
+gt(head(temp_prec_diagnostics_influ))
+```
+
+We then plot our standardised residuals against leverage and use point size to represent Cook's distance.
+
+```{r temp_prec_diagnostics_influ_plot}
+ggplot(
+  temp_prec_diagnostics_influ,
+  aes(
+    x = leverage,
+    y = standardised_residual
+  )
+) +
+  geom_point(aes(size = cooks_distance)) +
+  theme_bw()
+```
+
+The largest points have the greatest Cook's distances and therefore have the greatest influence on the fitted model. There are several observations with relatively high leverage or relatively large residuals, but no single observation appears to have an exceptionally large influence on the model.
+
+## Plotting linear models using base R
+
+So far, we have always used ggplot for plotting in R in these practicals. However, in this case, there is a shortcut to producing all four of these diagnostic plots in base R - we can just call the function `plot()` and then give the linear model as an argument.
+
+```{r plot_with_base_r}
+plot(lm_temp_prec)
+```
+
+The information in these plots is very similar to the plots we have produced manually, but it can be quicker to generate them using this simple function.

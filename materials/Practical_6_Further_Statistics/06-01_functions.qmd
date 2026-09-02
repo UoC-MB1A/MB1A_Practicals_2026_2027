@@ -1,0 +1,240 @@
+---
+format: html
+practical: Practical_6_Further_Statistics
+doc-id: "0601"
+author: "Katy Brown"
+---
+
+
+```{r setup_0601, include=FALSE}
+library(tidyverse)
+library(gt)
+```
+
+# Part 1: Functions {#sec-p1_functions}
+::: {.callout-note .partmenu #parts-0601}
+## Sections
+
+- @sec-dataset06
+- @sec-writing_functions
+- @sec-process_cancer_data
+- @sec-summary_0601
+:::
+
+:::{.callout-tip .objectives #objectives-0601}
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Understand what functions are and when they are used. 
+* Write functions to automate aspects of your analysis.
+* Use a function to run a multi-step analysis on a data frame.
+
+:::
+
+In this practical, you will need one Quarto documents:
+
+* `prac6_exercises.qmd` for basic exercises
+
+## Writing functions {#sec-writing_functions}
+
+In the practical course so far, we have used many of the different **functions** (see @sec-functions) which are built into R and provided by additional packages.
+
+However, it is also possible to **write your own functions**. This means you can use the same set of instructions multiple times, possibly with different inputs.
+
+Functions have several advantages:
+
+* Using the same code again saves time.
+* If you want to change something in the code, you only have to change it once.
+* Because you are writing less code, you are less likely to make mistakes.
+
+Here is a simple example of a function, to calculate the equivalent age of a dog if it were a human, its age in *dog years*. According to [the BBC](https://www.bbc.co.uk/news/magazine-22479412), for a medium dog the calculation is:
+
+$$
+d = 21 + \left(4 \times (\text{h} - 2)\right)
+$$
+
+Where *d* is the age in dog years and *h* is age in human years.
+
+We can write a function to calculate this. We define a function using the function `function()`. It is best to give the function a descriptive name.
+
+The steps of the function are then written in curly brackets (`{}`) on the following lines.
+
+The `return` statement defines what the **output** of the function will be.
+
+```{r first_function}
+human_years_to_dog_years <- function(age_in_human_years) {
+  age_in_dog_years <- 21 + (4 * (age_in_human_years - 2))
+  return(age_in_dog_years)
+}
+```
+
+So here we are saying:
+
+* <code>[human_years_to_dog_years <- function(age_in_human_years)]{.orange-text}</code>: I am defining a function, it is called `human_years_to_dog_years` and takes one argument, `age_in_human_years`.
+* <code>[{]{.orange-text}</code>: Here are the steps.
+* <code>[age_in_dog_years <- 21 + (4 * (age_in_human_years - 2))]{.orange-text}</code>: Run this equation on the variable `age_in_human_years` and store the result as the variable `age_in_dog_years`.
+* <code>[return (age_in_dog_years)]{.orange-text}</code>: Return the value of the variable `age_in_dog_years` as the output of the function
+* <code>[}]{.orange-text}</code>: That's all.
+
+Let's use our function to calculate the age in dog years of some dogs.
+
+Monty is 6 in human years.
+
+```{r dog_age_1}
+print(human_years_to_dog_years(6))
+```
+
+
+Noodle is 2 in human years:
+
+```{r dog_age_2}
+print(human_years_to_dog_years(2))
+```
+
+We can also apply our function to a column in a data frame.
+
+Let's say we have this data frame of dogs.
+
+```{r dog_tibble}
+dog_data <- tibble(
+  Name = c(
+    "Biscuit",
+    "Snowball",
+    "Pickle",
+    "Artemis",
+    "Bert"
+  ),
+  Age_Human_Years = c(6, 1, 12, 4, 15)
+)
+gt(dog_data)
+```
+
+Using our `human_years_to_dog_years()` function, we can calculate the age in dog years of each dog.
+
+[comment]: todo_katy link to the mutate explanation once I've written it.
+
+::: {.callout-note #note-mutate}
+
+Remember that the `mutate()` function allows us to create a new column in a data frame by applying a function to an existing column.
+:::
+
+```{r dog_years_df}
+dog_data_updated <- dog_data |>
+  mutate(Age_Dog_Years = human_years_to_dog_years(Age_Human_Years))
+
+gt(dog_data_updated)
+```
+
+
+There are two important things to learn about functions:
+
+**1. In order to run the function, you need to call it**
+
+So, if I just run this code:
+
+```{r function_call_1}
+human_years_to_dog_years <- function(age_in_human_years) {
+  age_in_dog_years <- 21 + (4 * (age_in_human_years - 2))
+  return(age_in_dog_years)
+}
+```
+
+R now knows this function exists, but it hasn't been used yet.
+
+If we want to actually run it, we need to add a **function call**.
+
+```{r function_call_2}
+human_years_to_dog_years <- function(age_in_human_years) {
+  age_in_dog_years <- 21 + (4 * (age_in_human_years - 2))
+  return(age_in_dog_years)
+}
+# function call
+print(human_years_to_dog_years(10))
+```
+
+
+**2. Variables you create inside a function only exist inside the function.**
+
+So, the following will work - inside the function, between the curly brackets, we can access the variable `age_in_dog_years`.
+
+```{r function_vars1}
+human_years_to_dog_years <- function(age_in_human_years) {
+  print(paste("Age in human years:", age_in_human_years))
+  age_in_dog_years <- 21 + (4 * (age_in_human_years - 2))
+  return(age_in_dog_years)
+}
+# function call
+print(paste("Age in dog years:", human_years_to_dog_years(10)))
+```
+
+But this will not work, because outside of the function, the variable `age_in_dog_years` does not exist.
+
+```{r function_vars2, error=TRUE}
+human_years_to_dog_years <- function(age_in_human_years) {
+  age_in_dog_years <- 21 + (4 * (age_in_human_years - 2))
+  return(age_in_dog_years)
+}
+result <- human_years_to_dog_years(10)
+print(paste("Age in human years:", age_in_dog_years))
+```
+
+:::{.callout-exercise #ex-dog_function}
+
+In your `prac6_exercises.qmd` Quarto document, write a function to convert dog years to human years (the reverse of the above). Round the answer to the nearest whole number.
+
+Apply your function to the following:
+
+* Billy, a human aged 180 dog years
+* Ahmed, a human aged 44 dog years
+* The `Age_Dog_Years` column of the following data frame of four humans:
+
+```{r human_tibble}
+human_data <- tibble(
+  Name = c(
+    "Aisha",
+    "Mateo",
+    "Priya",
+    "Daniel"
+  ),
+  Age_Dog_Years = c(76, 222, 239, 123)
+)
+gt(human_data)
+```
+
+::: {.callout-note .copycode #copy-libs_tcga}
+### Include this code
+
+Include this code at the top of your `prac6_exercises.qmd` Quarto file.
+
+```{r libraries_tcga}
+library(tidyverse)
+library(gt)
+```
+:::
+
+::: {.callout-answer collapse="true" #dog_function_ans}
+```{r ex-dog_function_ans1}
+dog_years_to_human_years <- function(age_in_dog_years) {
+  age_in_human_years <- ((age_in_dog_years - 21) / 4) + 2
+  return(round(age_in_human_years))
+}
+
+print(paste(
+  "Billy is", dog_years_to_human_years(180),
+  "human years old"
+))
+print(paste(
+  "Ahmed is", dog_years_to_human_years(44),
+  "human years old"
+))
+```
+
+```{r ex-dog_function_ans2}
+human_data_updated <- human_data |>
+  mutate(Age_Human_Years = dog_years_to_human_years(Age_Dog_Years))
+
+gt(human_data_updated)
+```
+:::
+:::
