@@ -1,0 +1,147 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0406"
+author: "Katy Brown"
+---
+
+```{r setup_0406, include=FALSE}
+library(tidyverse)
+library(gt)
+library(maps)
+library(patchwork)
+insect_counts <- read_csv("data/insect_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+flower_counts <- read_csv("data/flower_counts.csv")
+```
+
+# Part 6: Using models to make predictions {#sec-p6_predictions}
+
+::: {.callout-note .partmenu #parts-0406}
+## Sections
+- @sec-predictions
+- @sec-summary_0406
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+* Use a fitted statistical model to predict the expected value of a response variable.
+* Explain how a statistical model describes a probability distribution for the response variable.
+:::
+
+## Predictions {#sec-predictions}
+So far, we have mainly used linear models for hypothesis testing: to ask whether there is evidence that an explanatory variable is associated with a response variable.
+
+However, a fitted model can also be used to predict the expected value of the response variable for particular values of the explanatory variables.
+
+For example, we have already evidence that minimum temperature differs between sites where *H. tumulorum* is present and sites where it is absent.
+
+Therefore, can we use the presence of *H. tumulorum* to predict minimum temperature?
+
+First, let's read our data frame showing presence or absence of *H. tumulorum*.
+
+```{r regenerate_ht_df, message = FALSE}
+ht_df <- read_csv("data/ht_df.csv")
+
+gt(head(ht_df))
+```
+Now we can fit the linear model.
+
+```{r regenerate_ht_lm}
+ht_lm <- lm(
+  min_temp_coldest_month ~ detected,
+  data = ht_df,
+)
+```
+
+The R function `predict()` can be used to predict the mean value of the response variable under a fitted linear model given a specific value of the explanatory variable.
+
+Let's predict minimum temperature for sites where *H. tumulorum* is present.
+
+```{r predict_temp_ht}
+new_expl <- tibble(detected = TRUE)
+
+pred <- predict(
+  ht_lm,
+  newdata = new_expl,
+  interval = "confidence"
+)
+
+print(pred)
+```
+The values in the `fit` column are the predicted minimum temperature with *H. tumulorum* present, and `lwr` (lower) and `upr` (upper) are the lower and upper confidence interval of the prediction.
+
+We can extract the standard deviation from the model (using the function `sigma()`) and plot the predicted distribution. This linear model assumes that observations are normally distributed around the expected value, with a common residual standard deviation
+
+```{r plot_dist_predict_ht}
+pred_ht <- rnorm(1000, pred[1, "fit"], sigma(ht_lm))
+
+df_ht <- tibble(data = pred_ht)
+
+ggplot(
+  df_ht,
+  aes(x = data)
+) +
+  geom_histogram(bins = 30) +
+  theme_bw()
+```
+The model therefore gives us more than a single predicted value. For each value of the explanatory variable, it estimates the mean of a probability distribution for the response variable. For a linear model, observations are assumed to be normally distributed around this mean, with the residual standard deviation estimated by `sigma()`.
+
+You can make predictions using a linear model with a continuous explanatory variable by using `predict()` in exactly the same way. If there are multiple explanatory variables, the value of each variable needs to be passed to the model, the process is otherwise identical.
+
+::: {.callout-exercise #ex-predict_lm}
+
+In your `pollinators.qmd` Quarto file, fit a linear model to the relationship between annual precipitation (column `annual_total_prec`) and mean annual temperature (column `annual_mean_temp`), with annual precipitation as the response variable, as we did previously in @sec-linear_regression. 
+
+Predict the total annual precipitation and its confidence interval when annual mean temperature is 10°C. Then use the fitted model to simulate and plot the distribution of annual precipitation expected at 10°C.
+
+::: {.callout-answer collapse="true" #ex-predict_lm}
+
+[Fit a linear model to the relationship between annual precipitation (column `annual_total_prec`) and mean annual temperature (column `annual_mean_temp`), with annual precipitation as the response variable]{.blue-text}
+
+```{r predict_lm_ans1}
+lm_temp_prec <- lm(annual_total_prec ~ annual_mean_temp, data = site_metadata)
+
+df_unknown <- tibble(annual_mean_temp = 10)
+
+pred_lm <- predict(lm_temp_prec, newdata = df_unknown, interval = "confidence")
+
+print(pred_lm)
+```
+
+[Predict the mean and confidence interval and plot the distribution for annual precipitation when annual mean temperature is 10°C.]{.blue-text}
+
+```{r predict_lm_ans2}
+pred_prec <- rnorm(1000, pred_lm[1, "fit"], sigma(lm_temp_prec))
+
+df_prec <- tibble(data = pred_prec)
+
+ggplot(
+  df_prec,
+  aes(x = data)
+) +
+  geom_histogram(bins = 30) +
+  theme_bw()
+```
+:::
+:::
+## Review {#sec-summary_0406}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0406}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have edited are:
+
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
+
+{{< include ../includes/git_push.qmd >}}

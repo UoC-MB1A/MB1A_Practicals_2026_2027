@@ -15,9 +15,7 @@ library(gt)
 ::: {.callout-note .partmenu #parts-0601}
 ## Sections
 
-- @sec-dataset06
 - @sec-writing_functions
-- @sec-process_cancer_data
 - @sec-summary_0601
 :::
 
@@ -238,3 +236,22 @@ gt(human_data_updated)
 ```
 :::
 :::
+## Review {#sec-summary_0601}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0601}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 2.
+
+{{< include ../includes/git_commit.qmd >}}

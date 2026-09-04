@@ -11,7 +11,7 @@ library(gt)
 library(cowsay)
 ```
 
-# Part 1: Loops {#sec-p2_loops}
+# Part 1: Loops {#sec-p3_loops}
 
 ::: {.callout-note .partmenu #parts-0301}
 

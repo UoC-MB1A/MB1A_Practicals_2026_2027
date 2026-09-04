@@ -16,11 +16,26 @@ site_metadata <- read_csv("data/site_metadata.csv")
 set.seed(42)
 ```
 
-# Part 3: ANOVA
+# Part 3: ANOVA {#sec-p3_ANOVA}
+
+::: {.callout-note .partmenu #parts-0403}
+## Sections
+
+- @sec-one_way_anova
+- @sec-f_dist
+- @sec-multi_way_anova
+- @sec-interactions
+- @sec-summary_0403
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+:::
 
 In the previous section, we used one-way ANOVA to look at the difference between two levels of a single explanatory variable. However, ANOVA can easily be expanded to look at multiple groups and multiple explanatory variables.
 
-## One-way ANOVA with more than two groups
+## One-way ANOVA with more than two groups {#sec-one_way_anova}
 
 ANOVA expands easily to take into account an explanatory variable with more than two levels (i.e. a categorical variable with three or more options).
 
@@ -79,7 +94,7 @@ summary(lm_mass_domfam)
 
 This tells us:
 
-* There is evidence that sites with Apidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.
+* There is no evidence that sites with Apidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.
 * There is no evidence that sites with Halictidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.
 * There is no evidence that sites with Syrphidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.
 
@@ -130,8 +145,10 @@ There is evidence that mean insect mass differs among dominant insect families (
 :::
 :::
 
+## Extension exercise - the F-distribution {#sec-f_dist}
+
 ::: {.callout-note .extension #ext-f_distribution}
-### Extension exercise - the F-distribution
+
 
 I stated above that *"The p-value here is obtained from an F distribution specified by two degrees-of-freedom values: the numerator and denominator degrees of freedom. The numerator degrees of freedom are associated with the explanatory variable. The denominator degrees of freedom are the residual degrees of freedom."*. In this case, our numerator has three degrees of freedom and our denominator has 72. 
 
@@ -194,7 +211,7 @@ This should be the exact p-value calculated in our ANOVA.
 :::
 
 
-## Multi-way ANOVA
+## Multi-way ANOVA {#sec-multi_way_anova}
 
 ANOVA can also be extended to include multiple categorical explanatory variables. This is called multi-way ANOVA (or factorial ANOVA). A model with two categorical explanatory variables is a two-way ANOVA, one with three is a three-way ANOVA, and so on.
 
@@ -305,7 +322,7 @@ There is evidence that mean insect mass differs among dominant insect families (
 :::
 
 
-## Interactions
+## Interactions {#sec-interactions}
 
 When we use `+` to include multiple explanatory variables, we are assuming that their relationships with the response are additive. This means that the relationship between one explanatory variable and the response is the same at every level of the other explanatory variable. So for example, the dominant insect family can be associated with a difference in mean insect mass, and habitat can be associated with a difference, and these differences can be added together.
 
@@ -738,6 +755,23 @@ There is evidence of a negative association between mean annual temperature and 
 
 :::
 :::
+
+## Review {#sec-summary_0403}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0403}
+
+### Summary
+
+
 :::
 
+For this part of the practical, the main files you have created are:
 
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 4.
+
+{{< include ../includes/git_commit.qmd >}}

@@ -14,9 +14,29 @@ insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
 ```
 
-# Part 2: Hypothesis Testing 
+# Part 2: Hypothesis Testing {#sec-p2_hypothesis_testing_1}
 
-## Examining data
+::: {.callout-note .partmenu #parts-0402}
+## Sections
+
+- @sec-examining_data
+- @sec-choose_test
+- @sec-run_test
+- @sec-t_dist
+- @sec-confidence_intervals
+- @sec-linear_models_cat
+- @sec-fitting_linear_models_cat
+- @sec-visualising_linear_models_cat
+- @sec-anova_cat
+- @sec-summary_0402
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+:::
+
+## Examining data {#sec-examining_data}
 
 Now we can start to test some hypotheses based on this dataset.
 
@@ -44,6 +64,12 @@ ht_df <- ht_counts |>
   left_join(site_metadata)
 
 gt(head(ht_df))
+```
+
+We will keep coming back to this data frame, so let's save it in our `data` directory.
+
+```{r save_ht}
+write_csv(ht_df, "data/ht_df.csv")
 ```
 
 Now let's draw our map. We want a scatter plot (`geom_point()`) with longitude on the x axis and latitude on the y axis. We can colour the dots based on whether *H. tumulorum* is present or absent.
@@ -96,7 +122,7 @@ ggplot(
 
 Based on this box plot, perhaps these bees don't like the cold.
 
-## Choosing a test
+## Choosing a test {#sec-choose_test}
 
 Now we have a hypothesis to investigate:
 
@@ -113,7 +139,7 @@ We have a **continuous response variable** and a **categorical explanatory varia
 
 There are various **assumptions** which underlie a t-test - we'll come back to these later in the practical. For the moment, assume these assumptions are met.
 
-## Running statistical tests in R
+## Running statistical tests in R {#sec-run_test}
 
 In R statistical functions, `~` is used to specify a formula describing the relationship between variables.
 
@@ -191,8 +217,9 @@ There is evidence that mean minimum temperature is higher at sites where *H. tum
 
 This doesn't mean that our alternative hypothesis is definitely true for the population, but based on this sample the evidence supports it.
 
+## Extension exercise - the t-distribution {#sec-t_dist}
 ::: {.callout-note .extension #ext-t_distribution}
-### Extension exercise - the t-distribution
+
 
 I stated above that: "*The p-value for a t-test is the probability of a test statistic at least as far from zero as the value calculated from our data, if we drew values from a t-distribution with the specified number of degrees of freedom*".
 
@@ -276,7 +303,7 @@ This should be the exact p-value calculated in our t-test.
 :::
 :::
 
-### Confidence intervals
+## Confidence intervals {#sec-confidence_intervals}
 
 In our description of the t-test output above, something is missing - it is also worth looking at our **confidence interval** here. This data is provided in our t-test summary above.
 
@@ -527,7 +554,7 @@ This gives us our lower value of `r round(lower_cint, 4)` and upper value of `r 
 
 :::
 
-## Linear models
+## Linear models {#sec-linear_models_cat}
 
 The comparison we have just made can also be represented using a linear model.
 
@@ -593,7 +620,7 @@ Our **linear model** tests whether there is evidence that the slope of the line 
 
 They are therefore testing exactly the same thing.
 
-### Fitting linear models in R
+### Fitting linear models in R {#sec-fitting_linear_models_cat}
 
 Let's see if this is correct by fitting a linear model to our data in R. We do this with the function `lm()` and the same formula we used previously - `response ~ explanatory`.
 
@@ -671,7 +698,7 @@ There is evidence that minimum temperature differs according to the presence or 
 :::
 
 
-### Visualising linear models in R
+### Visualising linear models in R {#sec-visualising_linear_models_cat}
 
 We can easily visualise our linear model in ggplot.
 
@@ -702,7 +729,7 @@ ggplot(ht_temp_df, aes(
 ```
 
 
-## ANOVA
+## ANOVA {#sec-anova_cat}
 
 With exactly two groups, a classical one-way ANOVA is also mathematically equivalent to either of these tests. 
 
@@ -776,3 +803,24 @@ There is evidence that minimum temperature in the coldest month differs between 
 :::
 
 The advantage of ANOVA is that, unlike a t-test, we can use it when our categorical explanatory variable has more than two groups - we'll come to this in the next section.
+
+## Review {#sec-summary_0402}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0402}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 3.
+
+{{< include ../includes/git_commit.qmd >}}
+

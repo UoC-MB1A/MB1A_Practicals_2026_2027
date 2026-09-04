@@ -1,0 +1,90 @@
+```{r setup_0605, include=FALSE}
+library(tidyverse)
+library(gt)
+```
+
+# Part 5: Generalised Linear Models - Poisson {#sec-p5_glms_binomial}
+
+::: {.callout-note .partmenu #parts-0605}
+## Sections
+- @sec-fitting_pois_glms
+- @sec-summary_0605
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+:::
+
+A binomial GLM is appropriate when the response variable represents one of two possible outcomes. A Poisson GLM can be used to model count data when a Poisson distribution (@sec-comparing_sim_real) is appropriate. In a Poisson GLM, we model how $\lambda$, the expected mean count, changes with our explanatory variables.
+
+For example, with our Poisson data, let's test the following hypotheses:
+
+**Null hypothesis**: There is no association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
+
+**Alternative hypothesis**: There is an association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
+
+## Fitting Poisson GLMs in R {#sec-fitting_pois_glms}
+
+First we need to read our data, and add a column containing the number of non-Apidae species at each site.
+
+```{r pois_glm_apidae_data, message=FALSE}
+site_metadata <- read_csv("data/site_metadata.csv")
+site_metadata <- site_metadata |>
+  mutate(n_non_apidae = n_unique - n_apidae)
+```
+
+Now we can apply the GLM, with `family = poisson` for the Poisson model.
+
+```{r pois_glm_apidae}
+glm_apidae <- glm(n_apidae ~ n_non_apidae,
+                  family = poisson,
+                  data = site_metadata)
+summary(glm_apidae)
+```
+
+The estimated coefficient for the number of non-Apidae species is `r round(coef(glm_apidae)["n_non_apidae"], 3)`. This coefficient is positive, indicating that sites with more non-Apidae insect species are expected to also contain more Apidae species.
+
+The Poisson GLM uses a **log link**, so the coefficients represent changes in the log of the expected count. We can exponentiate the coefficient to make it easier to interpret:
+
+```{r exponentiate_pois_glm_apidae}
+print (exp(coef(glm_apidae)["n_non_apidae"]))
+```
+
+For each additional non-Apidae species, the expected number of Apidae species is therefore multiplied by `r round(exp(coef(glm_apidae)["n_non_apidae"]), 3)`, corresponding to an increase of approximately `r round((exp(coef(glm_apidae)["n_non_apidae"]) - 1) * 100, 1)`%.
+
+The p-value associated with this coefficient is `r format.pval(coef(summary(glm_apidae))["n_non_apidae", "Pr(>|z|)"], digits = 3)`. We therefore reject the null hypothesis and conclude that there is evidence of an association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
+
+Let's plot this relationship.
+
+```{r plot_glm_apidae}
+ggplot(site_metadata,
+       aes(x = n_non_apidae, y = n_apidae)) +
+  geom_point() +
+  geom_smooth(
+    method = "glm",
+    method.args = list(family = poisson)
+  ) +
+  theme_bw()
+```
+
+## Review {#sec-summary_0605}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0605}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 6.
+
+{{< include ../includes/git_commit.qmd >}}

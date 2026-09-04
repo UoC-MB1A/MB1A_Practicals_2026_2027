@@ -16,9 +16,23 @@ site_metadata <- read_csv("data/site_metadata.csv")
 set.seed(42)
 ```
 
-# Part 4: Linear regression and Chi-Squared
+# Part 4: Linear regression and Chi-Squared {#sec-p3_linear_regression_chisq}
 
-## Linear Regression
+::: {.callout-note .partmenu #parts-0404}
+## Sections
+- @sec-linear_regression
+- @sec-multiple_linear_regression
+- @sec-multicollinearity
+- @sec-chi_squared
+- @sec-summary_0404
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+:::
+
+## Linear Regression {#sec-linear_regression}
 
 We've now used all sorts of linear models, but how about a standard linear regression between two continuous variables? You already have the skills needed to do this - you can fit the model using `lm()` and then view the results using `summary()`, and you basically know how to interpret the results. 
 
@@ -51,7 +65,7 @@ ggplot(site_metadata,
   geom_smooth(method = "lm")
 ```
 
-## Multiple linear regression
+## Multiple linear regression {#sec-multiple_linear_regression}
 
 Just as we included multiple explanatory variables in our ANOVA, we can include multiple continuous explanatory variables in a linear regression. This is called multiple linear regression. We can also add interaction terms.
 
@@ -167,7 +181,7 @@ lm_r_squared <- summ_lm_elev_temp$r.squared
 There is no evidence of an association between mean annual temperature and total annual precipitation at the mean elevation ($b$ = `r round(temp_coef, 2)`, $t$(`r lm_df`) = `r round(temp_t, 2)`, $p$ = `r round(temp_p, 3)`). There is evidence of a positive association between elevation and total annual precipitation at the mean annual temperature ($b$ = `r round(elev_coef, 2)`, $t$(`r lm_df`) = `r round(elev_t, 2)`, $p$ = `r formatC(elev_p, format = "e", digits = 2)`). There is no evidence of an interaction between mean annual temperature and elevation ($b$ = `r round(interaction_coef, 3)`, $t$(`r lm_df`) = `r round(interaction_t, 2)`, $p$ = `r round(interaction_p, 3)`), so there is no evidence that the association between temperature and precipitation changes with elevation. Overall, the model explains `r round(lm_r_squared * 100, 1)`% of the variation in total annual precipitation ($R^2$ = `r round(lm_r_squared, 3)`).
 :::
 
-## Multicollinearity
+## Multicollinearity {#sec-multicollinearity}
 
 This result seems strange at first — precipitation was strongly associated with annual mean temperature when temperature was the only explanatory variable, but there is no longer strong evidence for that association once elevation is included.
 
@@ -367,7 +381,7 @@ Even when the explanatory variables are highly correlated, the model as a whole 
 
 :::
 
-## Chi-squared
+## Chi-squared {#sec-chi_squared}
 
 Chi-squared looks for an association between two categorical variables. Unlike all the other tests we've covered so far, it is not based on a linear model.
 
@@ -441,3 +455,23 @@ print(chisq_country_habitat$expected)
 ```
 
 The chi-squared test compares these expected counts with our observed counts. The greater the differences between the observed and expected counts, the greater the evidence against the null hypothesis.
+
+## Review {#sec-summary_0404}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0404}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 5.
+
+{{< include ../includes/git_commit.qmd >}}

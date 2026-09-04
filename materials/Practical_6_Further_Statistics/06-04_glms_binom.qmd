@@ -1,0 +1,318 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0604"
+author: "Katy Brown"
+---
+
+```{r setup_0604, include=FALSE}
+library(tidyverse)
+library(gt)
+```
+
+# Part 4: Generalised Linear Models - Binomial {#sec-p4_glms_binomial}
+
+::: {.callout-note .partmenu #parts-0604}
+## Sections
+- @sec-binary_response
+- @sec-not_linear
+- @sec-fitting_binomial_glms
+- @sec-link_functions
+- @sec-predictions_binom_glms
+- @sec-summary_0604
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+:::
+
+As you may have noticed, all of the statistical tests introduced in Practical 4 (except for chi-squared) expect a **continuous response variable**.
+
+A standard linear model assumes that the response variable is continuous, with observations normally distributed around an expected value. A linear combination of the explanatory variables determines this expected value.
+
+However, not all response variables are continuous or normally distributed. A **generalised linear model** (GLM) extends the idea of a linear model to response variables with other distributions.
+
+## Binomial response variables {#sec-binary_response}
+
+In @sec-p2_hypothesis_testing_1, we treated the presence or absence of a species as our explanatory variable when asking whether mean temperature differed between sites where a species was present and absent. We then used our model to predict mean temperature in the presence of this species in @sec-p6_predictions.
+
+However, we may instead want to ask: **does the probability of species presence change with temperature?**
+
+In the case of *H. tumulorum* we would therefore have the following hypotheses:
+
+* **Alternative**: There is a relationship between minimum temperature in the coldest month and the probability of detecting *H. tumulorum*.
+* **Null**: There is no relationship between minimum temperature in the coldest month and the probability of detecting *H. tumulorum*.
+
+In this case, detection of *H. tumulorum* becomes our response variable and minimum temperature becomes our explanatory variable.
+
+Our response variable is **binary**: at each site H. tumulorum was either detected (1) or not detected (0). We can model this using a binomial distribution, where $p$ represents the **probability** of detection. We therefore need our predicted values of $p$ to lie between 0 and 1.
+
+## Why not use a linear model? {#sec-not_linear}
+
+Let's try just using a linear model. First, we need to load our *H. tumulorum* dataset. We should also use the `as.integer()` function to convert our logical (TRUE / FALSE) `detected` column into a numerical column with `1` for detected and `0` for not detected.
+
+Then we can apply our linear model, with minimum temperature as the explanatory variable and detection of *H. tumulorum* as the response.
+
+```{r linear_model_binary_response1, message = FALSE}
+# Load data, convert detected to integers
+ht_df <- read_csv("data/ht_df.csv") |>
+  mutate(detected_01 = as.integer(detected))
+
+# Apply linear model
+lm_binary <- lm(detected_01 ~ min_temp_coldest_month, data = ht_df)
+
+# Display linear model
+summary(lm_binary)
+```
+Now let's try to use this model to predict the presence or absence of *H. tumulorum* at 0°C.
+
+```{r binary_lm_ans}
+df_unknown <- tibble(min_temp_coldest_month = 0)
+
+pred <- predict(lm_binary, newdata = df_unknown)
+print (pred)
+```
+
+Our model predicts a `r round(pred * 100, 2)`% probability of detecting *H. tumulorum* at this temperature. This seems feasible.
+
+Let's try some more extreme temperatures.
+
+::: {.callout-exercise #ex-binary_lm}
+
+In your `glms.qmd` Quarto file, use `predict()` with this model to predict the probability of detecting *H. tumulorum* when the minimum temperature in the coldest month is:
+
+* -10°C
+* 20°C
+
+:::{.callout-answer collapse="true" #ex-binary_lm_ans}
+
+```{r linear_model_binary_response_neg}
+df_unknown <- tibble(min_temp_coldest_month = c(-10, 20))
+pred <- predict(lm_binary, newdata = df_unknown)
+print (pred)
+```
+:::
+:::
+
+OK, so *H. tumulorum* will be present at -21% of sites at -10°C and 519% of sites at 20°C - this is not working.
+
+Let's plot our real data against our model nevertheless:.
+
+```{r plot_binary_response}
+ggplot(ht_df, 
+       aes(x = min_temp_coldest_month, y = detected_01)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se=FALSE)
+
+```
+
+A linear model can predict any numerical value, whereas a probability must always lie between 0 and 1 (0–100%). We therefore need a model that retains the useful linear relationship with our explanatory variable, but converts its predictions onto a scale appropriate for a probability.
+
+## Link functions in binomial GLMs {#sec-link_functions}
+
+Link functions connect the predictors in our model to the response variables in a linear way.
+
+In a binomial GLM, the **logit** link function transforms probabilities into log-odds. 
+
+$$
+\operatorname{logit}(p) = \ln\left(\frac{p}{1-p}\right)
+$$
+
+::: {.callout-exercise #ex-odds}
+
+In your `prac6_exercises.qmd` Quarto file, write a function to calculate the log-odds from a probability. In R `log()` is the natural logarithm.
+
+Use your function to calculate the log-odds for a sequence of probabiliies from 0 to 1, with increment 0.1.  Observe what happens to the log-odds as the probability increases.
+
+::: {.callout-ans collapse="true" #ex-odds_ans}
+```{r odds_ans}
+# Write the function
+calc_log_odds <- function(prob){
+  odds <- prob / (1 - prob)
+  log_odds <- log(odds)
+  return (log_odds)
+}
+
+# Apply the function to the sequence
+lo_vec <- c()
+for (val in seq(0, 1, 0.1)){
+  lo <- calc_log_odds(val)
+  lo_vec <- c(lo_vec, lo)
+}
+print (lo_vec)
+
+```
+There is an increase in log-odds as probability increases.
+:::
+:::
+
+The natural logarithm of the odds (log-odds) can take any value from $-\infty$ to $\infty$. We can therefore model the log-odds as a linear combination of our explanatory variables. 
+
+## Fitting binomial GLMs in R {#sec-fitting_binomial_glms}
+
+If we use a GLM instead of a linear model, it estimates the linear relationship between minimum temperature and presence / absence on the log-odds scale.
+
+We can apply a GLM in R `glm()` function. We use the argument `family = binomial` to specify that we want to predict a binomial response. Otherwise, the function is applied in the same way as a linear model, but with `glm()` instead of `lm()`.
+
+::: {.callout-exercise #ex-fit_binomial_glm_ht}
+
+In your `glms.qmd` Quarto file, use `glm()` to test whether the probability of detecting *H. tumulorum* is associated with minimum temperature in the coldest month.
+
+Use:
+
+- `detected_01` as the response variable
+- `min_temp_coldest_month` as the explanatory variable
+- `family = binomial` to fit a binomial GLM
+
+Save your model as `glm_ht` and examine it using `summary()`.
+
+::: {.callout-answer collapse="true" #ex-fit_binomial_glm_ht_ans}
+
+```{r fit_binomial_glm_ht_ans}
+glm_ht <- glm(detected_01 ~ min_temp_coldest_month, data = ht_df,
+              family = binomial)
+summary(glm_ht)
+```
+:::
+:::
+
+We would report these findings as follows:
+
+::: {.highlight-box}
+There was strong evidence that minimum temperature in the coldest month was associated with the probability of detecting *H. tumulorum* (binomial GLM, $\beta$ = `r round(glm_ht$coefficients[2], 2)`, $z$ = `r round(summary(glm_ht)$coefficients['min_temp_coldest_month', 'z value'], 2)`), $p$ = `r formatC(summary(glm_ht)$coefficients['min_temp_coldest_month', 'Pr(>|z|)'], format = "f", digits = 4)`. The positive coefficient estimate for `min_temp_coldest_month` indicates that *H. tumulorum* is more likely to be detected at sites with higher minimum temperatures.
+:::
+
+$\beta$ = `r round(glm_ht$coefficients[2], 2)` tells us that for every 1°C increase in minimum temperature, the log-odds of detecting *H. tumulorum* increase by `r round(glm_ht$coefficients[2], 2)`.
+
+We can exponentiate this to get the odds ratio:
+
+```{r exp_odds_ratio_ht}
+beta <- glm_ht$coefficients[2]
+expo <- exp(beta)
+print (expo)
+```
+So, for every 1°C increase in minimum temperature, the odds of detecting *H. tumulorum* are multiplied by approximately 5.2.
+
+Let's plot our data and our GLM prediction.
+
+To plot the predicted values we again use `geom_smooth()` but with the arguments `method = "glm"` and `method.args = list(family = binomial)`.
+
+```{r visualise_glm}
+ggplot(ht_df,
+       aes(x = min_temp_coldest_month,
+           y = detected_01)) +
+  geom_point() +
+  geom_smooth(
+    method = "glm",
+    method.args = list(family = binomial)
+  ) +
+  theme_bw()
+```
+
+As you can see, the prediction is limited to probabilities between 0 and 1.
+
+## Making predictions {#sec-predictions_binom_glms}
+::: {.callout-exercise #ex-predict_with_glm}
+
+In your `glms.qmd` Quarto file, use your GLM to predict the probability of detecting *H. tumulorum* at the following temperatures:
+
+* 0°C
+* 1°C
+* 2°C
+
+By default, `predict()` returns predictions from this model on the log-odds scale. The argument `type = "response"` applies the inverse link function and returns predictions on the original response scale — in this case, probabilities.
+
+::: {.callout-answer collapse="true" #ex_predict_with_glm_ans}
+
+```{r predict_with_glm_ans}
+# Make a data frame of the temperatures for which
+# we want to predict probabilities
+df_unknown <- tibble(
+  min_temp_coldest_month = c(0, 1, 2)
+)
+
+# Predict the probability of presence or absence at these
+# temperatures
+pred <- predict(
+  glm_ht,
+  newdata = df_unknown,
+  type = "response"
+)
+
+# Put the results in a data frame
+pred_df <- tibble(min_temp = c(0, 1, 2),
+                  predicted_prob = pred)
+gt(pred_df)
+```
+
+:::
+:::
+
+So, there is a `r round((filter(pred_df, min_temp == 0) |> pull(predicted_prob)) * 100, 2)`% probability of seeing *H. tumulorum* with a minimum temperature of 0°C, a `r round((filter(pred_df, min_temp == 1) |> pull(predicted_prob)) * 100, 2)`% probability at 1°C and an `r round((filter(pred_df, min_temp == 2) |> pull(predicted_prob)) * 100, 2)`% probability at 2°C.
+
+Let's go back to our extreme temperatures, -10°C and 20°C, and do the same thing again.
+
+```{r extreme_glm_ht}
+df_extreme <- tibble(
+  min_temp_coldest_month = c(-10, 20)
+)
+
+pred <- predict(
+  glm_ht,
+  newdata = df_extreme,
+  type = "response"
+)
+
+pred_df <- tibble(min_temp = c(-10, 20),
+                  predicted_prob = pred)
+gt(pred_df)
+```
+
+These values, essentially 0 at -10°C and 1 at 20°C may still be incorrect, but they are at least valid probabilites. Our model describes the relationship supported by the observed data, which has a minimum temperature of `r round(min(pull(ht_df, min_temp_coldest_month)), 2)`°C and a maximum temperature of `r round(max(pull(ht_df, min_temp_coldest_month)), 2)`°C. There is no guarantee that the same relationship continues beyond this range. Making predictions outside the observed range is called **extrapolation**, and these predictions can be highly unreliable.
+
+For example, let's predict the probability of finding *H. tumulorum* at 1000°C.
+
+```{r extremer_glm_ht}
+df_extremer <- tibble(
+  min_temp_coldest_month = 1000)
+
+pred <- predict(
+  glm_ht,
+  newdata = df_extremer,
+  type = "response"
+)
+
+pred_df <- tibble(min_temp = 1000,
+                  predicted_prob = pred)
+gt(pred_df)
+```
+
+According to our model, we are guaranteed to find *H. tumulorum* at this temperature.
+
+![A fire bee](images/fire_bee.png){#fig-bee width="50%"}
+
+Using the logit function forces the predicted probability to be between 0 and 1, however it doesn't guarantee it is correct.
+
+## Multiple predictors
+
+## Review {#sec-summary_0604}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0604}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 5.
+
+{{< include ../includes/git_commit.qmd >}}

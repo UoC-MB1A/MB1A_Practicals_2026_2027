@@ -9,13 +9,27 @@ library(tidyverse)
 library(gt)
 ```
 
-# Part 3: Can we break a t-test?
+# Part 3: Can we break a t-test? {#sec-p3_break_t}
 
-A t-test assumes that the data within each population are normally distributed and equal variance of residuals, but the t-test is often described as robust to violations of this assumption. What does this actually mean?
+::: {.callout-note .partmenu #parts-0603}
+## Sections
+- @sec-data_break_t
+- @sec-helper_functions
+- @sec-p_distributions
+- @sec-true_normal
+- @sec-breaking_assumptions
+- @sec-summary_0603
+:::
+
+:::{.callout-tip .objectives #objectives-0603}
+#### Learning objectives
+:::
+
+A standard two-sample t-test assumes that the populations being compared are normally distributed and that their residuals have equal variance, but the t-test is often described as robust to violations of these assumptions. What does this actually mean?
 
 Let's investigate two sets of hypotheses, in one we will simulate a true difference in means and in the other we will not.
 
-## Data
+## Data {#sec-data_break_t}
 
 #### Scenario 1
 
@@ -24,8 +38,8 @@ Let's investigate two sets of hypotheses, in one we will simulate a true differe
 
 Population values:
 
-* Orange cats: mean speed, **20kph**
-* Black cats: mean speed, **20kph**
+* Orange cats: mean speed, **20km/h**
+* Black cats: mean speed, **20km/h**
 
 #### Scenario 2
 
@@ -34,14 +48,14 @@ Population values:
 
 Population values:
 
-* Biscuit absent: mean speed, **20kph**
-* Biscuit present: mean speed, **24kph**
+* Biscuit absent: mean speed, **20km/hr**
+* Biscuit present: mean speed, **24km/hr**
 
 For the **cat** data, the **null hypothesis** is true, so the proportion of significant results estimates a **Type I** error rate.
 
 For the **dog** data, the **alternative hypothesis** is true, so the proportion of non-significant results estimates a **Type II** error rate.
 
-## Helper functions
+## Helper functions {#sec-helper_functions}
 
 We are going to perform the same steps lots of times, so we need a function.
 
@@ -145,7 +159,53 @@ We also need an empty data frame in which to store our results.
 comparison_df <- tibble()
 ```
 
-## True normally distributed data
+## Distributions of p-values {#sec-p_distributions}
+
+When we repeat a statistical test many times, we can examine the distribution of the p-values it produces.
+
+When the null hypothesis is true and the test is working correctly, p-values should be approximately uniformly distributed between 0 and 1. For example, around 5% should be less than or equal to 0.05, giving the expected 5% type I error rate.
+
+For example, here is a very clean scenario of two fairly big, normally distributed groups with the same mean and variance.
+
+```{r uniform_p}
+ps <- c()
+for (i in seq_len(10000)){
+  group_1 <- rnorm(100, mean = 10, sd = 5)
+  group_2 <- rnorm(100, mean = 10, sd = 5)
+
+  t_test <- t.test(group_1, group_2, var.equal = TRUE)
+  ps <- c(ps, t_test$p.value)
+}
+p_df <- tibble(pval = ps)
+
+ggplot(p_df, aes(x = pval)) +
+  geom_histogram(boundary = 0, binwidth = 0.05) +
+  theme_bw()
+```
+
+When the alternative hypothesis is true, we expect more small p-values. The stronger the evidence the test is able to detect, the more strongly the distribution will be concentrated towards zero.
+
+For example, here is a very clean scenario of two fairly big, normally distributed groups with a different mean and the same variance.
+
+```{r real_diff_p}
+ps <- c()
+for (i in seq_len(10000)){
+  group_1 <- rnorm(100, mean = 10, sd = 5)
+  group_2 <- rnorm(100, mean = 13, sd = 5)
+
+  t_test <- t.test(group_1, group_2, var.equal = TRUE)
+  ps <- c(ps, t_test$p.value)
+}
+p_df <- tibble(pval = ps)
+
+ggplot(p_df, aes(x = pval)) +
+  geom_histogram(boundary = 0, binwidth = 0.05) +
+  theme_bw()
+```
+
+Therefore, if we are running many tests we can use p-value distributions to investigate whether a statistical test is behaving as expected, rather than judging it from the result of a single test.
+
+## True normally distributed data {#sec-true_normal}
 
 First, let's take values from normal distributions with equal variance which meet the assumptions of our t-test and see how the t-test performs.
 
@@ -188,7 +248,9 @@ dd <- tibble(
 comparison_df <- bind_rows(comparison_df, dd)
 ```
 
-
+```{r comp_df_break_t_setup2, include=FALSE}
+comparison_df <- tibble()
+```
 :::{.callout-answer collapse="true" #ex_break_t_1_ans}
 
 #### 1
@@ -385,36 +447,15 @@ Therefore, our diagnostic plots are **within the range of deviations** which are
 If there is no significant effect we expect to see type I error **5%** of the time, if our critical p-value is 0.05.
 Therefore, our expected type I error rate is 0.05, our simulated rate was `r round(prop_cat_sig, 2)`
 
-The theoretical type II error rate can be calculated based on the **power** of our t-test. Power is the probability that a statistical test will correctly reject the null hypothesis when a real effect exists. The Type II error rate is the probability that the test will fail to reject the null hypothesis when a real effect exists. So, the type II error rate is just $`1 - power`$. 
+When the alternative hypothesis is true, the probability of correctly rejecting the null hypothesis is called the power of the test. The type II error rate is therefore $1-power$. Here, our simulations give us an estimate of the type II error rate directly - `r round (prop_dog_insig, 2)`
 
-R can calculate power using the function `power.t.test()`. This function takes six arguments:
-
-* `n` - the number of observations in the sample - in our case, 30.
-* `delta` - the effect size - in our case the difference in means between the two dog populations, so 4 km/hr.
-* `sd` - standard deviation, in our case 5.
-* `sig.level` - our critical p-value, 0.05.
-* `type` - the type of t-test, `two.sample` in our case.
-* `alternative` - the directionality of the t-test, `two.sided` in our case.
-
-```{r type_ii_error}
-power <- power.t.test(
-  n = 30,
-  delta = 4,
-  sd = 5,
-  sig.level = 0.05,
-  type = "two.sample",
-  alternative = "two.sided"
-)
-print(power)
-```
-
-Our type II error rate should therefore be roughly `r round(1 - power$power, 2)`. Our simulated rate was `r round(prop_dog_insig, 2)`
+## Breaking assumptions {#sec-breaking_assumptions}
 
 Now we're going to repeat these similar steps with data which violates the assumptions of a t-test in various ways.
 
 ::: {.callout-exercise #ex-break_t_2}
 
-In your `break_t.qmd` Quarto file, follow these steps for the following situations. They are the same steps as for the previous exercise and you should be able to reuse the majority of the code.
+In your `break_t.qmd` Quarto file, follow these steps for **2** of the following situations. They are the same steps as for the previous exercise and you should be able to reuse the majority of the code. For the situations you didn't choose, please look at the results and conclusions, or compare results with your neighbours. 
 
 1. Simulate data points from each of the populations (orange cats, black cats, dogs with a biscuit, dogs without a biscuit) with the specified parameters.
 2.  Pass the sets of data points for each scenario (one scenario at a time) to your `compare_vectors()` function, store the result as `results_cat` or `results_dog`.
@@ -426,7 +467,7 @@ In your `break_t.qmd` Quarto file, follow these steps for the following situatio
     * Examine the t-test (e.g. `results_cat$t_test`) result. 
 
 4. In a for loop, repeat the following 1000 times for each scenario:
-    * Simulate 30 data points from each of the populations with the same parameters you used above.
+    * Simulate data points from each of the populations with the same parameters you used above.
     * Pass the data points to `compare_vectors_short()` to get the p-value of the t-test
     * Store the p-value in a vector.
 
@@ -434,11 +475,13 @@ In your `break_t.qmd` Quarto file, follow these steps for the following situatio
 
 6. Calculate the proportion of significant p-values (p <= 0.05) you have for the cat dataset - these are type I errors - and the proportion of insignificant p-values you have for the dog dataset (p > 0.05) - these are type II errors.
 
-7. Store the type I and type II error rates in the `comparison_df` data frame, with the situation name column value as `skewed`, `bimodal`, `unequal_variance` or `outliers` as specified below.
+7. Store the type I and type II error rates in the `comparison_df` data frame, with the situation name column value as `skewed`, `unequal_variance`, `unequal_samples_same_var`, and `unequal_samples_diff_var` as specified below.
+
+8. Briefly describe your conclusions.
 
 #### Situation 1 - `skewed`
 
-The four populations are **right skewed**. 
+The four populations are **right skewed**. Each has 30 individuals and the means and standard deviations are as for our first simulation.
 
 We can produce right-skewed data using an exponential distribution, with a rate parameter of \(1/5\) to give a standard deviation of 5. For an exponential distribution, the mean is equal to the standard deviation, so this distribution will also have a mean of 5. We can shift the distribution to our desired mean by adding a fixed value, as follows:
   
@@ -528,7 +571,7 @@ print(results_dog$t_test)
 
 [In a for loop, repeat the following 1000 times for each scenario:]{.blue-text}
 
-* [Simulate 30 data points from each of the populations with the same parameters you used above.]{.blue-text}
+* [Simulate data points from each of the populations with the same parameters you used above.]{.blue-text}
 * [Pass the data points to `compare_vectors_short()` to get the p-value of the t-test]{.blue-text}
 * [Store the p-value in a vector.]{.blue-text}
 
@@ -599,6 +642,7 @@ n_dog_insig <- sum(dog_ps > 0.05)
 prop_dog_insig <- n_dog_insig / 1000
 print(prop_dog_insig)
 ```
+
 The percentage of insignificant p-values for the dog dataset is `r round(prop_dog_insig, 4)*100`% - this is the type II error rate.
 
 #### 7
@@ -612,192 +656,24 @@ dd <- tibble(
 )
 comparison_df <- bind_rows(comparison_df, dd)
 ```
-:::
 
-#### Situation 2 - `bimodal`
+#### 8 - Conclusion
 
-* The four populations each have a **bimodal distribution** where each observation has an equal probability of being drawn from either of two normal distributions.
-  * Orange and black cats - mean 16 and standard deviation 3, mean 24 and standard deviation 3
-  * Dogs without biscuits - mean 16 and standard deviation 3, mean 24 and standard deviation 3.
-  * Dogs with biscuits - mean 20 and standard deviation 3, mean 28 and standard deviation 3.
+This data is strongly right-skewed, as we can see in the distribution plots. The Q-Q plot also demonstrates that the data is not normally distributed.
 
-:::{.callout-answer collapse="true" #ex_break_t_3_ans}
+Nevertheless, the type I and type II error rates here were very similar to those obtained with normally distributed data and the p-value histograms look as expected. The t-test is therefore robust to this violation of the normality assumption **in this example**.
 
-#### 1
-
-[Simulate data points from each of the populations with the specified parameters.]{.blue-text}
-
-```{r break_t_ans3.1}
-cats_orange <- rnorm(30, sample(c(16, 24), 30, replace = TRUE), 3)
-cats_black <- rnorm(30, sample(c(16, 24), 30, replace = TRUE), 3)
-
-dogs_no_biscuit <- rnorm(30, sample(c(16, 24), 30, replace = TRUE), 3)
-dogs_biscuit <- rnorm(30, sample(c(20, 28), 30, replace = TRUE), 3)
-```
-
-#### 2
-
-[Pass the sets of data points for each scenario (one scenario at a time) to your `compare_vectors` function.]{.blue-text}
-
-```{r break_t_ans3.2}
-results_cat <- compare_vectors(cats_orange, cats_black)
-
-results_dog <- compare_vectors(dogs_no_biscuit, dogs_biscuit)
-```
-
-#### 3
-
-[Look at the summary table to check the mean of each group is approximately as expected.]{.blue-text}
-
-Cats:
-
-```{r break_t_ans3.3}
-print(results_cat$summ_df)
-```
-
-Dogs:
-
-```{r break_t_ans3.4}
-print(results_dog$summ_df)
-```
-
-[Examine the distribution of the residuals.]{.blue-text}
-
-Cats:
-
-```{r break_t_ans3.5}
-print(results_cat$distri)
-```
-Dogs:
-
-```{r break_t_ans3.6}
-print(results_dog$distri)
-```
-
-[Plot and examine diagnostic plots for the linear model in each scenario, using the base R `plot` function on the linear model.]{.blue-text}
-
-Cat:
-
-```{r break_t_ans3.7}
-plot(results_cat$linear_model)
-```
-Dog:
-
-```{r break_t_ans3.8}
-plot(results_dog$linear_model)
-```
-
-
-[Examine the t-test result.]{.blue-text}
-
-```{r break_t_ans3.9}
-print(results_cat$t_test)
-```
-
-```{r break_t_ans3.10}
-print(results_dog$t_test)
-```
-
-#### 4
-
-[In a for loop, repeat the following 1000 times for each scenario:]{.blue-text}
-
-* [Simulate 30 data points from each of the populations with the same parameters you used above.]{.blue-text}
-* [Pass the data points to `compare_vectors_short()` to get the p-value of the t-test]{.blue-text}
-* [Store the p-value in a vector.]{.blue-text}
-
-Cats:
- 
-```{r break_t_ans3.11}
-cat_ps <- c()
-
-for (i in seq_len(1000)) {
-  cats_orange <- rnorm(30, sample(c(16, 24), 30, replace = TRUE), 3)
-  cats_black <- rnorm(30, sample(c(16, 24), 30, replace = TRUE), 3)
-  cat_p <- compare_vectors_short(cats_orange, cats_black)
-  cat_ps <- c(cat_ps, cat_p)
-}
-```
-
-Dogs:
-
-```{r break_t_ans3.12}
-dog_ps <- c()
-for (i in seq_len(1000)) {
-  dogs_no_biscuit <- rnorm(30, sample(c(16, 24), 30, replace = TRUE), 3)
-  dogs_biscuit <- rnorm(30, sample(c(20, 28), 30, replace = TRUE), 3)
-
-  dog_p <- compare_vectors_short(dogs_biscuit, dogs_no_biscuit)
-  dog_ps <- c(dog_ps, dog_p)
-}
-```
-
-#### 5
-
-[Plot histograms of the p-values for both sets of simulations.]{.blue-text}
-
-Cats:
-
-```{r break_t_ans3.13}
-df_cat_ps <- tibble(pvalues = cat_ps)
-ggplot(df_cat_ps, aes(x = pvalues)) +
-  geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
-```
-
-Dogs:
-
-```{r break_t_ans3.14}
-df_dog_ps <- tibble(pvalues = dog_ps)
-ggplot(df_dog_ps, aes(x = pvalues)) +
-  geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
-```
-
-#### 6
-
-[Calculate the type I and type II error rates.]{.blue-text}
-
-Type I:
-
-```{r break_t_ans3.15}
-n_cat_sig <- sum(cat_ps <= 0.05)
-prop_cat_sig <- n_cat_sig / 1000
-print(prop_cat_sig)
-```
-
-The percentage of significant p-values for the cat dataset is `r round(prop_cat_sig, 4)*100`% - this is the type I error rate.
-
-```{r break_t_ans3.16}
-n_dog_insig <- sum(dog_ps > 0.05)
-prop_dog_insig <- n_dog_insig / 1000
-print(prop_dog_insig)
-```
-
-The percentage of insignificant p-values for the dog dataset is `r round(prop_dog_insig, 4)*100`% - this is the type II error rate.
-
-#### 7
-
-[Store the type I and type II error rates in the `comparison_df` data frame]{.blue-text}
-
-```{r break_t_ans3.17}
-dd <- tibble(
-  situation = "bimodal",
-  type_I = prop_cat_sig,
-  type_II = prop_dog_insig
-)
-comparison_df <- bind_rows(comparison_df, dd)
-```
+This is partly because all of the groups are skewed in the same way - the t-test is generally more robust when the groups have similarly shaped distributions than when the distributions differ substantially between groups.
 
 :::
 
-#### Situation 3 - `unequal_variance`
+#### Situation 2 - `unequal_variance`
 
-* The four populations are normally distributed but with different **variance**:
+* The four populations are normally distributed but with different **variance**. Each has 30 individuals and the means are as for our first simulation.
   * Orange cats - 30 data points, mean 20, standard deviation 7
-  * Black cats - 30 data points, mean 20, standard deviation 3
+  * Black cats - 30 data points, mean 20, standard deviation 1
   * Dogs without biscuits - 30 data points, mean 20, standard deviation 7
-  * Dogs with biscuits - 30 data points with mean 24 and standard deviation 3.
+  * Dogs with biscuits - 30 data points with mean 24 and standard deviation 1.
   
 :::{.callout-answer collapse="true" #ex_break_t_4_ans}
 
@@ -807,10 +683,10 @@ comparison_df <- bind_rows(comparison_df, dd)
 
 ```{r break_t_ans4.1}
 cats_orange <- rnorm(30, 20, 7)
-cats_black <- rnorm(30, 20, 3)
+cats_black <- rnorm(30, 20, 1)
 
 dogs_no_biscuit <- rnorm(30, 20, 7)
-dogs_biscuit <- rnorm(30, 24, 3)
+dogs_biscuit <- rnorm(30, 24, 1)
 ```
 
 #### 2
@@ -880,7 +756,7 @@ print(results_dog$t_test)
 
 [In a for loop, repeat the following 1000 times for each scenario:]{.blue-text}
 
-* [Simulate 30 data points from each of the populations with the same parameters you used above.]{.blue-text}
+* [Simulate data points from each of the populations with the same parameters you used above.]{.blue-text}
 * [Pass the data points to `compare_vectors_short()` to get the p-value of the t-test]{.blue-text}
 * [Store the p-value in a vector.]{.blue-text}
 
@@ -891,7 +767,7 @@ cat_ps <- c()
 
 for (i in seq_len(1000)) {
   cats_orange <- rnorm(30, 20, 7)
-  cats_black <- rnorm(30, 20, 3)
+  cats_black <- rnorm(30, 20, 1)
 
   cat_p <- compare_vectors_short(cats_orange, cats_black)
   cat_ps <- c(cat_ps, cat_p)
@@ -904,7 +780,7 @@ Dogs:
 dog_ps <- c()
 for (i in seq_len(1000)) {
   dogs_no_biscuit <- rnorm(30, 20, 7)
-  dogs_biscuit <- rnorm(30, 24, 3)
+  dogs_biscuit <- rnorm(30, 24, 1)
 
   dog_p <- compare_vectors_short(dogs_biscuit, dogs_no_biscuit)
   dog_ps <- c(dog_ps, dog_p)
@@ -968,192 +844,16 @@ dd <- tibble(
 comparison_df <- bind_rows(comparison_df, dd)
 ```
 
+#### 8 - Conclusion
+These two groups have very different variances, as we can clearly see in the distribution plot, the residuals vs fitted plot and the scale-location plot.
+
+Despite the two groups having substantially different variances, the type I error rate remained close to 5% and the p-value plots look as expected. The t-test was therefore fairly robust to unequal variance **in this example**, where groups differ **only** in their variance.
 
 :::
 
-#### Situation 4 - `outliers`
+#### Situation 3 - `unequal_samples_same_var`
 
-* There are a few extreme outliers in some of the data sets.
-* Orange cats – 28 data points, mean 17.86, standard deviation 5, plus 2 cats with speed 50.
-* Black cats – 28 data points, mean 17.86, standard deviation 5, plus 2 cats with speed 50.
-* Dogs without biscuits – 28 data points, mean 17.86, standard deviation 5, plus 2 dogs with speed 50.
-* Dogs with biscuits – 28 data points, mean 21.86, standard deviation 5, plus 2 dogs with speed 54
-
-
-:::{.callout-answer collapse="true" #ex_break_t_5_ans}
-
-#### 1
-
-[Simulate data points from each of the populations with the specified parameters.]{.blue-text}
-
-```{r break_t_ans5.1}
-cats_orange <- c(rnorm(28, 17.86, 5), 50, 50)
-cats_black <- c(rnorm(28, 17.86, 5), 50, 50)
-
-dogs_no_biscuit <- c(rnorm(28, 17.86, 5), 50, 50)
-dogs_biscuit <- c(rnorm(28, 21.86, 5), 54, 54)
-```
-
-#### 2
-
-[Pass the sets of data points for each scenario (one scenario at a time) to your `compare_vectors` function.]{.blue-text}
-
-```{r break_t_ans5.2}
-results_cat <- compare_vectors(cats_orange, cats_black)
-
-results_dog <- compare_vectors(dogs_no_biscuit, dogs_biscuit)
-```
-
-#### 3
-
-[Look at the summary table to check the mean of each group is approximately as expected.]{.blue-text}
-
-Cats:
-
-```{r break_t_ans5.3}
-print(results_cat$summ_df)
-```
-
-Dogs:
-
-```{r break_t_ans5.4}
-print(results_dog$summ_df)
-```
-
-[Examine the distribution of the residuals.]{.blue-text}
-
-Cats:
-
-```{r break_t_ans5.5}
-print(results_cat$distri)
-```
-Dogs:
-
-```{r break_t_ans5.6}
-print(results_dog$distri)
-```
-
-[Plot and examine diagnostic plots for the linear model in each scenario, using the base R `plot` function on the linear model.]{.blue-text}
-
-Cat:
-
-```{r break_t_ans5.7}
-plot(results_cat$linear_model)
-```
-Dog:
-
-```{r break_t_ans5.8}
-plot(results_dog$linear_model)
-```
-
-
-[Examine the t-test result.]{.blue-text}
-
-```{r break_t_ans5.9}
-print(results_cat$t_test)
-```
-
-```{r break_t_ans5.10}
-print(results_dog$t_test)
-```
-
-#### 4
-
-[In a for loop, repeat the following 1000 times for each scenario:]{.blue-text}
-
-* [Simulate 30 data points from each of the populations with the same parameters you used above.]{.blue-text}
-* [Pass the data points to `compare_vectors_short()` to get the p-value of the t-test]{.blue-text}
-* [Store the p-value in a vector.]{.blue-text}
-
-Cats:
- 
-```{r break_t_ans5.11}
-cat_ps <- c()
-
-for (i in seq_len(1000)) {
-  cats_orange <- c(rnorm(28, 17.86, 5), 50, 50)
-  cats_black <- c(rnorm(28, 17.86, 5), 50, 50)
-
-  cat_p <- compare_vectors_short(cats_orange, cats_black)
-  cat_ps <- c(cat_ps, cat_p)
-}
-```
-
-Dogs:
-
-```{r break_t_ans5.12}
-dog_ps <- c()
-for (i in seq_len(1000)) {
-  dogs_no_biscuit <- c(rnorm(28, 17.86, 5), 50, 50)
-  dogs_biscuit <- c(rnorm(28, 21.86, 5), 54, 54)
-
-  dog_p <- compare_vectors_short(dogs_biscuit, dogs_no_biscuit)
-  dog_ps <- c(dog_ps, dog_p)
-}
-```
-
-#### 5
-
-[Plot histograms of the p-values for both sets of simulations.]{.blue-text}
-
-Cats:
-
-```{r break_t_ans5.13}
-df_cat_ps <- tibble(pvalues = cat_ps)
-ggplot(df_cat_ps, aes(x = pvalues)) +
-  geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
-```
-
-Dogs:
-
-```{r break_t_ans5.14}
-df_dog_ps <- tibble(pvalues = dog_ps)
-ggplot(df_dog_ps, aes(x = pvalues)) +
-  geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
-```
-
-#### 6
-
-[Calculate the type I and type II error rates.]{.blue-text}
-
-Type I:
-
-```{r break_t_ans5.15}
-n_cat_sig <- sum(cat_ps <= 0.05)
-prop_cat_sig <- n_cat_sig / 1000
-print(prop_cat_sig)
-```
-
-The percentage of significant p-values for the cat dataset is `r round(prop_cat_sig, 4)*100`% - this is the type I error rate.
-
-```{r break_t_ans5.16}
-n_dog_insig <- sum(dog_ps > 0.05)
-prop_dog_insig <- n_dog_insig / 1000
-print(prop_dog_insig)
-```
-
-The percentage of insignificant p-values for the dog dataset is `r round(prop_dog_insig, 4)*100`% - this is the type II error rate.
-
-#### 7
-
-[Store the type I and type II error rates in the `comparison_df` data frame]{.blue-text}
-
-```{r break_t_ans5.17}
-dd <- tibble(
-  situation = "outliers",
-  type_I = prop_cat_sig,
-  type_II = prop_dog_insig
-)
-comparison_df <- bind_rows(comparison_df, dd)
-```
-
-:::
-
-#### Situation 5 - `unequal_samples_same_var`
-
-* The four populations are normally distributed with the same **variance** and different **sample size**:
+* The four populations are normally distributed with the same **variance** and different **sample size**. The means are the same as for our first simulation.
   * Orange cats - 40 data points, mean 20, standard deviation 5
   * Black cats - 20 data points, mean 20, standard deviation 5
   * Dogs without biscuits - 40 data points, mean 20, standard deviation 5
@@ -1241,7 +941,7 @@ print(results_dog$t_test)
 
 [In a for loop, repeat the following 1000 times for each scenario:]{.blue-text}
 
-* [Simulate 30 data points from each of the populations with the same parameters you used above.]{.blue-text}
+* [Simulate data points from each of the populations with the same parameters you used above.]{.blue-text}
 * [Pass the data points to `compare_vectors_short()` to get the p-value of the t-test]{.blue-text}
 * [Store the p-value in a vector.]{.blue-text}
 
@@ -1329,18 +1029,26 @@ dd <- tibble(
 comparison_df <- bind_rows(comparison_df, dd)
 ```
 
+#### 8 - Conclusion
+
+The unequal sample sizes in this data set don't have much apparent impact on any of the diagnostic plots - the populations are still normally distributed with equal variance.
+
+The t-test is also still functioning well, the p-value plots look as expected and the type I and type II error rates are similar to those when sample sizes were the same.
+
+Equal sample sizes are not an assumption of the t-test. A t-test can compare groups of different sizes, provided its other assumptions are reasonably well met.
+
 :::
 
-#### Situation 6 - `unequal_samples_different_var`
+#### Situation 4 - `unequal_samples_different_var`
 
-* The four populations are normally distributed with the same **variance** and different **sample size**:
+* The four populations are normally distributed with different **variance** and different **sample size**. The means are the same as for our first simulation.
   * Orange cats - 40 data points, mean 20, standard deviation 7.
-  * Black cats - 20 data points, mean 20, standard deviation 3.
+  * Black cats - 20 data points, mean 20, standard deviation 1.
   * Dogs without biscuits - 40 data points, mean 20, standard deviation 7.
-  * Dogs with biscuits - 20 data points with mean 24 and standard deviation 3.
+  * Dogs with biscuits - 20 data points with mean 24 and standard deviation 1.
 
 
-:::{.callout-answer collapse="true" #ex_break_t_5_ans}
+:::{.callout-answer collapse="true" #ex_break_t_7_ans}
 
 #### 1
 
@@ -1348,10 +1056,10 @@ comparison_df <- bind_rows(comparison_df, dd)
 
 ```{r break_t_ans7.1}
 cats_orange <- rnorm(40, 20, 7)
-cats_black <- rnorm(20, 20, 3)
+cats_black <- rnorm(20, 20, 1)
 
 dogs_no_biscuit <- rnorm(40, 20, 7)
-dogs_biscuit <- rnorm(20, 24, 3)
+dogs_biscuit <- rnorm(20, 24, 1)
 ```
 
 #### 2
@@ -1421,7 +1129,7 @@ print(results_dog$t_test)
 
 [In a for loop, repeat the following 1000 times for each scenario:]{.blue-text}
 
-* [Simulate 30 data points from each of the populations with the same parameters you used above.]{.blue-text}
+* [Simulate data points from each of the populations with the same parameters you used above.]{.blue-text}
 * [Pass the data points to `compare_vectors_short()` to get the p-value of the t-test]{.blue-text}
 * [Store the p-value in a vector.]{.blue-text}
 
@@ -1432,7 +1140,7 @@ cat_ps <- c()
 
 for (i in seq_len(1000)) {
   cats_orange <- rnorm(40, 20, 7)
-  cats_black <- rnorm(20, 20, 3)
+  cats_black <- rnorm(20, 20, 1)
 
   cat_p <- compare_vectors_short(cats_orange, cats_black)
   cat_ps <- c(cat_ps, cat_p)
@@ -1445,7 +1153,7 @@ Dogs:
 dog_ps <- c()
 for (i in seq_len(1000)) {
   dogs_no_biscuit <- rnorm(40, 20, 7)
-  dogs_biscuit <- rnorm(20, 24, 3)
+  dogs_biscuit <- rnorm(20, 24, 1)
 
   dog_p <- compare_vectors_short(dogs_biscuit, dogs_no_biscuit)
   dog_ps <- c(dog_ps, dog_p)
@@ -1509,9 +1217,51 @@ dd <- tibble(
 comparison_df <- bind_rows(comparison_df, dd)
 ```
 
+#### 8 - Conclusion
+
+When the groups have both unequal variances and unequal sample sizes, the diagnostic plots show the difference in variance, but may not look dramatically worse than when the sample sizes were equal.
+
+However, the p-values produced when the null hypothesis is true are no longer uniformly distributed. Instead of the approximately flat distribution seen in the previous examples, the p-value distribution is curved, with relatively few very small p-values. The type I error rate is therefore lower than the expected 5%. In this example, the t-test has become too conservative: it rejects the null hypothesis less often than it should.
+
+Importantly, unequal sample sizes and unequal variances interact. Neither caused a major problem on its own in our previous examples, but together they can make the standard t-test unreliable.
+
+This also demonstrates why diagnostic plots should not be treated as a simple pass/fail test: the plots do not necessarily look dramatically different even though the behaviour of the statistical test has changed.
+
 :::
 :::
+
+Now let's look at the error rates for all of the simulations above.
 
 ```{r view_comp_df_break_t}
 gt(comparison_df)
 ```
+
+This shows that even with our relatively small sample sizes, the t-test is robust to some violations of its assumptions - at least in these very controlled simulations where only one assumption is violated at a time. 
+We have also demonstrated that the diagnostic plots are useful but they are not definitive - sometimes the test performs well even if they look quite questionable.
+
+::: {.callout-bonus #bon-really_break_t_test}
+
+Without changing the population means, see if you really can break the t-test. This could be by violating multiple assumptions, changing the sample sizes, adding outliers, dragging the data further from normality, or anything else you can think of!
+
+If you do manage to break it, submit your sample distributions [here]() and we will create a site to showcase your results (anonymously).
+
+:::
+## Review {#sec-summary_0603}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0603}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 4.
+
+{{< include ../includes/git_commit.qmd >}}

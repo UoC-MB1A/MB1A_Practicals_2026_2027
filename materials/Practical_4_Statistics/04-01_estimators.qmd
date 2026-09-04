@@ -14,9 +14,22 @@ library(maps)
 insect_metadata <- read_csv("data/insect_metadata.csv")
 ```
 
-# Part 1: Estimators
+# Part 1: Estimators {#sec-p1_estimators}
 
-## The dataset
+::: {.callout-note .partmenu #parts-0401}
+## Sections
+
+- @sec-dataset_pollinators
+- @sec-estimators
+- @sec-summary_0401
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+:::
+
+## The dataset {#sec-dataset_pollinators}
 
 The dataset we will use in this practical is [pan-trap survey data](https://catalogue.ceh.ac.uk/documents/9df83130-e98f-48b0-bbfc-32f5920eedb0) from the UK Pollinator Monitoring Scheme. In this scheme, multiple [pan-traps](https://en.wikipedia.org/wiki/Pan_trap) are set in each of a set of specific 1km squares across the UK. On four days each summer, volunteers will set out traps for six hours, then send the insects to be counted. Flowering plants within a 2m radius of the trap are also recorded.
 
@@ -99,7 +112,7 @@ The most commonly observed species was `r pull(insect_totals, species)[1]`, whic
 :::
 :::
 
-## Estimators
+## Estimators {#sec-estimators}
 
 Let's concentrate on a single aspect of the data for now - the species richness, measured as the number of unique species.
 
@@ -353,6 +366,8 @@ ggplot(estimator_long, aes(x = estimate)) +
 ```
 Here it is clear again that none of these are great estimators, but that Chao1 is probably the best. 
 
+:::{.callout-note .extension #ext_estimators_more_samples}
+
 Sometimes an estimator is bad because the sample size is too small, sometimes it's just bad. Let's try taking 50 sites per sample, instead of 20.
 
 The code below is identical to the above except for samples of 50 sites.
@@ -452,6 +467,7 @@ ggplot(estimator_long_50, aes(x = estimate)) +
   facet_wrap(~ estimator, scales = "free")
 ```
 Chao1 actually looks pretty good here - it is generating an approximately unbiased estimate of the pseudo-population, although it has a higher variance, and therefore lower efficiency, than either other estimator. 
+:::
 
 ::: {.callout-note #uk_poms_citation}
 **Data citation**
@@ -462,5 +478,24 @@ The UK Pollinator Monitoring Scheme (PoMS) is a partnership funded jointly by UK
 PoMS is indebted to the many volunteers who carry out surveys and contribute data to the scheme.
 
 :::
+
+## Review {#sec-summary_0401}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0401}
+
+### Summary
+:::
+
+For this part of the practical, the main files you have created are:
+
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 2.
+
+{{< include ../includes/git_commit.qmd >}}
 
 

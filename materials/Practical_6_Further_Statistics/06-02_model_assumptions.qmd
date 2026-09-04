@@ -10,33 +10,30 @@ library(tidyverse)
 library(gt)
 library(maps)
 library(patchwork)
-
-insect_counts <- read_csv("data/insect_counts.csv")
-site_metadata <- read_csv("data/site_metadata.csv")
-
-ht_df <- insect_counts |>
-  filter(species == "Halictus tumulorum") |>
-  mutate(detected = n_observed > 0) |>
-  left_join(site_metadata)
-
-ht_temp_df <- ht_df |>
-  select(x1km_square, detected, min_temp_coldest_month)
-
-ht_temp_summ <- ht_temp_df |>
-  group_by(detected) |>
-  summarise(
-    mean = mean(min_temp_coldest_month),
-    sd = sd(min_temp_coldest_month),
-    count = n()
-  )
-
-present <- ht_temp_summ |> filter(detected == TRUE)
-absent <- ht_temp_summ |> filter(detected == FALSE)
 ```
 
-# Part 2: Testing Assumptions of Linear Models
+# Part 2: Testing Assumptions of Linear Models {#sec-p2_assumptions}
 
-As we discussed in @sec-p4_hypothesis_testing_1, T-tests, ANOVA and linear regression are all based on the same general linear-model framework and therefore share many assumptions.
+::: {.callout-note .partmenu #parts-0602}
+## Sections
+
+- @sec-independent
+- @sec-continuous
+- @sec-normality
+- @sec-qq
+- @sec-constant_variance
+- @sec-scale_location
+- @sec-res_fitted
+- @sec-influential
+- @sec-plotall
+- @sec-summary_0602
+:::
+
+:::{.callout-tip .objectives #objectives-0602}
+#### Learning objectives
+:::
+
+As we discussed in @sec-p2_hypothesis_testing_1, T-tests, ANOVA and linear regression are all based on the same general linear-model framework and therefore share many assumptions.
 
 | Assumption | t-test | ANOVA | Linear regression |
 |---|:---:|:---:|:---:|
@@ -50,26 +47,23 @@ As we discussed in @sec-p4_hypothesis_testing_1, T-tests, ANOVA and linear regre
 
 In the previous practical, we assumed the assumptions of all our models had been met, however, in reality we should always check this before carrying out a test.
 
-## Independent observations
+## Independent observations {#sec-independent}
 
 Each observation should be independent of the others. For example, repeated measurements from the same site should not usually be treated as independent observations. Whether observations are independent depends primarily on how the data were collected. This is a study design step rather than an analysis step.
 
-## Continuous response
+## Continuous response {#sec-continuous}
 
 The response variable should be continuous, e.g. mass, temperature, distance. Standard linear models assume that the response can vary continuously around the value predicted by the model. Binary responses, categorical responses and counts generally require different types of model.
 
-## Normally distributed residuals
+## Normally distributed residuals {#sec-normality}
 
 The **residuals** — the differences between the observed values and the values predicted by the model — should be approximately normally distributed.
 
-Let's go back to our first linear model from @sec-p4_hypothesis_testing_1 - for the hypothesis that minimum temperature is different at sites where the bee *H. tumulorum* is present than at sites where it is absent. 
+Let's go back to our first linear model from @sec-p2_hypothesis_testing_1 - for the hypothesis that minimum temperature is different at sites where the bee *H. tumulorum* is present than at sites where it is absent. 
 
-```{r lm_ht, message=FALSE}
-# Regenerate the presence / absence data frame
-ht_df <- insect_counts |>
-  filter(species == "Halictus tumulorum") |>
-  mutate(detected = n_observed > 0) |>
-  left_join(site_metadata)
+```{r lm_ht, message = FALSE}
+# Read the presence / absence data frame
+ht_df <- read_csv("data/ht_df.csv")
 
 # Refit the linear model
 linear_model_ht <- lm(min_temp_coldest_month ~ detected,
@@ -83,6 +77,16 @@ Here is the plot again showing the model and the results:
 ```{r redraw_plot_lm_ht, message=FALSE}
 ht_df <- ht_df |>
   mutate(detected_num = as.numeric(detected))
+
+mean_present <- ht_df |>
+  filter(detected == TRUE) |>
+  pull(min_temp_coldest_month) |>
+  mean()
+
+mean_absent <- ht_df |>
+  filter(detected == FALSE) |>
+  pull(min_temp_coldest_month) |>
+  mean()
 
 overall_mean <- ht_df |>
   pull(min_temp_coldest_month) |>
@@ -102,8 +106,8 @@ The residuals are the differences between the observed values and the values pre
 
 In the case of a t-test, the predicted values are just the means for each group - shown here where the blue line intercepts 0 (absent) and 1 (present). The residuals are the differences between the observed values and these means - so the distances between the tips of the blue line and the black dots.
 
-* The mean minimum temperature when *H. tumulorum* is absent is `r pull(absent, mean)`, the residuals for sites where *H. tumulorum* is absent are the observed values minus `r pull(absent, mean)`.
-* The mean minimum temperature when *H. tumulorum* is present is `r pull(present, mean)`, the residuals for sites where *H. tumulorum* is present are the observed values minus `r pull(present, mean)`.
+* The mean minimum temperature when *H. tumulorum* is absent is `r mean_absent`, the residuals for sites where *H. tumulorum* is absent are the observed values minus `r mean_absent`.
+* The mean minimum temperature when *H. tumulorum* is present is `r mean_present`, the residuals for sites where *H. tumulorum* is present are the observed values minus `r mean_present`.
 
 We could calculate these directly, however, we don't need to - R has already calculated them. We can access them by running the function `residuals()` on our existing linear model.
 
@@ -166,7 +170,7 @@ ggplot(
 These look reasonably close to a normal distribution.
 
 
-### Q-Q Plot
+## Q-Q Plot {#sec-qq}
 
 However, there is more we can do to check this assumption.
 
@@ -409,7 +413,7 @@ This is another S-shaped curve in the opposite direction, and is indicative of t
 
 Notice that we can now repeat the same analysis on different datasets with a single function call, rather than repeating all of the code used to construct the plots.
 
-## Constant variance of residuals
+## Constant variance of residuals {#sec-constant_variance}
 
 Constant variance (or homoscedasticity) is the assumption that the amount of unexplained variation is roughly the same across the range of values predicted by the model.
 
@@ -446,7 +450,9 @@ We can visualise this using the results of our linear regression in the previous
 First, let's recreate this linear model and re-draw our plot.
 
 
-```{r temp_prec_rerun}
+```{r temp_prec_rerun, message = FALSE}
+site_metadata <- read_csv("data/site_metadata.csv")
+
 lm_temp_prec <- lm(
   annual_total_prec ~ annual_mean_temp,
   data = site_metadata
@@ -501,7 +507,7 @@ ggplot(
 
 If the constant variance assumption is met, the vertical spread of the residuals should be roughly similar across the range of fitted values. Here, there is no obvious increase or decrease in the spread of the residuals, so the assumption of constant variance appears reasonable.
 
-### Scale-Location
+### Scale-Location {#sec-scale_location}
 
 An alternative diagnostic is the Scale–Location plot. This plots the square root of the absolute standardised residuals against the fitted values. Standardised residuals express each residual relative to its expected variability, making residuals easier to compare with one another.
 
@@ -588,7 +594,7 @@ ggplot(
 
 In the first plot you can see a characteristic “funnel” shape, with the spread of the residuals increasing as the fitted values increase. This suggests that the constant-variance assumption is not met. In the Scale–Location plot, the smooth line increases as the fitted values increase, again indicating that residual variability increases across the fitted values.
 
-### Linear relationship with continuous explanatory variables
+### Linear relationship with continuous explanatory variables {#sec-res_fitted}
 
 For linear regression, we also assume that the relationship between the response variable and each continuous explanatory variable is appropriately described as linear.
 
@@ -646,7 +652,7 @@ ggplot(curved_diagnostics, aes(x = fitted, y = residual)) +
 
 The smoothed line here is clearly a curve, suggesting that the relationship is not linear. A simple linear model may therefore not fully describe the relationship between these variables.
 
-## Influential observations
+## Influential observations {#sec-influential}
 
 The assumptions we have considered so far apply to the model as a whole. However, individual observations can also have a large influence on the results of a linear model.
 
@@ -686,7 +692,7 @@ ggplot(
 
 The largest points have the greatest Cook's distances and therefore have the greatest influence on the fitted model. There are several observations with relatively high leverage or relatively large residuals, but no single observation appears to have an exceptionally large influence on the model.
 
-## Plotting linear models using base R
+## Plotting linear models using base R {#sec-plotall}
 
 So far, we have always used ggplot for plotting in R in these practicals. However, in this case, there is a shortcut to producing all four of these diagnostic plots in base R - we can just call the function `plot()` and then give the linear model as an argument.
 
@@ -695,3 +701,23 @@ plot(lm_temp_prec)
 ```
 
 The information in these plots is very similar to the plots we have produced manually, but it can be quicker to generate them using this simple function.
+
+## Review {#sec-summary_0602}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0602}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 3.
+
+{{< include ../includes/git_commit.qmd >}}

@@ -14,8 +14,21 @@ site_metadata <- read_csv("data/site_metadata.csv")
 flower_counts <- read_csv("data/flower_counts.csv")
 ```
 
-# Part 5: Hypothesis Testing Exercises
+# Part 5: Hypothesis Testing Exercises {#sec-h_t_exercises}
 
+::: {.callout-note .partmenu #parts-0405}
+## Sections
+- @sec-stats_tests
+- @sec-hypothesis_testing_exercises
+- @sec-summary_0405
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+:::
+
+## Statistical test recap {#sec-stats_tests}
 Here is a reminder of some statistical tests and the data types they are appropriate for.
 
 | Response variable | Explanatory variable(s) | Statistical test/model |
@@ -32,6 +45,7 @@ Here is a reminder of some statistical tests and the data types they are appropr
 
 As long as there are many possible values (e.g. the values aren't limited to 1, 2 or 3), count data (such as number of insects) can be treated as continuous when used as an **explanatory** variable. For the tests in this table, **response** variables described as continuous should usually be genuinely continuous rather than counts.
 
+## Hypothesis testing exercises {#sec-hypothesis_testing_exercises}
 Now we are ready to test some hypotheses based on the POMS data.
 
 ::: {.callout-exercise #ex-pollinators_ht}
@@ -110,7 +124,7 @@ ggplot(biomass_tp, aes(
 )) +
   geom_point() +
   geom_smooth(method = "lm") +
-  facet_wrap(~variable, scales = "free_y") +
+  facet_wrap(~variable, scales = "free_x") +
   theme_bw()
 ```
 
@@ -121,6 +135,7 @@ lm_biomass_tp <- lm(total_insect_biomass ~ annual_mean_temp + annual_total_prec,
 lm_biomass_tp_summary <- summary(lm_biomass_tp)
 print(lm_biomass_tp_summary)
 ```
+
 ```{r pollinators_ht_ans2.4, include=FALSE}
 fstat <- lm_biomass_tp_summary$fstatistic
 
@@ -297,7 +312,7 @@ print(big_bee_test)
 ```{r pollinators_ht_ans5.4}
 bb_t <- round(big_bee_test$statistic, 2)
 bb_df <- round(big_bee_test$parameter)
-bb_p <- round(big_bee_test$p.value, 4)
+bb_p <- big_bee_test$p.value
 
 bb_ci_lower <- round(big_bee_test$conf.int[1], 2)
 bb_ci_upper <- round(big_bee_test$conf.int[2], 2)
@@ -306,7 +321,7 @@ bb_mean_absent <- round(big_bee_test$estimate[1], 2)
 bb_mean_present <- round(big_bee_test$estimate[2], 2)
 ```
 
-There is evidence that the total insect biomass differs between sites where *B. terrestris* is present and sites where it is absent ($t$(`r bb_df`) = `r bb_t`, $p$ = `r bb_p`, 95% CI [`r bb_ci_lower`, `r bb_ci_upper`] g). Mean total insect biomass was `r bb_mean_present` g at sites where *B. terrestris* was present, compared with `r bb_mean_absent` g where it was absent. The direction of the observed difference therefore agrees with the biological prediction: *B. terrestris* was found at sites with, on average, higher total insect biomass.
+There is evidence that the total insect biomass differs between sites where *B. terrestris* is present and sites where it is absent ($t$(`r bb_df`) = `r bb_t`, $p$ = `r formatC(bb_p, format = "f", digits = 4)`, 95% CI [`r bb_ci_lower`, `r bb_ci_upper`] g). Mean total insect biomass was `r bb_mean_present` g at sites where *B. terrestris* was present, compared with `r bb_mean_absent` g where it was absent. The direction of the observed difference therefore agrees with the biological prediction: *B. terrestris* was found at sites with, on average, higher total insect biomass.
 
 :::
 
@@ -405,7 +420,7 @@ ggplot(biomass_biodiv_temp, aes(
 )) +
   geom_point() +
   geom_smooth(method = "lm") +
-  facet_wrap(~variable, scales = "free_y") +
+  facet_wrap(~variable, scales = "free_x") +
   theme_bw()
 ```
 
@@ -649,3 +664,23 @@ There is no evidence that mean insect mass differs among broad habitat types ($F
 
 :::
 :::
+
+## Review {#sec-summary_0405}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0405}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 3.
+
+{{< include ../includes/git_commit.qmd >}}

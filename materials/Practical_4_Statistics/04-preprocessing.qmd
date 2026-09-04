@@ -11,6 +11,7 @@ library(osbng)
 library(sf)
 library(terra)
 library(rnaturalearth)
+library(pollimetry)
 ```
 
 Read the raw data.
@@ -83,12 +84,13 @@ survey_events <- samples |>
 insects_plus_samples <- insects |>
   left_join(sample_info, by = "sample_id")
 
-# Count the number of occurrences of each combo of square, date, species
+# Count the number of occurrences of each combo of square, species
 species_counts <- insects_plus_samples |> count(
   x1km_square,
   species,
   name = "n_observed"
 )
+
 
 # Get every combination of species and sampling events
 combos <- survey_events |> crossing(species)
@@ -109,7 +111,7 @@ insects_by_square <- insects_by_square |>
   mutate(genus = word(species, 1))
 ```
 
-For flowers - for each flower species and 1km square, mark each flower species as present or absent.
+For flowers - for each flower species and 1km square, calculate the total number of floral units observed, including zeros.
 
 ```{r flowers_per_square}
 # List the unique flower species
@@ -298,9 +300,9 @@ insects_sel <- insects_sel |> left_join(poll)
 Summarise the biomass data across sites.
 
 ```{r biomass}
-insect_biomass <- insect_counts |> 
+insect_biomass <- insects_by_square |> 
   filter(n_observed != 0) |>
-  left_join(insect_metadata) |>
+  left_join(insects_sel) |>
   filter(!is.na(mean_dry_mass)) |>
   mutate(total_biomass = n_observed * mean_dry_mass) |>
   group_by(x1km_square) |>
@@ -336,7 +338,35 @@ write_csv(insects_by_square, "data/insect_counts.csv")
 write_csv(flowers_by_square, "data/flower_counts.csv")
 ```
 
-Read the [WorldClim](https://nordata.physics.utoronto.ca/en/annexes-datasets-descriptions/72-precipitation/worldclim-version-2/) data, which has climate data by square averaged from 1970-2000. These are 2.5km squares but should be close enough for our purposes.
+Count the number of unique insect species in each of the selected families per site.
+
+```{r count_dom_fam}
+fams <- c("Apidae", "Halictidae", "Syrphidae")
+
+by_spp_met <- inner_join(species_counts, insects_sel) |>
+  filter(family %in% fams)
+
+counts <- by_spp_met |>
+  group_by(x1km_square, family) |>
+  count() |>
+  ungroup() |>
+  complete(
+    x1km_square,
+    family = fams,
+    fill = list(n = 0)
+  )  |>
+  pivot_wider(
+    names_from = family,
+    values_from = n,
+    names_prefix = "n_",
+    values_fill = 0
+  ) |>
+  rename_with(tolower)
+
+sample_summ <- inner_join(sample_summ, counts)
+```
+
+Read the [WorldClim](https://nordata.physics.utoronto.ca/en/annexes-datasets-descriptions/72-precipitation/worldclim-version-2/) data, which has climate data by square averaged from 1970-2000. These are 10 arc-minutes squares but should be close enough for our purposes.
 
 Take the [19 bioclim variables](https://www.nccs.nasa.gov/bioclim/) plus temperature for each month and elevation.
 
