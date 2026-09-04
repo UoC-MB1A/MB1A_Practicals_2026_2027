@@ -7,6 +7,7 @@ library(gt)
 
 ::: {.callout-note .partmenu #parts-0605}
 ## Sections
+- @sec-log_link
 - @sec-fitting_pois_glms
 - @sec-summary_0605
 :::
@@ -24,6 +25,20 @@ For example, with our Poisson data, let's test the following hypotheses:
 **Null hypothesis**: There is no association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
 
 **Alternative hypothesis**: There is an association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
+
+## Log-link function {#sec-log_link}
+
+By default, a Poisson GLM uses a log link function, which models the logarithm of the expected count, $\lambda$, as a linear function of the explanatory variables, with $\beta_0$ as the intercept and $\beta_1$ as the coefficient for the explanatory variable.
+
+$$
+\log(\lambda) = \beta_0 + \beta_1 x
+$$
+The inverse of this is:
+
+$$
+\lambda = e^{\beta_0 + \beta_1 x}
+$$
+This transformation ensures that the expected count is always positive, even though the linear predictor can take any value.
 
 ## Fitting Poisson GLMs in R {#sec-fitting_pois_glms}
 
@@ -56,7 +71,7 @@ For each additional non-Apidae species, the expected number of Apidae species is
 
 The p-value associated with this coefficient is `r format.pval(coef(summary(glm_apidae))["n_non_apidae", "Pr(>|z|)"], digits = 3)`. We therefore reject the null hypothesis and conclude that there is evidence of an association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
 
-Let's plot this relationship.
+Let's plot the data and our model, as usual. `geom_smooth()` will automatically convert the units of the response variable back to expected counts.
 
 ```{r plot_glm_apidae}
 ggplot(site_metadata,
@@ -68,6 +83,28 @@ ggplot(site_metadata,
   ) +
   theme_bw()
 ```
+
+## Prediction {@sec-prediction_pois_glm}
+
+::: {.callout-exercise #ex-prediction_pois_glm}
+Use `predict()` to estimate the expected number of Apidae species at a site with **8 non-Apidae species**.
+
+Remember to use `type = "response"` to return the prediction as an expected count rather than on the log scale.
+
+::: {.callout-answer collapse="true" #ex-prediction_pois_glm_ans}
+
+```{r prediction_pois_glm_ans}
+pred <- predict(
+  glm_apidae,
+  newdata = tibble(n_non_apidae = 8),
+  type = "response"
+)
+print (pred)
+```
+
+:::
+:::
+
 
 ## Review {#sec-summary_0605}
 

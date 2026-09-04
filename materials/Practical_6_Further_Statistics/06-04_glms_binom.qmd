@@ -297,6 +297,54 @@ Using the logit function forces the predicted probability to be between 0 and 1,
 
 ## Multiple predictors
 
+Additional predictors and interactions can be added to GLMs exactly as we added them to linear models in @sec-p3_hypothesis_testing_2 and @sec-p4_hypothesis_testing_3.
+
+::: {.callout-exercise #ex-two_predictors}
+
+In your `glms.qmd` Quarto file, apply a single binomial GLM to assess the following hypotheses, based on the data in `data/site_metadata.csv`.
+
+**Annual mean temperature**
+
+**Null hypothesis**: At the average latitude, the probability of Halictidae being the dominant insect family is not associated with annual mean temperature.
+
+**Alternative hypothesis**: At the average latitude, the probability of Halictidae being the dominant insect family is associated with annual mean temperature.
+
+**Latitude**
+
+**Null hypothesis**: At the average annual mean temperature, the probability of Halictidae being the dominant insect family is not associated with latitude.
+
+**Alternative hypothesis**: At the average annual mean temperature, the probability of Halictidae being the dominant insect family is associated with latitude.
+
+**Interaction**
+
+**Null hypothesis**: The relationship between annual mean temperature and the probability of Halictidae being the dominant insect family does not depend on latitude.
+
+**Alternative hypothesis**: The relationship between annual mean temperature and the probability of Halictidae being the dominant insect family depends on latitude.
+
+You will need to add a column to `site_metadata` with 1 if the value of the column `dominant_family` is Syrphidae and 0 otherwise. You will also need to **centre** your `annual_mean_temp` and `latitude` columns around 0 by subtracting the column mean from each value.
+
+Draw a conclusion based on the summary of the fitted model.
+
+```{r glm_hali_setup}
+site_metadata <- read_csv("data/site_metadata.csv")
+site_metadata <- site_metadata |>
+  mutate(dom_hali = as.integer(dominant_family == "Halictidae"),
+         cent_temp = annual_mean_temp - mean(annual_mean_temp),
+         cent_lat = latitude - mean(latitude))
+```
+
+```{r glm_hali}
+glm_hali <- glm(dom_hali ~ cent_lat * cent_temp, data = site_metadata,
+                family = binomial)
+print (summary(glm_hali))
+```
+For **latitude**, the estimated coefficient is `r round(coef(glm_hali)["cent_lat"], 3)` with a p-value of `r format.pval(coef(summary(glm_hali))["cent_lat", "Pr(>|z|)"], digits = 3)`. We therefore fail to reject the null hypothesis: there is no evidence that latitude is associated with the probability of Halictidae being the dominant insect family **at the average annual mean temperature**.
+
+For **annual mean temperature**, the estimated coefficient is `r round(coef(glm_hali)["cent_temp"], 3)` with a p-value of `r format.pval(coef(summary(glm_hali))["cent_temp", "Pr(>|z|)"], digits = 3)`. We therefore fail to reject the null hypothesis: there is no evidence that annual mean temperature is associated with the probability of Halictidae being the dominant insect family **at the average latitude**.
+
+For the **interaction between latitude and annual mean temperature**, the estimated coefficient is `r round(coef(glm_hali)["cent_lat:cent_temp"], 3)` with a p-value of `r format.pval(coef(summary(glm_hali))["cent_lat:cent_temp", "Pr(>|z|)"], digits = 3)`. We therefore reject the null hypothesis and conclude that there is evidence that the relationship between annual mean temperature and the probability of Halictidae being the dominant insect family **depends on latitude**.
+:::
+
 ## Review {#sec-summary_0604}
 
 [↑ top](#)
