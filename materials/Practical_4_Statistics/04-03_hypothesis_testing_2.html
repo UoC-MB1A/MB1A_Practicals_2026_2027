@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Katy Brown">
+
+<title>Part 3: ANOVA</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../materials/Practical_4_Statistics/04-04_hypothesis_testing_3.html" rel="next">
+<link href="../../materials/Practical_4_Statistics/04-02_hypothesis_testing_1.html" rel="prev">
+<link href="../../my-theme/university-of-cambridge-favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-3bb3f7c20036fb00374843588352d9a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../my-theme/university_crest_reversed.png" alt="" class="navbar-logo light-content">
+    <img src="../../my-theme/university_crest_reversed.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">MB1A Practicals 2026-2027</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+      </div> <!-- /container-fluid -->
+    
+    <style>
+    #version-dropdown {
+      list-style: none;
+    }
+    </style>
+    
+
+  <li id="version-dropdown" class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-versions" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="menu-text">Version:</span> <span class="version-badge" aria-hidden="true">Latest</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-versions">
+      <li>
+        <a class="dropdown-item" href="/MB1A_Practicals_2026_2027/index.html">
+          <span class="dropdown-text">Latest</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+</nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span id="sec-p3_ANOVA" class="quarto-section-identifier"><span class="chapter-title">Part 3: ANOVA</span></span></h1>
+        </a>     
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Welcome</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Installing R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Setting up Git, GitHub and RStudio</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 1 - Basics of R and RStudio</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-01_using_r_and_rstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Using R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-02_quarto.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Reproducible Analysis with Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-03_simple_variables_functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Functions and Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-04_complex_variables_plotting.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Vectors, data frames and plots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 2 - Data Frames and Visualisation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-01_manipulating_dataframes1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Basic Data Frame Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-02_manipulating_dataframes2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Complex Data Frame Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-03_visualisation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Visualisation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-04_visualisation_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Visualisation Exercise</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 3 - Probability and Simulation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-01_for_loops.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Loops</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-02_intro_to_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Using simulation to understand probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-03_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Using simulation to understand your data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-04_using_other_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Simulation exercises</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-05_Bayes_theorem.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Conditional Probability and Bayes’ Theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-06_bonus_non_standard_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5 - Bonus: Sampling from a user-defined probability distribution</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Practical 4 - Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-01_estimators.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Estimators</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-02_hypothesis_testing_1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-03_hypothesis_testing_2.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 3: ANOVA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-04_hypothesis_testing_3.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Linear regression and Chi-Squared</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-05_hypothesis_testing_exercises.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Hypothesis Testing Exercises</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-06_making_predictions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Using models to make predictions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 5 - Bioinformatics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-01_bioconductor.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Introduction to Bioconductor and Sequence Analysis in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-02_sequence_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Finding Open Reading Frames</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-03_blast.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Identifying Sequences with BLAST</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-04_align_phylo.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Multiple Sequence Alignment and Phylogeny</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-05_share_data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Share your results</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 6 - Further Statistics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-01_functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-02_model_assumptions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Testing Assumptions of Linear Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-03_breaking_assumptions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Can we break a t-test?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-04_glms_binom.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Generalised Linear Models - Binomial</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-05_glms_pois.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Generalised Linear Models - Poisson</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-06_choosing_a_model.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">06-04_choosing_a_model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-07_bootstrapping_and_permutation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">06-05_bootstrapping_and_permutation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-08_power_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">06-06_power_analysis</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Reference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../R_reference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">R Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-one_way_anova" id="toc-sec-one_way_anova" class="nav-link active" data-scroll-target="#sec-one_way_anova">One-way ANOVA with more than two groups</a>
+  <ul class="collapse">
+  <li><a href="#hypothesis" id="toc-hypothesis" class="nav-link" data-scroll-target="#hypothesis">Hypothesis</a></li>
+  <li><a href="#plot" id="toc-plot" class="nav-link" data-scroll-target="#plot">Plot</a></li>
+  <li><a href="#statistical-test" id="toc-statistical-test" class="nav-link" data-scroll-target="#statistical-test">Statistical Test</a></li>
+  </ul></li>
+  <li><a href="#sec-f_dist" id="toc-sec-f_dist" class="nav-link" data-scroll-target="#sec-f_dist">Extension exercise - the F-distribution</a></li>
+  <li><a href="#sec-multi_way_anova" id="toc-sec-multi_way_anova" class="nav-link" data-scroll-target="#sec-multi_way_anova">Multi-way ANOVA</a>
+  <ul class="collapse">
+  <li><a href="#hypothesis-1" id="toc-hypothesis-1" class="nav-link" data-scroll-target="#hypothesis-1">Hypothesis</a></li>
+  <li><a href="#plot-1" id="toc-plot-1" class="nav-link" data-scroll-target="#plot-1">Plot</a></li>
+  </ul></li>
+  <li><a href="#sec-interactions" id="toc-sec-interactions" class="nav-link" data-scroll-target="#sec-interactions">Interactions</a>
+  <ul class="collapse">
+  <li><a href="#hypotheses" id="toc-hypotheses" class="nav-link" data-scroll-target="#hypotheses">Hypotheses</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span id="sec-p3_ANOVA" class="quarto-section-identifier"><span class="chapter-title">Part 3: ANOVA</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Katy Brown </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="parts-0403" class="partmenu callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Sections
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><a href="#sec-one_way_anova" class="quarto-xref"><span>One-way ANOVA with more than two groups</span></a></li>
+<li><a href="#sec-f_dist" class="quarto-xref"><span>Extension exercise - the F-distribution</span></a></li>
+<li><a href="#sec-multi_way_anova" class="quarto-xref"><span>Multi-way ANOVA</span></a></li>
+<li><a href="#sec-interactions" class="quarto-xref"><span>Interactions</span></a></li>
+<li><a href="#sec-summary_0403" class="quarto-xref"><span>Review</span></a></li>
+</ul>
+</div>
+</div>
+<div class="objectives callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this part of the practical you will be able to:</p>
+</div>
+</div>
+<p>In the previous section, we used one-way ANOVA to look at the difference between two levels of a single explanatory variable. However, ANOVA can easily be expanded to look at multiple groups and multiple explanatory variables.</p>
+<section id="sec-one_way_anova" class="level2">
+<h2 class="anchored" data-anchor-id="sec-one_way_anova">One-way ANOVA with more than two groups</h2>
+<p>ANOVA expands easily to take into account an explanatory variable with more than two levels (i.e.&nbsp;a categorical variable with three or more options).</p>
+<p>We already know about using <code>response ~ explanatory</code> as a formula in R to investigate response as a function of explanatory variable. If you are using a data frame as the input to this function and the explanatory variable is categorical, R will automatically treat the different values in the column as different levels of that variable.</p>
+<p>One of the measurements in our pollinator data frame is <code>mean_insect_mass</code> - the mean mass in grams of all pollinators collected at that site.</p>
+<p>It seems feasible that this would be affected by the types of pollinators present - some pollinators are much bigger than others.</p>
+<section id="hypothesis" class="level3">
+<h3 class="anchored" data-anchor-id="hypothesis">Hypothesis</h3>
+<p>Using our pollinator data, let’s investigate the following hypothesis using a one-way ANOVA.</p>
+<ul>
+<li>Null hypothesis: Sites dominated by different insect families have the same mean mass.</li>
+<li>Alternative hypothesis: At least one dominant insect family is associated with sites with a different mean mass.</li>
+</ul>
+<p>Let’s first list all the families which dominate at any site.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>unique_fams <span class="ot">&lt;-</span> site_metadata <span class="sc">|&gt;</span> <span class="fu">distinct</span>(dominant_family)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(unique_fams)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 1
+  dominant_family
+  &lt;chr&gt;          
+1 Syrphidae      
+2 Halictidae     
+3 Apidae         
+4 Andrenidae     </code></pre>
+</div>
+</div>
+<p>All sites are dominated by one of these four families.</p>
+</section>
+<section id="plot" class="level3">
+<h3 class="anchored" data-anchor-id="plot">Plot</h3>
+<p>A box plot is a typical way to visualise the type of data which is suitable for ANOVA analysis.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  site_metadata,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> dominant_family, <span class="at">y =</span> mean_insect_mass,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> dominant_family</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="04-03_hypothesis_testing_2_files/figure-html/plot_domfam-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="04-03_hypothesis_testing_2_files/figure-html/plot_domfam-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="statistical-test" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-test">Statistical Test</h3>
+<p>We can test the association between mean insect mass and dominant family with a one-way ANOVA, and we define it exactly as before.</p>
+<p>Here, we would define the linear model as <code>lm(mean_insect_mass ~ dominant_family, data=site_metadata)</code>.</p>
+<p>We could then just look at our linear model directly. It would take one category - in this case Andrenidae, as it is first alphabetically, to be the reference level and compare each of the other levels - Syrphidae, Halictidae and Apidae to Andrenidae. It would not compare e.g.&nbsp;Halictidae to Apidae as neither is the reference.</p>
+<p>Let’s try it:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>lm_mass_domfam <span class="ot">&lt;-</span> <span class="fu">lm</span>(mean_insect_mass <span class="sc">~</span> dominant_family, <span class="at">data =</span> site_metadata)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_mass_domfam)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = mean_insect_mass ~ dominant_family, data = site_metadata)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-17.5991  -5.3988  -0.5006   3.8201  20.9558 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                 19.589      8.325   2.353   0.0214 *
+dominant_familyApidae       16.058      8.446   1.901   0.0613 .
+dominant_familyHalictidae   -1.674      8.830  -0.190   0.8502  
+dominant_familySyrphidae     5.571      8.450   0.659   0.5118  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 8.325 on 72 degrees of freedom
+Multiple R-squared:  0.3801,    Adjusted R-squared:  0.3543 
+F-statistic: 14.72 on 3 and 72 DF,  p-value: 1.435e-07</code></pre>
+</div>
+</div>
+<p>This tells us:</p>
+<ul>
+<li>There is no evidence that sites with Apidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.</li>
+<li>There is no evidence that sites with Halictidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.</li>
+<li>There is no evidence that sites with Syrphidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.</li>
+</ul>
+<p>But, this probably isn’t what we want to know - we still don’t know if all four means are equal.</p>
+<p>If we perform an ANOVA on this data, it will compare a model in which sites with all four dominant pollinator families have the same mean insect mass with a model in which the sites with different dominant pollinator families are allowed to have different means.</p>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-anova_domfam" class="callout-exercise">
+<p>In your <code>pollinators.qmd</code> markdown file, perform an ANOVA on the linear model defined above, to investigate the hypothesis that at least one dominant insect family is associated with sites with a different mean mass. Draw a conclusion based on the output, including the appropriate statistical evidence to support your conclusion.</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex-anova_domfam_ans" class="callout-answer" data-collapse="true">
+<section id="statistical-test-1" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-test-1">Statistical Test</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>anova_mass_domfam <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm_mass_domfam)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova_mass_domfam)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: mean_insect_mass
+                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+dominant_family  3 3060.2  1020.1  14.719 1.435e-07 ***
+Residuals       72 4989.8    69.3                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<div class="highlight-box">
+<p>There is evidence that mean insect mass differs among dominant insect families (<span class="math inline">\(F\)</span>(3, 72) = 14.72, <span class="math inline">\(p\)</span> = 0.00000014), <span class="math inline">\(R^2\)</span> = 0.38). Dominant insect family explains approximately 38% of the variation in mean insect mass among sites.</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-f_dist" class="level2">
+<h2 class="anchored" data-anchor-id="sec-f_dist">Extension exercise - the F-distribution</h2>
+<div id="ext-f_distribution" class="extension callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I stated above that <em>“The p-value here is obtained from an F distribution specified by two degrees-of-freedom values: the numerator and denominator degrees of freedom. The numerator degrees of freedom are associated with the explanatory variable. The denominator degrees of freedom are the residual degrees of freedom.”</em>. In this case, our numerator has three degrees of freedom and our denominator has 72.</p>
+<p>In your <code>pollinators.qmd</code> Quarto file:</p>
+<ul>
+<li>Simulate a sample of 1000 observations from F-distribution with 3 numerator degrees of freedom and 72 denominator degrees of freedom. You can draw a random sample from an F-distribution with the function <code>rf</code> with the arguments <code>n</code> - number of observations, <code>df1</code> numerator degrees of freedom and <code>df2</code> denominator degrees of freedom.</li>
+<li>Create a dataframe where this set of observations forms a column.</li>
+<li>Plot the results using the ggplot layer <code>geom_density()</code>.</li>
+<li>Calculate an approximate p-value using your simulated data — the proportion of simulated F-values which are greater than or equal to the F-statistic calculated from our data (14.72). You can extract the F-statistic from the ANOVA table using <code>anova_mass_domfam["dominant_family", "F value"]</code>, changing <code>anova_mass_domfam</code> to whichever variable name you used.</li>
+<li>Calculate the exact p-value using the F-distribution cumulative probability function <code>pf()</code>.</li>
+</ul>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_f_distribution_ans" class="callout-answer" data-collapse="true">
+<p><span class="blue-text">Simulate a sample of 1000 observations from F-distribution with 3 numerator degrees of freedom and 72 denominator degrees of freedom. You can draw a random sample from an F-distribution with the function <code>rf</code> with the arguments <code>n</code> - number of observations, <code>df1</code> numerator degrees of freedom and <code>df2</code> denominator degrees of freedom.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_3_72 <span class="ot">&lt;-</span> <span class="fu">rf</span>(<span class="dv">1000</span>, <span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">72</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Create a dataframe where this set of observations forms a column.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>f_dist <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">simulated =</span> df_3_72)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Plot the results using the ggplot layer <code>geom_density()</code>.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fstat <span class="ot">&lt;-</span> anova_mass_domfam[<span class="st">"dominant_family"</span>, <span class="st">"F value"</span>]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  f_dist,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> simulated)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> fstat, <span class="at">color =</span> <span class="st">"red"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="04-03_hypothesis_testing_2_files/figure-html/f_dist_ans3-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="04-03_hypothesis_testing_2_files/figure-html/f_dist_ans3-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="blue-text">Calculate an approximate p-value using your simulated data — the proportion of simulated F-values which are greater than or equal to the F-statistic calculated from our data (14.72).</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>p_above_sim <span class="ot">&lt;-</span> <span class="fu">sum</span>(f_dist<span class="sc">$</span>simulated <span class="sc">&gt;=</span> fstat)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>p_sim <span class="ot">&lt;-</span> p_above_sim <span class="sc">/</span> <span class="fu">nrow</span>(f_dist)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_sim)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>As for the t-test previously, with 1000 simulations and such a low p-value, your value will almost certainly be zero.</p>
+<p><span class="blue-text">Calculate the exact p-value using the F-distribution cumulative probability function <code>pf()</code>.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p_below <span class="ot">&lt;-</span> <span class="fu">pf</span>(fstat, <span class="dv">3</span>, <span class="dv">72</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>p_exact <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> p_below</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_exact)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.434646e-07</code></pre>
+</div>
+</div>
+<p>This should be the exact p-value calculated in our ANOVA.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-multi_way_anova" class="level2">
+<h2 class="anchored" data-anchor-id="sec-multi_way_anova">Multi-way ANOVA</h2>
+<p>ANOVA can also be extended to include multiple categorical explanatory variables. This is called multi-way ANOVA (or factorial ANOVA). A model with two categorical explanatory variables is a two-way ANOVA, one with three is a three-way ANOVA, and so on.</p>
+<p>We can add additional explanatory variables using <code>+</code> - <code>response ~ explanatory1 + explanatory2 + explanatory3</code> etc.</p>
+<p>The ANOVA tests whether each explanatory variable is associated with the response in turn. So, in the case above, explanatory1 would be tested first, followed by whether explanatory2 explains additional variation after explanatory1 has been included, and so forth.</p>
+<section id="hypothesis-1" class="level3">
+<h3 class="anchored" data-anchor-id="hypothesis-1">Hypothesis</h3>
+<p>Using our pollinator data, let’s investigate the following hypotheses:</p>
+<p>Dominant insect family:</p>
+<ul>
+<li>Null hypothesis: mean insect mass is the same at sites dominated by different insect families</li>
+<li>Alternative hypothesis: mean insect mass differs for at least one dominant insect family.</li>
+</ul>
+<p>Broad habitat type:</p>
+<ul>
+<li>Null hypothesis: after taking dominant insect family into account, mean insect mass is the same across different broad habitat types.</li>
+<li>Alternative hypothesis: after taking dominant insect family into account, mean insect mass differs for at least one broad habitat type.</li>
+</ul>
+</section>
+<section id="plot-1" class="level3">
+<h3 class="anchored" data-anchor-id="plot-1">Plot</h3>
+<p>A box plot is again a typical visualisation to use here, this time using <code>facet_wrap()</code> to separate our different variables.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take the relevant columns from the data frame</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>domfam_habitat_sel <span class="ot">&lt;-</span> site_metadata <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(x1km_square, dominant_family, broad_habitat, mean_insect_mass)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot to long format</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>domfam_habitat_long <span class="ot">&lt;-</span> domfam_habitat_sel <span class="sc">|&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>      dominant_family,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      broad_habitat</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the boxplot</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  domfam_habitat_long,</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> mean_insect_mass, <span class="at">fill =</span> variable)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="co"># rotate x labels so they fit</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="04-03_hypothesis_testing_2_files/figure-html/plot_domfam_habitat-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="04-03_hypothesis_testing_2_files/figure-html/plot_domfam_habitat-1.png" class="img-fluid figure-img" width="576"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-anova_twoway" class="callout-exercise">
+<p>In your <code>pollinators.qmd</code> Quarto file:</p>
+<ul>
+<li>Expand the linear model above to incorporate a second explanatory variable - broad habitat type (from the column <code>broad_habitat</code>) as well as <code>dominant_family</code>.</li>
+<li>Run an ANOVA on the model and view the results.</li>
+<li>Draw a conclusion based on your findings, including the appropriate statistical evidence to support your conclusion.</li>
+</ul>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_anova_twoway_ans" class="callout-answer" data-collapse="true">
+<section id="statistical-test-2" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-test-2">Statistical Test</h3>
+<p>We define our linear model as follows:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lm_domfam_habitat_mass <span class="ot">&lt;-</span> <span class="fu">lm</span>(mean_insect_mass <span class="sc">~</span> dominant_family <span class="sc">+</span> broad_habitat, <span class="at">data =</span> site_metadata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And then run the ANOVA.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>anova_domfam_habitat_mass <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm_domfam_habitat_mass)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova_domfam_habitat_mass)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: mean_insect_mass
+                Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+dominant_family  3 3060.2 1020.06 14.6513 1.85e-07 ***
+broad_habitat    4  255.5   63.87  0.9174    0.459    
+Residuals       68 4734.3   69.62                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusion-1" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-1">Conclusion</h3>
+<div class="highlight-box">
+<p>There is evidence that mean insect mass differs among dominant insect families (<span class="math inline">\(F\)</span>(3, 68) = 14.65, <span class="math inline">\(p\)</span> = 1.85e-07). After accounting for dominant insect family, there is no evidence that broad habitat type explains additional variation in mean insect mass (<span class="math inline">\(F\)</span>(4, 68) = 0.92, <span class="math inline">\(p\)</span> = 0.46).</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-interactions" class="level2">
+<h2 class="anchored" data-anchor-id="sec-interactions">Interactions</h2>
+<p>When we use <code>+</code> to include multiple explanatory variables, we are assuming that their relationships with the response are additive. This means that the relationship between one explanatory variable and the response is the same at every level of the other explanatory variable. So for example, the dominant insect family can be associated with a difference in mean insect mass, and habitat can be associated with a difference, and these differences can be added together.</p>
+<p>However, sometimes the relationship between one explanatory variable and the response depends on the value of another explanatory variable. This is called an interaction.</p>
+<p>We can add interactions between variables using <code>*</code> - <code>response ~ explanatory1 * explanatory2</code>. The ANOVA will then test the association between each explanatory variable and the response, as well as whether there is an interaction between them.</p>
+<p>For example, if we set up the model as <code>mean_insect_mass ~ dominant_family * dominant_flower_order</code>, we are asking:</p>
+<ul>
+<li>Does mean insect mass vary between sites with different dominant insect families?</li>
+<li>Does mean insect mass vary between sites with different dominant flower orders, once dominant insect family has been taken into account?</li>
+<li>Does any difference in mean insect mass among dominant insect families depend on the dominant flower order?</li>
+</ul>
+<p>This final question is the interaction: does the association between one explanatory variable and the response depend on the value of another explanatory variable?</p>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-simulate_interaction" class="callout-exercise">
+<p>Let’s simulate a dataset with an interaction, to help illustrate this concept.</p>
+<p>In this study, there are four populations of students and the response variable is the time they took to finish their lunch, in minutes. Response time is drawn from a normal distribution with a standard deviation of 3.</p>
+<p>There are two categorical explanatory variables:</p>
+<ul>
+<li>Did they use a spoon or a fork?</li>
+<li>Did they eat soup or pasta?</li>
+</ul>
+<p>Their mean finishing times are as follows:</p>
+<ul>
+<li>Spoon + Pasta = 8 minutes</li>
+<li>Fork + Pasta = 10 minutes</li>
+<li>Spoon + Soup = 11 minutes</li>
+<li>Fork + Soup = 25 minutes</li>
+</ul>
+<p>The hypotheses here are:</p>
+<p>Utensil:</p>
+<ul>
+<li>Null: There is no association between utensil choice and finishing time.</li>
+<li>Alternative: Utensil choice is associated with finishing time.</li>
+</ul>
+<p>Food:</p>
+<ul>
+<li>Null: There is no association between food choice and finishing time, after taking into account the association with utensil choice.</li>
+<li>Alternative: Food choice is associated with finishing time, after taking into account the association with utensil choice.</li>
+</ul>
+<p>Interaction:</p>
+<ul>
+<li>Null: The association between utensil choice and finishing time does not vary depending on food choice.</li>
+<li>Alternative: The association between utensil choice and finishing time varies depending on food choice.</li>
+</ul>
+<p>In your <code>prac4_exercises.qmd</code> Quarto file:</p>
+<ul>
+<li>Generate four simulated populations, each of 10 students, with response times normally distributed around these means and a standard deviation of 3.</li>
+<li>Convert each of these into a data frame with the columns <code>utensil</code>, <code>food</code> and <code>time</code>.</li>
+<li>Convert these to a single data frame using the function <code>bind_rows()</code>. You can pass any number of data frames as arguments to this function and it will return a single data frame combining all of the rows (assuming the data frames all have the same columns).</li>
+<li>Fit a linear model with <code>time</code> as the response variable and <code>utensil</code>, <code>food</code> and their interaction as explanatory variables.</li>
+<li>Run an ANOVA on the linear model.</li>
+</ul>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_simulate_interaction_ans" class="callout-answer">
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
+<p><span class="blue-text">Generate four simulated populations, each of 10 students, with response times normally distributed around these means and a standard deviation of 3.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>spoon_pasta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">8</span>, <span class="dv">3</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fork_pasta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">3</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>spoon_soup <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">3</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>fork_soup <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">25</span>, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Convert each of these into a data frame with the columns <code>utensil</code>, <code>food</code> and <code>time</code>.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df_sp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Spoon"</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Pasta"</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> spoon_pasta</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>df_fp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Fork"</span>,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Pasta"</span>,</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> fork_pasta</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>df_ss <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Spoon"</span>,</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Soup"</span>,</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> spoon_soup</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>df_fs <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Fork"</span>,</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Soup"</span>,</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> fork_soup</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Convert these to a single data frame using the function <code>bind_rows()</code>. You can pass any number of data frames as arguments to this function and it will return a single data frame combining all of the rows (assuming the data frames all have the same columns).</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df_food <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(df_sp, df_fp, df_ss, df_fs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="statistical-test-3" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-test-3">Statistical test</h3>
+<p><span class="blue-text">Fit a linear model with <code>time</code> as the response variable and <code>utensil</code>, <code>food</code> and their interaction as explanatory variables.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>lm_lunch <span class="ot">&lt;-</span> <span class="fu">lm</span>(time <span class="sc">~</span> utensil <span class="sc">*</span> food, <span class="at">data =</span> df_food)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Run an ANOVA on the linear model.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>anova_lunch <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm_lunch)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova_lunch)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: time
+             Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+utensil       1 580.00  580.00  51.270 2.025e-08 ***
+food          1 755.45  755.45  66.779 1.018e-09 ***
+utensil:food  1 405.33  405.33  35.830 7.259e-07 ***
+Residuals    36 407.25   11.31                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<section id="conclusion-2" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-2">Conclusion</h3>
+<p>Here, we need to report the F-statistic, degrees of freedom and p-value for both explanatory variables and for the interaction.</p>
+<div class="highlight-box">
+<p>There is evidence that eating time differs according to the utensil used (<span class="math inline">\(F\)</span>(1, 36) = 51.27, <span class="math inline">\(p\)</span> = 2.03e-08) and according to the type of food being eaten (<span class="math inline">\(F\)</span>(1, 36) = 66.78, <span class="math inline">\(p\)</span> = 1.02e-09).</p>
+<p>There is also evidence of an interaction between utensil and food (<span class="math inline">\(F\)</span>(1, 36) = 35.83, <span class="math inline">\(p\)</span> = 7.26e-07). This means that the difference in eating time between using a fork and a spoon depends on the type of food being eaten.</p>
+</div>
+<div id="bon-simulate_interaction" class="bonus callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Bonus Exercise: Removing the interaction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Change the population means so that there is no interaction between food and utensil, but both food and utensil are still associated with eating time, then re-run the ANOVA and re-interpret the results.</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="bon-simulate_interaction_ans" class="callout-answer" data-collapse="true">
+<p>For example</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate the populations</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>spoon_pasta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">8</span>, <span class="dv">3</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>fork_pasta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">3</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>spoon_soup <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">14</span>, <span class="dv">3</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>fork_soup <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">18</span>, <span class="dv">3</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the data frames</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>df_sp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Spoon"</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Pasta"</span>,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> spoon_pasta</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>df_fp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Fork"</span>,</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Pasta"</span>,</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> fork_pasta</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>df_ss <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Spoon"</span>,</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Soup"</span>,</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> spoon_soup</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>df_fs <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">utensil =</span> <span class="st">"Fork"</span>,</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">food =</span> <span class="st">"Soup"</span>,</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> fork_soup</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the data frames</span></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>df_food <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(df_sp, df_fp, df_ss, df_fs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="statistical-test-4" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-test-4">Statistical Test</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the linear model</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>lm_lunch <span class="ot">&lt;-</span> <span class="fu">lm</span>(time <span class="sc">~</span> utensil <span class="sc">*</span> food, <span class="at">data =</span> df_food)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the ANOVA</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>anova_lunch <span class="ot">&lt;-</span> <span class="fu">anova</span>(lm_lunch)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova_lunch)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: time
+             Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+utensil       1 183.16  183.16 26.1797 1.052e-05 ***
+food          1 468.43  468.43 66.9523 9.869e-10 ***
+utensil:food  1  38.76   38.76  5.5395   0.02417 *  
+Residuals    36 251.87    7.00                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusion-3" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-3">Conclusion</h3>
+<div class="highlight-box">
+<p>There is evidence that eating time differs according to the utensil used (<span class="math inline">\(F\)</span>(1, 36) = 26.18, <span class="math inline">\(p\)</span> = 1.05e-05) and according to the type of food being eaten (<span class="math inline">\(F\)</span>(1, 36) = 66.95, <span class="math inline">\(p\)</span> = 9.87e-10).</p>
+<p>However, there is no evidence of an interaction between utensil and food (<span class="math inline">\(F\)</span>(1, 36) = 5.54, <span class="math inline">\(p\)</span> = 0.0242). This means there is no evidence that the difference in eating time between using a fork and a spoon depends on the type of food being eaten.</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<section id="hypotheses" class="level3">
+<h3 class="anchored">Hypotheses</h3>
+<p>Now, let’s try this with our real data. Here, our hypotheses are:</p>
+<p>Dominant insect family:</p>
+<ul>
+<li>Null: There is no association between mean insect mass and dominant insect family.</li>
+<li>Alternative: Mean insect mass is associated with dominant insect family.</li>
+</ul>
+<p>Dominant flower order:</p>
+<ul>
+<li>Null: There is no association between mean insect mass and dominant flower order, once dominant insect family has been taken into account.</li>
+<li>Alternative: Mean insect mass is associated with dominant flower order, once dominant insect family has been taken into account.</li>
+</ul>
+<p>Interaction:</p>
+<ul>
+<li>Null: The association between dominant insect family and mean insect mass does not vary depending on dominant flower order.</li>
+<li>Alternative: The association between dominant insect family and mean insect mass varies depending on dominant flower order.</li>
+</ul>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-anova_interaction" class="callout-exercise">
+<p>In your <code>pollinators.qmd</code> Quarto file:</p>
+<ul>
+<li>Draw a box plot showing the distribution of mean insect mass by dominant family and dominant flower order. You will need to convert the data to long format and use the <code>facet_wrap()</code> function to divide it into two separate plots. For this plot there’s no need to worry about the interaction.</li>
+<li>Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.</li>
+<li>Run an ANOVA on this model and view the results.</li>
+<li>Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.</li>
+</ul>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_anova_twoway_ans" class="callout-answer" data-collapse="true">
+<section id="plot-2" class="level3">
+<h3 class="anchored" data-anchor-id="plot-2">Plot</h3>
+<p><span class="blue-text">Draw a box plot showing the distribution of mean insect mass by dominant family and dominant flower order. You will need to convert the data to long format and use the <code>facet_wrap()</code> function to divide it into two separate plots. For this plot there’s no need to worry about the interaction.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take the relevant columns from the data frame</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>mass_fam_sel <span class="ot">&lt;-</span> site_metadata <span class="sc">|&gt;</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    x1km_square, dominant_family, dominant_flower_order,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    mean_insect_mass</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot to long format</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>mass_fam_long <span class="ot">&lt;-</span> mass_fam_sel <span class="sc">|&gt;</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>      dominant_family,</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>      dominant_flower_order</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the boxplot</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>  mass_fam_long,</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">y =</span> mean_insect_mass, <span class="at">fill =</span> variable)</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="co"># rotate x labels so they fit</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="04-03_hypothesis_testing_2_files/figure-html/mass_fam_plot-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="04-03_hypothesis_testing_2_files/figure-html/mass_fam_plot-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="statistical-test-5" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-test-5">Statistical test</h3>
+<p><span class="blue-text">Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.</span></p>
+<p><span class="blue-text">Run an ANOVA on this model and view the results.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>mass_fam_flower_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(mean_insect_mass <span class="sc">~</span> dominant_family <span class="sc">*</span> dominant_flower_order,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> site_metadata</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the ANOVA</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>mass_fam_flower_anova <span class="ot">&lt;-</span> <span class="fu">anova</span>(mass_fam_flower_lm)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mass_fam_flower_anova)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: mean_insect_mass
+                                      Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+dominant_family                        3 3060.17 1020.06 16.4326 1.601e-07 ***
+dominant_flower_order                 10 1124.69  112.47  1.8118   0.08323 .  
+dominant_family:dominant_flower_order 13  823.43   63.34  1.0204   0.44778    
+Residuals                             49 3041.69   62.08                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusion-4" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-4">Conclusion</h3>
+<p><span class="blue-text">Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.</span></p>
+<div class="highlight-box">
+<p>There is evidence that mean insect mass differs among dominant insect families (<span class="math inline">\(F\)</span>(3, 49) = 16.43, <span class="math inline">\(p\)</span> = 1.60e-07).</p>
+<p>After accounting for dominant insect family, there is no evidence that mean insect mass differs among dominant flower orders (<span class="math inline">\(F\)</span>(10, 49) = 1.81, <span class="math inline">\(p\)</span> = 0.0832).</p>
+<p>There is also no evidence of an interaction between dominant insect family and dominant flower order (<span class="math inline">\(F\)</span>(13, 49) = 1.02, <span class="math inline">\(p\)</span> = 0.4478). Therefore, there is no evidence that the difference in mean insect mass among dominant insect families depends on the dominant flower order.</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 5
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex_temp_prec" class="callout-exercise">
+<p>In your <code>pollinators.qmd</code> Quarto file:</p>
+<ul>
+<li>Fit a linear model to the <code>site_metadata</code> data frame with <code>annual_total_prec</code> as the response variable and <code>annual_mean_temp</code> as the explanatory variable.</li>
+<li>Use the function <code>summary()</code> to view the results.</li>
+<li>Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.</li>
+</ul>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_temp_prec_ans" class="callout-answer" data-collapse="true">
+<section id="statistical-test-6" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-test-6">Statistical test</h3>
+<p><span class="blue-text">Fit a linear model to the <code>site_metadata</code> data frame with <code>annual_total_prec</code> as the response variable and <code>annual_mean_temp</code> as the explanatory variable.</span></p>
+<p><span class="blue-text">Use the function <code>summary()</code> to view the results.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>lm_temp_prec <span class="ot">&lt;-</span> <span class="fu">lm</span>(annual_total_prec <span class="sc">~</span> annual_mean_temp, <span class="at">data =</span> site_metadata)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>summ_lm_temp_prec <span class="ot">&lt;-</span> <span class="fu">summary</span>(lm_temp_prec)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summ_lm_temp_prec)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = annual_total_prec ~ annual_mean_temp, data = site_metadata)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-526.36 -175.89  -26.99  203.27  589.30 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)       2812.95     233.08  12.069  &lt; 2e-16 ***
+annual_mean_temp  -200.20      26.46  -7.567 8.51e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 281 on 74 degrees of freedom
+Multiple R-squared:  0.4362,    Adjusted R-squared:  0.4286 
+F-statistic: 57.26 on 1 and 74 DF,  p-value: 8.511e-11</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusion-5" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-5">Conclusion</h3>
+<p><span class="blue-text">Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.</span></p>
+<div class="highlight-box">
+<p>There is evidence of a negative association between mean annual temperature and total annual precipitation (<span class="math inline">\(t\)</span>(74) = -7.57, <span class="math inline">\(p\)</span> = 8.51e-11). For each 1°C increase in mean annual temperature, the model predicts a decrease in total annual precipitation of approximately 200.2 mm. The model explains 43.62% of the variation in total annual precipitation (<span class="math inline">\(R^2\)</span> = 0.4362).</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<section id="sec-summary_0403" class="level2">
+<h2 class="anchored" data-anchor-id="sec-summary_0403">Review</h2>
+<p><a href="#">↑ top</a></p>
+<div id="note-summary_0403" class="callout callout-style-default callout-note callout-empty-content callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Summary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+<p>For this part of the practical, the main files you have created are:</p>
+<p>These are the files you should select when making your Git commit.</p>
+<p>Remember to save and commit your work before moving on to Part 4.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Commit your changes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember to save your progress regularly by committing your changes with Git.</p>
+<ol type="1">
+<li>Save your changes to the files above in RStudio with the <code>Save</code> button.</li>
+<li>Render any Quarto documents with the <code>Render</code> button.</li>
+<li>Open the <code>Git</code> tab in RStudio.</li>
+<li>Tick the files listed above, don’t worry about any others.</li>
+<li>Click <code>Commit</code> and write a short message in the <code>Commit message</code> describing your changes, something like e.g.&nbsp;“Practical 1 part 1” is sufficient, then click <code>Commit</code>. Close the <code>Commit</code> popup.</li>
+</ol>
+</div>
+</div>
+
+
+</section>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../materials/Practical_4_Statistics/04-02_hypothesis_testing_1.html" class="pagination-link" aria-label="Part 2: Hypothesis Testing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 2: Hypothesis Testing</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../materials/Practical_4_Statistics/04-04_hypothesis_testing_3.html" class="pagination-link" aria-label="Part 4: Linear regression and Chi-Squared">
+        <span class="nav-page-text"><span class="chapter-title">Part 4: Linear regression and Chi-Squared</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> <img src="https://creativecommons.org/images/deed/cc_icon_black_x2.png" class="img-fluid" width="25"></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>
