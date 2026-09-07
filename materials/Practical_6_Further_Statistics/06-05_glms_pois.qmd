@@ -3,12 +3,14 @@ library(tidyverse)
 library(gt)
 ```
 
-# Part 5: Generalised Linear Models - Poisson {#sec-p5_glms_binomial}
+# Part 5: Generalised Linear Models - Poisson  {#sec-p5_glms_pois}
 
 ::: {.callout-note .partmenu #parts-0605}
 ## Sections
 - @sec-log_link
 - @sec-fitting_pois_glms
+- @sec-prediction_pois_glm
+- @sec_assumptions_glms
 - @sec-summary_0605
 :::
 
@@ -18,13 +20,11 @@ By the end of this part of the practical you will be able to:
 
 :::
 
-A binomial GLM is appropriate when the response variable represents one of two possible outcomes. A Poisson GLM can be used to model count data when a Poisson distribution (@sec-comparing_sim_real) is appropriate. In a Poisson GLM, we model how $\lambda$, the expected mean count, changes with our explanatory variables.
+A binomial GLM is appropriate when the response variable represents one of two possible outcomes. A Poisson GLM can be used to model count data when a Poisson distribution (@sec-comparing_sim_real) is appropriate. In a Poisson GLM, we model how $\lambda$, the expected count, changes with our explanatory variables.
 
-For example, with our Poisson data, let's test the following hypotheses:
+As with the binomial GLM, the model coefficients are estimated using maximum likelihood. The likelihood is now calculated using the Poisson rather than the binomial distribution, but the principle is the same: R finds the combination of parameter values that makes the observed data most likely.
 
-**Null hypothesis**: There is no association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
-
-**Alternative hypothesis**: There is an association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
+Note: Although Poisson GLMs are used for count data, not every count response is adequately described by a Poisson model. We will discuss this below in @sec-assumptions_glms.
 
 ## Log-link function {#sec-log_link}
 
@@ -42,6 +42,12 @@ This transformation ensures that the expected count is always positive, even tho
 
 ## Fitting Poisson GLMs in R {#sec-fitting_pois_glms}
 
+Let's use a Poisson GLM to test the following hypotheses:
+
+* **Null hypothesis**: There is no association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
+
+* **Alternative hypothesis**: There is an association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
+
 First we need to read our data, and add a column containing the number of non-Apidae species at each site.
 
 ```{r pois_glm_apidae_data, message=FALSE}
@@ -50,14 +56,34 @@ site_metadata <- site_metadata |>
   mutate(n_non_apidae = n_unique - n_apidae)
 ```
 
-Now we can apply the GLM, with `family = poisson` for the Poisson model.
+Now we are ready to fit the GLM. This is very similar to fitting a binomial GLM, except we use the argument `family = poisson` for the Poisson model.
 
-```{r pois_glm_apidae}
-glm_apidae <- glm(n_apidae ~ n_non_apidae,
-                  family = poisson,
-                  data = site_metadata)
+::: {.callout-exercise #ex-fit_pois_glm}
+
+In your `glms.qmd` Quarto file, use a GLM to test whether the number of Apidae species at a site is associated with the number of non-Apidae insect species.
+
+Use:
+
+- `n_apidae` as the response variable
+- `n_non_apidae` as the explanatory variable
+- `family = poisson` to fit a Poisson GLM
+
+Store your model in a variable, `glm_apidae`, and examine it using `summary()`.
+
+::: {.callout-answer collapse="true" #ex-fit_pois_glm_ans}
+
+```{r}
+glm_apidae <- glm(
+  n_apidae ~ n_non_apidae,
+  family = poisson,
+  data = site_metadata
+)
+
 summary(glm_apidae)
 ```
+
+:::
+:::
 
 The estimated coefficient for the number of non-Apidae species is `r round(coef(glm_apidae)["n_non_apidae"], 3)`. This coefficient is positive, indicating that sites with more non-Apidae insect species are expected to also contain more Apidae species.
 
@@ -71,7 +97,7 @@ For each additional non-Apidae species, the expected number of Apidae species is
 
 The p-value associated with this coefficient is `r format.pval(coef(summary(glm_apidae))["n_non_apidae", "Pr(>|z|)"], digits = 3)`. We therefore reject the null hypothesis and conclude that there is evidence of an association between the number of non-Apidae insect species and the expected number of Apidae species found at a site.
 
-Let's plot the data and our model, as usual. `geom_smooth()` will automatically convert the units of the response variable back to expected counts.
+Let's plot the data and our model, as usual. `geom_smooth()` transforms the fitted values back from the log scale to the response scale, so the fitted line shows the expected number of Apidae species.
 
 ```{r plot_glm_apidae}
 ggplot(site_metadata,
@@ -84,7 +110,9 @@ ggplot(site_metadata,
   theme_bw()
 ```
 
-## Prediction {@sec-prediction_pois_glm}
+## Prediction {#sec-prediction_pois_glm}
+
+We can make predictions with our Poisson GLMs using the `predict()` function, just like for our other models.
 
 ::: {.callout-exercise #ex-prediction_pois_glm}
 Use `predict()` to estimate the expected number of Apidae species at a site with **8 non-Apidae species**.
@@ -101,10 +129,268 @@ pred <- predict(
 )
 print (pred)
 ```
+The model predicts an expected count of `r round(pred, 2)` Apidae species at a site with 8 non-Apidae species.
 
 :::
 :::
 
+## Assumptions of Poisson GLMs {#sec-assumptions_glms}
+
+As well as the assumptions we discussed in @sec-assumptions_binom, for Poisson GLMs, we additionally assume that:
+
+* The response is compatible with a Poisson distribution (see @sec-distributions).
+* The variance of the response, conditional on the explanatory variables, is equal to its mean.
+
+The relationship between the variance of the response and the mean can be calculated from our model.
+
+Two statistics are commonly used:
+
+### Pearson dispersion
+
+$$
+\hat{\phi}_{P} =
+\frac{\sum_{i=1}^{n} r_{P,i}^{2}}
+{n-p}
+$$
+
+where $r_{P,i}$ is the Pearson residual for observation $i$, $n$ is the number of observations and $p$ is the number of model parameters.
+
+We can extract the residuals directly from the fitted GLM using the `residuals()` function with the argument `type = "pearson"`.
+
+```{r glm_residuals}
+resid <- residuals(glm_apidae, type = "pearson")
+```
+
+The sum of the squares of these values is ${\sum_{i=1}^{n} r_{P,i}^{2}}$.
+
+$(n - p)$ is the residual degrees of freedom, which we can also access from the model, as e.g. `glm_apidae$df.residual`.
+
+::: {.callout-exercise #ex_pearson_dispersion}
+In your `glms.qmd` Quarto file, write a function named `pearson_dispersion` to calculate the Pearson dispersion of a GLM, where the input is the fitted GLM and the output is the Pearson dispersion. Apply it to your fitted Apidae GLM.
+
+::: {.callout-answer #ex_pearson_dispersion_ans}
+```{r pearson_dispersion_ans}
+pearson_dispersion <- function(fitted_glm){
+  resid <- residuals(fitted_glm, type = "pearson")
+  ss <- sum(resid ^ 2)
+  df <- fitted_glm$df.residual
+  disp <- ss / df
+  return (disp)
+}
+p_disp_apidae <- pearson_dispersion(glm_apidae)
+print (p_disp_apidae)
+```
+:::
+:::
+
+### Deviance dispersion
+
+$$
+\hat{\phi}_{D} =
+\frac{D}
+{n-p}
+$$
+
+where $D$ is the residual **deviance**, $n$ is the number of observations and $p$ is the number of model parameters.
+
+![Deviance](images/bob.png){#fig-bob width="25%"}
+
+The residual deviance is a measure of how much mismatch remains between the observed data and the fitted GLM.
+
+It's based on likelihood, comparing the fitted model with a hypothetical saturated model — a model with enough parameters to fit the observations perfectly. We will come back to this later when we compare models.
+
+We can access the residual deviance using e.g. `glm_apidae$deviance`.
+
+As we know, $n - p$ is the residual degrees of freedom.
+
+::: {.callout-exercise #ex_dev_dispersion}
+In your `glms.qmd` Quarto file, write a function named `deviance_dispersion` to calculate the deviance dispersion of a GLM, where the input is the fitted GLM and the output is the deviance dispersion. Apply it to your fitted Apidae GLM.
+
+::: {.callout-answer #ex_dev_dispersion_ans}
+```{r deviance_dispersion_ans}
+deviance_dispersion <- function(fitted_glm){
+  devi <- fitted_glm$deviance
+  df <- fitted_glm$df.residual
+  disp <- devi / df
+  return (disp)
+}
+d_disp_apidae <- deviance_dispersion(glm_apidae)
+print (d_disp_apidae)
+```
+:::
+:::
+
+In general, we want both of these statistics to be close to 1. Values substantially greater than 1 can indicate **overdispersion** - the variance in the data is greater than the model expects. Values substantially less than 1 can indicate **underdispersion** - the variance in the data is less than the model expects.
+
+Let's fit another GLM to demonstrate how this can impact our model.
+
+::: {.callout-exercise #ex-overdispersion}
+
+In your `glms.qmd` Quarto file, using your site metadata data frame, fit a Poisson GLM to address the following hypotheses.
+
+* **Null hypothesis**: There is no association between the number of unique flower species (column `n_unique_flowers`) at a site and the number of unique insect species (column `n_unique`).
+* **Alternative hypothesis**: There is an association between the number of unique flower species at a site and the number of unique insect species.
+
+Using your functions from the previous exercises, calculate the Pearson dispersion and deviance dispersion of the model. Do you think the data is overdispersed?
+
+::: {.callout-answer collapse="true" #ex-overdispersion_ans}
+
+
+[Fit a Poisson GLM to address the following hypotheses.]{.blue-text}
+
+```{r overdispersion_ans1}
+glm_unique_spp <- glm(n_unique ~ n_unique_flowers, data = site_metadata, family = poisson)
+print(summary(glm_unique_spp))
+```
+[Calculate the Pearson dispersion.]{.blue-text}
+
+```{r overdispersion_ans2}
+p_disp_unique_spp <- pearson_dispersion(glm_unique_spp)
+print(p_disp_unique_spp)
+```
+[Calculate the deviance dispersion.]{.blue-text}
+
+```{r overdispersion_ans3}
+d_disp_unique_spp <- deviance_dispersion(glm_unique_spp)
+print(d_disp_unique_spp)
+```
+:::
+:::
+
+Both dispersion statistics are greater than 1, indicating that there is more variation in the observed counts than expected under the fitted Poisson model. A Poisson model may therefore not be appropriate for these data.
+
+### Visualising overdispersion
+
+Our dispersion statistics suggest that the observed insect counts vary more than we would expect under our fitted Poisson model. We can use simulation to visualise what this means.
+
+The fitted values from our model are the expected counts ($\lambda$) for each site. If the Poisson model is appropriate, we can use these values to simulate the sort of counts we would expect to observe under the fitted model.
+
+::: {.callout-exercise #ex-visualise_overdispersion}
+
+In your `glms.qmd` Quarto file:
+
+* Use `fitted()` to extract the expected insect count for each site from your fitted Poisson GLM.
+* Use `rpois()` to simulate one new insect count for each site, using the fitted values as the values of $\lambda$.
+* Create a data frame containing:
+    * the fitted count for each site
+    * the observed insect count
+    * the simulated insect count
+* Calculate the difference between the fitted count and the observed count and add this as a column, `observed_difference`.
+* Calculate the difference between the fitted count and the simulated count and add this as a column, `simulated_difference`.
+* Plot these differences as a box plot.
+
+What does this tell you about the variation in the observed data compared with the variation expected under the fitted Poisson model?
+
+::: {.callout-answer collapse="true" #ex-visualise_overdispersion_ans}
+
+[Use `fitted()` to extract the expected insect count for each site from your fitted Poisson GLM.]{.blue-text}
+
+```{r visualise_overdispersion_ans1}
+# Extract expected counts from the fitted model
+fitted_counts <- fitted(glm_unique_spp)
+```
+
+[Use `rpois()` to simulate one new insect count for each site, using the fitted values as the values of $\lambda$.]{.blue-text}
+
+```{r visualise_overdispersion_ans2}
+simulated_counts <- rpois(
+  n = length(fitted_counts),
+  lambda = fitted_counts
+)
+```
+
+[Create a data frame containing: the fitted count for each site, the observed insect count, the simulated insect count]{.blue-text}
+
+```{r visualise_overdispersion_ans3}
+dispersion_df <- tibble(
+  fitted = fitted_counts,
+  observed = site_metadata$n_unique,
+  simulated = simulated_counts
+)
+```
+
+[Calculate the difference between the fitted count and the observed count and add this as a column, `observed_difference`.]{.blue-text}
+
+[Calculate the difference between the fitted count and the simulated count and add this as a column, `simulated_difference`.]{.blue-text}
+
+```{r visualise_overdispersion_ans4}
+dispersion_df <-  dispersion_df |>
+  mutate(
+    observed_difference = observed - fitted,
+    simulated_difference = simulated - fitted
+  )
+```
+
+[Plot these differences as a box plot.]{.blue-text}
+```{r visualise_overdispersion_ans5}
+# Convert to long format for plotting
+dispersion_long <- dispersion_df |>
+  select(observed_difference, simulated_difference) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "data",
+    values_to = "difference"
+  )
+
+# Plot
+ggplot(dispersion_long, aes(x = data, y = difference, fill = data)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0) +
+  theme_bw()
+```
+Clearly, our data are more dispersed than the model predicts.
+
+:::
+:::
+
+### Accounting for overdispersion
+
+One way to account for overdispersion is to use a **quasi-Poisson model**. A standard Poisson model assumes:
+
+$$
+\operatorname{Var}(Y) = \mu
+$$
+
+A quasi-Poisson model introduces an additional dispersion parameter, $\phi$:
+
+$$
+\operatorname{Var}(Y) = \phi\mu
+$$
+
+When $\phi > 1$, this allows the variance to be greater than the mean.
+
+![Quasi-modo](images/quasi.png){#fig-bob width="25%"}
+
+
+In R, we can fit this model by replacing `family = poisson` with `family = quasipoisson`.
+
+```{r quasipoisson}
+glm_unique_spp_quasi <- glm(
+  n_unique ~ n_unique_flowers,
+  family = quasipoisson,
+  data = site_metadata
+)
+
+summary(glm_unique_spp_quasi)
+```
+::: {.callout-exercise #ex-quasipoisson}
+
+Compare the output from the Poisson and quasi-Poisson models.
+
+* What has happened to the coefficient estimates?
+* What has happened to their standard errors?
+* What has happened to the p-value for `n_unique_flowers`?
+* Has accounting for overdispersion changed your conclusion about the association between flower and insect species richness?
+
+::: {.callout-answer collapse="true" #ex-quasipoisson_ans}
+
+* The coefficient estimates are identical, but their standard errors are larger in the quasi-Poisson model. The quasi-Poisson model accounts for the additional variation in the data, and therefore gives us less certainty about the estimated coefficients.
+* The p-value for `n_unique_flowers` has increased from <2 × 10^-16^ to 6.5 × 10^-5^, although there is still strong evidence of an association between flower and insect species richness.
+
+This does not change our conclusion, but accounting for the overdispersion gives us a more appropriate estimate of the uncertainty around the coefficients.
+
+:::
+:::
 
 ## Review {#sec-summary_0605}
 

@@ -16,7 +16,7 @@ site_metadata <- read_csv("data/site_metadata.csv")
 set.seed(42)
 ```
 
-# Part 3: ANOVA {#sec-p3_ANOVA}
+# Part 3: ANOVA {#sec-p3_anova}
 
 ::: {.callout-note .partmenu #parts-0403}
 ## Sections

@@ -16,7 +16,7 @@ site_metadata <- read_csv("data/site_metadata.csv")
 set.seed(42)
 ```
 
-# Part 4: Linear regression and Chi-Squared {#sec-p3_linear_regression_chisq}
+# Part 4: Linear regression and Chi-Squared {#sec-p4_linear_regression_chisq}
 
 ::: {.callout-note .partmenu #parts-0404}
 ## Sections

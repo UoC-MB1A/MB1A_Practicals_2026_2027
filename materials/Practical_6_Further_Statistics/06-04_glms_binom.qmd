@@ -19,6 +19,10 @@ library(gt)
 - @sec-fitting_binomial_glms
 - @sec-link_functions
 - @sec-predictions_binom_glms
+- @sec-multiple_predictors
+- @sec-parameter_estimation
+- @sec-parameter_space
+- @sec-assumptions_binom
 - @sec-summary_0604
 :::
 
@@ -72,7 +76,7 @@ Now let's try to use this model to predict the presence or absence of *H. tumulo
 df_unknown <- tibble(min_temp_coldest_month = 0)
 
 pred <- predict(lm_binary, newdata = df_unknown)
-print (pred)
+print(pred)
 ```
 
 Our model predicts a `r round(pred * 100, 2)`% probability of detecting *H. tumulorum* at this temperature. This seems feasible.
@@ -91,7 +95,7 @@ In your `glms.qmd` Quarto file, use `predict()` with this model to predict the p
 ```{r linear_model_binary_response_neg}
 df_unknown <- tibble(min_temp_coldest_month = c(-10, 20))
 pred <- predict(lm_binary, newdata = df_unknown)
-print (pred)
+print(pred)
 ```
 :::
 :::
@@ -101,11 +105,12 @@ OK, so *H. tumulorum* will be present at -21% of sites at -10°C and 519% of sit
 Let's plot our real data against our model nevertheless:.
 
 ```{r plot_binary_response}
-ggplot(ht_df, 
-       aes(x = min_temp_coldest_month, y = detected_01)) +
+ggplot(
+  ht_df,
+  aes(x = min_temp_coldest_month, y = detected_01)
+) +
   geom_point() +
-  geom_smooth(method = 'lm', se=FALSE)
-
+  geom_smooth(method = "lm", se = FALSE)
 ```
 
 A linear model can predict any numerical value, whereas a probability must always lie between 0 and 1 (0–100%). We therefore need a model that retains the useful linear relationship with our explanatory variable, but converts its predictions onto a scale appropriate for a probability.
@@ -129,20 +134,19 @@ Use your function to calculate the log-odds for a sequence of probabiliies from 
 ::: {.callout-ans collapse="true" #ex-odds_ans}
 ```{r odds_ans}
 # Write the function
-calc_log_odds <- function(prob){
+calc_log_odds <- function(prob) {
   odds <- prob / (1 - prob)
   log_odds <- log(odds)
-  return (log_odds)
+  return(log_odds)
 }
 
 # Apply the function to the sequence
 lo_vec <- c()
-for (val in seq(0, 1, 0.1)){
+for (val in seq(0, 1, 0.1)) {
   lo <- calc_log_odds(val)
   lo_vec <- c(lo_vec, lo)
 }
-print (lo_vec)
-
+print(lo_vec)
 ```
 There is an increase in log-odds as probability increases.
 :::
@@ -171,8 +175,10 @@ Save your model as `glm_ht` and examine it using `summary()`.
 ::: {.callout-answer collapse="true" #ex-fit_binomial_glm_ht_ans}
 
 ```{r fit_binomial_glm_ht_ans}
-glm_ht <- glm(detected_01 ~ min_temp_coldest_month, data = ht_df,
-              family = binomial)
+glm_ht <- glm(detected_01 ~ min_temp_coldest_month,
+  data = ht_df,
+  family = binomial
+)
 summary(glm_ht)
 ```
 :::
@@ -191,7 +197,7 @@ We can exponentiate this to get the odds ratio:
 ```{r exp_odds_ratio_ht}
 beta <- glm_ht$coefficients[2]
 expo <- exp(beta)
-print (expo)
+print(expo)
 ```
 So, for every 1°C increase in minimum temperature, the odds of detecting *H. tumulorum* are multiplied by approximately 5.2.
 
@@ -200,9 +206,13 @@ Let's plot our data and our GLM prediction.
 To plot the predicted values we again use `geom_smooth()` but with the arguments `method = "glm"` and `method.args = list(family = binomial)`.
 
 ```{r visualise_glm}
-ggplot(ht_df,
-       aes(x = min_temp_coldest_month,
-           y = detected_01)) +
+ggplot(
+  ht_df,
+  aes(
+    x = min_temp_coldest_month,
+    y = detected_01
+  )
+) +
   geom_point() +
   geom_smooth(
     method = "glm",
@@ -242,8 +252,10 @@ pred <- predict(
 )
 
 # Put the results in a data frame
-pred_df <- tibble(min_temp = c(0, 1, 2),
-                  predicted_prob = pred)
+pred_df <- tibble(
+  min_temp = c(0, 1, 2),
+  predicted_prob = pred
+)
 gt(pred_df)
 ```
 
@@ -265,8 +277,10 @@ pred <- predict(
   type = "response"
 )
 
-pred_df <- tibble(min_temp = c(-10, 20),
-                  predicted_prob = pred)
+pred_df <- tibble(
+  min_temp = c(-10, 20),
+  predicted_prob = pred
+)
 gt(pred_df)
 ```
 
@@ -276,7 +290,8 @@ For example, let's predict the probability of finding *H. tumulorum* at 1000°C.
 
 ```{r extremer_glm_ht}
 df_extremer <- tibble(
-  min_temp_coldest_month = 1000)
+  min_temp_coldest_month = 1000
+)
 
 pred <- predict(
   glm_ht,
@@ -284,8 +299,10 @@ pred <- predict(
   type = "response"
 )
 
-pred_df <- tibble(min_temp = 1000,
-                  predicted_prob = pred)
+pred_df <- tibble(
+  min_temp = 1000,
+  predicted_prob = pred
+)
 gt(pred_df)
 ```
 
@@ -295,55 +312,298 @@ According to our model, we are guaranteed to find *H. tumulorum* at this tempera
 
 Using the logit function forces the predicted probability to be between 0 and 1, however it doesn't guarantee it is correct.
 
-## Multiple predictors
+## Multiple predictors {#sec-multiple_predictors}
 
-Additional predictors and interactions can be added to GLMs exactly as we added them to linear models in @sec-p3_hypothesis_testing_2 and @sec-p4_hypothesis_testing_3.
+Additional predictors and interactions can be added to GLMs exactly as we added them to linear models in @sec-p3_anova and @sec-p4_linear_regression_chisq.
 
 ::: {.callout-exercise #ex-two_predictors}
 
 In your `glms.qmd` Quarto file, apply a single binomial GLM to assess the following hypotheses, based on the data in `data/site_metadata.csv`.
 
-**Annual mean temperature**
+#### Annual mean temperature
 
-**Null hypothesis**: At the average latitude, the probability of Halictidae being the dominant insect family is not associated with annual mean temperature.
+* **Null hypothesis**: At the average latitude, the probability of Halictidae being the dominant insect family is not associated with annual mean temperature.
+* **Alternative hypothesis**: At the average latitude, the probability of Halictidae being the dominant insect family is associated with annual mean temperature.
 
-**Alternative hypothesis**: At the average latitude, the probability of Halictidae being the dominant insect family is associated with annual mean temperature.
+#### Latitude
 
-**Latitude**
+* **Null hypothesis**: At the average annual mean temperature, the probability of Halictidae being the dominant insect family is not associated with latitude.
+* **Alternative hypothesis**: At the average annual mean temperature, the probability of Halictidae being the dominant insect family is associated with latitude.
 
-**Null hypothesis**: At the average annual mean temperature, the probability of Halictidae being the dominant insect family is not associated with latitude.
+#### Interaction
 
-**Alternative hypothesis**: At the average annual mean temperature, the probability of Halictidae being the dominant insect family is associated with latitude.
+* **Null hypothesis**: The relationship between annual mean temperature and the probability of Halictidae being the dominant insect family does not depend on latitude.
+* **Alternative hypothesis**: The relationship between annual mean temperature and the probability of Halictidae being the dominant insect family depends on latitude.
 
-**Interaction**
-
-**Null hypothesis**: The relationship between annual mean temperature and the probability of Halictidae being the dominant insect family does not depend on latitude.
-
-**Alternative hypothesis**: The relationship between annual mean temperature and the probability of Halictidae being the dominant insect family depends on latitude.
-
-You will need to add a column to `site_metadata` with 1 if the value of the column `dominant_family` is Syrphidae and 0 otherwise. You will also need to **centre** your `annual_mean_temp` and `latitude` columns around 0 by subtracting the column mean from each value.
+You will need to add a column to `site_metadata` with 1 if the value of the column `dominant_family` is Halictidae and 0 otherwise. You will also need to **centre** your `annual_mean_temp` and `latitude` columns around 0 by subtracting the column mean from each value.
 
 Draw a conclusion based on the summary of the fitted model.
 
 ```{r glm_hali_setup}
 site_metadata <- read_csv("data/site_metadata.csv")
 site_metadata <- site_metadata |>
-  mutate(dom_hali = as.integer(dominant_family == "Halictidae"),
-         cent_temp = annual_mean_temp - mean(annual_mean_temp),
-         cent_lat = latitude - mean(latitude))
+  mutate(
+    dom_hali = as.integer(dominant_family == "Halictidae"),
+    cent_temp = annual_mean_temp - mean(annual_mean_temp),
+    cent_lat = latitude - mean(latitude)
+  )
 ```
 
 ```{r glm_hali}
-glm_hali <- glm(dom_hali ~ cent_lat * cent_temp, data = site_metadata,
-                family = binomial)
-print (summary(glm_hali))
+glm_hali <- glm(dom_hali ~ cent_lat * cent_temp,
+  data = site_metadata,
+  family = binomial
+)
+print(summary(glm_hali))
 ```
+
+::: {.highlight-box}
+
 For **latitude**, the estimated coefficient is `r round(coef(glm_hali)["cent_lat"], 3)` with a p-value of `r format.pval(coef(summary(glm_hali))["cent_lat", "Pr(>|z|)"], digits = 3)`. We therefore fail to reject the null hypothesis: there is no evidence that latitude is associated with the probability of Halictidae being the dominant insect family **at the average annual mean temperature**.
 
 For **annual mean temperature**, the estimated coefficient is `r round(coef(glm_hali)["cent_temp"], 3)` with a p-value of `r format.pval(coef(summary(glm_hali))["cent_temp", "Pr(>|z|)"], digits = 3)`. We therefore fail to reject the null hypothesis: there is no evidence that annual mean temperature is associated with the probability of Halictidae being the dominant insect family **at the average latitude**.
 
 For the **interaction between latitude and annual mean temperature**, the estimated coefficient is `r round(coef(glm_hali)["cent_lat:cent_temp"], 3)` with a p-value of `r format.pval(coef(summary(glm_hali))["cent_lat:cent_temp", "Pr(>|z|)"], digits = 3)`. We therefore reject the null hypothesis and conclude that there is evidence that the relationship between annual mean temperature and the probability of Halictidae being the dominant insect family **depends on latitude**.
 :::
+:::
+
+## Estimating model parameters using maximum likelihood {#sec-parameter_estimation}
+
+R uses maximum likelihood to estimate the parameters for the model.
+
+Let's fit a two-parameter model to some simple data. Seagulls like to steal chips, and are more common near to the sea. 
+
+![A seagull stealing a chip](images/seagull.jpg){#fig-gull width="50%"}
+
+You've been provided with a dataset in `data/seagulls.csv`.
+
+::: {.callout-exercise #ex-seagulls}
+
+In your `prac6_exercises.qmd` Quarto file:
+
+* Read the data frame `data/seagulls.csv`.
+* Plot a box plot with `chips_stolen` on the x axis and `distance_from_sea` on the y axis.
+* Fit a binomial GLM with `chips_stolen` as the response variable.
+* View the GLM output with `summary()` and draw a brief conclusion.
+
+::: {.callout-answer collapse="true" #ex-seagulls_ans}
+
+[Read the data frame `data/seagulls.csv`.]{.blue-text}
+
+```{r seagulls_ans1, message = FALSE}
+seagulls <- read_csv("data/seagulls.csv")
+```
+
+[Plot a box plot with `chips_stolen` on the x axis and `distance_from_sea` on the y axis.]{.blue-text}
+
+```{r seagulls_ans2}
+ggplot(seagulls, aes(x = chips_stolen, y = distance_from_sea, fill = chips_stolen)) +
+  geom_boxplot()
+```
+
+[Fit a binomial GLM with `chips_stolen` as the response variable.]{.blue-text}
+
+[View the GLM output with `summary()`]{.blue-text}
+
+```{r glm_seagulls}
+seagull_glm <- glm(chips_stolen ~ distance_from_sea,
+                    data = seagulls,
+                    family = binomial)
+print (summary(seagull_glm))
+```
+
+```{r glm_seagulls_get_parameters, include=FALSE}
+b0 <- round(coef(seagull_glm)["(Intercept)"], 4)
+b1 <- round(coef(seagull_glm)["distance_from_sea"], 4)
+```
+
+[Draw a brief conclusion]{.blue-text}
+
+::: {.highlight-box}
+
+The estimated coefficient for distance from the sea is `r round(coef(seagull_glm)["distance_from_sea"], 3)`. As distance from the sea increases, the log-odds of having your chips stolen by a seagull therefore decreases ($p$ = `r format.pval(coef(summary(seagull_glm))["distance_from_sea", "Pr(>|z|)"], digits = 3)`). We therefore reject the null hypothesis and conclude that there is evidence of an association between distance from the sea and the probability of having your chips stolen by a seagull.
+
+:::
+:::
+:::
+
+In this case, R will have estimated both $\beta_0$ (`r b0`) and $\beta_1$ (`r b1`) using **maximum likelihood estimation**. This process finds the values of the model parameters that make the observed data most likely.
+
+To understand how this works, let's fix $\beta_0$ at `r b0` and calculate the likelihood of the observed data for a range of possible values of $\beta_1$, from -1 to +1.
+
+The model we are using is therefore:
+
+$$
+\operatorname{logit}(p_{\text{stolen}}) =
+1.3711 + \beta_1 \times \text{distance from sea}
+$$
+
+We can then try a range of values of $\beta_1$ and see which value gives us a model with the highest likelihood of our observed data.
+
+For each observation in the data frame, we calculate the probability of the outcome that was actually observed, given its distance from the sea and the value of $\beta_1$ being tested. We then combine these probabilities to calculate the likelihood of the complete dataset.
+
+For convenience, we use the logarithms of the probabilities. This allows us to add log-probabilities rather than multiplying together many very small probabilities. The value of $\beta_1$ that gives the highest log-likelihood will also give the highest likelihood.
+
+For each value of $\beta_1$ we will:
+
+* Use the model equation and each observed `distance_from_sea` value to calculate the log-odds of chips being stolen.
+* Convert the log-odds to a probability using the inverse logit equation:
+
+$$
+p = \frac{e^{\text{log-odds}}}{1 + e^{\text{log-odds}}}
+$$
+
+* For rows where `chips_stolen` is `TRUE`, add the log of the probability of the chips being stolen, $\log(p)$, to the total log-likelihood.
+* For rows where `chips_stolen` is `FALSE`, add the log of the probability of the chips not being stolen, $\log(1-p)$, to the total log-likelihood.
+* Select the value of $\beta_1$ that gives the highest log-likelihood.
+
+```{r run_ml_seagulls}
+possible_beta1s <- seq(-1, 1, by = 0.01)
+log_likelihoods <- c()
+b0 <- coef(seagull_glm)["(Intercept)"]
+
+for (beta in possible_beta1s) {
+  # Calculate log-odds using this possible coefficient
+  log_odds <- b0 + beta * pull(seagulls, distance_from_sea)
+  
+  # Convert log-odds to probability
+  probs <- exp(log_odds) / (1 + exp(log_odds))
+  
+  # Filter the data frame to only rows where chips
+  # were stolen and add a row with the probability
+  # of this happening under the model
+  chips_stolen <- seagulls |>
+    mutate(probs = probs,
+           log_probs = log(probs)) |>
+    filter(chips_stolen == TRUE)
+
+  # Filter the data frame to only rows where chips
+  # were not stolen and add a row with the probability
+  # of this happening under the model
+  chips_not_stolen <- seagulls |>
+    mutate(probs = (1 - probs),
+           log_probs = log(probs)) |>
+    filter(chips_stolen == FALSE)
+
+  # Calculate the log likelihood of the observed data
+  tot_stolen <- chips_stolen |> pull(log_probs) |> sum()
+  tot_not <- chips_not_stolen |> pull(log_probs) |> sum()
+  log_likelihood <- tot_stolen + tot_not
+  
+  # Add this to our vector of log likelihoods
+  log_likelihoods <- c(log_likelihoods, log_likelihood)
+}
+
+# Put the results into a data frame
+df_likelihood <- tibble(beta = possible_beta1s,
+                        log_likelihood = log_likelihoods)
+gt(head(df_likelihood))
+```
+
+Now we have our log-likelihood for each value of beta. Let's find the most likely value of $\beta_1$ by sorting our data frame by descending likelihood.
+
+```{r max_ml_seagulls}
+max_likelihood <- df_likelihood |>
+  arrange(desc(log_likelihood))
+gt(head(max_likelihood))
+```
+
+We can also plot our estimates.
+
+```{r plot_ml_seagulls}
+ggplot(df_likelihood,
+       aes(x = beta, y = log_likelihood)) +
+  geom_point() +
+  geom_vline(xintercept = -0.52)
+```
+
+Our maximum likelihood estimate of $\beta_1$ is `r pull(max_likelihood, beta)[1]`, very similar to the estimate in the model of `r b1`.
+
+Note that maximising the likelihood and maximising the log-likelihood will identify the same value of $\beta_1$. Log-likelihood is generally more convenient to work with because it allows products of many small probabilities to be replaced by sums of their logarithms, avoiding extremely small numbers.
+
+::: {.callout-exercise #ex-not_log_likelihood}
+
+In your `prac6_exercises.qmd` Quarto file, adapt the code above to use the product of the likelihood of the data under the model for each $\beta_1$ value, rather than the log likelihood. The R function for product is `prod()`.
+
+::: {.callout-answer collapse="true" #ex_not_log_likelihood_ans}
+
+```{r run_ml_seagulls_nolog}
+
+possible_beta1s <- seq(-1, 1, by = 0.01)
+likelihoods <- c()
+b0 <- coef(seagull_glm)["(Intercept)"]
+
+for (beta in possible_beta1s) {
+  # Calculate log-odds using this possible coefficient
+  log_odds <- b0 + beta * pull(seagulls, distance_from_sea)
+  
+  # Convert log-odds to probability
+  probs <- exp(log_odds) / (1 + exp(log_odds))
+  
+  # Filter the data frame to only rows where chips
+  # were stolen and add a row with the probability
+  # of this happening under the model
+
+  chips_stolen <- seagulls |>
+    mutate(probs = probs) |>
+    filter(chips_stolen == TRUE)
+
+  # Filter the data frame to only rows where chips
+  # were not stolen and add a row with the probability
+  # of this happening under the model
+  chips_not_stolen <- seagulls |>
+    mutate(probs = (1 - probs)) |>
+    filter(chips_stolen == FALSE)
+
+  # Calculate the log likelihood of the observed data
+  tot_stolen <- chips_stolen |> pull(probs) |> prod()
+  tot_not <- chips_not_stolen |> pull(probs) |> prod()
+  
+  likelihood <- tot_stolen * tot_not
+
+  likelihoods <- c(likelihoods, likelihood)
+}
+
+df_likelihood_nolog <- tibble(beta = possible_beta1s,
+                              likelihood = likelihoods)
+gt(head(df_likelihood_nolog))
+```
+
+```{r max_ml_seagulls_nolog}
+max_likelihood <- df_likelihood_nolog |>
+  arrange(desc(likelihood))
+gt(head(max_likelihood))
+```
+```{r plot_ml_seagulls_nolog}
+ggplot(df_likelihood_nolog,
+       aes(x = beta, y = likelihood)) +
+  geom_point() +
+  geom_vline(xintercept = -0.52)
+```
+:::
+:::
+
+This process gives the same answer, but the numbers are becoming impossibly small. With only 50 data points, R can cope with these values. Eventually, they may be too small for R to represent and be rounded to zero. Taking logarithms converts these products into sums and avoids this problem. 
+
+## Parameter space {#sec-parameter_space}
+
+We are looking for the most likely value of a single parameter, so we can test a suitable range of possible values. However, we have used R's estimate for $\beta_0$. Without this, we would need to find the **combination** of $\beta_0$ and $\beta_1$ that gives the highest likelihood of observing our data, requiring us to search across a two-dimensional parameter space.
+
+With additional parameters, the number of dimensions increases and the search becomes increasingly complex.
+
+In practice, `glm()` uses an optimisation algorithm to find the combination of parameter values that maximises the likelihood, rather than testing every possible combination.
+
+## Assumptions {#sec-assumptions_binom}
+
+Some assumptions are common to all GLMs and some are specific depending on the type of response variable.
+
+For all GLMs we assume:
+
+* Independence of observations - this is mostly a study-design/data-structure issue.
+
+* Linearity on the link scale - GLMs assume that the linear predictor is linear with respect to the explanatory variables
+
+For binomial GLMs we additionally assume that the response is compatible with a binomial distribution (see @sec-binomial).
 
 ## Review {#sec-summary_0604}
 
