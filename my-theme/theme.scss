@@ -175,7 +175,7 @@ div.callout-answer.callout {
   border-left-color: $callout-color-tip;
 }
 div.callout-answer.callout-style-default > .callout-header {
-  background-color: #eaf3f3;
+  background-color: #DFE1E8;
 }
 
 /* Hint callout */
@@ -375,4 +375,12 @@ img.inline-icon {
   padding: 1em;
   margin: 1em 0;
   background-color: #F2FFF6;
+}
+
+code span.co {
+  color: #4D8F5E !important;
+}
+
+pre.sourceCode {
+  background-color: #F7F7F7;
 }

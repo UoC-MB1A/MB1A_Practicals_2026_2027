@@ -25,6 +25,7 @@ format:
     lightbox: true
     crossrefs:
       hover: false
+    axe: true
 
 filters:
   - callout-exercise

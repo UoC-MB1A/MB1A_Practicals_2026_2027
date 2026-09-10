@@ -27,12 +27,13 @@ book:
     - part: "Practical 4 - Statistics"
       chapters:
         - materials/Practical_4_Statistics/04-00_learning_obj.qmd
-        - materials/Practical_4_Statistics/04-01_estimators.qmd
+        - materials/Practical_4_Statistics/04-01_data.qmd
         - materials/Practical_4_Statistics/04-02_hypothesis_testing_1.qmd
         - materials/Practical_4_Statistics/04-03_hypothesis_testing_2.qmd
         - materials/Practical_4_Statistics/04-04_hypothesis_testing_3.qmd
         - materials/Practical_4_Statistics/04-05_hypothesis_testing_exercises.qmd
         - materials/Practical_4_Statistics/04-06_making_predictions.qmd
+        - materials/Practical_4_Statistics/04-07_estimators_and_bootstrapping.qmd
     - part: "Practical 5 - Bioinformatics"
       chapters:
         - materials/Practical_5_Bioinformatics/05-00_learning_obj.qmd
@@ -50,8 +51,8 @@ book:
         - materials/Practical_6_Further_Statistics/06-04_glms_binom.qmd
         - materials/Practical_6_Further_Statistics/06-05_glms_pois.qmd
         - materials/Practical_6_Further_Statistics/06-06_choosing_a_model.qmd
-        - materials/Practical_6_Further_Statistics/06-07_bootstrapping_and_permutation.qmd
-        - materials/Practical_6_Further_Statistics/06-08_power_analysis.qmd
+        - materials/Practical_6_Further_Statistics/06-07_power_analysis.qmd
+        - materials/Practical_6_Further_Statistics/06-08_multiple_testing.qmd
     - part: "R Reference"
       chapters:
        - R_reference.qmd
