@@ -1,0 +1,399 @@
+---
+format: html
+practical: Practical_6_Further_Statistics
+doc-id: "0607"
+author: "Katy Brown"
+---
+
+```{r setup_0402, include=FALSE}
+library(tidyverse)
+library(gt)
+library(effectsize)
+library(pwr)
+```
+
+# Part 7: Power Analysis
+
+Before collecting data, we need to consider whether our experiment will have enough observations to detect an effect if one really exists. The statistical power of a hypothesis test is the probability that it will correctly reject the null hypothesis when a real effect of a specified size exists.
+
+It is affected by:
+
+* Effect size - how big of a difference do you want to be able to detect
+* Sample size
+* Sample variation
+* Significance level
+
+We therefore need to decide:
+
+  * Our desired power - 80% is often considered to be good - the percentage of effects with this effect size that we can detect.
+  * A significance level - 5% is often used.
+  * Our desired effect size.
+  
+Power analysis functions all operate under the assumption that the data that you will collect will meet all of the assumptions of your chosen statistical test perfectly. 
+
+Power analysis should be carried out early, before we perform our data collection. We are learning about it last **not because you do it last**, but because it's helpful to understand the various hypothesis tests first.
+
+For simple standard tests, R provides analytical power functions. For more complicated models, power can be estimated by simulation.
+
+## Effect size
+
+Effect size is tricky - it requires us to know, before an experiment is carried out, how big an effect we would consider to be of interest.
+
+We can get the desired effect size from pilot data, from the literature, or using the following rules of thumb devised by a statistician, [Jacob Cohen](https://en.wikipedia.org/wiki/Jacob_Cohen_(statistician)), as follows:
+
+
+| Test          | Small | Medium | Large |
+|---------------|------:|-------:|------:|
+| t-tests       | 0.2   | 0.5    | 0.8   |
+| ANOVA         | 0.1   | 0.25   | 0.4   |
+| Linear models | 0.02  | 0.15   | 0.35  |
+| Chi-squared   | 0.1   | 0.3    | 0.5   |
+
+We should use empirical effect sizes (based on pilot data or the literature) where possible.
+
+
+## T-test power analysis
+
+Let's say that we are designing a study to determine if people diagnosed with lung adenocarcinoma differ in age from people diagnosed with lung squamous cell carcinoma.
+
+We have identified data from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/ccg/research/genome-sequencing/tcga) to help us design our study. TCGA is a **cancer genomics** research project which collected and analysed thousands of matched pairs of tumour and normal tissue samples from the same individuals, across 33 types of cancer. The samples were compared in terms of their genome, transcriptome, epigenome and proteome.
+
+![The Cancer Genome Atlas](images/TCGA.png){#fig-tcga}
+
+For the purpose of designing our study, we only want to look at data showing the age of participants diagnosed with lung adenocarcinoma and lung squamous cell carcinoma.
+
+You have been provided with a CSV file with the following columns:
+
+* `Patient_ID`: A unique ID for each patient.
+* `Cancer_Type`: The type of cancer they were diagnosed with.
+* `Cancer_category`: A broader category of where in the body their cancer was diagnosed.
+* `N_Severe_Mutations`: Total number of severe mutations in any gene identified in this individual.
+* `N_Severe_Driver_Mutations`: Total number of severe mutations in cancer driver genes identified in this individual.
+* `Age`: Age in years.
+* `Sex`: Sex, male or female.
+* `Tumour_Stage`: Stage of the tumour at the time of the study.
+* `Genetic_Ancestry`: broad categorisation of genetic ancestry.
+
+First, let's read the data frame and filter to include only Lung_Adenocarcinoma and Lung_Squamous_Cell_Carcinoma.
+
+```{r ttest_power_read_data, message = FALSE}
+by_indiv <- read_csv("data/by_individual.csv")
+lungs <- by_indiv |>
+  filter(Cancer_Type %in% c('Lung_Adenocarcinoma', 'Lung_Squamous_Cell_Carcinoma'))
+```
+
+
+Before using these data to estimate a plausible effect size for our new study, we should first establish whether they provide evidence of a difference in age between the two cancer types.
+
+```{r ttest}
+ttest_lungs <- t.test(Age ~ Cancer_Type, lungs, var.equal=TRUE)
+print(ttest_lungs)
+```
+The difference is highly significant, with a p-value of `r formatC(ttest_lungs$p.value, digits=2, format="e")`.
+
+We can calculate the standardised effect size, Cohen's d, from the data.
+
+```{r cohens_d_lungs}
+cd <- cohens_d(
+  Age ~ Cancer_Type,
+  data = lungs,
+  pooled_sd = TRUE
+)
+print (cd)
+```
+Our estimated standardised effect size is `r round(cd$Cohens_d, 2)`.
+
+Based on our table above, this is a small effect.
+
+Now we have this value, we have an idea about what might be a reasonable effect size to see in our own study. We can then calculate the number of participants we would need to have an 80% probability of detecting an effect of this size. We need to use the absolute value of Cohen's d.
+
+```{r power_lungs}
+abs_cd <- abs(cd$Cohens_d)
+power_test <- pwr.t.test(
+  d = abs_cd,
+  sig.level = 0.05,
+  power = 0.8,
+  type = "two.sample"
+)
+print (power_test)
+```
+
+To have 80% power to detect an effect of this size at a significance level of 0.05, we would need at least `r ceiling(power_test$n)` individuals in each group.
+
+```{r anova_power_ans_1}
+dig <- by_indiv |>
+  filter(Cancer_Category == "digestive")
+```
+
+## Anova power analysis
+
+Power analysis for ANOVA follows a very similar process to for a t-test. 
+
+The differences are:
+
+* Instead of Cohen's D, we calculate Cohen's f using the function `cohens_f()`. This function runs directly on the fitted ANOVA rather than on the data, so we would do e.g. `cf <- cohens_f(anova)`. We can retrieve the value as e.g. `cf$Cohens_f` (note the capital C).
+* The power analysis is performed using the function `pwr.anova.test()`, with four arguments:
+
+  * `f` - Cohen's f
+  * `sig.level` - the desired significance level
+  * `power` - the desired power
+  * `k` - the number of groups in the ANOVA
+  
+::: {.callout-exercise #ex-power}
+
+Using the same cancer data frame, imagine that we are planning a new study to investigate whether age differs between different types of digestive cancer. We want to know how many individuals to include in each group.
+
+In your `power.qmd` Quarto document:
+
+* Filter the data frame to include only individuals where Cancer_Category is "digestive".
+* Fit a linear model with `Age` as the response variable and `Cancer_Type` as the explanatory variable, and perform an ANOVA on the fitted model.
+* Calculate Cohen's f for the ANOVA.
+* Calculate the number of individuals required per cancer type for a new study to have 80% power to detect an effect of this size at a significance level of 0.05.
+
+Remember that `pwr.anova.test()` requires you to specify the number of groups being compared.
+
+::: {.callout-answer collapse="true" #ex-power_ans}
+
+[Filter the data frame to include only individuals where Cancer_Category is "digestive".]{.blue-text}
+```{r anova_power_ans1}
+dig <- by_indiv |>
+  filter(Cancer_Category == "digestive")
+```
+
+[Fit a linear model with `Age` as the response variable and `Cancer_Type` as the explanatory variable, and perform an ANOVA on the fitted model.]{.blue-text}
+
+```{r anova_power_ans_2}
+lm_ct_age <- lm(Age ~ Cancer_Type, data = dig)
+anova_ct_age <- anova(lm_ct_age)
+print (anova_ct_age)
+```
+
+[Calculate Cohen's f for the ANOVA.]{.blue-text}
+
+```{r anova_power_ans_3}
+cf <- cohens_f(anova_ct_age)
+print (cf)
+```
+
+[Calculate the number of individuals required per cancer type for a new study to have 80% power to detect an effect of this size at a significance level of 0.05.]{.blue-text}
+
+```{r anova_power_ans_4}
+k <- dig |> distinct(Cancer_Type) |> nrow()
+cf_abs <- abs(cf$Cohens_f)
+power_ct_age <- pwr.anova.test(f = cf_abs,
+               sig.level = 0.05,
+               power = 0.8,
+               k = k)
+print (power_ct_age)
+```
+
+We would need `r ceiling(power_ct_age$n)` individuals per group.
+
+:::
+:::
+
+## Other tests
+
+We can run power analysis for other types of test by following the same basic process.
+
+| Analysis | Effect size | `pwr` function |
+|---|---|---|
+| t-test | Cohen's \(d\) | `pwr.t.test()` |
+| ANOVA | Cohen's \(f\) | `pwr.anova.test()` |
+| Linear model | Cohen's \(f^2\) | `pwr.f2.test()` |
+| Chi-squared test | Cohen's \(w\) | `pwr.chisq.test()` |
+
+## Simulation-based power analysis
+
+For more complicated statistical models, there may not be a simple analytical function for calculating power. Instead, we can estimate power using **simulation**. We repeatedly simulate datasets containing an effect of a specified size, analyse each simulated dataset using our planned statistical test or model, and record whether the effect is detected. The proportion of simulated experiments in which the effect is detected provides an estimate of the power of the proposed study. By repeating this process for different sample sizes, we can estimate the sample size required to achieve our desired power.
+
+Simulation-based power analysis is particularly useful for more complicated models, including GLMs, where power may depend on several features of the proposed experiment.
+
+Let's say we're planning an experiment to determine if toast will land butter-side-down when dropped. We have two groups of participants, those who consider themselves to be **lucky** and those who consider themselves to be **unlucky**. We would consider a difference of 20 percentage points in the probability of the toast landing butter-side-down between these groups to be an effect worth detecting.
+
+![A disaster](images/toast.jpg){#fig-toast width="50%"}
+
+For our power analysis, we will assume that toast dropped by lucky participants has a 40% probability of landing butter-side-down, compared with 60% for unlucky participants.
+
+We can then determine how many people we would need to recruit to each group using simulation.
+
+Let's simulate group sizes of between 5 and 300, with an interval of 20.
+
+* For each group size, we will run 1000 simulations, in which we generate two random binomial datasets, one with a probability of 0.4 (lucky) of the toast landing butter-side-down and one with a probability of 0.6 (unlucky). 
+* We can then compare these groups using a GLM with the model `toast_bsd ~ luck`, where `toast_bsd` is 1 when the toast landed butter-side-down and 0 when it landed butter-side-up, and luck is 1 for lucky and 0 for unlucky.
+* We can extract our p-value from the model using `summary(model)$coefficients[2, 4]` and determine if this is less than our significance threshold of 0.05.
+* For each group size, we then determine the proportion of the time we detected a significant effect. Once this reaches 80%, we have our sample size.
+
+```{r toast}
+# Vector to store the percentages for all groups sizes
+perc_vec <- c()
+
+# Try each group size from 5 to 300 with interval 20
+for (group_size in seq(5, 300, 20)){
+  # Vector to store the results for this group size
+  sig_vec <- c()
+  # Simulate 1000 times
+  for (j in seq_len(1000)){
+    # Lucky with 0.4 BSD probability
+    lucky <- rbinom(group_size, 1, prob = 0.4)
+    # Unlucky with 0.6 BSD probability
+    unlucky <- rbinom(group_size, 1, prob=0.6)
+    # Put each into a data frame
+    df_lucky <- tibble(luck = 1,
+                       toast_bsd = lucky)
+    df_unlucky <- tibble(luck = 0,
+                         toast_bsd = unlucky)
+    # Combine the data frames
+    df_comb <- bind_rows(df_lucky, df_unlucky)
+    # Fit the GLM
+    model <- glm(toast_bsd ~ luck,
+                 family = binomial,
+                 data = df_comb)
+    # Extract the p-value
+    pval <- summary(model)$coefficients[2, 4]
+    # Check if it is significant
+    is_sig <- pval <= 0.05
+    # Add TRUE or FALSE to the vector
+    sig_vec <- c(sig_vec, is_sig)
+  }
+  # Calculate the percentage of significant p-values
+  perc <- sum(sig_vec) / 1000
+  # Add it to the vector
+  perc_vec <- c(perc_vec, perc)
+}
+```
+
+Let's put the results in a data frame.
+
+```{r toast_df}
+power_df <- tibble(
+  group_size = seq(5, 300, 20),
+  power = perc_vec
+)
+
+gt(power_df)
+```
+
+The minimum group size is approximately `r power_df |> filter(power >= 0.8) |> slice_head(n = 1) |> pull(group_size)` people per group.
+
+Let's also plot group size against power.
+
+```{r toast_plot}
+min_group_size <- power_df |> filter(power >= 0.8) |> slice_head(n = 1) |> pull(group_size)
+
+ggplot(power_df, aes(x = group_size, y = power)) +
+  geom_line() +
+  geom_point() +
+  geom_vline(xintercept = min_group_size, color="red") +
+  geom_hline(yintercept = 0.8, color="red")
+```
+We can see that our power increases dramatically with sample size, but eventually approaches 100%. Once power is already very high, further increasing the sample size provides little additional statistical benefit, despite potentially increasing the time and cost of the experiment.
+
+### Fixed sample sizes
+
+In the example above, we started with an effect that we wanted to be able to detect and used power analysis to determine the sample size that we would need.
+
+However, in real experiments there may be practical limits on the number of observations that we can collect. In this case, we can instead use power analysis to investigate **how large an effect we would be able to reliably detect with the sample size available to us**.
+
+Imagine that we can recruit a maximum of **100 lucky and 100 unlucky participants** for our toast-dropping experiment. We will continue to assume that toast dropped by lucky participants has a 0.4 probability of landing butter-side-down.
+
+::: {.callout-exercise #ex-toast-power}
+
+In your `power.qmd` Quarto document:
+
+* Create a sequence of probabilities between 0.4 and 0.8, with an interval of 0.02. These will represent different possible probabilities of toast landing butter-side-down for the unlucky group. Keep the probability at 0.4 for the lucky group.
+* Adapt the simulation above so that the group size is always 100, but the probability for the unlucky group changes in each iteration of the outer loop. For each probability, simulate the experiment 1000 times and calculate the proportion of experiments in which the GLM detects a significant effect at a significance level of 0.05.
+* Put your results into a data frame containing:
+  * the probability of toast landing butter-side-down for the unlucky group;
+  * the difference in probability between the lucky and unlucky groups;
+  * the estimated power.
+* Based on your simulations, approximately how large a difference in the probability of landing butter-side-down could this experiment detect with 80% power?
+* Plot the estimated power against the difference in probability between the two groups.
+
+What happens when there is **no difference** between the two groups? Why is the proportion of significant results close to 0.05?
+
+::: {.callout-answer collapse="true" #ex-toast_power_ans}
+
+[Create a sequence of probabilities between 0.4 and 0.8, with an interval of 0.02. These will represent different possible probabilities of toast landing butter-side-down for the unlucky group.]{.blue-text}
+
+```{r toast_power_ans1}
+probs <- seq(0.4, 0.8, 0.02)
+```
+
+[Adapt the simulation above so that the group size is always 100, but the probability for the unlucky group changes in each iteration of the outer loop.]{.blue-text}
+
+[For each probability, simulate the experiment 1000 times and calculate the proportion of experiments in which the GLM detects a significant effect at a significance level of 0.05.]{.blue-text}
+
+```{r toast_power_ans2}
+# Vector to store the percentages for all powers
+perc_vec_fixed_sample <- c()
+
+# Try each probability for unlucky from 0.4 to 0.8
+for (prob in probs){
+  # Vector to store the results for this probability
+  sig_vec <- c()
+  # Simulate 1000 times
+  for (j in seq_len(1000)){
+    # Lucky with 0.4 BSD probability
+    lucky <- rbinom(100, 1, prob = 0.4)
+    # Unlucky with prob BSD probability
+    unlucky <- rbinom(100, 1, prob=prob)
+    # Put each into a data frame
+    df_lucky <- tibble(luck = 1,
+                       toast_bsd = lucky)
+    df_unlucky <- tibble(luck = 0,
+                         toast_bsd = unlucky)
+    # Combine the data frames
+    df_comb <- bind_rows(df_lucky, df_unlucky)
+    # Fit the GLM
+    model <- glm(toast_bsd ~ luck,
+                 family = binomial,
+                 data = df_comb)
+    # Extract the p-value
+    pval <- summary(model)$coefficients[2, 4]
+    # Check if it is significant
+    is_sig <- pval <= 0.05
+    # Add TRUE or FALSE to the vector
+    sig_vec <- c(sig_vec, is_sig)
+  }
+  # Calculate the percentage of significant p-values
+  perc <- sum(sig_vec) / 1000
+  # Add it to the vector
+  perc_vec_fixed_sample <- c(perc_vec_fixed_sample, perc)
+}
+```
+
+[Put your results into a data frame containing:]{.blue-text}
+  * [The probability of toast landing butter-side-down for the unlucky group.]{.blue-text}
+  * [The difference in probability between the lucky and unlucky groups.]{.blue-text}
+  * [The estimated power.]{.blue-text}
+  
+```{r toast_power_ans3}
+df_toast_fixed <- tibble(
+  prob_unlucky = probs,
+  prob_diff = probs - 0.4,
+  power = perc_vec_fixed_sample)
+gt(df_toast_fixed)
+```
+
+[Based on your simulations, approximately how large a difference in the probability of landing butter-side-down could this experiment detect with 80% power?]{.blue-text}
+
+The minimum difference we can detect with this group size is approximately `r df_toast_fixed |> filter(power >= 0.8) |> slice_head(n = 1) |> pull(prob_diff) * 100` percentage points.
+
+[Plot the estimated power against the difference in probability between the two groups.]{.blue-text}
+
+```{r toast_power_ans4}
+min_diff <- df_toast_fixed |> filter(power >= 0.8) |> slice_head(n = 1) |> pull(prob_diff)
+
+ggplot(df_toast_fixed, aes(x = prob_diff, y = power)) +
+  geom_line() +
+  geom_point() +
+  geom_hline(yintercept = 0.8, color="red") +
+  geom_vline(xintercept = min_diff, color="red") +
+  scale_y_continuous(limits = c(0, 1))
+```
+[What happens when there is **no difference** between the two groups? Why is the proportion of significant results close to 0.05?]{.blue-text}
+
+When there is no real difference between the groups, the null hypothesis is true. Under the null hypothesis, p-values are uniformly distributed, so approximately 5% will be below our significance threshold of 0.05.
+
+:::

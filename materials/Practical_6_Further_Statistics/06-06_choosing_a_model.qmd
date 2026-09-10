@@ -1,5 +1,461 @@
 ---
-title: "06-04_choosing_a_model"
 format: html
+practical: Practical_6_Further_Statistics
+doc-id: "0606"
+author: "Katy Brown"
 ---
 
+```{r setup_0606, include=FALSE}
+library(tidyverse)
+library(gt)
+```
+
+# Part 6: Choosing a model {#sec-p6_choosing_a_model}
+
+::: {.callout-note .partmenu #parts-0606}
+
+## Sections
+
+:::
+
+:::{.callout-tip .objectives}
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+:::
+
+When we fit a model, we generally aim for the simplest model that adequately fits the data. We can therefore simplify a model by removing explanatory variables, provided that doing so does not significantly worsen the fit of the model. The simplest model which adequately fits the data is known as the minimal model.
+
+The approaches we use for model comparison apply to both linear models and to both binomial and Poisson GLMs, although the specific statistical test used to compare nested models differs between linear models and GLMs.
+
+For linear models, the **residual sum of squares (RSS)** measures the discrepancy between the observed values and those predicted by the model. For GLMs, the equivalent role is played by **deviance** (see @sec-assumptions_glms) - a measure of how much mismatch remains between the observed data and the fitted GLM - or, in other words, of how well the model fits the data.In both cases, simplifying a model will generally worsen its fit, and we can test whether this worsening is sufficiently large to justify retaining the more complex model.
+
+
+We will use our **Septin* dataset to determine if the $P_n$ of the six Septin proteins can be used to predict if an HSC is young or old, and to explore the methods of establishing a minimal model. 
+
+## Nested models and backwards stepwise elimination
+
+One model is **nested** within another if the simpler model can be obtained just by removing one or more terms from the more complex model.
+
+For example, in the following example model 1 is nested within model 2. 
+
+```{r nested_models1, eval=FALSE}
+model_1 <- lm(y ~ temperature, data = ...)
+model_2 <- lm(y ~ temperature + rainfall, data = ...)
+```
+
+Similarly, in the following case, model 1 is nested within model 2, because model 2 expanded to `y ~ temperature + rainfall + temperature:rainfall`, where `temperature:rainfall` is the interaction.
+
+```{r nested_models2, eval=FALSE}
+model_1 <- lm(y ~ temperature + rainfall, data = ...)
+model_2 <- lm(y ~ temperature * rainfall, data = ...)
+```
+
+We can manually remove elements from a nested model and see how the model is affected.
+
+There are various options to choose which element to remove, including:
+
+* Sequentially removing the element with the highest p-value - the element with the least significant effect on the model fit.
+* Removing the element whose removal results in the lowest AIC - a statistic which specifically balances how well the model fits with the complexity of the model.
+
+## Removing elements by p-value
+
+::: {.callout-exercise #ex_septin_nested}
+
+In your `septin.qmd` Quarto file:
+* Read `data/septin.csv` into a data frame.
+* Fit a GLM to the Septin dataset with `Is_Old` as the binary response variable and all six septin levels as continuous explanatory variables. Consider only additive effects at this stage, not interactions.
+* Once you have the fitted model, look at the summary and find which of the explanatory variables has the least significant p-value. Remove this variable and fit another GLM.
+
+Continue to do this until you have no remaining variables, then fit the NULL model - `Is_Old ~ 1`. Keep all of your models in different variables named `model_1` to `model_7`.
+
+Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (`model$deviance`) for each model. 
+
+Plot the resulting values, with `degrees_of_freedom` on the x axis and `deviance` on the y axis.
+
+On the graph, observe how the residual deviance changes as the model becomes simpler.
+
+::: {.callout-answer collapse="true" #ex_septin_nested_ans}
+
+[Read `data/septin.csv` into a data frame.]{.blue-text}
+
+```{r septin_read_csv, message=FALSE}
+septin <- read_csv("data/septin.csv")
+```
+
+[Fit a GLM to the Septin dataset with `Is_Old` as the binary response variable and all six septins levels as continuous explanatory variables. Consider only additive effects at this stage, not interactions.]{.blue-text}
+
+```{r septin_model_1}
+model_1 <- glm(Is_Old ~ Septin1 + Septin2 + Septin6 + Septin7 + Septin9 + Septin11, septin, family = binomial)
+summary(model_1)
+```
+
+
+[Once you have the fitted model, look at the summary and find which of the explanatory variables has the least significant p-value.]{.blue-text}
+
+Septin 11 is the least significant.
+
+[Remove this variable and fit another GLM.]{.blue-text}
+
+```{r septin_model_2}
+model_2 <- glm(Is_Old ~ Septin1 + Septin2 + Septin6 + Septin7 + Septin9, septin, family = binomial)
+summary(model_2)
+```
+
+[Continue to do this until you have no remaining varibles.]{.blue-text}
+
+Septin 2 is the least significant.
+
+```{r septin_model_3}
+model_3 <- glm(Is_Old ~ Septin1 + Septin6 + Septin7 + Septin9, septin, family = binomial)
+summary(model_3)
+```
+
+Septin 1 is the least significant.
+
+```{r septin_model_4}
+model_4 <- glm(Is_Old ~ Septin6 + Septin7 + Septin9, septin, family = binomial)
+summary(model_4)
+```
+
+Septin 6 is the least significant.
+
+```{r septin_model_5}
+model_5 <- glm(Is_Old ~ Septin7 + Septin9, septin, family = binomial)
+summary(model_5)
+```
+
+Septin 9 is the least significant.
+
+```{r septin_model_6}
+model_6 <- glm(Is_Old ~ Septin7, septin, family = binomial)
+summary(model_6)
+```
+
+Septin 7 is the least significant.
+
+[Fit the NULL model - `Is_Old ~ 1`]{.blue-text}
+ 
+```{r septin_model_7}
+model_7 <- glm(Is_Old ~ 1, septin, family = binomial)
+summary(model_7)
+```
+
+[Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (`model$deviance) for each model.]{.blue-text}
+
+```{r septin_model_df}
+df_septin <- tibble(
+  degrees_of_freedom = c(
+    model_1$df.residual,
+    model_2$df.residual,
+    model_3$df.residual,
+    model_4$df.residual,
+    model_5$df.residual,
+    model_6$df.residual,
+    model_7$df.residual
+  ),
+  deviance = c(
+    deviance(model_1),
+    deviance(model_2),
+    deviance(model_3),
+    deviance(model_4),
+    deviance(model_5),
+    deviance(model_6),
+    deviance(model_7)
+  )
+)
+gt(df_septin)
+```
+
+[Plot the resulting values, with `degrees_of_freedom` on the x axis and `deviance` on the y axis.]{.blue-text}
+[On the graph, observe how the residual deviance changes as the model becomes simpler.]{.blue-text}
+
+```{r septin_model_plot}
+ggplot(
+  df_septin,
+  aes(x = degrees_of_freedom, y = deviance)
+) +
+  geom_point() +
+  geom_line()
+```
+
+:::
+:::
+
+## Likelihood-Ratio tests
+
+As we removed explanatory variables from our model, the **residual deviance** increased. However, this does not tell us whether the increase in deviance is large enough to indicate that removing a variable has significantly worsened the fit of the model.
+
+For nested GLMs, we can test this using a likelihood-ratio test (LRT). The null hypothesis is that the simpler model fits the data adequately compared with the more complex model. A significant result therefore indicates that removing the variable has significantly worsened the fit of the model. The test is based on the ratio of the likelihood of our observed data given the two different models.
+
+For our nested GLMs, the difference in residual deviance between two adjacent points is identical to the likelihood-ratio test statistic.
+
+The test statistic for a likelihood ratio test is:
+
+$$
+LR = 2\left[\log(L_{\text{full}}) - \log(L_{\text{reduced}})\right]
+$$
+We can measure the log-likelihood of a model using the R function `logLik()`.
+
+The test statistics for likelihood-ratio tests are approximately chi-squared distributed, with degrees of freedom as the difference between the residual degrees of freedom for the two models.
+
+$$
+df_{\mathrm{LR}} = df_{\mathrm{reduced}} - df_{\mathrm{full}}
+$$
+
+::: {.callout-exercise #ex-log_lik}
+
+In your `septin.qmd` Quarto file:
+
+* Calculate the test statistic for the likelihood ratio test comparing your `model_1` and `model_2` from the previous exercise.
+* Find the degrees of freedom for this likelihood ratio test.
+* Using the cumulative probability function for the chi-squared distribution, `pchisq()`, calculate the probability that a variable with a chi-squared distribution with these degrees of freedom would be **greater than or equal to** your calculated value of the test statistic.
+
+::: {.callout-answer collapse="true" #ex_log_lik_ans}
+
+[Calculate the test statistic for the likelihood ratio test comparing your `model_1` and `model_2` from the previous exercise.]{.blue-text}
+
+```{r calc_log_lik_septin1}
+log_lik_model_1 <- logLik(model_1)
+log_lik_model_2 <- logLik(model_2)
+test_statistic <- 2 * (log_lik_model_1 - log_lik_model_2)
+print (test_statistic)
+```
+[Find the degrees of freedom for this likelihood ratio test.]{.blue-text}
+
+```{r calc_log_lik_septin2}
+df1 <- model_1$df.residual
+df2 <- model_2$df.residual
+df_diff <- df2 - df1
+print (df_diff)
+```
+[Using the cumulative probability function for the chi-squared distribution, `pchisq()` with the argument `lower.tail = FALSE` calculate the probability that a variable with a chi-squared distribution with these degrees of freedom would be **greater than or equal to** than your calculated value of the test statistic.]{.blue-text}
+
+```{r calc_log_lik_septin3}
+prob <- pchisq(test_statistic, df = df_diff, lower.tail = FALSE)
+print (prob)
+```
+:::
+:::
+
+You should see a non-significant p-value - so removing Septin 11 has not made the model significantly worse.
+
+The test statistic for a likelihood ratio test comparing two models is identical to the difference in deviance between those two models (for a GLM). 
+
+```{r calc_diff_deviance_septin}
+print (model_2$deviance - model_1$deviance)
+```
+
+Therefore, we can calculate the change in significance for each model in our data frame sequentially.
+
+The R function `lead()` returns the following value in a data frame column, so we can use it as follows to compare each value of `deviance` with the following value of `deviance`. The final value will be `NA` because there is nothing to compare it too.
+
+```{r calc_diff_deviance_septin_df}
+df_septin <- df_septin |>
+  mutate(test_statistic = lead(deviance) - deviance)
+gt(df_septin)
+```
+
+We can do exactly the same for the degrees of freedom.
+
+```{r calc_df_septin_df}
+df_septin <- df_septin |>
+  mutate(df_diff = lead(degrees_of_freedom) - degrees_of_freedom)
+gt(df_septin)
+```
+
+Now our data frame contains everything we need to calculate the p-value of the LRT.
+
+```{r calc_p_septin_df}
+df_septin <- df_septin |>
+  mutate(pvalue = pchisq(test_statistic, df_diff, lower.tail = FALSE),
+         sig = pvalue <= 0.05)
+gt(df_septin)
+```
+
+We can add this to our visualisation. The colour of each point indicates whether the increase in deviance between that model and the next, simpler model is significant.
+
+We can also add a second set of x axis labels to show which model corresponds to each point, using the function `scale_x_continuous()` with the `dup_axis()` function. 
+
+```{r septin_model_plot_sig}
+ggplot(
+  df_septin,
+  aes(x = degrees_of_freedom, y = deviance)
+) +
+  geom_line() +
+  geom_point(aes(color=sig), size=6) +
+  scale_x_continuous(
+    sec.axis = dup_axis(
+      breaks = df_septin$degrees_of_freedom,
+      name = "Model",
+      labels = paste0("Model ", seq(1, 7))))
+```
+
+:::{.callout-exercise #ex-minimal_model_septin}
+
+Based on the plot above, which model is our minimal model?
+
+::: {.callout-answer collapse="true" #ex-minimal_model_septin_ans}
+
+The change between model 4 and model 5 is the first significant change - this is where we removed Septin 6. This means our minimal model is model 4, as removing Septin 6 made the model significantly worse.
+
+:::
+:::
+
+For a linear model, the process above is very similar. As for the GLM, we sequentially remove the predictor with the highest p-value from the model. 
+
+Instead of deviance, we use the sum of the residual sum of squares (RSS) for each model, `sum(residuals(model)^2)`. Conveniently but confusingly, you can also use the `deviance(model)` function in R to get this value from a fitted linear model.
+
+Instead of a likelihood ratio test, we calculate the test statistic F as follows:
+
+$$
+F =
+\frac{
+(RSS_{\mathrm{reduced}} - RSS_{\mathrm{full}}) /
+(df_{\mathrm{reduced}} - df_{\mathrm{full}})
+}{
+RSS_{\mathrm{full}} / df_{\mathrm{full}}
+}
+$$
+This statistic follows approximately an F-distribution, so we find the p-value using the function `pf()`. The degrees of freedom for the F-distribution are as follows:
+
+$$
+df_1 = df_{\mathrm{reduced}} - df_{\mathrm{full}}
+$$
+
+
+$$
+df_2 = df_{\mathrm{full}}
+$$
+
+## Removing elements by AIC
+
+Now let's try finding a minimal model using the AIC (Akaike Information Criterion) rather than p-value to choose which explanatory variables to remove.
+
+The AIC for a model is calculated based on its log likelihood and $k$, the number of parameters in the model. It is implemented in the R function `AIC()`.
+
+$$
+AIC = -2\log(L) + 2k
+$$
+We can calculate the AIC of a model directly:
+
+```{r calculate_aic_septin}
+aic_septin_m1 <- AIC(model_1)
+print (aic_septin_m1)
+```
+This just tells us the AIC of the model, not the contribution of each variable. If we want to know how the AIC would change if we removed each variable in turn, we can use the function `drop1()`.
+
+```{r drop1_septin}
+aic_drop1 <- drop1(model_1)
+print (aic_drop1)
+```
+This shows us what the AIC would be for the model if we removed each variable. Low values of AIC mean the model is better - so we want to remove the variable which would give us the lowest AIC - Septin 11.
+
+We can do this sequentially until all of the single term deletions give a worse AIC than the model without any deletions - the value next to `<none>` in the table. 
+
+::: {.callout-note .important #imp-aic}
+
+In the following exercise, we will use **AIC** for model selection with a linear model, whereas earlier we used **likelihood-ratio tests and p-values** with a GLM. Both approaches can be used for model selection with **either** linear models or GLMs, although the statistical test used to compare nested models differs between the two types of model.
+
+:::
+
+::: {.callout-exercise #ex_septin_nested}
+
+In your `septin.qmd` Quarto file:
+
+* Fit a linear model to the Septin dataset with `Septin1` as the continuous response variable and all five of the other septin levels as continuous explanatory variables. Consider only additive effects, not interactions.
+* Once you have the fitted model, run the `drop1` function and find out which variable improves the model the least. Remove this variable and fit another linear model.
+
+Continue until removing any remaining variable would increase the AIC.
+
+What is your minimal model?
+
+::: {.callout-answer collapse="true" #ex-septin_lm_ans}
+
+[Fit a linear model to the Septin dataset with `Septin1` as the continuous response variable and all five of the other septin levels as continuous explanatory variables. Consider only additive effects, not interactions.]
+
+```{r septin_lm_ans1}
+lm_1 <- lm(Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9 + Septin11,
+                data = septin)
+print (summary(lm_1))
+```
+[Once you have the fitted model, run the `drop1` function and find out which variable improves the model the least.]{.blue-text}
+
+```{r septin_lm_ans2}
+d1 <- drop1(lm_1)
+print (d1)
+```
+Septin 11 is the lowest.
+
+[Remove this variable and fit another linear model.]{.blue-text}
+```{r septin_lm_ans3}
+lm_2 <- lm(Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9 ,
+                data = septin)
+```
+
+[Continue until removing any remaining variable would increase the AIC.]{.blue-text}
+
+```{r septin_lm_ans4}
+d2 <- drop1(lm_2)
+print (d2)
+```
+
+Septin 7 is the lowest.
+
+```{r septin_lm_ans5}
+lm_3 <- lm(Septin1 ~ Septin2 + Septin6 + Septin9 ,
+                data = septin)
+d3 <- drop1(lm_3)
+print (d3)
+```
+None of these improve the AIC, so we can stop here.
+
+[What is your minimal model?]{.blue-text}
+`Septin1 ~ Septin2 + Septin6 + Septin9`
+:::
+:::
+
+## Automating backwards stepwise selection
+
+The process we have just carried out — starting with a full model and sequentially removing variables — is known as backwards stepwise selection.
+
+R can automate this process using the `step()` function with the argument `direction = "backward"`. By default, `step()` uses AIC to decide whether removing a variable improves the model.
+
+::: {.callout-exercise #ex-step_function}
+
+In your `septin.qmd` Quarto file, run `step()` on your first linear model (with all five explanatory variables) with the argument `direction = "backward"`
+
+Compare the final model selected by `step()` with the model you obtained manually. Are they the same? 
+
+::: {.callout-answer collapse="true" #ex-step_function_ans}
+
+```{r step_function_ans}
+step_func <- step(lm_1, direction = "backward")
+print (step_func)
+```
+
+This is the same as the result we obtained manually.
+:::
+:::
+
+
+## Review {#sec-summary_0606}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0606}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 6.
+
+{{< include ../includes/git_commit.qmd >}}

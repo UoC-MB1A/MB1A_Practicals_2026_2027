@@ -1,0 +1,96 @@
+---
+title: "Preprocessing PD Data"
+format: html
+---
+```{r libraries, message=FALSE}
+library(tidyverse)
+library(janitor)
+```
+
+Read the nutrient data and the species data.
+
+```{r read_raw_data_pd}
+nut_data <- read_csv("data/20250902_raw_spspecific_invertdata.csv")
+spp_data <- read_csv("data/AllSLBSpecies_Traits.csv") |> clean_names()
+```
+```{r}
+selected_nut <- nut_data |>
+  filter(
+    !is.na(value),
+    nutrient_code_fao %in% c("CA", "FE", "MG")
+  ) |>
+  group_by(sciname, nutrient_code_fao) |>
+  summarise(
+    value = mean(value, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  pivot_wider(
+    names_from = nutrient_code_fao,
+    values_from = value
+  ) |>
+  filter(if_all(
+    c(CA, FE, MG),
+    ~ !is.na(.x)))
+gt(selected_nut)
+```
+
+
+```{r}
+traits <- spp_data |>
+  pivot_longer(
+    cols = c(
+      tl_trophic_level,
+      lmax,
+      depth_range_deep
+    ),
+    names_to = "trait",
+    values_to = "value"
+  ) |>
+  mutate(sciname = species_name) |>
+  filter(!is.na(value)) |>
+  group_by(sciname, trait) |>
+  summarise(
+    value = mean(value),
+    .groups = "drop"
+  ) |>
+  pivot_wider(
+    names_from = trait,
+    values_from = value
+  )|>
+  filter(if_all(
+    c(tl_trophic_level, lmax, depth_range_deep),
+    ~ !is.na(.x)))
+
+orders <- spp_data |> select(species_name, order) |>
+  rename(sciname = species_name) |>
+  distinct()
+
+environment <- spp_data |> select(species_name, env_temp) |>
+  rename(sciname = species_name) |>
+  distinct()
+
+traits <- inner_join(traits, orders)
+traits <- inner_join(traits, environment)
+```
+
+
+```{r}
+merged <- inner_join(selected_nut, traits)
+nrow(merged)
+```
+
+```{r}
+write_csv(merged, "data/marine_invertebrates.csv")
+```
+
+```{r}
+iron <- nut_data |>
+  filter(nutrient_code_fao == "FE") |>
+  select(sciname, value) |>
+  rename(FE = value) |>
+  distinct()
+```
+
+```{r}
+write_csv(iron, "data/inverts_iron.csv")
+```

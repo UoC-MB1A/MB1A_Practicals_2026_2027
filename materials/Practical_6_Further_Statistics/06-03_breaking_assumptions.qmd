@@ -1,6 +1,6 @@
 ---
 format: html
-practical: Practical_4_Statistics
+practical: Practical_6_Further_Statistics
 doc-id: "0603"
 author: "Katy Brown"
 ---

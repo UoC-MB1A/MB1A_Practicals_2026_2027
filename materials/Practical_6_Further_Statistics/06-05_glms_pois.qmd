@@ -1,3 +1,10 @@
+---
+format: html
+practical: Practical_6_Further_Statistics
+doc-id: "0605"
+author: "Katy Brown"
+---
+
 ```{r setup_0605, include=FALSE}
 library(tidyverse)
 library(gt)

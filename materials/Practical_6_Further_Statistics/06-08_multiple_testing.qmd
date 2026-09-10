@@ -1,0 +1,539 @@
+---
+format: html
+practical: Practical_6_Further_Statistics
+doc-id: "0608"
+author: "Katy Brown"
+---
+
+```{r setup_0405, include=FALSE}
+library(tidyverse)
+library(gt)
+set.seed(42)
+```
+
+# Part 8: P-values and Multiple testing {#sec-p8_p_multiple_testing}
+
+::: {.callout-note .partmenu #parts-0608}
+
+:::
+
+:::{.callout-tip .objectives #objectives-0608}
+#### Learning objectives
+:::
+
+
+As we discussed in @sec-p_distributions, when the null hypothesis is true and the assumptions of a statistical test are met, p-values from repeated tests are expected to be uniformly distributed between 0 and 1.
+
+We can understand where this uniform distribution comes from by considering cumulative probabilities. For any value drawn from a continuous probability distribution, we can calculate the proportion of the distribution expected to be less than or equal to that value. If we repeat this for many values drawn from the distribution, these cumulative probabilities are uniformly distributed between 0 and 1.
+
+If we draw values from a standard normal distribution, `pnorm()` gives the probability of obtaining a value less than or equal to each observation. Across many observations, approximately 5% of these probabilities will fall between 0 and 0.05, 5% between 0.05 and 0.10, and so on.
+
+A p-value is calculated from the cumulative probability of a test statistic under the null hypothesis. For example, for a lower-tailed test, the p-value is the probability of obtaining a test statistic less than or equal to the observed value. Therefore, p-values under the null hypothesis are also expected to be uniformly distributed between 0 and 1.
+
+This is known as the probability integral transform - if $X$ is a continuous random variable with cumulative distribution function $F_X$, then the random variable $Y = F_X(X)$ has a uniform distribution between 0 and 1.
+
+We can reproduce this in R.
+
+::: {.callout-exercise #ex-p_uniform}
+* Generate a simulated set of 1000 values which are normally distributed with mean 0 and standard deviation 1.
+* For each value, use `pnorm()` to calculate its cumulative probability — the proportion of a standard normal distribution that lies below that value.
+* Plot these probabilities as a histrogram using `geom_histogram()` with the arguments `boundary = 0, binwidth = 0.05`.
+
+::: {.callout-answer collapse="true" #ex-p_uniform_ans}
+```{r}
+norms <- rnorm(1000)
+props <- c()
+for (n in norms) {
+  prop <- pnorm(n)
+  props <- c(props, prop)
+}
+histo <- tibble(
+  norms = norms,
+  props = props
+)
+
+ggplot(histo, aes(x = props)) +
+  geom_histogram(boundary = 0, binwidth = 0.05)
+```
+:::
+:::
+
+Two interesting (optional) further reading articles about p-values are the American Statistical Association statement on p-values [here](https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#d1e849) and [this article](https://doi.org/10.1080/00031305.2018.1529625) by Greenland in 2018.
+
+## Multiple testing
+
+If we perform many tests for which the null hypothesis is true, and the assumptions of the tests are met, approximately 5% of the tests will produce $p \le 0.05$ purely by chance. This corresponds to the 5% Type I error rate when we use a significance threshold of 0.05.
+
+If we're only doing one or two tests, this is often deemed to be acceptable. However, when we perform many tests it becomes a problem.
+
+In [this article](https://doi.org/10.1016/j.jclinepi.2006.01.012), Austin et al. (2006) demonstrate the problem of multiple testing using an intentionally implausible example. They classified more than 10 million people according to astrological sign and tested whether astrological signs were associated with 223 common reasons for hospitalisation.
+
+Their initial analysis identified apparently significant associations between astrological signs and hospitalisation. They then tested selected associations in an independent validation dataset and found that, for example, Sagittarians had a significantly increased risk of humerus fracture, with $p = 0.0125$, while Leos had a significantly increased risk of gastrointestinal haemorrhage $p=0.0483$. However, after correcting for the large number of statistical comparisons being made, none of the associations remained statistically significant.
+
+### Multiple testing exercise
+
+We can reproduce this ourselves with our pollinator dataset.
+
+Let's add an imaginary column, `vibes`, to our `site_metadata` data frame, in which each site is assigned a score based on the extent to which the volunteer felt good vibes when they collected the sample. This variable is normally distributed, with mean 50 and standard deviation 30.
+
+```{r assign_vibes_pollinators, message = FALSE}
+site_metadata <- read_csv("data/site_metadata.csv")
+site_metadata <- site_metadata |>
+  mutate(
+    vibes = rnorm(nrow(site_metadata), mean = 50, sd = 30)
+  )
+```
+
+Next, let's take every species which was observed in at least 10 sites.
+
+```{r get_common_pollinators, message = FALSE}
+insect_counts <- read_csv("data/insect_counts.csv")
+species_over_10 <- insect_counts |>
+  filter(n_observed > 0) |>
+  count(species) |>
+  filter(n >= 10) |>
+  pull(species)
+```
+
+::: {.callout-exercise #ex-vibes}
+
+In your `multiple_testing.qmd` Quarto file, for each pollinator species observed at least 10 times, we are going to test whether its presence or absence is associated with vibes.
+
+For each species:
+
+* Filter the `insect_counts` data frame to contain only that species. The result will have one row per site.
+* Create a column in the same data frame, `detected`, which is TRUE when n_observed > 0 and FALSE otherwise.
+* Inner join this data frame to `site_metadata` to add the vibes variable.
+* Use a t-test with equal variance to compare vibes between sites where the species was and was not detected.
+* Extract the p-value from the t-test and append it to a vector.
+
+Once you have the p-values for all 86 species:
+
+* Put them into a data frame and plot them as a histogram.
+* Calculate the proportion which are $\le$ 0.05.
+* Identify any species for which presence/absence was significantly associated with vibes.
+
+Your `for` loop to do this should be structured as follows, so that `spp` has the value of each species in turn.
+
+```{r for_loop_vibes}
+for (spp in species_over_10) {
+  # Do the steps
+}
+```
+
+
+::: {.callout-answer #ex-vibes_ans}
+
+```{r vibes_ans1, message = FALSE}
+pvals <- c()
+for (spp in species_over_10) {
+  # Filter the insect_counts data frame to contain only that species.
+  # The result will have one row per site.
+  pres_abs <- insect_counts |>
+    filter(species == spp)
+
+  # Create a column in the same data frame, `detected`,
+  # which is TRUE when n_observed > 0 and FALSE otherwise.
+  pres_abs <- pres_abs |>
+    mutate(detected = n_observed > 0)
+
+  # Inner join this data frame to site_metadata to add the vibes variable.
+  pres_abs_site <- inner_join(pres_abs, site_metadata)
+
+  # Use a t-test with equal variance to compare vibes
+  # between sites where the species was and was not detected.
+  ttest <- t.test(vibes ~ detected, data = pres_abs_site, var.equal = TRUE)
+
+  # Extract the p-value from the t-test and append it to a vector.
+  pvals <- c(pvals, ttest$p.value)
+}
+```
+
+[Once you have the p-values for all 86 species, put them into a data frame and plot them as a histogram.]{.blue-text}
+
+```{r vibes_ans2, message = FALSE}
+df_vibes <- tibble(
+  species = species_over_10,
+  pval = pvals
+)
+
+ggplot(df_vibes, aes(x = pvals)) +
+  geom_histogram(boundary = 0, binwidth = 0.05)
+```
+
+You are likely to end up with an untidy but uniform-ish distribution.
+
+[Calculate the proportion which are $\le$ 0.05.]{.blue-text}
+
+```{r vibes_ans3, message = FALSE}
+tot <- sum(pvals <= 0.05)
+prop <- tot / length(species_over_10)
+print(prop)
+```
+
+We only performed 86 tests, so the proportion will vary considerably between simulations, but over repeated simulations we would expect an average of approximately 5% of the p-values to be $\le$ 0.05.
+
+[Identify any species for which presence/absence was significantly associated with vibes.]{.blue-text}
+
+```{r vibes_ans4}
+df_sig <- df_vibes |>
+  filter(pval <= 0.05)
+
+gt(df_sig)
+```
+:::
+:::
+
+## Family-wise error rate
+
+The family-wise error rate (FWER) is the probability of making at least one Type I error across a whole set (family) of statistical tests.
+
+For example, in our pollinator vibes experiment above, if all the null hypotheses are true (which they should be), we expect approximately 5% of our tests to produce a false positive. 
+
+The FWER is the probability that at least one of our 86 tests will produce a false positive.
+
+$$
+\mathrm{FWER} = 1 - (1 - \alpha)^n
+$$
+Where $\alpha$ is our p-value threshold and $n$ is the number of tests.
+
+::: {.callout-exercise #ex-fwer}
+
+In R, calculate FWER for our example above, where alpha is 0.05 and n is 86.
+
+::: {.callout-answer collapse="true" #ex-fwer_ans}
+```{r fwer_ans}
+fwer <- 1 - (1 - 0.05)^86
+print(fwer)
+```
+There is a `r round(fwer * 100, 2)`% probability that at least one test will be significant.
+
+:::
+:::
+
+## Multiple testing corrections
+
+To avoid this issue, there are various corrections we can apply, which basically lower the threshold at which we consider a p-value to be significant.
+
+The simplest of these is a [**Bonferroni**](https://en.wikipedia.org/wiki/Carlo_Emilio_Bonferroni) correction, in which you divide the acceptable p-value by the number of tests.
+
+So, in our case:
+
+```{r bonferroni}
+pthresh <- 0.05 / 86
+print(pthresh)
+```
+This controls our FWER at no more than 5%, meaning that the probability of obtaining at least one false positive across the whole set of tests is no greater than our "acceptable" 5% threshold.
+
+```{r bonferroni_fwer}
+b_fwer <- 1 - (1 - pthresh)^86
+print(b_fwer)
+```
+This correction is easy to understand but can be brutal in terms of increasingly the type II error rate. 
+
+A less conservative alternative is a **Benjamini–Hochberg** (BH) correction. Instead of controlling FWER, this method works to control the **false discovery rate** (FDR) — the expected proportion of significant results which are false positives. The method can therefore tolerate more false positives when there are more significant results (as, for example, 5% of 100 significant results is larger than 5% of 5 significant results). This allows the threshold p-value to become less stringent when there is evidence for a larger number of genuine effects.
+
+To illustrate this, I will simulate **1000 t-tests** each on three pairs of datasets with the following properties:
+
+* 0% true effects
+* 10% true effects 
+* 20% true effects
+
+First, I will write a function to perform a t-test on two samples of 1000 observations drawn from a normal distribution with standard deviation 16. One sample will always have mean 20, the other will have a probability `prob` of having a mean of 20 and a probability of `1 - prob` of having a mean of 18. 
+
+```{r true_pos_props1}
+run_t <- function(prob) {
+  # Set the mean of the two groups
+  # Group 1 always has a mean of 20
+  group1_mean <- 20
+
+  # Group 2 has a probability prob of having a mean of 20
+  # and a probability 1 - prob of having a mean of 18
+  group2_mean <- sample(c(20, 18), size = 1, prob = c(prob, 1 - prob))
+
+  # Generate the two samples, drawn from a ND with sd 16
+  pop1 <- rnorm(1000, mean = group1_mean, sd = 16)
+  pop2 <- rnorm(1000, mean = group2_mean, sd = 16)
+
+  # Put both into a data frame
+  df_pop1 <- tibble(pop = 1, value = pop1)
+  df_pop2 <- tibble(pop = 2, value = pop2)
+  df_comb <- bind_rows(df_pop1, df_pop2)
+
+  # Run the t-test
+  ttest <- t.test(value ~ pop, data = df_comb, var.equal = TRUE)
+
+  # Put the result into a data frame, including whether there
+  # was a real effect
+  res_df <- tibble(
+    pvalue = ttest$p.value,
+    true_effect = group2_mean == 18
+  )
+  # Return the t-test p-value
+  return(res_df)
+}
+```
+
+Now I will simulate 1000 pairs of samples for each scenario:
+
+* 0% true effects: Both samples always have mean 20
+* 10% true effects: Sample 1 always has mean 20, sample 2 has a mean of 20 90% of the time and of 18 10% of the time.
+* 20% true effects: Sample 1 always has mean 20, sample 2 has a mean of 20 80% of the time and of 18 20% of the time.
+
+```{r true_pos_props2}
+# Make empty data frames to store the results
+results_0 <- tibble()
+results_10 <- tibble()
+results_20 <- tibble()
+
+# Run the function 1000 times for each pair of means
+for (i in seq_len(1000)) {
+  results_0 <- bind_rows(results_0, run_t(1))
+  results_10 <- bind_rows(results_10, run_t(0.9))
+  results_20 <- bind_rows(results_20, run_t(0.8))
+}
+```
+
+Now we can plot our p-values in each scenario.
+
+```{r true_pos_props_3, fig.width=8}
+# Make one data frame for all three sets of results
+df_probs <- bind_rows(
+  mutate(results_0, scenario = "0% true effects"),
+  mutate(results_10, scenario = "10% true effects"),
+  mutate(results_20, scenario = "20% true effects")
+)
+
+# This is just to make FALSE show at the bottom
+# of the plot and TRUE at the top instead of
+# the other way around
+df_probs <- df_probs |>
+  mutate(
+    true_effect = factor(
+      true_effect,
+      levels = c(FALSE, TRUE)
+    )
+  )
+
+# Plot the p-values
+# position = position_stack(reverse = TRUE) - generates
+# the stacked effect with FALSE at the bottom
+ggplot(df_probs, aes(x = pvalue, fill = true_effect)) +
+  geom_histogram(
+    boundary = 0,
+    binwidth = 0.05,
+    position = position_stack(reverse = TRUE)
+  ) +
+  facet_wrap(~scenario) +
+  theme_bw()
+```
+
+Here, for the bar between 0 and 0.05, the blue part of the bar represents true positives: tests where there really is a difference between the populations and we have correctly rejected the null hypothesis. The red part represents false positives: tests where there is no real difference, but we have nevertheless obtained a p-value below 0.05.
+
+The proportion of our significant results that are false positives is the **false discovery proportion** (FDP). The false discovery rate (FDR) is the expected FDP over repeated experiments.
+
+For the remaining bars, the blue part represents **false negatives**, where there is a true effect but our test has failed to detect it. These are our Type II errors.
+
+Let's calculate the FDP for each of our three simulations - the proportion of our significant results which are false positives
+
+::: {.callout-exercise #ex-fdp}
+
+In your `multiple_testing.qmd` Quarto file, calculate the FDP for each of the three scenarios. You will need to group the data frame by `scenario` then implement the equation above.
+
+::: {.callout-answer collapse="true" #ex-fdp_ans}
+```{r calc_fdr}
+FDP <- df_probs |>
+  filter(pvalue <= 0.05) |>
+  group_by(scenario) |>
+  summarise(FDP = sum(true_effect == FALSE) / n())
+gt(FDP)
+```
+:::
+:::
+
+When there are no true effects, every significant result is necessarily a false positive, so the FDP is 1. As the number of genuine effects increases, more of our significant results are true positives and the FDP decreases.
+
+We could reduce the number of false positives by applying a Bonferroni correction. Since we have performed 1000 tests, this would give us a significance threshold of:
+
+$$
+\frac{0.05}{1000} = 0.00005
+$$
+
+
+Let's see what effect this would have on the number of false positives and false negatives in our simulations.
+
+::: {.callout-exercise #ex-bonf}
+
+In your `multiple_testing.qmd` Quarto file, based on the `df_probs` data frame, calculate the false positive and false negative rates with a Bonferroni correction applied, so that only p-values less than 0.05/1000 are considered to be significant.
+
+::: {.callout-answer collapse="true" #ex-bonf_ans}
+
+False positives:
+
+```{r bonferroni_comparison_fp}
+n_false_pos <- df_probs |>
+  group_by(scenario) |>
+  summarise(
+    n_false_pos = sum(
+      pvalue <= (0.05 / 1000) & true_effect == FALSE
+    )
+  )
+gt(n_false_pos)
+```
+
+False negatives:
+
+```{r bonferroni_comparison_fn}
+n_false_neg <- df_probs |>
+  group_by(scenario) |>
+  summarise(
+    n_false_neg = sum(
+      pvalue > (0.05 / 1000) & true_effect == TRUE
+    )
+  )
+gt(n_false_neg)
+```
+
+:::
+:::
+
+The Bonferroni correction is extremely effective at preventing false positives. However, this comes at a cost: the much lower p-value threshold also means that many genuine effects are no longer considered significant. In other words, reducing our type I error rate has substantially increased our type II error rate.
+
+This illustrates why Bonferroni correction can be overly conservative when we are performing large numbers of tests and expect some genuine effects to be present.
+
+The BH procedure first ranks the p-values from lowest (most significant) to highest (least significant). For each p-value, it calculates a threshold:
+
+$$
+p_{\mathrm{threshold}} = 0.05 \times \frac{\mathrm{rank}}{\mathrm{number\ of\ tests}}
+$$
+
+For the smallest of our 1000 p-values, this threshold is therefore $0.05/1000$. However, the threshold becomes progressively less stringent as we move through the ranked p-values.
+
+We can calculate these thresholds for each of our three simulations.
+
+```{r bh}
+df_bh <- df_probs |>
+  group_by(scenario) |>
+  arrange(pvalue, .by_group = TRUE) |>
+  mutate(
+    rank = seq_len(n()),
+    thresh = 0.05 * (rank / n()),
+    sig = pvalue <= thresh
+  )
+```
+
+In each scenario, the threshold p-value would be the highest ranking p-value which is $\le$ its threshold - in our case this is the highest ranking row in which `sig` is TRUE. This will not work for 0% true effects as there will usually be no rows that meet these criteria.
+
+Let's find the highest p-value which was lower than its threshold for 10% and 20% true effects.
+
+```{r bh_pthresh}
+threshold_p <- df_bh |>
+  group_by(scenario) |>
+  filter(sig) |>
+  summarise(
+    threshold_p = max(pvalue)
+  )
+
+gt(threshold_p)
+```
+
+We can join these into our data frame.
+
+```{r add_p_thresh_bh, message = FALSE}
+df_bh <- left_join(df_bh, threshold_p)
+gt(head(df_bh))
+```
+
+::: {.callout-exercise #ex-bh}
+
+In your `multiple_testing.qmd` Quarto file, based on the `df_bh` data frame, count the number of false positives and false negatives based on the BH-corrected p-value threshold.
+
+::: {.callout-answer collapse="true" #ex-bh_ans}
+
+False positives:
+
+```{r bh_fp}
+n_false_pos <- df_bh |>
+  group_by(scenario) |>
+  summarise(
+    n_false_pos = sum(
+      (pvalue <= threshold_p) & true_effect == FALSE
+    )
+  )
+gt(n_false_pos)
+```
+
+False negatives:
+
+```{r bh_fn}
+n_false_neg <- df_bh |>
+  group_by(scenario) |>
+  summarise(
+    n_false_neg = sum(
+      (pvalue > threshold_p) & true_effect == TRUE
+    )
+  )
+gt(n_false_neg)
+```
+:::
+:::
+
+Compared with the Bonferroni correction, the BH procedure generally allows us to retain more of the genuine effects, at the cost of accepting that some false positives may remain. Rather than attempting to eliminate false positives entirely, it controls their expected proportion among the results we call significant.
+
+This makes FDR-controlling approaches particularly useful when large numbers of tests are performed and we expect that some of the tested effects are genuinely present.
+
+We can perform BH correction automatically in R.
+
+```{r bh_auto}
+df_bh <- df_bh |>
+  group_by(scenario) |>
+  mutate(
+    corrected_pvalue = p.adjust(pvalue, method = "BH")
+  )
+```
+
+False positives:
+
+```{r fp_bh_auto}
+r_false_pos <- df_bh |>
+  group_by(scenario) |>
+  summarise(
+    n_false_pos = sum(
+      corrected_pvalue <= 0.05 & true_effect == FALSE
+    )
+  )
+gt(r_false_pos)
+```
+
+False negatives:
+
+```{r fn_bh_auto}
+r_false_neg <- df_bh |>
+  group_by(scenario) |>
+  summarise(
+    n_false_neg = sum(
+      corrected_pvalue > 0.05 & true_effect == TRUE
+    )
+  )
+gt(r_false_neg)
+```
+
+## Review {#sec-summary_0608}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0608}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have created are:
+
+These are the files you should select when making your Git commit.
+
+
+Remember to save and commit your work before moving on to Part 4.
+
+{{< include ../includes/git_commit.qmd >}}
