@@ -1,0 +1,565 @@
+---
+format: html
+practical: Practical_4_Statistics
+doc-id: "0407"
+author: "Katy Brown"
+---
+
+```{r setup_0407, include=FALSE}
+library(tidyverse)
+library(gt)
+insect_counts <- read_csv("data/insect_counts.csv")
+site_metadata <- read_csv("data/site_metadata.csv")
+flower_counts <- read_csv("data/flower_counts.csv")
+```
+
+# Part 7: Estimators and Bootstrapping
+
+## Estimators {#sec-estimators}
+
+An estimator is a statistic calculated from a sample that we use to estimate an unknown characteristic of the wider population. Different estimators can be used to estimate the same population parameter, and they may differ in how accurately and consistently they do so.
+
+For example, let's concentrate on a single aspect of the data for now - the species richness, measured as the number of unique species.
+
+Across the whole dataset, we can find the number of unique species using our `insect_counts` data frame.
+
+```{r count_unique_species, message=FALSE}
+n_unique_species <- insect_counts |>
+  distinct(species) |>
+  nrow()
+print(n_unique_species)
+```
+There are `r n_unique_species` unique species.
+
+The data we have here are themselves only a sample of the real population. For this exercise, however, we will pretend that the complete dataset is our population. This allows us to repeatedly sample from a known pseudo-population and observe how our estimators behave across different samples.
+
+Let's say we wanted to estimate the total species richness across the full data set based on 20 sites and we have three possible estimators:
+
+* Observed richness - total number of unique species across 20 sites
+* Scaled observed richness - total number of unique species across 20 sites * (total number of sites / 20)
+* The Chao1 richness estimator, which uses the number of rare species in the sample to estimate how many species may have gone undetected.
+
+First let's take a sample of 20 random sites.
+
+```{r take_sample}
+random_sites <- site_metadata |>
+  distinct(x1km_square) |>
+  slice_sample(n = 20) |>
+  pull(x1km_square)
+```
+
+Now we can extract these rows from our insect counts data frame. For this part of the practical, we're not interested in insects with a count of 0.
+
+```{r count_species_sample}
+insect_sample <- insect_counts |>
+  filter(
+    x1km_square %in% random_sites,
+    n_observed != 0
+  )
+
+gt(head(insect_sample))
+```
+
+#### Observed richness
+
+The observed richness is just the total number of unique species observed across all sites.
+
+```{r observed_richness}
+obs_rich <- insect_sample |>
+  distinct(species) |>
+  pull(species)
+n_obs_rich <- length(obs_rich)
+print(n_obs_rich)
+```
+The  observed richness estimator for this sample is `r round(n_obs_rich)`.
+
+#### Scaled observed richness
+
+The scaled observed richness is the total number of unique species observed across all sites, multiplied by 
+(total number of sites / number of sites in sample).
+
+```{r scaled_observed_richness}
+n_sites_sample <- 20
+site_count <- nrow(site_metadata)
+scaled_obs_rich <- n_obs_rich * (site_count / n_sites_sample)
+print(scaled_obs_rich)
+```
+The scaled observed richness estimator for this sample is `r round(scaled_obs_rich)`.
+
+#### Chao1 estimator
+
+The Chao1 estimator estimates unseen species based on the number of species represented only once or twice in your sample.
+
+$$
+\hat{S}_{Chao1} = S_{obs} + \frac{f_1^2}{2f_2}
+$$
+
+where:
+
+- $S_{obs}$ is the number of species observed in the sample.
+- $f_1$ is the number of species observed exactly once (singletons).
+- $f_2$ is the number of species observed exactly twice (doubletons).
+
+::: {.callout-note #note-chao}
+You do not need to remember this - it is just an example of an estimator. 
+:::
+
+```{r chao}
+obs_per_insect <- insect_sample |>
+  group_by(species) |>
+  summarise(n_total = sum(n_observed))
+
+once <- obs_per_insect |> filter(n_total == 1)
+twice <- obs_per_insect |> filter(n_total == 2)
+
+n_once <- nrow(once)
+n_twice <- nrow(twice)
+
+chao <- n_obs_rich + ((n_once^2) / (2 * n_twice))
+print(chao)
+```
+The chao1 estimator for this sample is `r round(chao)`.
+
+None of these did a particularly good job of finding our real value of `r n_unique_species`.
+
+However, you can't measure how good an estimator is based on a single sample. Let's try simulation and generate multiple samples.
+
+Remember (from the lectures): An unbiased estimator gives the correct value on average across repeated samples. The efficiency of an estimator is determined by its variance: estimators with lower variance give more consistent estimates. Mean square error (MSE) combines bias and variance and measures how far, overall, estimates tend to be from the true value.
+
+::: {.callout-exercise #ex-simulate_estimators}
+
+Using a for loop, with 10,000 iterations (this might take a minute or two to run).
+
+* Take a sample of 20 sites, then extract the insect counts for these sites from the data frame.
+* Calculate observed richness, scaled observed richness and chao1 for each sample.
+* Store the results for each estimator in a separate vector.
+* Combine these into a data frame.
+* For each estimator:
+  * Calculate the bias, as the difference between the mean value across samples and the real value from our pseudo population.
+  * Calculate the variance.
+  * Calculate the mean square error.
+* Which estimator would you use, if any?
+
+::: {.callout-answer collapse="true" #ex-simulate_estimators_ans}
+
+[Take a sample of 20 sites, then extract the insect counts for these sites from the data frame.]{.blue-text}
+
+[Calculate observed richness, scaled observed richness and chao1 for each sample.]{.blue-text}
+
+[Store the results for each estimator in a separate vector.]{.blue-text}
+
+```{r simulate_estimators_ans1, eval=FALSE}
+obs_rich_vec <- c()
+scaled_obs_rich_vec <- c()
+chao_vec <- c()
+
+# Loop for 10,000 iterations
+for (i in seq_len(10000)) {
+  # Sample 20 sites
+  random_sites <- site_metadata |>
+    distinct(x1km_square) |>
+    slice_sample(n = 20) |>
+    pull(x1km_square)
+
+  # Extract the insect counts for these sites
+  insect_sample <- insect_counts |>
+    filter(
+      x1km_square %in% random_sites,
+      n_observed != 0
+    )
+
+  # Calculate observed richness
+  obs_rich <- insect_sample |>
+    distinct(species) |>
+    pull(species)
+  n_obs_rich <- length(obs_rich)
+  # Store
+  obs_rich_vec <- c(obs_rich_vec, n_obs_rich)
+
+  # Calculate the scaled observed richness
+  scaled_obs_rich <- n_obs_rich * (site_count / 20)
+  # Store
+  scaled_obs_rich_vec <- c(scaled_obs_rich_vec, scaled_obs_rich)
+
+  # Calculate Chao1
+  obs_per_insect <- insect_sample |>
+    group_by(species) |>
+    summarise(n_total = sum(n_observed))
+
+  once <- obs_per_insect |> filter(n_total == 1)
+  twice <- obs_per_insect |> filter(n_total == 2)
+
+  n_once <- nrow(once)
+  n_twice <- nrow(twice)
+
+  chao <- n_obs_rich + ((n_once^2) / (2 * n_twice))
+  # Store
+  chao_vec <- c(chao_vec, chao)
+}
+```
+
+[Combine these into a data frame.]{.blue-text}
+
+```{r simulate_estimators_ans2, eval=FALSE}
+estimator_df <- tibble(
+  Observed = obs_rich_vec,
+  Scaled_Observed = scaled_obs_rich_vec,
+  Chao1 = chao_vec)
+```
+
+```{r read_sim, include=FALSE, message=FALSE}
+# Read the data instead of generating it above - saves time when rendering
+estimator_df = read_csv("data/estimator_df.csv")
+```
+
+[For each estimator:]{.blue-text}
+
+[Calculate the bias]{.blue-text}
+
+[Calculate the efficiency]{.blue-text}
+
+[Calculate the mean square error.]{.blue-text}
+
+```{r simulate_estimators_ans3}
+estimator_summary <- estimator_df |>
+  summarise(
+    Bias_Observed = mean(Observed) - n_unique_species,
+    Bias_Scaled_Observed = mean(Scaled_Observed) - n_unique_species,
+    Bias_Chao1 = mean(Chao1) - n_unique_species,
+    Eff_Observed = var(Observed),
+    Eff_Scaled_Observed = var(Scaled_Observed),
+    Eff_Chao1 = var(Chao1),
+    MSE_Observed = mean((Observed - n_unique_species)^2),
+    MSE_Scaled_Observed =mean((Scaled_Observed - n_unique_species)^2),
+    MSE_Chao1 = mean((Chao1 - n_unique_species)^2)
+  )
+gt(estimator_summary)
+```
+
+[Which estimator would you use, if any?]{.blue-text}
+
+Of the three, the Chao1 estimator has the lowest mean square error, however it is still has a negative bias and a low efficiency.
+
+:::
+:::
+
+Plotting our simulated estimators also provides a lot of information.
+
+We can combine all three estimators into a single plot, first we need to convert the data from wide to long format (see @sec-long_wide).
+
+The function `everything()` tells R to pivot all of the columns in the table. A new column, `estimator` will be created to specify if each row is an observed, scaled observed or chao1 estimator.
+
+```{r pivot_estimators}
+estimator_long <- estimator_df |>
+  pivot_longer(
+    everything(),
+    names_to = "estimator",
+    values_to = "estimate"
+  )
+
+gt(head(estimator_long))
+```
+
+Now, let's plot the values of each estimator as histograms. 
+
+The function `facet_wrap()` splits the data from a single data frame into multiple plots, based on the values in a categorical column. The first argument should be the variable you would like to facet by, preceded by a `~` symbol. The argument `scales = "free"` means that each plot can have a different scale bar - by default they are all the same.
+
+The function `geom_vline()` adds a vertical line at a specific point, specified by the argument `xintercept`. In this case, the line is at our pseudo-population total species richness.
+
+```{r plot_simulated_estimators}
+ggplot(estimator_long, aes(x = estimate)) +
+  geom_histogram(bins=50) +
+  facet_wrap(~ estimator, scales = "free") +
+  geom_vline(xintercept = n_unique_species, color='red')
+```
+Here it is clear again that none of these are great estimators, but that Chao1 is probably the best. 
+
+:::{.callout-note .extension #ext_estimators_more_samples}
+
+Sometimes an estimator is bad because the sample size is too small, sometimes it's just bad. Let's try taking 50 sites per sample, instead of 20.
+
+The code below is identical to the above except for samples of 50 sites.
+
+```{r simulate_estimators_sample_50, eval=FALSE}
+
+obs_rich_vec_50 <- c()
+scaled_obs_rich_vec_50 <- c()
+chao_vec_50 <- c()
+
+# Loop for 10,000 iterations
+for (i in seq_len(10000)) {
+  # Sample 50 sites
+  random_sites <- site_metadata |>
+    distinct(x1km_square) |>
+    slice_sample(n = 50) |>
+    pull(x1km_square)
+
+  # Extract the insect counts for these sites
+  insect_sample <- insect_counts |>
+    filter(
+      x1km_square %in% random_sites,
+      n_observed != 0
+    )
+
+  # Calculate observed richness
+  obs_rich <- insect_sample |>
+    distinct(species) |>
+    pull(species)
+  n_obs_rich <- length(obs_rich)
+  # Store
+  obs_rich_vec_50 <- c(obs_rich_vec_50, n_obs_rich)
+
+  # Calculate the scaled observed richness
+  scaled_obs_rich <- n_obs_rich * (site_count / 50)
+  # Store
+  scaled_obs_rich_vec_50 <- c(scaled_obs_rich_vec_50, scaled_obs_rich)
+
+  # Calculate Chao1
+  obs_per_insect <- insect_sample |>
+    group_by(species) |>
+    summarise(n_total = sum(n_observed))
+
+  once <- obs_per_insect |> filter(n_total == 1)
+  twice <- obs_per_insect |> filter(n_total == 2)
+
+  n_once <- nrow(once)
+  n_twice <- nrow(twice)
+
+  chao <- n_obs_rich + ((n_once^2) / (2 * n_twice))
+  # Store
+  chao_vec_50 <- c(chao_vec_50, chao)
+}
+
+estimator_df_50 <- tibble(
+  Observed = obs_rich_vec_50,
+  Scaled_Observed = scaled_obs_rich_vec_50,
+  Chao1 = chao_vec_50)
+```
+
+```{r read_sim_50, include=FALSE, message=FALSE}
+# Read the data instead of generating it above - saves time when rendering
+estimator_df_50 = read_csv("data/estimator_df_50.csv")
+```
+
+Now we can look at the results.
+
+```{r simulate_estimators_sample_50_df}
+estimator_summary_50 <- estimator_df_50 |>
+  summarise(
+    Bias_Observed = mean(Observed) - n_unique_species,
+    Bias_Scaled_Observed = mean(Scaled_Observed) - n_unique_species,
+    Bias_Chao1 = mean(Chao1) - n_unique_species,
+    Eff_Observed = var(Observed),
+    Eff_Scaled_Observed = var(Scaled_Observed),
+    Eff_Chao1 = var(Chao1),
+    MSE_Observed = mean((Observed - n_unique_species)^2),
+    MSE_Scaled_Observed =mean((Scaled_Observed - n_unique_species)^2),
+    MSE_Chao1 = mean((Chao1 - n_unique_species)^2)
+  )
+gt(estimator_summary_50)
+```
+
+These are still not great, but they have improved quite a lot. Chao1 still looks best.
+
+```{r simulate_estimators_sample_50_ggplot}
+estimator_long_50 <- estimator_df_50 |>
+  pivot_longer(
+    everything(),
+    names_to = "estimator",
+    values_to = "estimate"
+  )
+
+ggplot(estimator_long_50, aes(x = estimate)) +
+  geom_histogram(bins=50) +
+  geom_vline(xintercept = n_unique_species, color='red') +
+  facet_wrap(~ estimator, scales = "free")
+```
+Chao1 actually looks pretty good here - it is generating an approximately unbiased estimate of the pseudo-population, although it has a higher variance, and therefore lower efficiency, than either other estimator. 
+:::
+
+## Bootstrapping {#sec-bootstrapping}
+
+In the example above, we treated our full dataset as a pseudo-population from which our sample was taken. However, in most experiments we will only have our sample and not have the opportunity to re-sample from the population.
+
+In these cases, we can use an approach called **bootstrapping** to assess the reliability of our estimator. We repeatedly re-sample, with replacement, from our observed dataset and re-calculate the estimator for each sample. The resulting bootstrap distribution approximates the sampling distribution of our estimator and allows us to quantify its uncertainty.
+
+For the **invertebrates** dataset, we have 85 observations in total, let's say we want to know how accurately we can measure the **median** iron concentration for the population based on these observations.
+
+::: {.callout-exercise #ex-bootstrap_invert}
+In your `invertebrates.qmd` Quarto file:
+
+* Read the invertebrate dataset (if you haven't already).
+* Plot the distribution of the iron concentration (the FE column) as a histogram.
+* Calculate the median iron concentration in the sample.
+* Take 1000 samples of 85 observations (the same as the number in the original sample) of iron concentration from the same data frame, with replacement, and calculate the median of each.
+  You can sample a data frame using the `slice_sample()` function with the following arguments:
+    * `data` - the data frame.
+    * `n` - the number of rows to sample, in this case 85.
+    * `replace` - TRUE or FALSE, should the sample be with or without replacement.
+* Put these values into a data frame.
+* Plot the sampling distribution of the median.
+* Calculate a 95% confidence interval for the median.
+  You can extract quantiles from the data using the function `quantile()`, with the following arguments:
+  * `x` - the data from which you want to find the quantile.
+  * `probs` - a vector of the percentiles you want to find, in this case `c(0.025, 0.975)`.
+
+::: {.callout-answer collapse="true" #ex-bootstrap_invert_ans}
+
+[Read the invertebrate dataset (if you haven't already).]{.blue-text}
+```{r bootstrap_invert_ans1, message=FALSE}
+inverts <- read_csv("data/marine_invertebrates.csv")
+```
+
+[Plot the distribution of the iron concentration (the FE column) as a histogram.]{.blue-text}
+```{r bootstrap_invert_ans2}
+ggplot(inverts,
+       aes(x = FE)) +
+  geom_histogram(bins=15) +
+  theme_bw()
+```
+
+[Calculate the median iron concentration in the sample.]{.blue-text}
+
+```{r bootstrap_invert_ans3}
+medi <- median(pull(inverts, FE))
+print (medi)
+```
+The sample median is `r medi`.
+
+[Take 1000 samples of 85 observations (the same as the number in the original sample) of iron concentration from the same data frame, with replacement, and calculate the median of each.]{.blue-text}
+
+```{r bootstrap_invert_ans4}
+meds <- c()
+for (i in seq_len(1000)){
+  samp <- slice_sample(inverts, n = 85, replace=TRUE)
+  samp_median <- median(pull(samp, FE))
+  meds <- c(meds, samp_median)
+}
+```
+
+[Put these values into a data frame]{.blue-text}
+
+```{r bootstrap_invert_ans5}
+df_meds <- tibble(median = meds)
+```
+
+[Plot the sampling distribution of the median.]
+
+```{r bootstrap_invert_ans6}
+ggplot(df_meds,
+       aes(x = median)) +
+  geom_histogram(bins = 15) +
+  theme_bw()
+```
+
+[Calculate a 95% confidence interval for the median.]{.blue-text}
+
+```{r bootstrap_invert_ans7}
+quans <- quantile(meds, probs = c(0.025, 0.975))
+print (quans)
+```
+:::
+:::
+
+Based on this analysis, there is a fairly wide confidence interval around the median, in this case it is between `r round(quans[1], 2)` and `r(round(quans[2], 2))`. This gives a range of plausible values for the population median, based on our sample.
+
+Normally, this would be our end point, but, in this case, we do have a better estimate of the population median. In this dataset, relatively few (85) organisms had data for all our traits of interest, but 917 had data for at least iron concentration. This data is provided as `data/inverts_iron.csv`. This data will not provide a population median, but it can give us a more estimate of the population median than our 85 organism sample.
+
+::: {.callout-exercise #ex-bootstrap_invert_full}
+In your `invertebrates.qmd` Quarto file:
+
+* Read the iron dataset `data/inverts_iron.csv`.
+* Calculate the median of the `FE` column
+* Is this value within your confidence interval?
+
+::: {.callout-answer collapse="true" #ex-bootstrap_invert_full_ans}
+
+[Read the iron dataset `data/inverts_iron.csv`.]{.blue-text}
+
+```{r bootstrap_invert_full_ans1, message=FALSE}
+iron_full <- read_csv("data/inverts_iron.csv")
+```
+
+[Calculate the median of the `FE` column]{.blue-text}
+
+```{r }
+med_iron <- median(pull(iron_full, FE))
+print (med_iron)
+```
+[Is this value within your confidence interval?]{.blue-text}
+
+The median is `r round(med_iron, 2)`, which is within my bootstrapped confidence interval.
+
+The technical definition of a confidence interval in this context is: if we repeatedly collected samples and constructed 95% confidence intervals using this method, approximately 95% of those intervals would contain the true population value.
+
+Let's check.
+
+Here, our simulated data represents the time interval between someone deciding to do an unappealing task and them actually starting to do it. It is gamma distributed with a shape parameter of 2 and a scale parameter of 10 and therefore a population mean of 10 minutes. We are interested in finding the 75th percentile - the time by which 75% of people will have started the task, or equivalently, the minimum procrastination time for the slowest 25% of the population.
+
+The true population value for the 75th percentile is `r qgamma(0.75, shape = 2, scale = 10)`, calculated as `qgamma(0.75, shape = 2, scale = 10)`.
+
+![Procrastination (https://xkcd.com/1906)](images/xkcd.png){#fig-bob width="25%"}
+
+::: {.callout-exercise #ex-bootstrap_ci}
+
+Take a sample of 200 individuals from the population 100 times, then, within that sample, use bootstrapping with 100 replicates to calculate a 95% confidence interval for the **75th percentile** of the data. Record whether or not the confidence interval contains the true population value of `r qgamma(0.75, shape = 2, scale = 10)`.
+Across the 100 samples, calculate the proportion of bootstrap confidence intervals which contain the true population value.
+
+::: {.callout-answer collapse="true" #ex-bootstrap_ci_ans}
+```{r bootstrap_ci_ans1}
+# Calculate the population 0.75 quantile
+pop <- qgamma(0.75, shape = 2, scale = 10)
+
+# Make a vector to store the results
+results <- c()
+# Repeat 100 times
+for (i in seq_len(100)){
+  # Sample 200 individuals
+  samp <- rgamma(200, shape = 2, scale = 10)
+  # Put the results into a data frame
+  samp_df <- tibble(time = samp)
+  # Make a vector to store the quantiles
+  quans <- c()
+  # Repeat 100 times
+  for (j in seq_len(100)){
+    # Sample 200 individuals with replacement
+    bootstrap <- slice_sample(samp_df, n = 200, replace = TRUE)
+    # Calculate the 0.75 quantile
+    quan75 <- quantile(pull(bootstrap, time), 0.75)
+    # Store the result
+    quans <- c(quans, quan75)
+  }
+  # Find the confidence interval
+  ci <- quantile(quans, c(0.025, 0.975))
+  # Check if the population value is in the CI
+  has_pop <- between(pop, ci[1], ci[2])
+  # Append to the results vector
+  results <- c(results, has_pop)
+}
+# Calculate the percentage
+perc <- sum(results) / 100
+print (perc)
+```
+The bootstrapped confidence interval for the estimator contains the population value `r round(perc * 100, 2)`% of the time.
+:::
+:::
+## Review {#sec-summary_0407}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0407}
+
+### Summary
+
+
+:::
+
+For this part of the practical, the main files you have edited are:
+
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}
+
+{{< include ../includes/git_push.qmd >}}
+

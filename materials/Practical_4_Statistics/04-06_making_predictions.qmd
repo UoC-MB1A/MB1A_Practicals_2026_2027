@@ -86,6 +86,7 @@ ggplot(
   geom_histogram(bins = 30) +
   theme_bw()
 ```
+
 The model therefore gives us more than a single predicted value. For each value of the explanatory variable, it estimates the mean of a probability distribution for the response variable. For a linear model, observations are assumed to be normally distributed around this mean, with the residual standard deviation estimated by `sigma()`.
 
 You can make predictions using a linear model with a continuous explanatory variable by using `predict()` in exactly the same way. If there are multiple explanatory variables, the value of each variable needs to be passed to the model, the process is otherwise identical.
@@ -143,5 +144,3 @@ For this part of the practical, the main files you have edited are:
 These are the files you should select when making your Git commit.
 
 {{< include ../includes/git_commit.qmd >}}
-
-{{< include ../includes/git_push.qmd >}}
