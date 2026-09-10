@@ -1,5 +1,0 @@
----
-title: "06-05_bootstrapping_and_permutation"
-format: html
----
-
