@@ -14,7 +14,7 @@ library(maps)
 insect_metadata <- read_csv("data/insect_metadata.csv")
 ```
 
-# Part 1: Datasets {#sec-p1_data}
+# Part 1: Dataset {#sec-p1_data}
 
 ::: {.callout-note .partmenu #parts-0401}
 ## Sections
