@@ -34,19 +34,40 @@ site_metadata <- read_csv("data/site_metadata.csv")
 :::{.callout-tip .objectives}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
+
+* Interpret and report the test statistic, degrees of freedom, p-value and confidence interval from a t-test.
+* Fit and interpret a linear model with a categorical explanatory variable.
+* Explain the relationship between a two-sample t-test, a linear model and a one-way ANOVA with two groups.
+* Perform and interpret a one-way ANOVA in R.
+* Report statistical results in the context of a biological question.
+
 :::
 
-## Examining data {#sec-examining_data}
+## Examining data {#sec-examining_data .core}
+
+[**Core**]{.core-text}
 
 Now we can start to test some hypotheses based on this dataset.
 
-For now, let's concentrate on a single species, the "bronze furrow bee" *Halictus tumulorum*. This is a relatively common bee species in the UK. It is a species of sweat bee, named because they are often attracted to sweat (although the UK ones usually aren't).
+For now, let's concentrate on a single species, the "bronze furrow bee" *Halictus tumulorum*. This is a relatively common bee species in the UK. It is a species of sweat bee, named because they are often attracted to sweat (although the UK ones usually aren't). 
 
-![*Halictus tumulorum*](images/bee.jpg){#fig-bee width="50%"}
+![*Halictus tumulorum*](images/bee.jpg){#fig-bee width="50%" fig-alt="A photo of H. tumulorum"}
 
-We can plot the distribution of this bee on a map, using the methods we learned in @sec-p3_visualisation.
+::: {.callout-exercise #ex-filter_ht .core}
+### Build *H. tumulorum* data frame.
 
-First, let's filter our insect counts data frame to keep only the observations for this species. 
+[**Core**]{.core-text}
+
+In your `pollinators.qmd` Quarto document:
+
+* Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.
+* Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.
+* Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.
+* Store the resulting data frame in as a variable named `ht_df`.
+* Write the data frame to the file `output/ht_df.tsv`.
+
+::: {.callout-answer collapse="true" #ex_filter_ht_ans}
+[Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.]{.blue-text}
 
 ```{r subset_ht}
 ht_counts <- insect_counts |>
@@ -54,62 +75,74 @@ ht_counts <- insect_counts |>
 gt(head(ht_counts))
 ```
 
-We can create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected. 
+[Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.]{.blue-text}
 
-We also need to join with the site metadata table to get the additional info about the sampling sites. The code below will give us one row for each site including a column, `detected` which is FALSE if *H. tumulorum* is absent and TRUE if it is present.
+```{r logical_ht}
+ht_df <- ht_counts |>
+  mutate(detected = n_observed > 0)
+```
+
+[Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.]{.blue-text}
+
+[Store the resulting data frame in as a variable named `ht_df`.]{.blue-text}
 
 ```{r presence_absence_ht, message=FALSE}
-ht_df <- ht_counts |>
-  mutate(detected = n_observed > 0) |>
+ht_df <- ht_df |>
   left_join(site_metadata)
 
 gt(head(ht_df))
 ```
 
-We will keep coming back to this data frame, so let's save it in our `data` directory.
+[Write the data frame to the file `output/ht_df.tsv`.]{.blue-text}
 
 ```{r save_ht}
-write_csv(ht_df, "data/ht_df.csv")
+write_csv(ht_df, "output/ht_df.csv")
 ```
 
-Now let's draw our map. We want a scatter plot (`geom_point()`) with longitude on the x axis and latitude on the y axis. We can colour the dots based on whether *H. tumulorum* is present or absent.
+:::
+:::
 
-We can use the function `annotation_borders()` with the argument `regions = "UK"` to generate a UK map. [Remember](@sec-adding_map_features) that `coord_quickmap()` adjusts the axis co-ordinates so the map doesn't appear skewed. `theme_bw()` is optional - it's just aesthetics, making the background white instead of grey.
+*H. tumulorum* tend to be found [towards the south](https://bwars.com/bee/halictidae/halictus-tumulorum) of the UK. Let's use our data to explore the possibility that this is because they don't like very cold temperatures.
 
-```{r map_ht}
-spp_map <- ggplot(ht_df, aes(
-  x = longitude, y = latitude,
-  color = detected
-)) +
-  geom_point() +
-  annotation_borders(regions = "UK", linewidth = 0.2) +
-  coord_quickmap() +
-  theme_bw()
-
-spp_map
-```
-
-These bees seem to favour the south-east of the UK - possibly to avoid the coldest regions?
-
-We have a column in our site metadata data frame which can help us establish if this is true - the `min_temp_coldest_month` column. This is a BIOCLIM climate variable describing the lowest temperature in the coldest month in the map square and is the mean from 1970-2000. Technically, the lowest tempeature in the coldest month might not be the overall lowest temperature, however, for brevity from here forward we will refer to this just as **minimum temperature** (rather than mean lowest temperature in coldest month).
+We have a column in our site metadata data frame which can help us establish if this is true - the `min_temp_coldest_month` column. This is a BIOCLIM climate variable describing the lowest temperature in the coldest month in the map square and is the mean from 1970-2000. Technically, the lowest tempeature in the coldest month might not be the overall lowest temperature, however, for brevity from here forward we will refer to this just as **minimum temperature**.
 
 We can compare this minimum temperature for the sites where the bees are present and absent using a box plot.
 
 For clarity, let's select only the relevant columns in our data frame, using the `select()` function.
 
+::: {.callout-note .copycode #copy-select}
+
+### Include this code
+
+In `pollinators.qmd`:
+
 ```{r select_ht}
 ht_temp_df <- ht_df |>
   select(x1km_square, detected, min_temp_coldest_month)
+```
+
+:::
+
+```{r show_ht}
 gt(head(ht_temp_df))
 ```
 
-:::{.callout-exercise #ex-boxplot_bees}
+
+:::{.callout-exercise #ex-boxplot_bees .rec}
+
+### Box plot
+
+[**Recommended**]{.rec-text}
+
 In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `min_temp_coldest_month` in your `ht_df` data frame for the regions with and without these bees (i.e. based on the `detected` column).
 
-The R function `geom_boxplot()` draws a box plot. The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the argument `x = detected` and `y = min_temp_coldest_month`. 
+* The R function `geom_boxplot()` draws a box plot.
+* The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the arguments `x = detected` and `y = min_temp_coldest_month`. 
 
 :::{.callout-answer collapse="true" #ex-boxplot_bees_ans}
+
 ```{r boxplot_ht}
+#| fig-alt: "Box plot comparing minimum temperature at sites where H. tumulorum was detected and not detected. The detected group is shifted towards higher temperatures, although the two distributions overlap. The undetected box has a longer interquartile range and longer whiskers"
 ggplot(
   ht_df,
   aes(x = detected, y = min_temp_coldest_month, fill = detected)
@@ -122,14 +155,17 @@ ggplot(
 
 Based on this box plot, perhaps these bees don't like the cold.
 
-## Choosing a test {#sec-choose_test}
+## Choosing a test {#sec-choose_test .core}
 
-Now we have a hypothesis to investigate:
+[**Core**]{.core-text}
 
-* Alternative hypothesis: Minimum temperature is different at sites where *H. tumulorum* is present than at sites where it is absent.
-* Null hypothesis: Mean minimum temperature is the same at sites where *H. tumulorum* is present and absent.
+Now we have some hypotheses to investigate:
 
-:::{.callout-important #note-harking}
+* **Null hypothesis**: Mean minimum temperature is the same at sites where *H. tumulorum* is present and absent.
+
+* **Alternative hypothesis**: Mean minimum temperature is different at sites where *H. tumulorum* is present than at sites where it is absent.
+
+::: {.callout-important #note-harking}
 We developed our hypothesis that *H. tumulorum* prefers sites with a higher minimum temperature after looking at these data, and we're about to use the same data to test that hypothesis. This is sometimes called **HARKing** — Hypothesizing After the Results are Known.
 
 Ideally, we would now test our hypothesis using a new dataset. However, given the limitations of this practical, we will instead look for evidence of an association in this dataset.
@@ -139,7 +175,9 @@ We have a **continuous response variable** and a **categorical explanatory varia
 
 There are various **assumptions** which underlie a t-test - we'll come back to these later in the practical. For the moment, assume these assumptions are met.
 
-## Running statistical tests in R {#sec-run_test}
+## Running statistical tests in R {#sec-run_test .core}
+
+[**Core**]{.core-text}
 
 In R statistical functions, `~` is used to specify a formula describing the relationship between variables.
 
@@ -159,8 +197,17 @@ The first argument is our formula - `response ~ explanatory`, or in this case, `
 We need two additional arguments:
 
 * `data = ht_temp_df` - this is the data frame containing the data.
-* `var.equal = TRUE` - run a standard t-test, the default in R is to assume unequal variance and run a Welch's t-test.
+* `var.equal = TRUE` - run an equal variance t-test, the default in R is to assume unequal variance and run a Welch's t-test.
 
+::: {.callout-exercise #ex-first_t .core}
+
+### T-test
+
+[**Core**]{.core-text}
+
+In your `pollinators.qmd` Quarto file, run a t-test in R to test the hypotheses above. View the output using `print()`. 
+
+::: {.callout-answer collapse="true" #ex-first_t_ans}
 
 ```{r ttest_ht}
 ttest_ht_temp <- t.test(min_temp_coldest_month ~ detected,
@@ -170,11 +217,10 @@ ttest_ht_temp <- t.test(min_temp_coldest_month ~ detected,
 print(ttest_ht_temp)
 ```
 
-The p-value for a t-test is the probability of a test statistic at least as far from zero as the value calculated from our data, if we drew values from a t-distribution with the specified number of degrees of freedom.
+:::
+:::
 
-For a standard two-sample t-test, the degrees of freedom are the total number of observations minus the number of group means estimated. Here we have 76 observations and estimate two means, so the degrees of freedom are 76 - 2 = 74.
-
-So, to fully describe our t-test output we need to include at least the following:
+To fully describe our t-test output we need to include at least the following:
 
 * **Test statistic:** `t`
 * **Degrees of freedom:** `df`
@@ -217,19 +263,25 @@ There is evidence that mean minimum temperature is higher at sites where *H. tum
 
 This doesn't mean that our alternative hypothesis is definitely true for the population, but based on this sample the evidence supports it.
 
-## Extension exercise - the t-distribution {#sec-t_dist}
-::: {.callout-note .extension #ext-t_distribution}
 
+## The t-distribution {#sec-t_dist .fold .extension}
 
-I stated above that: "*The p-value for a t-test is the probability of a test statistic at least as far from zero as the value calculated from our data, if we drew values from a t-distribution with the specified number of degrees of freedom*".
+[**Extension**]{.extension-text}
+
+The p-value for a t-test is the probability of a test statistic at least as far from zero as the value calculated from our data, if we drew values from a t-distribution with the specified number of degrees of freedom.
 
 The t-distribution is just a probability distribution, so we can simulate and visualise it in R using the same methods we learned for other probability distributions (@sec-using_other_distributions).
 
+::: {.callout-exercise #ex-t_dist .extension}
+
+### Visualising the t-distribution
+
+[**Extension**]{.extension-text}
 
 In your `pollinators.qmd` Quarto file:
 
 * Simulate a sample of 1000 observations from t-distribution with 74 degrees of freedom. You can draw a random sample from a t-distribution with the function `rt` with the arguments `n` - number of observations and `df` degrees of freedom. 
-* Create a dataframe where this set of observations forms a column.
+* Create a data frame where this set of observations forms a column.
 * Plot the results using the ggplot layer `geom_density()`.
 * Calculate an approximated p-value using your simulated data - the proportion of observations which are at least `r round(abs(ttest_ht_temp$statistic), 3)` from zero **in either direction**. You can extract the test statistic from the t-test as `ttest_ht_temp$statistic`.
 * Calculate the exact p-value using the t-distribution cumulative probability function `pt()`. 
@@ -242,7 +294,7 @@ In your `pollinators.qmd` Quarto file:
 df74 <- rt(1000, df = 74)
 ```
 
-[Create a dataframe where this set of observations forms a column.]{.blue-text}
+[Create a data frame where this set of observations forms a column.]{.blue-text}
 
 ```{r t_dist_ans2}
 t_dist <- tibble(simulated = df74)
@@ -251,6 +303,7 @@ t_dist <- tibble(simulated = df74)
 [Plot the results using the ggplot layer `geom_density()`.]{.blue-text}
 
 ```{r t_dist_ans3}
+#| fig-alt: "Density plot of 1,000 values simulated from a t-distribution with 74 degrees of freedom. The distribution is symmetric around zero, with most values concentrated near zero and progressively fewer values towards either tail. Vertical lines mark the observed positive and negative t-statistics. Both lines lie far into the tails of the distribution."
 ggplot(
   t_dist,
   aes(x = simulated)
@@ -272,12 +325,15 @@ print(p_sim)
 
 With 1000 simulations your value will almost certainly be zero. 
 
-:::{.callout-note .bonus #bon_pvalue_ttest}
+:::{.callout-exercise #ex-pvalue_ttest .bonus}
+
 ### Bonus question: Probability
+
+[**Bonus**]{.bonus-text}
 
 What is the probability of getting a value which is not zero here given the p-value calculated by R above of `r formatC(ttest_ht_temp$p.value, format = "e", digits = 2)`.
 
-:::{.callout-answer collapse="true" #bon_pvalue_ttest_ans}
+:::{.callout-answer collapse="true" #pvalue_ttest_ans}
 ```{r pvalue_ttest_ans}
 prob_no_extreme <- (1 - ttest_ht_temp$p.value)^1000
 prob_at_least_one <- 1 - prob_no_extreme
@@ -303,7 +359,9 @@ This should be the exact p-value calculated in our t-test.
 :::
 :::
 
-## Confidence intervals {#sec-confidence_intervals}
+## Confidence intervals {#sec-confidence_intervals .core}
+
+[**Core**]{.core-text}
 
 In our description of the t-test output above, something is missing - it is also worth looking at our **confidence interval** here. This data is provided in our t-test summary above.
 
@@ -323,13 +381,19 @@ There is evidence that mean minimum temperature is higher at sites where *H. tum
 
 :::
 
-::: {.callout-exercise #ex-cis}
+### The t-distribution and confidence intervals {#sec-t_confidence_intervals .fold .extension}
+
+[**Extension**]{.extension-text}
 
 *"A 95% confidence interval means that if we repeatedly sampled from the population and calculated a 95% confidence interval in the same way each time, 95% of those intervals would contain the true population value. In this case, the true population value is the true difference between the mean minimum annual temperature at sites where H. tumulorum is present and at sites where it is absent."*
 
 Let's check using simulation. If we simulate samples from populations with known means, we know the "true" difference between means of the source populations.
 
 To simplify this process, let's first calculate the mean, standard deviation and sample size for sites with and without *H. tumulorum*. This is straightforward using the `group_by()` and `summarise()` functions.
+
+::: {.callout-note .copycode #copy-select}
+
+### Include this code
 
 ```{r summary_ht}
 ht_temp_summ <- ht_temp_df |>
@@ -346,9 +410,18 @@ present <- ht_temp_summ |>
 
 absent <- ht_temp_summ |>
   filter(detected == FALSE)
+```
+:::
 
+
+```{r summary_ht_show}
 gt(ht_temp_summ)
 ```
+
+::: {.callout-exercise #ex-cis .extension}
+
+[**Extension**]{.extension-text}
+
 
 Next, in your `pollinators.qmd` Quarto file:
 
@@ -458,6 +531,7 @@ for (i in seq_len(1000)) {
 ```
 
 [Calculate the percentage of the 1,000 confidence intervals that contain the true difference.]{.blue-text}
+
 ```{r cis_ans2}
 perc <- (sum(res_vec) / length(res_vec)) * 100
 print(perc)
@@ -468,8 +542,10 @@ In this simulation, the confidence interval included the true difference `r roun
 :::
 :::
 
-::: {.callout-note .extension #ext-t_distribution_conf}
-### Extension - the t-distribution and confidence intervals
+
+###  Calculating confidence intervals {#sec-calc_confidence-intervals .fold .extension}
+
+[**Extension**]{.extension-text}
 
 We can revisit our simulated t-distribution above to understand how confidence intervals are calculated. 
 
@@ -478,16 +554,17 @@ For a 95% confidence interval, we want the central 95% of the t-distribution. Th
 In our `t_dist` data frame there are 1,000 observations sampled from a t-distribution with 74 degrees of freedom.
 
 ```{r t_dist_replot}
+#| fig-alt: "Density plot of simulated values from the same t-distribution as above."
 ggplot(
   t_dist,
   aes(x = simulated)
 ) +
   geom_density()
 ```
+
 To calculate our confidence interval, we want the middle 95% of values from this distribution. 
 
 With our simulated data, we can extract these using `summarize()` and then the `quantile()` function with the data column as the first argument and the quantile we want to extract as the second. The $x$ quantile is the value below which $x$ proportion of the observations fall. 
-
 
 ```{r t_dist_quantiles}
 quantile_df <- t_dist |>
@@ -501,6 +578,7 @@ gt(quantile_df)
 Let's add these to our density plot.
 
 ```{r t_dist_quantiles_plot}
+#| fig-alt: "Density plot of simulated values from the same t-distribution as above, with blue vertical lines marking the estimated 2.5% and 97.5% quantiles. Approximately 95% of the simulated values lie between the lines."
 ggplot(
   t_dist,
   aes(x = simulated)
@@ -508,6 +586,7 @@ ggplot(
   geom_density() +
   geom_vline(xintercept = c(pull(quantile_df, lower), pull(quantile_df, upper)), color = "blue")
 ```
+
 We can also calculate the exact values using the function `qt()`.
 
 ```{r t_dist_qt}
@@ -517,9 +596,11 @@ upper_exact <- qt(0.975, 74)
 print(lower_exact)
 print(upper_exact)
 ```
+
 The absolute values of these exact values should be identical to each other.
 
 ```{r t_dist_quantiles_exact}
+#| fig-alt: "Density plot of simulated values from the same t-distribution as above, with orange vertical lines marking the exact 2.5% and 97.5% quantiles. The lines are symmetric around zero, with 95% of the distribution between them."
 ggplot(
   t_dist,
   aes(x = simulated)
@@ -527,6 +608,7 @@ ggplot(
   geom_density() +
   geom_vline(xintercept = c(lower_exact, upper_exact), color = "orange")
 ```
+
 Because the t-distribution is symmetric, the two exact quantiles have the same absolute value. This value is called the critical t-value, often written $t*$. These values are measured on the t-distribution. To calculate a confidence interval for our estimated difference between means, we need to convert $t*$ into the units of our response variable.
 
 We do this by multiplying $t*$ by the standard error of our t-test. We can access from our t-test above using `ttest_ht_temp$stderr`.
@@ -539,6 +621,7 @@ confint_rv_units <- tstar * SE
 
 print(confint_rv_units)
 ```
+
 This tells us how far we need to go above and below our estimated difference between means to obtain the 95% confidence interval.
 
 ```{r t_dist_confint_man}
@@ -552,9 +635,10 @@ print(c(lower_cint, upper_cint))
 
 This gives us our lower value of `r round(lower_cint, 4)` and upper value of `r round(upper_cint, 4)` as above.
 
-:::
 
-## Linear models {#sec-linear_models_cat}
+## Linear models {#sec-linear_models_cat .core}
+
+[**Core**]{.core-text}
 
 The comparison we have just made can also be represented using a linear model.
 
@@ -620,32 +704,59 @@ Our **linear model** tests whether there is evidence that the slope of the line 
 
 They are therefore testing exactly the same thing.
 
-### Fitting linear models in R {#sec-fitting_linear_models_cat}
+### Fitting linear models in R {#sec-fitting_linear_models_cat .core}
+
+[**Core**]{.core-text}
 
 Let's see if this is correct by fitting a linear model to our data in R. We do this with the function `lm()` and the same formula we used previously - `response ~ explanatory`.
 
-We can summarise the linear model using the function `summary()`.
+::: {.callout-exercise #ex-first_lm .core}
 
+[**Core**]{.core-text}
+
+In your `pollinators.qmd` Quarto file, fit a linear model using the function `lm()` and the same formula as for the t-test above. As for the t-test, you'll need to add the argument `data = ht_temp_df` so R can see the data frame. Store the output in the variable `lm_ht`.
+
+::: {.callout-answer collapse="true" #ex-first_lm_ans}
 ```{r lm_ht_spp}
 lm_ht <- lm(min_temp_coldest_month ~ detected,
   data = ht_temp_df
 )
+```
+:::
+:::
+
+We can summarise the linear model using the function `summary()` on the fitted model.
+
+```{r lm_ht_spp_summ}
 summ_lm_ht <- summary(lm_ht)
 print(summ_lm_ht)
 ```
 
 This function gives us a lot of information, including the numbers we calculated above.
 
-* The estimated intercept is our mean minimum temperature without *H. tumulorum*
-* The estimated slope (listed as `detectedTRUE`) is the difference in minimum temperature with and without *H. tumulorum*. 
-* The p-value for the slope is identical to the p-value we calculated earlier with our t-test.
+* The estimated **intercept** is our mean minimum temperature without *H. tumulorum*
+* The estimated **slope** (listed as `detectedTRUE`) is the difference in minimum temperature with and without *H. tumulorum*. 
+* The **p-value** for the slope is identical to the p-value we calculated earlier with our t-test.
 
-We can extract the 95% confidence intervals from our linear model with the function `confint()` with one argument - the fitted model.
+We can extract the 95% confidence intervals from our linear model with the function `confint()` with one argument - the fitted model, `lm_ht`. 
+
+::: {.callout-exercise #ex-first_ci .rec}
+
+### Confidence intervals
+
+[**Recommended**]{.rec-text}
+
+In your `pollinators.qmd` Quarto file, use the function `confint()` to find the confidence intervals for your `lm_ht` fitted model.
+
+::: {.callout-answer collapse="true" #ex-first_ci_ans}
 
 ```{r confint_lm}
 ci <- confint(lm_ht)
 print(ci)
 ```
+
+:::
+:::
 
 The second confidence interval here is the confidence interval of the slope of the line - and again it's identical to our t-test values above.
 
@@ -698,7 +809,9 @@ There is evidence that minimum temperature differs according to the presence or 
 :::
 
 
-### Visualising linear models in R {#sec-visualising_linear_models_cat}
+### Visualising linear models with a logical categorical variable {#sec-visualising_linear_models_cats .fold .extension}
+
+[**Extension**]{.extension-text}
 
 We can easily visualise our linear model in ggplot.
 
@@ -711,6 +824,7 @@ We can then use the function `geom_smooth()` to apply and plot a linear model to
 Let's also add a horizontal line using `geom_hline()` showing a slope of 0 and the same mean for both groups.
 
 ```{r lm_lowest_temp}
+#| fig-alt: "Scatter plot of minimum temperature against H. tumulorum detection status, coded as 0 for absent and 1 for present. Points form two vertical groups, with present somewhat warmer than absent. The fitted linear model slopes upward from the absent group to the present group, indicating higher mean minimum temperature where H. tumulorum is present. A horizontal reference line shows the overall mean temperature."
 ht_temp_df <- ht_temp_df |>
   mutate(detected_num = as.numeric(detected))
 
@@ -728,10 +842,11 @@ ggplot(ht_temp_df, aes(
   geom_hline(aes(yintercept = overall_mean), color = "red")
 ```
 
+## ANOVA {#sec-anova_cat .core}
 
-## ANOVA {#sec-anova_cat}
+[**Core**]{.core-text}
 
-With exactly two groups, a classical one-way ANOVA is also mathematically equivalent to either of these tests. 
+With exactly two groups, a **classical one-way ANOVA** is also mathematically equivalent to either of these tests. 
 
 A one-way ANOVA with two groups is testing:
 
@@ -741,16 +856,28 @@ This can be simplified to - is there evidence that these two means are not equal
 
 This is asking the same question we've already asked twice, in a different way.
 
-Let's try an ANOVA. We run ANOVA in R on an existing linear model - which we already created above, using the function `anova()`.
+Let's try an ANOVA. We run ANOVA in R on an existing linear model - which we already created above, in the variable `lm_ht`, using the function `anova()`.
+
+::: {.callout-exercise #ex-first_anova.core}
+
+In your `pollinators.qmd` Quarto file, run an ANOVA on your existing linear model, `lm_ht`, using the function `anova()`.
+
+::: {.callout-answer collapse="true" #ex-first_anova_ans}
 
 ```{r anova_temp}
 anova_lm <- anova(lm_ht)
 anova_lm
 ```
 
+:::
+:::
+
 As you can see, we've again found an identical p-value. As it's the same linear model, our confidence intervals are, by definition, also the same.
 
-For an ANOVA, we report our results a little differently. The p-value here is obtained from an F distribution specified by two degrees-of-freedom values: the numerator and denominator degrees of freedom. The numerator degrees of freedom are associated with the explanatory variable. Here there are two groups (present and absent), so this is 2 − 1 = 1. The denominator degrees of freedom are the residual degrees of freedom. We have 76 observations and estimate two parameters (the intercept and slope), so this is 76 − 2 = 74.
+For an ANOVA, we report our results a little differently. The p-value here is obtained from an **F distribution** specified by **two** degrees-of-freedom values: the numerator and denominator degrees of freedom.
+
+* The numerator degrees of freedom are associated with the explanatory variable. Here there are two groups (present and absent), so this is 2 − 1 = 1.
+* The denominator degrees of freedom are the residual degrees of freedom. We have 76 observations and estimate two parameters (the intercept and slope), so this is 76 − 2 = 74.
 
 As with the t-test, the p-value is calculated from a probability distribution. For ANOVA, this is the F-distribution rather than the t-distribution. The F-statistic compares the variation explained by the model with the unexplained variation; unusually large F-values provide evidence against the null hypothesis.
 
@@ -761,7 +888,7 @@ So, we need to look for the following values in our ANOVA output.
 * **Denominator degrees of freedom:** `Df` for the residuals
 * **p-value:** `Pr(>F)`
 
-![Interpreting ANOVA results](images/anova_1way_stats.png){#fig-a1wstats width="100%"}
+![Interpreting ANOVA results](images/anova_1way_stats.png){#fig-a1wstats width="100%" fig-alt="Screenshot showing where to find the ANOVA numerator DF, denominator DF, p-value and test statistic. The output is a table with columns Df, Sum Sq, Mean Sq, F value and Pr(>F) and rows detected and residuals. Numerator DF is in Df, detected, denominator Df in Df, residuals, test statistic in F value, detected and p-value in Pr(>F), detected"}
 
 Additionally, we can report the proportion of variation explained by the model relative to the total variation in the response variable. We can calculate this from the sum of square values in the ANOVA output.
 
@@ -772,6 +899,7 @@ SS_res <- anova_lm["Residuals", "Sum Sq"]
 prop_var <- SS_model / (SS_res + SS_model)
 print(prop_var)
 ```
+
 Conveniently, this is the same as our $R^2$ value in the linear model we used above.
 
 ```{r lm_again}
@@ -808,14 +936,43 @@ The advantage of ANOVA is that, unlike a t-test, we can use it when our categori
 
 [↑ top](#)
 
+
+In this part of the practical, you used hypothesis tests to investigate associations between variables in the pollinator data and learned how to interpret test statistics and p-values. The key idea is that t-tests, linear models and ANOVA are not completely separate statistical techniques. In this simple two-group example, they provide different ways of describing and testing the same model of the data.
+
 ::: {.callout-note #note-summary_0402}
 
-### Summary
+### Programming summary
+
+In this part of the practical, you have used the following R functions:
+
+| Function         | What it does                                                                                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `t.test()`       | Performs a t-test to compare the means of two groups.                                                             |
+| `lm()`           | Fits a linear model describing the relationship between a response and one or more explanatory variables.         |
+| `summary()`      | Displays a summary of a fitted statistical model, including coefficient estimates, test statistics and p-values.  |
+| `confint()`      | Calculates confidence intervals for the coefficients of a fitted model.                                           |
+| `anova()`        | Produces an ANOVA table for a fitted model, partitioning variation into explained and residual components.        |
+| `as.numeric()`   | Converts values to numbers; for logical values, `FALSE` becomes 0 and `TRUE` becomes 1.                           |
+| `geom_boxplot()` | Adds a box plot to a `ggplot`, allowing the distributions of a continuous variable to be compared between groups. |
+| `geom_smooth()`  | Adds a fitted model to a `ggplot`; `method = "lm"` fits a linear model.                                           |
+| `geom_hline()`   | Adds a horizontal reference line to a `ggplot`.                                                                   |
+
+**Extension material also introduced:**
+
+| Function     | What it does                                                                |
+| ------------ | --------------------------------------------------------------------------- |
+| `rt()`       | Generates random values from a t-distribution.                              |
+| `pt()`       | Calculates cumulative probabilities from a t-distribution.                  |
+| `qt()`       | Finds a specified quantile of a t-distribution.                             |
+| `quantile()` | Finds values corresponding to specified quantiles of a set of observations. |
+| `between()`  | Tests whether a value lies between a lower and upper value.                 |
 
 
 :::
 
-For this part of the practical, the main files you have created are:
+For this part of the practical, the main files you have edited are:
+
+- `pollinators.qmd`
 
 These are the files you should select when making your Git commit.
 
@@ -823,4 +980,3 @@ These are the files you should select when making your Git commit.
 Remember to save and commit your work before moving on to Part 3.
 
 {{< include ../includes/git_commit.qmd >}}
-

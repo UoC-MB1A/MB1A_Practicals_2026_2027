@@ -31,13 +31,21 @@ set.seed(42)
 :::{.callout-tip .objectives}
 #### Learning objectives
 By the end of this part of the practical you will be able to:
+
+* Use one-way ANOVA to compare a continuous response among more than two groups.
+* Fit and interpret an ANOVA with multiple categorical explanatory variables.
+* Explain what an interaction between explanatory variables means.
+* Fit and interpret a linear model containing an interaction.
+
 :::
 
-In the previous section, we used one-way ANOVA to look at the difference between two levels of a single explanatory variable. However, ANOVA can easily be expanded to look at multiple groups and multiple explanatory variables.
+In the previous section, we introduced one-way ANOVA using an explanatory variable with two levels. However, ANOVA can easily be expanded to look at multiple groups and multiple explanatory variables.
 
-## One-way ANOVA with more than two groups {#sec-one_way_anova}
+## One-way ANOVA with more than two groups {#sec-one_way_anova .core}
 
-ANOVA expands easily to take into account an explanatory variable with more than two levels (i.e. a categorical variable with three or more options).
+[**Core**]{.core-text}
+
+ANOVA expands easily to take into account an explanatory variable with **more than two levels** (i.e. a categorical variable with three or more options).
 
 We already know about using `response ~ explanatory` as a formula in R to investigate response as a function of explanatory variable. If you are using a data frame as the input to this function and the explanatory variable is categorical, R will automatically treat the different values in the column as different levels of that variable.
 
@@ -45,27 +53,34 @@ One of the measurements in our pollinator data frame is `mean_insect_mass` - the
 
 It seems feasible that this would be affected by the types of pollinators present - some pollinators are much bigger than others. 
 
-### Hypothesis
+**Hypothesis**
 
 Using our pollinator data, let's investigate the following hypothesis using a one-way ANOVA.
 
-* Null hypothesis: Sites dominated by different insect families have the same mean mass.
-* Alternative hypothesis: At least one dominant insect family is associated with sites with a different mean mass.
+* **Null hypothesis**: Sites dominated by different insect families have the same mean mass.
+* **Alternative hypothesis**: At least one dominant insect family is associated with sites with a different mean mass.
 
-Let's first list all the families which dominate at any site.
 
-```{r families_domfam}
-unique_fams <- site_metadata |> distinct(dominant_family)
-print(unique_fams)
-```
-
-All sites are dominated by one of these four families.
-
-### Plot
+**Plot**
 
 A box plot is a typical way to visualise the type of data which is suitable for ANOVA analysis.
 
+:::{.callout-exercise #ex-boxplot_domfam .rec}
+
+### Box plot
+
+[**Recommended**]{.rec-text}
+
+In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `mean_insect_mass` in your `site_metadata` data frame for the regions with each value of `dominant_family`.
+
+Remember that:
+* The R function `geom_boxplot()` draws a box plot.
+* The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the arguments `x = mean_insect_mass` and `y = dominant_family`. 
+
+:::{.callout-answer collapse="true" #ex-boxplot_domfam_ans}
+
 ```{r plot_domfam}
+#| fig-alt: "Box plot comparing mean insect mass at sites dominated by four insect families: Andrenidae, Apidae, Halictidae and Syrphidae. Apidae have the highest median mass and largest IQR, followed by Syrphidae, Halictidae then Andrenidae."
 ggplot(
   site_metadata,
   aes(
@@ -76,8 +91,10 @@ ggplot(
   geom_boxplot() +
   theme_bw()
 ```
+:::
+:::
 
-### Statistical Test
+**Statistical test**
 
 We can test the association between mean insect mass and dominant family with a one-way ANOVA, and we define it exactly as before.
 
@@ -87,36 +104,53 @@ We could then just look at our linear model directly. It would take one category
 
 Let's try it:
 
+::: {.callout-exercise #ex-lm_mass_domfam .core}
+
+### Linear model with more than two groups
+
+[**Core**]{.core-text}
+
+In your `pollinators.qmd` Quarto file, fit a linear model using the function `lm()` and the formula above. As for the t-test, you'll need to add the argument `data = site_metadata` so R can see the data frame. Store the output in the variable `lm_mass_domfam`. View the results using the `summary()` function.
+
+::: {.callout-answer collapse="true" #ex-first_lm_ans}
+
 ```{r lm_mass_domfam}
 lm_mass_domfam <- lm(mean_insect_mass ~ dominant_family, data = site_metadata)
 summary(lm_mass_domfam)
 ```
 
+:::
+:::
+
 This tells us:
 
-* There is no evidence that sites with Apidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.
-* There is no evidence that sites with Halictidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.
-* There is no evidence that sites with Syrphidae as the dominant family differ from those with Andrenidae as their dominant family in mean insect mass.
+* There is no evidence that sites with Apidae as the dominant family differ **from those with Andrenidae as their dominant family** in mean insect mass.
+* There is no evidence that sites with Halictidae as the dominant family differ **from those with Andrenidae as their dominant family** in mean insect mass.
+* There is no evidence that sites with Syrphidae as the dominant family differ **from those with Andrenidae as their dominant family** in mean insect mass.
 
-But, this probably isn't what we want to know - we still don't know if all four means are equal.
+But, this probably **isn't** what we want to know - we still don't know if all four means are equal.
 
 If we perform an ANOVA on this data, it will compare a model in which sites with all four dominant pollinator families have the same mean insect mass with a model in which the sites with different dominant pollinator families are allowed to have different means. 
 
 
-:::{.callout-exercise #ex-anova_domfam}
+:::{.callout-exercise #ex-anova_domfam .core}
 
-In your `pollinators.qmd` markdown file, perform an ANOVA on the linear model defined above, to investigate the hypothesis that at least one dominant insect family is associated with sites with a different mean mass. Draw a conclusion based on the output, including the appropriate statistical evidence to support your conclusion.
+### ANOVA with more than two groups
+
+[**Core**]{.core-text}
+
+In your `pollinators.qmd` Quarto file, perform an ANOVA on the linear model defined above, to investigate the hypothesis that at least one dominant insect family is associated with sites with a different mean mass. Draw a conclusion based on the output, including the appropriate statistical evidence to support your conclusion.
 
 :::{.callout-answer collapse="true" #ex-anova_domfam_ans}
 
-### Statistical Test
+**Statistical test**
 
 ```{r anova_mass_domfam}
 anova_mass_domfam <- anova(lm_mass_domfam)
 print(anova_mass_domfam)
 ```
 
-### Conclusion
+**Conclusion**
 
 ```{r vals_mass_domfam, include=FALSE}
 mass_domfam_df <- anova_mass_domfam["dominant_family", "Df"]
@@ -145,17 +179,24 @@ There is evidence that mean insect mass differs among dominant insect families (
 :::
 :::
 
-## Extension exercise - the F-distribution {#sec-f_dist}
+## The F-distribution {#sec-f_dist .fold .extension}
 
-::: {.callout-note .extension #ext-f_distribution}
-
+[**Extension**]{.extension-text}
 
 I stated above that *"The p-value here is obtained from an F distribution specified by two degrees-of-freedom values: the numerator and denominator degrees of freedom. The numerator degrees of freedom are associated with the explanatory variable. The denominator degrees of freedom are the residual degrees of freedom."*. In this case, our numerator has three degrees of freedom and our denominator has 72. 
 
+Let's use simulation to visualise this.
+
+::: {.callout-exercise #ext-f_distribution .extension}
+
+### The F-distribution
+
+[**Extension**]{.extension-text}
+
 In your `pollinators.qmd` Quarto file:
 
-* Simulate a sample of 1000 observations from F-distribution with 3 numerator degrees of freedom and 72 denominator degrees of freedom. You can draw a random sample from an F-distribution with the function `rf` with the arguments `n` - number of observations, `df1` numerator degrees of freedom and `df2` denominator degrees of freedom.
-* Create a dataframe where this set of observations forms a column.
+* Simulate a sample of 1000 observations from an F-distribution with 3 numerator degrees of freedom and 72 denominator degrees of freedom. You can draw a random sample from an F-distribution with the function `rf()` with the arguments `n` - number of observations, `df1` numerator degrees of freedom and `df2` denominator degrees of freedom.
+* Create a data frame where this set of observations forms a column.
 * Plot the results using the ggplot layer `geom_density()`.
 * Calculate an approximate p-value using your simulated data — the proportion of simulated F-values which are greater than or equal to the F-statistic calculated from our data (`r round(anova_mass_domfam["dominant_family", "F value"], 2)`). You can extract the F-statistic from the ANOVA table using `anova_mass_domfam["dominant_family", "F value"]`, changing `anova_mass_domfam` to whichever variable name you used.
 * Calculate the exact p-value using the F-distribution cumulative probability function `pf()`. 
@@ -168,7 +209,7 @@ In your `pollinators.qmd` Quarto file:
 df_3_72 <- rf(1000, df1 = 3, df2 = 72)
 ```
 
-[Create a dataframe where this set of observations forms a column.]{.blue-text}
+[Create a data frame where this set of observations forms a column.]{.blue-text}
 
 ```{r f_dist_ans2}
 f_dist <- tibble(simulated = df_3_72)
@@ -177,6 +218,8 @@ f_dist <- tibble(simulated = df_3_72)
 [Plot the results using the ggplot layer `geom_density()`.]{.blue-text}
 
 ```{r f_dist_ans3}
+#| fig-alt: "Density plot of 1,000 values simulated from an F-distribution with 3 and 72 degrees of freedom. The distribution is strongly right-skewed, with most values close to zero and a long right tail. The red vertical line shows the observed F-statistic, which lies far into the right tail."
+
 fstat <- anova_mass_domfam["dominant_family", "F value"]
 
 ggplot(
@@ -211,33 +254,37 @@ This should be the exact p-value calculated in our ANOVA.
 :::
 
 
-## Multi-way ANOVA {#sec-multi_way_anova}
+## Multi-way ANOVA {#sec-multi_way_anova .core}
 
-ANOVA can also be extended to include multiple categorical explanatory variables. This is called multi-way ANOVA (or factorial ANOVA). A model with two categorical explanatory variables is a two-way ANOVA, one with three is a three-way ANOVA, and so on.
+[**Core**]{.core-text}
+
+ANOVA can also be extended to include **multiple categorical explanatory variables**. This is called multi-way ANOVA (or factorial ANOVA). A model with two categorical explanatory variables is a two-way ANOVA, one with three is a three-way ANOVA, and so on.
 
 We can add additional explanatory variables using `+` - `response ~ explanatory1 + explanatory2 + explanatory3` etc.
 
-The ANOVA tests whether each explanatory variable is associated with the response in turn. So, in the case above, explanatory1 would be tested first, followed by whether explanatory2 explains additional variation after explanatory1 has been included, and so forth.
+The default ANOVA implementation in R tests whether each explanatory variable is associated with the response in turn. So, in the case above, explanatory1 would be tested first, followed by whether explanatory2 explains additional variation after explanatory1 has been included, and so forth.
 
-### Hypothesis
+**Hypothesis**
 
 Using our pollinator data, let's investigate the following hypotheses:
 
 Dominant insect family:
 
-* Null hypothesis: mean insect mass is the same at sites dominated by different insect families
-* Alternative hypothesis: mean insect mass differs for at least one dominant insect family.
+* **Null hypothesis**: mean insect mass is the same at sites dominated by different insect families
+* **Alternative hypothesis**: mean insect mass differs for at least one dominant insect family.
 
 Broad habitat type:
 
-* Null hypothesis: after taking dominant insect family into account, mean insect mass is the same across different broad habitat types.
-* Alternative hypothesis: after taking dominant insect family into account, mean insect mass differs for at least one broad habitat type.
+* **Null hypothesis**: after taking dominant insect family into account, mean insect mass is the same across different broad habitat types.
+* **Alternative hypothesis**: after taking dominant insect family into account, mean insect mass differs for at least one broad habitat type.
 
-### Plot
+**Plot**
 
 A box plot is again a typical visualisation to use here, this time using `facet_wrap()` to separate our different variables.
 
 ```{r plot_domfam_habitat, fig.width = 6}
+#| fig-alt: "Faceted box plots comparing insect mass among dominant insect families and broad habitat types. Mean insect mass differs visibly among dominant insect families, with Apidae having the highest median and Andrenidae the lowest, as above. There are five habitats - heathland, arable, grassland/herbaceous, woodland and wetland. Amongst habitats, healthland has the highest median and arable the lowest, heathland also has a much larger IQR than the other four."
+
 # Take the relevant columns from the data frame
 domfam_habitat_sel <- site_metadata |>
   select(x1km_square, dominant_family, broad_habitat, mean_insect_mass)
@@ -264,7 +311,11 @@ ggplot(
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) # rotate x labels so they fit
 ```
 
-::: {.callout-exercise #ex-anova_twoway}
+::: {.callout-exercise #ex-anova_twoway .core}
+
+### Two-way ANOVA
+
+[**Core**]{.core-text}
 
 In your `pollinators.qmd` Quarto file:
 
@@ -274,7 +325,7 @@ In your `pollinators.qmd` Quarto file:
 
 ::: {.callout-answer collapse="true" #ex_anova_twoway_ans}
 
-### Statistical Test
+**Statistical test**
 
 We define our linear model as follows:
 
@@ -313,7 +364,7 @@ habitat_p <- round(
 resid_df <- anova_domfam_habitat_mass["Residuals", "Df"]
 ```
 
-### Conclusion
+**Conclusion**
 
 ::: {.highlight-box}
 There is evidence that mean insect mass differs among dominant insect families ($F$(`r family_df`, `r resid_df`) = `r family_f`, $p$ = `r formatC(family_p, format = "e", digits = 2)`). After accounting for dominant insect family, there is no evidence that broad habitat type explains additional variation in mean insect mass ($F$(`r habitat_df`, `r resid_df`) = `r habitat_f`, $p$ = `r round(habitat_p, 2)`).
@@ -322,27 +373,31 @@ There is evidence that mean insect mass differs among dominant insect families (
 :::
 
 
-## Interactions {#sec-interactions}
+## Interactions {#sec-interactions .rec}
 
-When we use `+` to include multiple explanatory variables, we are assuming that their relationships with the response are additive. This means that the relationship between one explanatory variable and the response is the same at every level of the other explanatory variable. So for example, the dominant insect family can be associated with a difference in mean insect mass, and habitat can be associated with a difference, and these differences can be added together.
+[**Recommended**]{.rec-text}
 
-However, sometimes the relationship between one explanatory variable and the response depends on the value of another explanatory variable. This is called an interaction.
+When we use `+` to include multiple explanatory variables, we are assuming that their relationships with the response are **additive**. This means that the relationship between one explanatory variable and the response is the same at every level of the other explanatory variable. So for example, the dominant insect family can be associated with a difference in mean insect mass, and habitat can be associated with a difference, and these differences can be **added together**.
 
-We can add interactions between variables using `*` - `response ~ explanatory1 * explanatory2`. The ANOVA will then test the association between each explanatory variable and the response, as well as whether there is an interaction between them.
+However, sometimes the relationship between one explanatory variable and the response depends on the value of another explanatory variable. This is called an **interaction**.
+
+We can add interactions between variables using **`*`** - `response ~ explanatory1 * explanatory2`. The ANOVA will then test the association between each explanatory variable and the response, as well as whether there is an interaction between them.
 
 For example, if we set up the model as `mean_insect_mass ~ dominant_family * dominant_flower_order`, we are asking:
 
 * Does mean insect mass vary between sites with different dominant insect families?
 * Does mean insect mass vary between sites with different dominant flower orders, once dominant insect family has been taken into account?
-* Does any difference in mean insect mass among dominant insect families depend on the dominant flower order?
+* **Does any difference in mean insect mass among dominant insect families depend on the dominant flower order?**
 
 This final question is the interaction: does the association between one explanatory variable and the response depend on the value of another explanatory variable?
 
-::: {.callout-exercise #ex-simulate_interaction}
+### Using simulation to visualise interactions {#sec-simulating_interactions .fold .extension}
+
+[**Extension**]{.extension-text}
 
 Let's simulate a dataset with an interaction, to help illustrate this concept.
 
-In this study, there are four populations of students and the response variable is the time they took to finish their lunch, in minutes. Response time is drawn from a normal distribution with a standard deviation of 3.
+In this study, there are four samples of students and the response variable is the time they took to finish their lunch, in minutes. Response time is drawn from a normal distribution with a standard deviation of 3.
 
 There are two categorical explanatory variables:
 
@@ -351,41 +406,47 @@ There are two categorical explanatory variables:
 
 Their mean finishing times are as follows:
 
-* Spoon + Pasta = 8 minutes
-* Fork + Pasta = 10 minutes
-* Spoon + Soup = 11 minutes
-* Fork + Soup = 25 minutes
+* Spoon + Pasta = **8 minutes**
+* Fork + Pasta = **10 minutes**
+* Spoon + Soup = **11 minutes**
+* Fork + Soup = **25 minutes**
 
 The hypotheses here are:
 
 Utensil:
 
-* Null: There is no association between utensil choice and finishing time.
-* Alternative: Utensil choice is associated with finishing time.
+* **Null hypothesis**: There is no association between utensil choice and finishing time.
+* **Alternative hypothesis**: Utensil choice is associated with finishing time.
 
 Food:
 
-* Null: There is no association between food choice and finishing time, after taking into account the association with utensil choice.
-* Alternative: Food choice is associated with finishing time, after taking into account the association with utensil choice.
+* **Null hypothesis**: There is no association between food choice and finishing time, after taking into account the association with utensil choice.
+* **Alternative hypothesis**: Food choice is associated with finishing time, after taking into account the association with utensil choice.
 
 Interaction:
 
-* Null: The association between utensil choice and finishing time does not vary depending on food choice.
-* Alternative: The association between utensil choice and finishing time varies depending on food choice.
+* **Null hypothesis**: The association between utensil choice and finishing time does not vary depending on food choice.
+* **Alternative hypothesis**: The association between utensil choice and finishing time varies depending on food choice.
+
+::: {.callout-exercise #ex-simulate_interaction .extension}
+
+### Using simulation to visualise interactions
+
+[**Extension**]{.extension-text}
 
 In your `prac4_exercises.qmd` Quarto file:
 
-* Generate four simulated populations, each of 10 students, with response times normally distributed around these means and a standard deviation of 3.
-* Convert each of these into a data frame with the columns `utensil`, `food` and `time`.
-* Convert these to a single data frame using the function `bind_rows()`. You can pass any number of data frames as arguments to this function and it will return a single data frame combining all of the rows (assuming the data frames all have the same columns).
+* Generate four simulated samples, each of 10 students, with response times normally distributed around the means above and a standard deviation of 3.
+* Convert each of these into a data frame with the columns `utensil`, `food` and `time`, using the following syntax, where `time_sim` is your vector of simulated response times - `tibble(time = time_sim, food = "soup", utensil = "spoon")
+* Convert these to a single data frame using the function `bind_rows()`. You can pass any number of data frames as arguments to this function and it will return a single data frame combining all of the rows (assuming the data frames all have the same columns) (e.g. as `bind_rows(df1, df2, df3)`)
 * Fit a linear model with `time` as the response variable and `utensil`, `food` and their interaction as explanatory variables.
 * Run an ANOVA on the linear model.
 
 :::{.callout-answer #ex_simulate_interaction_ans}
 
-### Data
+**Data**
 
-[Generate four simulated populations, each of 10 students, with response times normally distributed around these means and a standard deviation of 3.]{.blue-text}
+[Generate four simulated samples, each of 10 students, with response times normally distributed around these means and a standard deviation of 3.]{.blue-text}
 
 ```{r simulate_populations_forky_spoony}
 spoon_pasta <- rnorm(10, 8, 3)
@@ -428,7 +489,7 @@ df_fs <- tibble(
 df_food <- bind_rows(df_sp, df_fp, df_ss, df_fs)
 ```
 
-### Statistical test
+**Statistical test**
 
 [Fit a linear model with `time` as the response variable and `utensil`, `food` and their interaction as explanatory variables.]{.blue-text}
 
@@ -445,7 +506,7 @@ print(anova_lunch)
 
 :::
 
-### Conclusion
+**Conclusion**
 
 ```{r get_vals_forky_spoony, include=FALSE}
 # Utensil
@@ -478,13 +539,15 @@ There is evidence that eating time differs according to the utensil used ($F$(`r
 There is also evidence of an interaction between utensil and food ($F$(`r interaction_df`, `r resid_df`) = `r interaction_f`, $p$ = `r formatC(interaction_p, format = "e", digits = 2)`). This means that the difference in eating time between using a fork and a spoon depends on the type of food being eaten.
 :::
 
-::: {.callout-note .bonus #bon-simulate_interaction}
+::: {.callout-exercise #ex-simulate_no_interaction .bonus}
 
-### Bonus Exercise: Removing the interaction
+### Removing the interaction
+
+[**Bonus**]{.bonus-text}
 
 Change the population means so that there is no interaction between food and utensil, but both food and utensil are still associated with eating time, then re-run the ANOVA and re-interpret the results.
 
-::: {.callout-answer collapse="true" #bon-simulate_interaction_ans}
+::: {.callout-answer collapse="true" #ex-simulate_no_interaction_ans}
 
 For example
 
@@ -524,7 +587,7 @@ df_fs <- tibble(
 df_food <- bind_rows(df_sp, df_fp, df_ss, df_fs)
 ```
 
-### Statistical Test
+**Statistical test**
 
 ```{r lm_forky_spoony_bonus}
 # Fit the linear model
@@ -535,7 +598,7 @@ anova_lunch <- anova(lm_lunch)
 print(anova_lunch)
 ```
 
-### Conclusion
+**Conclusion**
 
 ```{r get_vals_forky_spoony_bonus, include=FALSE}
 # Utensil
@@ -578,71 +641,40 @@ However, there is no evidence of an interaction between utensil and food ($F$(`r
 :::
 :::
 
-### Hypotheses
+**Hypotheses**
 
-Now, let's try this with our real data. Here, our hypotheses are:
+Now, let's try this with our data. Here, our hypotheses are:
 
 Dominant insect family:
 
-* Null: There is no association between mean insect mass and dominant insect family.
-* Alternative: Mean insect mass is associated with dominant insect family.
+* **Null hypothesis**: There is no association between mean insect mass and dominant insect family.
+* **Alternative hypothesis**: Mean insect mass is associated with dominant insect family.
 
 Dominant flower order:
 
-* Null: There is no association between mean insect mass and dominant flower order, once dominant insect family has been taken into account.
-* Alternative: Mean insect mass is associated with dominant flower order, once dominant insect family has been taken into account.
+* **Null hypothesis**: There is no association between mean insect mass and dominant flower order, once dominant insect family has been taken into account.
+* **Alternative hypothesis**: Mean insect mass is associated with dominant flower order, once dominant insect family has been taken into account.
 
 Interaction:
 
-* Null: The association between dominant insect family and mean insect mass does not vary depending on dominant flower order.
-* Alternative: The association between dominant insect family and mean insect mass varies depending on dominant flower order.
+* **Null hypothesis**: The association between dominant insect family and mean insect mass does not vary depending on dominant flower order.
+* **Alternative hypothesis**: The association between dominant insect family and mean insect mass varies depending on dominant flower order.
 
-::: {.callout-exercise #ex-anova_interaction}
+::: {.callout-exercise #ex-anova_interaction .rec}
+
+### ANOVA with interaction
+
+[**Recommended**]{.rec-text}
 
 In your `pollinators.qmd` Quarto file:
 
-* Draw a box plot showing the distribution of mean insect mass by dominant family and dominant flower order. You will need to convert the data to long format and use the `facet_wrap()` function to divide it into two separate plots. For this plot there's no need to worry about the interaction.
 * Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.
 * Run an ANOVA on this model and view the results.
 * Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.
 
 ::: {.callout-answer collapse="true" #ex_anova_twoway_ans}
 
-### Plot
-
-[Draw a box plot showing the distribution of mean insect mass by dominant family and dominant flower order. You will need to convert the data to long format and use the `facet_wrap()` function to divide it into two separate plots. For this plot there's no need to worry about the interaction.]{.blue-text}
-
-```{r mass_fam_plot}
-# Take the relevant columns from the data frame
-mass_fam_sel <- site_metadata |>
-  select(
-    x1km_square, dominant_family, dominant_flower_order,
-    mean_insect_mass
-  )
-
-# Pivot to long format
-mass_fam_long <- mass_fam_sel |>
-  pivot_longer(
-    c(
-      dominant_family,
-      dominant_flower_order
-    ),
-    names_to = "variable",
-    values_to = "value"
-  )
-
-# Plot the boxplot
-ggplot(
-  mass_fam_long,
-  aes(x = value, y = mean_insect_mass, fill = variable)
-) +
-  geom_boxplot() +
-  facet_wrap(~variable, scales = "free_x") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) # rotate x labels so they fit
-```
-
-### Statistical test
+**Statistical test**
 
 [Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.]{.blue-text}
 
@@ -659,7 +691,7 @@ mass_fam_flower_anova <- anova(mass_fam_flower_lm)
 print(mass_fam_flower_anova)
 ```
 
-### Conclusion
+**Conclusion**
 
 ```{r get_vars_mass_fam_flower, include=FALSE}
 # Dominant insect family
@@ -716,58 +748,39 @@ There is also no evidence of an interaction between dominant insect family and d
 :::
 :::
 
-:::{.callout-exercise #ex_temp_prec}
 
-In your `pollinators.qmd` Quarto file:
-
-* Fit a linear model to the `site_metadata` data frame with `annual_total_prec` as the response variable and `annual_mean_temp` as the explanatory variable.
-* Use the function `summary()` to view the results.
-* Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.
-
-::: {.callout-answer collapse="true" #ex_temp_prec_ans}
-
-### Statistical test
-
-[Fit a linear model to the `site_metadata` data frame with `annual_total_prec` as the response variable and `annual_mean_temp` as the explanatory variable.]{.blue-text}
-
-[Use the function `summary()` to view the results.]{.blue-text}
-
-```{r lm_temp_prec}
-lm_temp_prec <- lm(annual_total_prec ~ annual_mean_temp, data = site_metadata)
-summ_lm_temp_prec <- summary(lm_temp_prec)
-print(summ_lm_temp_prec)
-```
-```{r get_vals_temp_prec, include=FALSE}
-slope <- summ_lm_temp_prec$coefficients["annual_mean_temp", "Estimate"]
-slope_t <- summ_lm_temp_prec$coefficients["annual_mean_temp", "t value"]
-slope_p <- summ_lm_temp_prec$coefficients["annual_mean_temp", "Pr(>|t|)"]
-slope_df <- summ_lm_temp_prec$df[2]
-r_squared <- summ_lm_temp_prec$r.squared
-```
-
-### Conclusion
-
-[Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.]{.blue-text}
-
-::: {.highlight-box}
-
-There is evidence of a negative association between mean annual temperature and total annual precipitation ($t$(`r slope_df`) = `r round(slope_t, 2)`, $p$ = `r formatC(slope_p, format = "e", digits = 2)`). For each 1°C increase in mean annual temperature, the model predicts a decrease in total annual precipitation of approximately `r abs(round(slope, 2))` mm. The model explains `r round(r_squared * 100, 2)`% of the variation in total annual precipitation ($R^2$ = `r round(r_squared, 4)`).
-
-:::
-:::
 
 ## Review {#sec-summary_0403}
-
 [↑ top](#)
+
+In this part of the practical, you extended ANOVA to compare more than two groups and to include multiple explanatory variables and interactions between explanatory variables.
 
 ::: {.callout-note #note-summary_0403}
 
-### Summary
+### Programming summary
 
+| Function | What it does |
+|---|---|
+| `lm()` | Fits a linear model to a response variable and one or more explanatory variables. |
+| `anova()` | Performs an ANOVA on a fitted linear model. |
+| `rf()` | Generates random values from an F-distribution. |
+| `pf()` | Calculates cumulative probabilities from an F-distribution. |
+| `tibble()` | Creates a data frame. |
+| `bind_rows()` | Combines data frames by adding their rows together. |
+| `select()` | Selects particular columns from a data frame. |
+| `pivot_longer()` | Converts data from wide to long format. |
+| `ggplot()` | Creates a plot using a data frame and aesthetic mappings. |
+| `geom_boxplot()` | Adds a box plot to a `ggplot`. |
+| `geom_density()` | Adds an estimated density distribution to a `ggplot`. |
+| `geom_vline()` | Adds a vertical reference line to a `ggplot`. |
+| `facet_wrap()` | Splits a plot into separate panels according to a variable. |
 
 :::
 
-For this part of the practical, the main files you have created are:
+For this part of the practical, the main files you have edited are:
+
+- `prac4_exercises.qmd`
+- `pollinators.qmd`
 
 These are the files you should select when making your Git commit.
 

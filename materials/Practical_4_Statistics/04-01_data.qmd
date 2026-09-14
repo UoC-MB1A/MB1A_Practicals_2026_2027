@@ -14,26 +14,39 @@ library(maps)
 insect_metadata <- read_csv("data/insect_metadata.csv")
 ```
 
-# Part 1: Dataset {#sec-p1_data}
+# Part 1: UK Pollinator Monitoring Scheme Dataset {#sec-p1_data}
 
 ::: {.callout-note .partmenu #parts-0401}
 ## Sections
 
 - @sec-dataset_pollinators
-- @sec-dataset_invertebrates
 - @sec-summary_0401
 :::
 
 :::{.callout-tip .objectives}
 #### Learning objectives
-By the end of this part of the practical you will be able to:
+By the end of this part of the practical you will:
+
+* Understand the structure of the pollinator dataset
+* Have recapped some data frame operations from @sec-p1_basic_data_frame_operations and @sec-p2_complex_data_frame_operations.
+
 :::
 
-We will use three real research datasets throughout both this practical and Practical 6.
+## Sync your Git repository
+{{< include ../includes/git_pull.qmd >}}
 
-## Pollinator dataset {#sec-dataset_pollinators}
+For this practical, we recommend that you create two Quarto documents:
 
-The first dataset we will use in this practical is [pan-trap survey data](https://catalogue.ceh.ac.uk/documents/9df83130-e98f-48b0-bbfc-32f5920eedb0) from the UK Pollinator Monitoring Scheme. In this scheme, multiple [pan-traps](https://en.wikipedia.org/wiki/Pan_trap) are set in each of a set of specific 1km squares across the UK. On four days each summer, volunteers will set out traps for six hours, then send the insects to be counted. Flowering plants within a 2m radius of the trap are also recorded.
+* `{{< meta practical >}}/pollinators.qmd` - analysis of the pollinator dataset
+* `{{< meta practical >}}/prac4_exercises.qmd` - general practice exercises
+
+We will use the following research dataset repeatedly throughout both this practical and Practical 6 (Further Statistics) and visit others as needed.
+
+## Pollinator dataset {#sec-dataset_pollinators .core}
+
+[**Core**]{.core-text}
+
+The main dataset we will use in this practical is [pan-trap survey data](https://catalogue.ceh.ac.uk/documents/9df83130-e98f-48b0-bbfc-32f5920eedb0) from the UK Pollinator Monitoring Scheme (POMS). In this scheme, multiple [pan-traps](https://en.wikipedia.org/wiki/Pan_trap) are set in each of a set of specific 1km squares across the UK. On four days each summer, volunteers will set out traps for six hours, then send the insects to be counted. Flowering plants within a 2m radius of the trap are also recorded.
 
 [comment]: todo_katy link to the preprocessing.
 
@@ -47,46 +60,23 @@ You have been provided with three data files:
 
 * In the **site metadata** CSV file - `data/site_metadata.csv`, each row represents a single 1km square sampling site. The data frame contains information about the geographical location, plus land use and climate at the sample site. Additional climate data has been added based on [WorldClim](https://nordata.physics.utoronto.ca/en/annexes-datasets-descriptions/72-precipitation/worldclim-version-2/) data, which has detailed climate data by square averaged from 1970-2000. Various additional statistics have been calculated based on the information in the original data frame.
 
-::: {.callout-note #uk_poms_citation}
-**Data citation**
+<details>
+<summary>Data citation</summary>
 
 UK Pollinator Monitoring Scheme (2024). 1km square pan trap data from the UK Pollinator Monitoring Scheme, 2017-2021. NERC EDS Environmental Information Data Centre. (Dataset).
 
 The UK Pollinator Monitoring Scheme (PoMS) is a partnership funded jointly by UKCEH and JNCC (through funding from Defra, Scottish Government, Welsh Government, and DAERA). UKCEH’s contribution is funded by the Natural Environment Research Council award number NE/R016429/1 as part of the UK-SCAPE programme delivering National Capability. Between 2017 and 2021, PoMS was funded by UKCEH and Defra (England), Welsh Government, Scottish Government, DAERA (Northern Ireland), and JNCC.
 PoMS is indebted to the many volunteers who carry out surveys and contribute data to the scheme.
 
-:::
+</details>
 
-## Invertebrate dataset
+::: {.callout-exercise #ex_summarise_bees .rec}
 
-[comment]: todo_katy link to the preprocessing.
+### Revise data frame operations
 
-In [this publication](https://www.nature.com/articles/s41586-026-10908-7), published in Nature in 2026, the authors investigated the potential of marine invertebrates as a food source, and found these organisms to be very nutrient dense, with the potential to feed billions of people.
+[**Recommended**]{.rec-text}
 
-They sourced data on nutrient content and various ecological characteristics from numerous organisms, however most of the records are incomplete. In `data/marine_invertebrates.csv` you have been provided with data from the 85 organisms for which data is available for the following measurements:
-
-* `lmax` - maximum length
-* `depth_range_deep` - maximum depth
-* `FE` - iron mg / 100g
-* `CA` - calcium mg / 100g
-* `MG` - magnesium mg / 100g
-* `order` - taxonomic order
-
-## Septin dataset
-
-Our third dataset is based on [this article](https://doi.org/10.1038/s41467-024-54638-8), published in Nature Communications in 2024. These authors developed a tool to determine the spatial distribution of components inside cells using 3D image analysis. This is based on a measure, $P_n$, of how polar the distribution of a protein is within a cell.
-
-* low $P_n$ → protein distributed relatively symmetrically → less polar
-* high $P_n$ → protein concentrated asymmetrically toward one part of the cell → more polar.
-
-Using their tool, they characterised the distribution of 6 members of a family of proteins called Septins, which are involved in cellular compartmentalisation, in haematopoietic stem cells (HSCs) from young mice (aged 10–18 weeks) and aged mice (aged 80+ weeks). They found that most Septins had a lower $P_n$ in aged HSCs, indicating a less polar distribution, and that the organisation of the Septin network was altered with age. This is shown in their Figure 3B.
-
-The data is in your `data/septin.csv` folder.
-
-Choose **at least one** of the following exercises to recap data frame operations.
-
-::: {.callout-exercise #ex_summarise_bees}
-In your `pollinators.qmd` Quarto file, using the **pollinator** dataset.
+In your `pollinators.qmd` Quarto file:
 
 * Read the three CSV files:
 
@@ -144,55 +134,6 @@ The most commonly observed species was `r pull(insect_totals, species)[1]`, whic
 :::
 :::
 
-::: {.callout-exercise #ex_summarise_invertebrates}
-In your `invertebrates.qmd` Quarto file, using the **invertebrates** dataset.
-
-* Read the CSV file `data/marine_invertebrates.csv`
-* Count how many unique orders of marine invertebrates are present (column `order`)
-* Count how many times the CA concentration is greater than the FE concentration.
-* Count how many species are in the dataset with the genus *Penaeus*. The function `str_starts(column, string)` will find rows starting with a specific character string.
-
-::: {.callout-answer #ex_summarise_bees_ans}
-
-[Read the CSV file `data/marine_invertebrates.csv`]{.blue-text}
-
-```{r summarise_inverts_ans1, message=FALSE}
-inverts <- read_csv("data/marine_invertebrates.csv")
-```
-
-[Count how many unique orders of marine invertebrates are present (column `order`)]{.blue-text}
-```{r summarise_inverts_ans2, message=FALSE}
-n_unique <- inverts |>
-  distinct(order) |>
-  nrow()
-print(n_unique)
-```
-
-There are `r n_unique` unique orders.
-
-[Count how many times the CA concentration is greater than the MG concentration.]{.blue-text}
-
-```{r summarise_inverts_ans3, message=FALSE}
-mg_ca <- inverts |>
-  filter(CA > MG) |>
-  nrow()
-print (mg_ca)
-```
-`r mg_ca` rows have a higher CA than MG concentration.
-
-[Count how many species are in the dataset with the genus *Penaeus*.]{.blue-text}
-
-```{r summarise_inverts_ans4, message=FALSE}
-pen <- inverts |>
-  filter(str_starts(sciname, "Penaeus")) |>
-  nrow()
-print (pen)
-```
-`r pen` species are members of the genus *Penaeus*.
-:::
-:::
-
-
 ## Review {#sec-summary_0401}
 
 [↑ top](#)
@@ -200,10 +141,16 @@ print (pen)
 ::: {.callout-note #note-summary_0401}
 
 ### Summary
+
+* The POMS data contains detailed information about pollinator species across the UK.
+* Here we have also added detailed climate data for each site.
+* You have recapped various ways to manipulate data frames in R.
+
 :::
 
 For this part of the practical, the main files you have created are:
 
+- `pollinators.qmd`
 
 These are the files you should select when making your Git commit.
 
