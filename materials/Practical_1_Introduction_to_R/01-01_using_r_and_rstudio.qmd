@@ -2,15 +2,18 @@
 format: html
 practical: Practical_1_Introduction_to_R
 doc-id: "0101"
+author: "Katy Brown"
 ---
+
 ```{r setup0101, include=FALSE}
 library(styler)
 ```
 
 # Part 1: Using R and RStudio {#sec-p1_r_and_rstudio}
 
-::: {.callout-note .partmenu #parts-0101}
+::: {#parts-0101 .callout-note .partmenu}
 ## Sections
+
 - @sec-open_r
 - @sec-r_language
 - @sec-coding_in_the_console
@@ -19,32 +22,44 @@ library(styler)
 - @sec-summary_0101
 :::
 
-:::{.callout-tip .objectives #objectives-0101}
+::: {#objectives-0101 .callout-tip .objectives}
 #### Learning objectives
+
 By the end of this part of the practical you should be able to:
 
 - Explain what R is and why it is useful for biological data analysis.
 - Use some features of the RStudio interface.
 - Use the R console and R scripts to run R code.
-
 :::
 
 ## Loading RStudio and syncing {#sec-open_r}
 
 {{< include ../includes/git_pull.qmd >}}
 
-
-## The R language {#sec-r_language}
+## The R language {#sec-r_language .core}
 
 [↑ top](#)
 
-![The R Logo](images/Rlogo_small.png){#fig-rlogo}
+
+![The R Logo](images/Rlogo_small.png){#fig-rlogo fig-alt = "The R logo - a big blue R in front of a grey oval"}
 
 In this session, we will learn the basics of using the programming language **R**, which we will use for data analysis and visualisation throughout the {{< meta course-title >}} course.
 
+::: {.callout-note}
+
+If you've never programmed before, don't worry about the extension and bonus material in this practical! The material marked **core** is all you will need to progress through this course. You're advised to read the material marked **recommended** and attempt any exercises if you have time, but it is not essential. 
+
+If you are an experienced programmer, please still read all of the core and recommended materials to understand the difference between R and other programming languages, and how we will interact with R in these practicals. However, if you are confident you do not need to complete all of the introductory exercises in parts 3 and 4. Instead, there are extension (marked with a magnifying glass) and bonus (marked with a rocket) exercises for you to try.
+
+If you are somewhere in between, please read all of the core and recommended materials and choose whichever exercises feel more helpful to you. 
+:::
+
+
 The R language was initially developed by two programmers, Ross Ihaka and Robert Gentleman, in 1993, for teaching introductory statistics. It has become one of the most commonly used languages in scientific computing, particularly amongst biologists.
 
-### Why learn R?
+### Why learn R? {#sec-why_R .core}
+
+[**Core**]{.core-text}
 
 R provides many of the same functions as spreadsheet tools such as MS Excel and Google Sheets, and statistics and graphing software like SPSS and GraphPad.
 
@@ -62,14 +77,13 @@ Before we go any further, let's try writing some R code.
 
 When you first open your RStudio project, your screen will look like this.
 
-![The welcome screen of RStudio](images/rstudio_no_source.png){#fig-rstudio_main width="100%"}
-
+![The welcome screen of RStudio](images/rstudio_no_source.png){#fig-rstudio_main width="100%" fig-alt = "Image of the Rstudio interface. The left section is labelled Console, highlighted in orange. The top right section is labelled Environment, History, Connections, Git, with Environment and Git highlighted in orange. The bottom right section is labelled Files, Plots, Packages, Viewer, Presentation, with Help highlighted in orange."}
 
 We will look at other parts of the screen shortly, but for now let's focus on the **Console**.
 
 In the console, R commands can be typed and executed immediately by the computer. When you type a line of code and press {{< kbd Enter >}}, it is transferred to the R **interpreter**. Results are shown straight after the command is executed. However, no record is kept and any information is lost once the session is closed.
 
-Try typing the following, in the grey box,  into the console, then press {{< kbd Enter >}}.
+Try typing the following text (everything in the grey box), into the console, then press {{< kbd Enter >}}.
 
 ```{r console_sayhi}
 print("Hello! First contact with R successful!")
@@ -93,8 +107,7 @@ Usually in these practicals, we won't run most of our code directly in the conso
 
 However, it can be useful to use the console, for example to quickly try something out or check the value of a variable.
 
-::: {.callout-exercise #ex-creating_objects}
-
+::: {#ex-creating_objects .callout-exercise}
 {{< fa solid anchor >}}
 
 - In your console, create a variable with your first name. The syntax you will need to use is as follows - replace "[Mary]{.red-text}" with your own name.
@@ -108,13 +121,12 @@ Then, have R write you a message as follows:
 ```{r name_show}
 print(paste("Hi", my_name, "Welcome to R!"))
 ```
-
 :::
 
-::: {.callout-important #note-r_prompt}
+::: {#note-r_prompt .callout-important}
 ## The R prompt
 
-If R is ready to accept commands, the R console shows a `>` symbol. 
+If R is ready to accept commands, the R console shows a `>` symbol.
 
 If the console shows a `+` symbol, this means it is waiting for something - you have most likely not 'closed' a parenthesis or quotation, i.e. you don't have the same number of left-parentheses as right-parentheses, or the same number of opening and closing quotation marks. When this happens, and you thought you finished typing your command, click inside the console window and press {{< kbd Escape >}}. This will cancel the incomplete command and return you to the `>` prompt.
 :::
@@ -127,43 +139,40 @@ Now we will learn a bit about the rest of RStudio.
 
 [RStudio](https://posit.co/products/open-source/rstudio/) is an interactive development environment (IDE) - a piece of software designed to make working with R as easy as possible. It's free, open-source and well-supported.
 
-![The welcome screen of RStudio](images/rstudio_no_source.png){#fig-rstudio_main width="100%"}
+![The welcome screen of RStudio](images/rstudio_no_source.png){width="100%"}
 
 In the image above you can see that the window is divided into three main parts, each with various tabs. In clockwise order we have:
 
-1.  **[Console]{.orange-text}** / Terminal / Background jobs
-2.  **[Environment]{.orange-text}** / History / Connections / Tutorial / **[Git]{.orange-text}**
-3.  Files / Plots / Packages / **[Help]{.orange-text}** / Viewer / Presentation
+1.  [**Console**]{.orange-text} / Terminal / Background jobs
+2.  [**Environment**]{.orange-text} / History / Connections / Tutorial / [**Git**]{.orange-text}
+3.  Files / Plots / Packages / [**Help**]{.orange-text} / Viewer / Presentation
 
 In orange we've highlighted the tabs we'll be using most.
 
-* In the **[Console]{.orange-text}** we can directly run code, as you did above.
-* The **[Environment]{.orange-text}** shows any information that is stored in R's memory (empty in the figure above). 
-
+- In the [**Console**]{.orange-text} we can directly run code, as you did above.
+- The [**Environment**]{.orange-text} shows any information that is stored in R's memory (empty in the figure above).
 
 Click on the environment now - you should see two variables: `x`, with a value of 8 and `my_name`, with whatever you entered as your name above.
 
 ![The environment tab](images/environment_tab.png){#fig-env_tab width="50%"}
 
+- The [**Git**]{.orange-text} tab allows you to interact with Git and GitHub, as we saw above.
 
-* The **[Git]{.orange-text}** tab allows you to interact with Git and GitHub, as we saw above.
+- [**Help**]{.orange-text} is where you can go for help.
 
-* **[Help]{.orange-text}** is where you can go for help. 
-
-::: {.callout-exercise #ex-r_help}
-
+:::: {#ex-r_help .callout-exercise}
 {{< fa solid anchor >}}
 
 In the search box on the Help tab, search for the function `sum`.
 
 Using the **Examples** section as a guide, calculate the sum of the numbers 2, 3, 4 in the console.
 
-::: {.callout-answer collapse="true" #ex-r_help_ans}
+::: {#ex-r_help_ans .callout-answer collapse="true"}
 ```{r r_help_ans}
 sum(2, 3, 4)
 ```
 :::
-:::
+::::
 
 ## R Scripts {#sec-console_scripts}
 
@@ -175,22 +184,22 @@ Next, we tell the computer to follow the instructions by **executing** or **runn
 
 In your RStudio window, choose `File` \> `New File` \> `R Script`. This will add a new panel to your RStudio session, the **Source** panel.
 
-![The source and console panels](images/rstudio_with_source.png){.screenshot #fig-rstudio_labelled}
+![The source and console panels](images/rstudio_with_source.png){#fig-rstudio_labelled .screenshot}
 
 Here, we can save our code as a script. This is a list of commands which the R interpreter will execute in order. The script represents a complete record of what we did, and anyone (including our future selves!) can easily replicate the results on their computer. We can also use a script to repeatedly perform the same or similar tasks.
 
-| Console | Script |
-|------------------------------------|------------------------------------|
-| runs code directly | in essence, a text file |
-| interactive | needs to be told to run |
-| no record | records actions |
-| difficult to trace progress | transparent workflow |
+| Console                     | Script                  |
+|-----------------------------|-------------------------|
+| runs code directly          | in essence, a text file |
+| interactive                 | needs to be told to run |
+| no record                   | records actions         |
+| difficult to trace progress | transparent workflow    |
 
 #### Creating a script
 
 To create a script, we put a list of commands for R to run into the `Source` panel.
 
-Try entering the following into the `Source` panel, then press the ![source_button](../images/source_button.png){.inline-icon} button. The ![source_button](../images/source_button.png){.inline-icon}  button runs all of the code in the `Source` panel, while the ![run_button](../images/run_button.png){.inline-icon} button will only run the active line - the line where your cursor is currently. The answer should show in the **console**.
+Try entering the following into the `Source` panel, then press the ![source_button](../images/source_button.png){.inline-icon} button. The ![source_button](../images/source_button.png){.inline-icon} button runs all of the code in the `Source` panel, while the ![run_button](../images/run_button.png){.inline-icon} button will only run the active line - the line where your cursor is currently. The answer should show in the **console**.
 
 ```{r first_script}
 x <- 8
@@ -200,8 +209,7 @@ z <- x + y
 print(z)
 ```
 
-::: {.callout-exercise #ex-first_script}
-
+:::: {#ex-first_script .callout-exercise}
 {{< fa solid anchor >}}
 
 Here is the code we wrote in the console above:
@@ -211,25 +219,26 @@ my_name <- "Mary"
 print(paste("Hi", my_name, "Welcome to R!"))
 ```
 
-Write a script based on this code but to display, for example, "My name is Jeremy and I am 27 years old", but with your own (or another) name and age. Run your script using the ![source_button](../images/source_button.png){.inline-icon} button. 
+Write a script based on this code but to display, for example, "My name is Jeremy and I am 27 years old", but with your own (or another) name and age. Run your script using the ![source_button](../images/source_button.png){.inline-icon} button.
 
-Save your script as `my_first_script.R` (using `File` > `Save As`). You can save it directly into the **`{{< meta practical >}}`** folder.
+Save your script as `my_first_script.R` (using `File` \> `Save As`). You can save it directly into the **`{{< meta practical >}}`** folder.
 
-::: {.callout-answer collapse="true" #ex-first_script_ans}
+::: {#ex-first_script_ans .callout-answer collapse="true"}
 ```{r first_script_ans}
 my_name <- "Jeremy"
 my_age <- 27
 print(paste("My name is", my_name, "and I am", my_age, "years old"))
 ```
 :::
-:::
+::::
 
 ## Review {#sec-summary_0101}
 
 [↑ top](#)
 
-::: {.callout-note #note-summary_0101}
+::: {#note-summary_0101 .callout-note}
 ## Summary
+
 - **R** is a commonly used programming language amongst biologists.
 - **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.
 - We can code interactively in the **console** but it is not easy to track or document.
