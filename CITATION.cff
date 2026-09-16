@@ -5,7 +5,7 @@
 # This is a known limitation of CFF files: https://github.com/citation-file-format/citation-file-format/issues/112
 
 cff-version: 1.2.0
-title: Course Development Guidelines
+title: University of Cambridge MB1A Practicals 2026-2027
 message: >-
   You may cite these materials using the metadata in this
   file. Please cite our materials if you publish materials
@@ -13,24 +13,16 @@ message: >-
   the information in your own work.
 type: dataset
 authors:
-  - given-names: Hugo
-    family-names: Tavares
-    affiliation: Cambridge Centre for Research Informatics Training
-    website: 'https://bioinfotraining.bio.cam.ac.uk/staff/hugo-tavares-phd'
-    orcid: 'https://orcid.org/0000-0001-9373-2726'
-    alias: 'writing - original draft; conceptualisation; software'
-  - given-names: Martin
-    family-names: van Rongen
-    affiliation: Cambridge Centre for Research Informatics Training
-    orcid: 'https://orcid.org/0000-0002-1441-367X'
-    alias: 'writing - review & editing; conceptualisation; software'
-  - given-names: Alexia
-    family-names: Cardona
-    affiliation: Cambridge Centre for Research Informatics Training
-    orcid: 'https://orcid.org/0000-0002-7877-5565'
-    alias: 'conceptualisation'
-repository-code: 'https://github.com/cambiotraining/quarto-course-template'
-url: 'https://cambiotraining.github.io/quarto-course-template/'
+  - given-names: Katy
+    family-names: Brown
+    affiliation: University of Cambridge Department of Pathology
+    orcid: 'https://orcid.org/my-orcid?orcid=0000-0002-8400-6922'
+    alias: 'writing; conceptualisation;'
+  - given-names: Paul
+    family-names: Fannon
+    affiliation: University of Cambridge Department of Genetics
+    alias: 'writing; conceptualisation;'
+repository-code: 'https://github.com/UoC-MB1A/MB1A_Practicals_2026_2027'
+url: 'https://uoc-mb1a.github.io/MB1A_Practicals_2026_2027/'
 license: CC-BY-4.0
-commit: 3c8234e82c7315cfb4d869d9635433bf62baf17f
-date-released: '2024-08-23'
+date-released: '2026-10-01'
