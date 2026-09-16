@@ -125,6 +125,10 @@ xyz_vec <- c(x, y, z)
 
 ::: {.callout-exercise #ex-vectors1 .core}
 
+### Vectors
+
+[**Core**]{.core-text}
+
 Let's look again at our dataset in which you have treated one batch of cells with radiation and kept the other as a control, then counted the number of live cells before and after.
 
 The attributes of your two batches of cells are in this table:
@@ -229,7 +233,12 @@ Similarly, functions will often operate on every element of a vector:
 ```{r vectorisation_functions}
 print(sqrt(x))
 ```
+
 ::: {.callout-exercise #ex-vectorisation .extension}
+
+### Vectorisation
+
+[**Extension**]{.callout-extension}
 
 Create a vector as follows:
 
@@ -379,7 +388,7 @@ Based on this table, what was the temperature in degrees C on 2026-07-02 at 12:0
 :::
 
 
-### Reading CSV Files {#sec-reading_csv .core}
+### Reading CSV files {#sec-reading_csv .core}
 
 The R function `read_csv` reads a CSV file into R. 
 
@@ -392,7 +401,7 @@ gt(weather)
 
 ::: {.callout-exercise #ex-public_health .core}
 
-### Reading UK Public Health Monitoring Data
+### Reading UK public health monitoring data
 
 [**Core**]{.core-text}
 
@@ -408,7 +417,7 @@ In a new Quarto report, `{{< meta practical >}}/ukhsa_data_analysis.qmd`, load t
 
 For example:
 
-```{r gt_head}
+```{r gt_head, message=FALSE}
 rhinovirus <- read_csv("data/ukhsa-chart-download-rhinovirus.csv")
 
 gt(head(rhinovirus))
@@ -426,8 +435,9 @@ library(gt)
 ```
 
 :::
+:::
 
-### Downloading data via an API {#sec-api .bonus}
+### Downloading data via an API {#sec-api .fold .bonus}
 
 Often, when we want to work with data which is regularly updated, we will use an application programming interface (API) to directly access data programmatically. UKHSA provides an API for accessing the data underlying its dashboard. 
 
@@ -537,6 +547,10 @@ This may seem like a lot of work to do something you could do manually in two mi
 
 :::{.callout-exercise #ex-api .bonus}
 
+### Downloading data from an API
+
+[**Bonus**]{.bonus-text}
+
 In your `ukhsa_data_analysis.qmd` Quarto file, download a metric of your choice and convert it to a data frame. Your graph later will be more interesting if you choose something measured by week or by day, rather than by year, as most records start less than 10 years ago.
 
 Check the `stratum`, `sex` and `age` columns. If any contain multiple values, use `filter()` to select a single data series.
@@ -576,7 +590,7 @@ gt(filt)
 
 [**Core**]{.core-text}
 
-### Initiating a Plot {#sec-initiating_plots .core}
+### Initiating a plot {#sec-initiating_plots .core}
 
 We will now learn to draw some basic graphs in R. We will learn much more about this over future weeks.
 
@@ -610,7 +624,7 @@ ggplot(weather, aes(
 ))
 ```
 
-### Adding Data {#sec-adding_data .core}
+### Adding data {#sec-adding_data .core}
 
 Now we can add some data to our plot. In `ggplot2`, we build plots by adding layers using the + symbol.
 
@@ -624,7 +638,7 @@ ggplot(weather, aes(
   geom_line()
 ```
 
-### Adding extra features
+### Adding extra features {#sec-adding_features_gg .core}
 
 We can add some additional features here to make the plot look nicer. For example, here I will change the colour of the line to red, add *x* and *y* axis labels and add a title.
 
@@ -661,6 +675,7 @@ ggplot(rhinovirus, aes(
   geom_line()
 ```
 :::
+:::
 
 ::: {.callout-exercise #ex-public_health_plot2 .rec}
 
@@ -686,8 +701,11 @@ ggplot(rhinovirus, aes(
   ylab("Percentage") +
   ggtitle("Percentage of positive PCR test results for rhinovirus")
 ```
+
 :::
 :::
+
+### Additional plot styling {#sec-additional_plot_styling .fold .extension}
 
 ::: {.callout-exercise #ex-pretty_plot .extension}
 
@@ -699,21 +717,31 @@ The plot you have created contains the information we need, but there are many w
 
 Explore the [ggplot2 documentation](https://ggplot2.tidyverse.org/) and improve your plot. For example, you could:
 
-- Try a different **theme**.
+- Try a different theme.
 - Change the appearance of the line.
 - Change the size and style of text.
 - Adjust the appearance of the axes or grid lines.
 
 Choose changes that you think make your plot clearer or more visually appealing. You don't need to use all of the suggestions above.
 
-:::
+:::{.callout-exercise #ex-bonusbonusp1 .bonus}
 
+### Bonus-bonus
+
+[**Bonus**]{.bonus-text}
+
+Still looking for a challenge? Extend your UKHSA analysis in any way you like. For example, retrieve and compare multiple metrics or geographical areas, automate part of the workflow, or create a more sophisticated visualisation.
+
+
+:::
+:::
 
 ## Review {#sec-summary_0104}
 
 [↑ top](#)
 
 ::: {.callout-note #note-summary_0104}
+
 ## Summary
 
 * Additional functions are available in **packages**, which must be installed and loaded before they can be used.
@@ -723,6 +751,7 @@ Choose changes that you think make your plot clearer or more visually appealing.
 * Data is commonly made available in **comma-separated values (CSV)** format.
 * `read_csv()` reads data from a CSV file into an R data frame.
 * We can create plots using **ggplot2**, mapping variables to features of the plot using `aes()`.
+
 :::
 
 For this part of the practical, the main files you have created are:

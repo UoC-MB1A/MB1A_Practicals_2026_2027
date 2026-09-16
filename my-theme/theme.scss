@@ -1,9 +1,5 @@
-/*-- Imports ---------------------------------------------------------------*/
-/* Font Awesome */
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css");
-
-
 /*-- scss:defaults --*/
+
 /* Quarto layout */
 $grid-body-width: 1000px;
 
@@ -23,8 +19,8 @@ $white: #FFFFFF;
 $muted: #F5F5F5;
 
 /* Content-level colours
-   Dark colours are used for text/icons/borders;
-   pale colours are used for backgrounds. */
+   Dark colours are used for text/icons;
+   pale colours are used for backgrounds/borders. */
 $core: #416356;
 $core-bg: #CADED6;
 
@@ -40,7 +36,7 @@ $bonus-bg: #FCE1E1;
 $reference: #5F6368;
 $reference-bg: #F3F3F3;
 
-$other: #FFE9E5;
+$other: #FAC68E;
 
 /* Callout colours */
 $callout-color-note: $other;
@@ -62,6 +58,9 @@ $font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
 
 
 /*-- scss:rules --*/
+
+/* Font Awesome */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css");
 
 
 /*============================================================================
@@ -151,7 +150,7 @@ div.sidebar-item-container .active,
   }
 }
 
-/* Navbar buttons (toggle + search) */
+/* Navbar buttons */
 .quarto-secondary-nav {
   .btn.quarto-btn-toggle,
   .btn.quarto-search-button {
@@ -174,7 +173,6 @@ div.sidebar-item-container .active,
       outline-offset: 2px;
     }
 
-    /* Icons inherit button colour */
     i {
       color: inherit;
     }
@@ -186,7 +184,35 @@ div.sidebar-item-container .active,
   4. General callout behaviour and typography
 ============================================================================*/
 
-/* Fix for nested callouts padding bug */
+/* All callouts get wide borders on both sides */
+.callout {
+  border-left-width: 5px !important;
+  border-right-width: 5px !important;
+  border-left-style: solid !important;
+  border-right-style: solid !important;
+}
+
+/* Standard note and tip callouts */
+div.callout-note.callout,
+div.callout-tip.callout {
+  border-left-color: $other !important;
+  border-right-color: $other !important;
+}
+
+/* Caution and warning callouts */
+div.callout-caution.callout,
+div.callout-warning.callout {
+  border-left-color: #8A2D4E !important;
+  border-right-color: #8A2D4E !important;
+}
+
+/* Important callouts */
+div.callout-important.callout {
+  border-left-color: #B36B00 !important;
+  border-right-color: #B36B00 !important;
+}
+
+/* Fix nested callout padding */
 .callout.callout-titled .callout-body > :last-child:not(.sourceCode),
 .callout.callout-titled .callout-body > div > :last-child:not(.sourceCode) {
   padding-bottom: 0;
@@ -198,7 +224,7 @@ div.sidebar-item-container .active,
   padding-bottom: 0.5rem;
 }
 
-/* Keep callout text consistent with the main body */
+/* Keep callout text consistent with main body */
 .callout .callout-body p,
 .callout .callout-body li,
 .callout .callout-header,
@@ -228,17 +254,13 @@ div.callout-exercise.callout-style-default > .callout-header {
   font-size: 1.25rem;
 }
 
-.callout.callout-exercise {
-  border-left-width: 5px !important;
-  border-right-width: 5px !important;
-}
 
-/* Core: circle */
+/* Core */
 .callout.callout-exercise:has(
   > .callout-collapse > .callout-body > .core
 ) {
-  border-left-color: $core !important;
-  border-right-color: $core !important;
+  border-left-color: $core-bg !important;
+  border-right-color: $core-bg !important;
 }
 
 .callout.callout-exercise:has(
@@ -255,7 +277,7 @@ div.callout-exercise.callout-style-default > .callout-header {
 }
 
 
-/* Recommended: flask */
+/* Recommended */
 .callout.callout-exercise:has(
   > .callout-collapse > .callout-body > .rec
 ) {
@@ -277,7 +299,7 @@ div.callout-exercise.callout-style-default > .callout-header {
 }
 
 
-/* Extension: magnifying glass */
+/* Extension */
 .callout.callout-exercise:has(
   > .callout-collapse > .callout-body > .extension
 ) {
@@ -299,7 +321,7 @@ div.callout-exercise.callout-style-default > .callout-header {
 }
 
 
-/* Bonus: rocket */
+/* Bonus */
 .callout.callout-exercise:has(
   > .callout-collapse > .callout-body > .bonus
 ) {
@@ -325,7 +347,8 @@ div.callout-exercise.callout-style-default > .callout-header {
 .callout.callout-exercise:has(
   > .callout-collapse > .callout-body > .ref
 ) {
-  border-left-color: $reference !important;
+  border-left-color: $reference-bg !important;
+  border-right-color: $reference-bg !important;
 }
 
 .callout.callout-exercise:has(
@@ -334,8 +357,9 @@ div.callout-exercise.callout-style-default > .callout-header {
   background-color: $reference-bg !important;
 }
 
+
 /*============================================================================
-  6. Answer, hint, copy-code and standalone extension/bonus callouts
+  6. Answer, hint and copy-code callouts
 ============================================================================*/
 
 /* Answer callout */
@@ -346,12 +370,14 @@ div.callout-exercise.callout-style-default > .callout-header {
 }
 
 div.callout-answer.callout {
-  border-left: 1px solid #dee2e6;
+  border-left-color: #E3E5E8 !important;
+  border-right-color: #E3E5E8 !important;
 }
 
 div.callout-answer.callout-style-default > .callout-header {
   background-color: #E3E5E8;
 }
+
 
 /* Hint callout */
 .callout-hint > .callout-header::before {
@@ -361,16 +387,19 @@ div.callout-answer.callout-style-default > .callout-header {
 }
 
 div.callout-hint.callout {
-  border-left-color: $reference;
+  border-left-color: $reference-bg !important;
+  border-right-color: $reference-bg !important;
 }
 
 div.callout-hint.callout-style-default > .callout-header {
   background-color: #F5F5F5;
 }
 
-/* Code copy callout */
+
+/* Code-copy callout */
 div.callout.copycode.callout {
-  border-left-color: #FFF1B8;
+  border-left-color: #FFF1B8 !important;
+  border-right-color: #FFF1B8 !important;
 }
 
 div.callout.copycode.callout-style-default > .callout-header {
@@ -386,6 +415,12 @@ div.callout.copycode .callout-title-container::before {
   margin-right: 10px;
   vertical-align: middle;
 }
+
+div.callout.copycode .callout-icon {
+  display: none;
+}
+
+
 /*============================================================================
   7. Collapsible sections
 ============================================================================*/
@@ -398,14 +433,12 @@ details.collapse-section > summary {
   cursor: pointer;
 }
 
-/* Preserve a visible keyboard focus indicator */
 details.collapse-section > summary:focus-visible {
   outline: 3px solid rgba(29, 58, 117, 0.35);
   outline-offset: 4px;
   border-radius: 2px;
 }
 
-/* Collapsible section colours */
 details.core > summary {
   color: $core;
 }
@@ -424,6 +457,32 @@ details.bonus > summary {
 
 details.ref > summary {
   color: $reference;
+}
+
+details.collapse-section > summary::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  margin-right: 0.5rem;
+}
+
+details.core > summary::before {
+  content: "\f5d1";
+  color: $core;
+}
+
+details.rec > summary::before {
+  content: "\f0c3";
+  color: $rec;
+}
+
+details.extension > summary::before {
+  content: "\f002";
+  color: $extension;
+}
+
+details.bonus > summary::before {
+  content: "\f135";
+  color: $bonus;
 }
 
 
@@ -461,43 +520,40 @@ h4.ref {
   color: $reference;
 }
 
-h2.core::before,
-{
+/* Level icons on H2 headings only */
+h2.core::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f111"; // apple-whole
+  content: "\f111";
   margin-right: 0.5rem;
 }
 
-h2.rec::before,
- {
+h2.rec::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f0c3"; // flask
+  content: "\f0c3";
   margin-right: 0.5rem;
 }
 
-h2.extension::before,
- {
+h2.extension::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f002"; // star
+  content: "\f002";
   margin-right: 0.5rem;
 }
 
-h2.bonus::before,
-{
+h2.bonus::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f135"; // rocket
+  content: "\f135";
   margin-right: 0.5rem;
 }
+
 
 /*============================================================================
   9. Tabs and internal navigation links
 ============================================================================*/
 
-/* Base tab appearance */
 .panel-tabset .nav-link {
   font-weight: 400;
   opacity: 0.85;
@@ -505,14 +561,13 @@ h2.bonus::before,
   transition: opacity 0.2s ease, font-weight 0.2s ease;
 }
 
-/* Active tab */
 .panel-tabset .nav-link.active {
   font-weight: 600;
   opacity: 1;
   color: $primary-darker;
 }
 
-/* Don't format links in the part menu or objectives */
+/* Don't format links in part menu or objectives */
 .partmenu a,
 .objectives a {
   color: inherit;
@@ -525,25 +580,30 @@ h2.bonus::before,
 }
 
 
-/* Part menu header */
+/* Part menu */
 div.callout.partmenu > .callout-header {
   background-color: $other !important;
 }
+
 div.callout.partmenu {
   border-left: 5px solid $other !important;
   border-right: 5px solid $other !important;
   border-bottom: 5px solid $other !important;
 }
 
-/* Objectives header */
+
+/* Objectives */
 div.callout.objectives > .callout-header {
   background-color: $other !important;
 }
+
 div.callout.objectives {
   border-left: 5px solid $other !important;
   border-right: 5px solid $other !important;
   border-bottom: 5px solid $other !important;
 }
+
+
 /*============================================================================
   10. Figures, screenshots, code and output
 ============================================================================*/
@@ -622,12 +682,15 @@ img.inline-icon {
 .core-text {
   color: $core;
 }
+
 .rec-text {
   color: $rec;
 }
+
 .extension-text {
   color: $extension;
 }
+
 .bonus-text {
   color: $bonus;
 }
@@ -650,39 +713,11 @@ img.inline-icon {
   background-color: #F1F8F3;
 }
 
+/* Hidden headings */
 section:has(> h2.hide-heading) > h2.hide-heading {
   display: none;
 }
 
 .collapse-heading-hidden {
-  display: none;
-}
-details.collapse-section > summary::before {
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
-  margin-right: 0.5rem;
-}
-
-details.core > summary::before {
-  content: "\f5d1"; // apple-whole
-  color: $core;
-}
-
-details.rec > summary::before {
-  content: "\f0c3"; // flask
-  color: $rec;
-}
-
-details.extension > summary::before {
-  content: "\f002"; // star
-  color: $extension;
-}
-
-details.bonus > summary::before {
-  content: "\f135"; // rocket
-  color: $bonus;
-}
-
-div.callout.copycode .callout-icon {
   display: none;
 }
