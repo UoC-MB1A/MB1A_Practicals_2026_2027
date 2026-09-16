@@ -40,9 +40,11 @@ $bonus-bg: #FCE1E1;
 $reference: #5F6368;
 $reference-bg: #F3F3F3;
 
+$other: #FFE9E5;
+
 /* Callout colours */
-$callout-color-note: #D9D9DB;
-$callout-color-tip: #D9D9DB;
+$callout-color-note: $other;
+$callout-color-tip: $other;
 $callout-color-caution: #8A2D4E;
 $callout-color-warning: #8A2D4E;
 $callout-color-important: #B36B00;
@@ -460,8 +462,7 @@ h4.ref {
 }
 
 h2.core::before,
-h3.core::before,
-h4.core::before {
+{
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   content: "\f111"; // apple-whole
@@ -469,8 +470,7 @@ h4.core::before {
 }
 
 h2.rec::before,
-h3.rec::before,
-h4.rec::before {
+ {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   content: "\f0c3"; // flask
@@ -478,8 +478,7 @@ h4.rec::before {
 }
 
 h2.extension::before,
-h3.extension::before,
-h4.extension::before {
+ {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   content: "\f002"; // star
@@ -487,8 +486,7 @@ h4.extension::before {
 }
 
 h2.bonus::before,
-h3.bonus::before,
-h4.bonus::before {
+{
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   content: "\f135"; // rocket
@@ -527,6 +525,25 @@ h4.bonus::before {
 }
 
 
+/* Part menu header */
+div.callout.partmenu > .callout-header {
+  background-color: $other !important;
+}
+div.callout.partmenu {
+  border-left: 5px solid $other !important;
+  border-right: 5px solid $other !important;
+  border-bottom: 5px solid $other !important;
+}
+
+/* Objectives header */
+div.callout.objectives > .callout-header {
+  background-color: $other !important;
+}
+div.callout.objectives {
+  border-left: 5px solid $other !important;
+  border-right: 5px solid $other !important;
+  border-bottom: 5px solid $other !important;
+}
 /*============================================================================
   10. Figures, screenshots, code and output
 ============================================================================*/
