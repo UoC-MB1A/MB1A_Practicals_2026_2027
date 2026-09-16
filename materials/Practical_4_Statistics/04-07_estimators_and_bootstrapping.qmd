@@ -15,7 +15,26 @@ flower_counts <- read_csv("data/flower_counts.csv")
 
 # Part 7: Estimators and Bootstrapping
 
-## Estimators {#sec-estimators}
+::: {.callout-note .partmenu #parts-0407}
+## Sections
+- @sec-estimators
+- @sec-bootstrapping
+- @sec-summary_0407
+:::
+
+:::{.callout-tip .objectives}
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Compare estimators using bias, variance and MSE
+* Use simulation to investigate the sampling distribution of an estimator.
+* Use bootstrapping to estimate uncertainty and construct a confidence interval.
+
+:::
+
+## Estimators {#sec-estimators .fold .extension}
+
+[**Extension**]{.extension-text}
 
 An estimator is a statistic calculated from a sample that we use to estimate an unknown characteristic of the wider population. Different estimators can be used to estimate the same population parameter, and they may differ in how accurately and consistently they do so.
 
@@ -33,7 +52,7 @@ There are `r n_unique_species` unique species.
 
 The data we have here are themselves only a sample of the real population. For this exercise, however, we will pretend that the complete dataset is our population. This allows us to repeatedly sample from a known pseudo-population and observe how our estimators behave across different samples.
 
-Let's say we wanted to estimate the total species richness across the full data set based on 20 sites and we have three possible estimators:
+Let's say we wanted to estimate the total species richness across the full data set based on 20 sites and we have **three possible estimators**:
 
 * Observed richness - total number of unique species across 20 sites
 * Scaled observed richness - total number of unique species across 20 sites * (total number of sites / 20)
@@ -124,11 +143,15 @@ None of these did a particularly good job of finding our real value of `r n_uniq
 
 However, you can't measure how good an estimator is based on a single sample. Let's try simulation and generate multiple samples.
 
-Remember (from the lectures): An unbiased estimator gives the correct value on average across repeated samples. The efficiency of an estimator is determined by its variance: estimators with lower variance give more consistent estimates. Mean square error (MSE) combines bias and variance and measures how far, overall, estimates tend to be from the true value.
+Remember (from the lectures): An unbiased estimator gives the correct value on average across repeated samples. The efficiency of an estimator is determined by its variance: estimators with lower variance give more consistent estimates. Mean squared error (MSE) combines bias and variance and measures how far, overall, estimates tend to be from the true value.
 
-::: {.callout-exercise #ex-simulate_estimators}
+::: {.callout-exercise #ex-simulate_estimators .extension}
 
-Using a for loop, with 10,000 iterations (this might take a minute or two to run).
+### Estimator distributions
+
+[**Extension**]{.extension-text}
+
+In your `pollinators.qmd` Quarto file, using a for loop, with 10,000 iterations (this might take a minute or two to run).
 
 * Take a sample of 20 sites, then extract the insect counts for these sites from the data frame.
 * Calculate observed richness, scaled observed richness and chao1 for each sample.
@@ -262,7 +285,7 @@ gt(head(estimator_long))
 
 Now, let's plot the values of each estimator as histograms. 
 
-The function `facet_wrap()` splits the data from a single data frame into multiple plots, based on the values in a categorical column. The first argument should be the variable you would like to facet by, preceded by a `~` symbol. The argument `scales = "free"` means that each plot can have a different scale bar - by default they are all the same.
+The function `facet_wrap()` splits the data from a single data frame into multiple plots, based on the values in a categorical column. The first argument should be the variable you would like to facet by, preceded by a `~` symbol. The argument `scales = "free"` means that each plot can have a different scale on each axis - by default they are all the same.
 
 The function `geom_vline()` adds a vertical line at a specific point, specified by the argument `xintercept`. In this case, the line is at our pseudo-population total species richness.
 
@@ -274,7 +297,10 @@ ggplot(estimator_long, aes(x = estimate)) +
 ```
 Here it is clear again that none of these are great estimators, but that Chao1 is probably the best. 
 
-:::{.callout-note .extension #ext_estimators_more_samples}
+
+### Increasing sample size {#sec-increase_sample_size .fold .bonus}
+
+[**Bonus**]{.bonus-text}
 
 Sometimes an estimator is bad because the sample size is too small, sometimes it's just bad. Let's try taking 50 sites per sample, instead of 20.
 
@@ -374,31 +400,56 @@ ggplot(estimator_long_50, aes(x = estimate)) +
   geom_vline(xintercept = n_unique_species, color='red') +
   facet_wrap(~ estimator, scales = "free")
 ```
-Chao1 actually looks pretty good here - it is generating an approximately unbiased estimate of the pseudo-population, although it has a higher variance, and therefore lower efficiency, than either other estimator. 
-:::
 
-## Bootstrapping {#sec-bootstrapping}
+Chao1 actually looks pretty good here - it is generating an approximately unbiased estimate of the pseudo-population, although it has a higher variance, and therefore lower efficiency, than either other estimator. 
+
+
+## Bootstrapping {#sec-bootstrapping .fold .extension}
 
 In the example above, we treated our full dataset as a pseudo-population from which our sample was taken. However, in most experiments we will only have our sample and not have the opportunity to re-sample from the population.
 
-In these cases, we can use an approach called **bootstrapping** to assess the reliability of our estimator. We repeatedly re-sample, with replacement, from our observed dataset and re-calculate the estimator for each sample. The resulting bootstrap distribution approximates the sampling distribution of our estimator and allows us to quantify its uncertainty.
+In these cases, we can use an approach called **bootstrapping** to estimate the uncertainty in our estimate. We repeatedly re-sample, with replacement, from our observed dataset and re-calculate the estimator for each sample. The resulting bootstrap distribution approximates the sampling distribution of our estimator and allows us to quantify its uncertainty.
 
-For the **invertebrates** dataset, we have 85 observations in total, let's say we want to know how accurately we can measure the **median** iron concentration for the population based on these observations.
+Because we do not know the distribution of values in the whole population, we use our observed sample as an approximation. Each bootstrap sample therefore contains the same number of observations as the original sample, but observations are sampled **with replacement**. This means that some observations may appear several times in a bootstrap sample, while others may not appear at all. Repeating this process many times shows us how much the value of our estimator changes between bootstrap samples, giving us an estimate of its uncertainty.
 
-::: {.callout-exercise #ex-bootstrap_invert}
-In your `invertebrates.qmd` Quarto file:
+We keep the bootstrap sample size the same as the original sample so that the bootstrap replicates mimic repeatedly collecting samples of the same size as the one we actually observed.
 
-* Read the invertebrate dataset (if you haven't already).
-* Plot the distribution of the iron concentration (the FE column) as a histogram.
+One simple way to construct a bootstrap confidence interval is the **percentile method**: we take the middle 95% of values in the bootstrap distribution, using its 2.5th and 97.5th percentiles.
+
+#### Invertebrate dataset
+
+For this exercise, we will use a different dataset. In [this publication](https://www.nature.com/articles/s41586-026-10908-7), published in Nature in 2026, the authors investigated the potential of marine invertebrates as a food source, and found these organisms to be very nutrient dense, with the potential to feed billions of people.
+
+They sourced data on nutrient content and various ecological characteristics from numerous organisms, however most of the records are incomplete. In `data/marine_invertebrates.csv` you have been provided with data from the 85 organisms for which data is available for the following measurements:
+
+* `lmax` - maximum length
+* `depth_range_deep` - maximum depth
+* `FE` - iron mg / 100g
+* `CA` - calcium mg / 100g
+* `MG` - magnesium mg / 100g
+* `order` - taxonomic order
+
+We have 85 observations in total, let's say we want to know how accurately we can measure the **median** iron concentration for the population based on these observations.
+
+::: {.callout-exercise #ex-bootstrap_invert .extension}
+
+### Bootstrapping
+
+[**Extension**]{.extension-text}
+
+In your `prac4_exercises.qmd` Quarto file:
+
+* Read the invertebrate dataset.
+* Plot the distribution of the iron concentration (the `FE` column) as a histogram.
 * Calculate the median iron concentration in the sample.
 * Take 1000 samples of 85 observations (the same as the number in the original sample) of iron concentration from the same data frame, with replacement, and calculate the median of each.
   You can sample a data frame using the `slice_sample()` function with the following arguments:
     * `data` - the data frame.
     * `n` - the number of rows to sample, in this case 85.
     * `replace` - TRUE or FALSE, should the sample be with or without replacement.
-* Put these values into a data frame.
-* Plot the sampling distribution of the median.
-* Calculate a 95% confidence interval for the median.
+* Put the median values into a data frame.
+* Plot the bootstrap distribution of the median.
+* Calculate a 95% confidence interval for the median based on the middle 95% of the bootstrap distribution.
   You can extract quantiles from the data using the function `quantile()`, with the following arguments:
   * `x` - the data from which you want to find the quantile.
   * `probs` - a vector of the percentiles you want to find, in this case `c(0.025, 0.975)`.
@@ -437,13 +488,13 @@ for (i in seq_len(1000)){
 }
 ```
 
-[Put these values into a data frame]{.blue-text}
+[Put the median values into a data frame]{.blue-text}
 
 ```{r bootstrap_invert_ans5}
 df_meds <- tibble(median = meds)
 ```
 
-[Plot the sampling distribution of the median.]
+[Plot the bootstrap distribution of the median.]{.blue-text}
 
 ```{r bootstrap_invert_ans6}
 ggplot(df_meds,
@@ -461,12 +512,12 @@ print (quans)
 :::
 :::
 
-Based on this analysis, there is a fairly wide confidence interval around the median, in this case it is between `r round(quans[1], 2)` and `r(round(quans[2], 2))`. This gives a range of plausible values for the population median, based on our sample.
+Based on this analysis, there is a fairly wide confidence interval around the median, in this case it is between `r round(quans[1], 2)` and `r round(quans[2], 2)`. This gives a range of plausible values for the population median, based on our sample.
 
-Normally, this would be our end point, but, in this case, we do have a better estimate of the population median. In this dataset, relatively few (85) organisms had data for all our traits of interest, but 917 had data for at least iron concentration. This data is provided as `data/inverts_iron.csv`. This data will not provide a population median, but it can give us a more estimate of the population median than our 85 organism sample.
+Normally, this would be our end point, but, in this case, we do have a better estimate of the population median. In this dataset, relatively few (85) organisms had data for all our traits of interest, but 917 had data for at least iron concentration. This data is provided as `data/inverts_iron.csv`. This data will not provide a population median, but it can give us a more accurate estimate of the population median than our 85 organism sample.
 
-::: {.callout-exercise #ex-bootstrap_invert_full}
-In your `invertebrates.qmd` Quarto file:
+::: {.callout-exercise #ex-bootstrap_invert_full .extension}
+In your `prac4_exercises.qmd` Quarto file:
 
 * Read the iron dataset `data/inverts_iron.csv`.
 * Calculate the median of the `FE` column
@@ -490,22 +541,31 @@ print (med_iron)
 
 The median is `r round(med_iron, 2)`, which is within my bootstrapped confidence interval.
 
+:::
+:::
+
+### Bootstrap confidence intervals {#sec-bootstrap_ci .fold .bonus}
+
+[**Bonus**]{.bonus-text}
+
 The technical definition of a confidence interval in this context is: if we repeatedly collected samples and constructed 95% confidence intervals using this method, approximately 95% of those intervals would contain the true population value.
 
-Let's check.
+To illustrate, let's generate simulated data which represents the time interval between someone deciding to do an unappealing task and them actually starting to do it. It is gamma distributed with a shape parameter of 2 and a scale parameter of 10 and therefore a population mean of 20 minutes. We want to find the bootstrap distribution of a specific metric, the 75th percentile - the time by which 75% of people will have started the task, or equivalently, the minimum procrastination time for the slowest 25% of the population.
 
-Here, our simulated data represents the time interval between someone deciding to do an unappealing task and them actually starting to do it. It is gamma distributed with a shape parameter of 2 and a scale parameter of 10 and therefore a population mean of 10 minutes. We are interested in finding the 75th percentile - the time by which 75% of people will have started the task, or equivalently, the minimum procrastination time for the slowest 25% of the population.
-
-The true population value for the 75th percentile is `r qgamma(0.75, shape = 2, scale = 10)`, calculated as `qgamma(0.75, shape = 2, scale = 10)`.
+The true population value for the 75th percentile is `r round(qgamma(0.75, shape = 2, scale = 10), 2)`, calculated as `qgamma(0.75, shape = 2, scale = 10)`.
 
 ![Procrastination (https://xkcd.com/1906)](images/xkcd.png){#fig-bob width="25%"}
 
-::: {.callout-exercise #ex-bootstrap_ci}
+::: {.callout-exercise #ex-bootstrap_ci .bonus}
 
-Take a sample of 200 individuals from the population 100 times, then, within that sample, use bootstrapping with 100 replicates to calculate a 95% confidence interval for the **75th percentile** of the data. Record whether or not the confidence interval contains the true population value of `r qgamma(0.75, shape = 2, scale = 10)`.
-Across the 100 samples, calculate the proportion of bootstrap confidence intervals which contain the true population value.
+In your `prac4_exercises.qmd` Quarto file:
+
+* Take a sample of 200 individuals from the above population 100 times, then, within that sample, use bootstrapping with 100 replicates to calculate a 95% confidence interval for the **75th percentile** of the data. Record whether or not the confidence interval contains the true population value of `r qgamma(0.75, shape = 2, scale = 10)`.
+
+* Across the 100 samples, calculate the proportion of bootstrap confidence intervals which contain the true population value.
 
 ::: {.callout-answer collapse="true" #ex-bootstrap_ci_ans}
+
 ```{r bootstrap_ci_ans1}
 # Calculate the population 0.75 quantile
 pop <- qgamma(0.75, shape = 2, scale = 10)
@@ -541,21 +601,32 @@ perc <- sum(results) / 100
 print (perc)
 ```
 The bootstrapped confidence interval for the estimator contains the population value `r round(perc * 100, 2)`% of the time.
+
 :::
 :::
 ## Review {#sec-summary_0407}
+
+In this part of the practical, you explored how different estimators behave across repeated samples, comparing their bias, variance and mean square error. You also used bootstrapping to approximate the sampling distribution of an estimator from a single observed sample and used this distribution to construct a confidence interval.
 
 [↑ top](#)
 
 ::: {.callout-note #note-summary_0407}
 
 ### Summary
+### Programming Summary
 
+| Function | What it does |
+|---|---|
+| `slice_sample()` | Takes a random sample of rows from a data frame; `replace = TRUE` allows the same row to be sampled more than once when bootstrapping. |
+| `quantile()` | Calculates specified quantiles of a set of values, used here to calculate percentile bootstrap confidence intervals. |
+| `everything()` | Selects all columns, used here when converting the estimator results from wide to long format. |
 
 :::
 
 For this part of the practical, the main files you have edited are:
 
+- `pollinators.qmd`
+- `prac4_exercises.qmd`
 
 These are the files you should select when making your Git commit.
 

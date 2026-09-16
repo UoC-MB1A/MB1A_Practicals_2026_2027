@@ -12,6 +12,7 @@ library(patchwork)
 insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
 flower_counts <- read_csv("data/flower_counts.csv")
+source("../../../devel/alt_text.R")
 ```
 
 # Part 5: Hypothesis Testing Exercises {#sec-h_t_exercises}
@@ -20,15 +21,23 @@ flower_counts <- read_csv("data/flower_counts.csv")
 ## Sections
 - @sec-stats_tests
 - @sec-hypothesis_testing_exercises
-- @sec-summary_0405
 :::
 
 :::{.callout-tip .objectives}
 #### Learning objectives
-By the end of this part of the practical you will be able to:
+By the end of this part of the practical you will have practised:
+
+* Selecting an appropriate statistical test based on the types of response and explanatory variables.
+* Selecting an appropriate visualisation for different combinations of variable types.
+* Applying hypothesis tests and linear models to biological questions.
+* Interpreting statistical results using appropriate evidence, including test statistics, degrees of freedom, p-values and effect estimates.
+* Relating statistical results back to a biological hypothesis.
 :::
 
-## Statistical test recap {#sec-stats_tests}
+## Statistical test recap {#sec-stats_tests .core}
+
+[**Core**]{.core-text}
+
 Here is a reminder of some statistical tests and the data types they are appropriate for.
 
 | Response variable | Explanatory variable(s) | Statistical test/model |
@@ -39,22 +48,33 @@ Here is a reminder of some statistical tests and the data types they are appropr
 | Continuous | Multiple categorical variables | Multi-way ANOVA |
 | Continuous | Multiple continuous variables | Multiple linear regression |
 | Continuous | Mixture of categorical and continuous variables | Multiple linear regression / linear model |
-| Categorical* | Categorical* | Chi-squared test |
+| Categorical* | Categorical* | Chi-squared test of association |
 
 * For a chi-squared test, neither variable needs to be considered the explanatory or response variable.
 
 As long as there are many possible values (e.g. the values aren't limited to 1, 2 or 3), count data (such as number of insects) can be treated as continuous when used as an **explanatory** variable. For the tests in this table, **response** variables described as continuous should usually be genuinely continuous rather than counts.
 
-## Hypothesis testing exercises {#sec-hypothesis_testing_exercises}
+## Hypothesis testing exercises {#sec-hypothesis_testing_exercises .rec}
+
+[**Recommended**]{.rec-text}
+
 Now we are ready to test some hypotheses based on the POMS data.
 
-::: {.callout-exercise #ex-pollinators_ht}
+::: {.callout-exercise #ex-pollinators_ht .rec}
 
-In your `pollinators.qmd` Quarto file, using the appropriate statistical tests, investigate at least three of the following questions. Try to choose questions requiring different tests.
+### Hypothesis testing exercises
 
-For each hypothesis, choose an appropriate statistical test and visualisation (a box plot, bar chart or scatter plot). Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.
+[**Recommended**]{.rec-text}
 
-For this exercise, assume that the underlying assumptions of the appropriate model have been met — you do not need to check or plot these. There is also no need to plot maps.
+In your `pollinators.qmd` Quarto file, using the appropriate statistical tests, investigate **at least three** of the following questions. Try to choose questions requiring different tests.
+
+For each hypothesis:
+
+* Choose and create an appropriate visualisation (a box plot, bar chart or scatter plot, with faceting if needed).
+* Choose and perform an appropriate statistical test.
+* Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.
+
+For this exercise, assume that the underlying assumptions of the appropriate model have been met — you do not need to check or plot these.
 
 The data you need are in the `site_metadata` data frame unless otherwise specified.
 
@@ -63,7 +83,7 @@ The data you need are in the `site_metadata` data frame unless otherwise specifi
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans1}
 
-Count the groups for the plot.
+[Count the groups for the plot.]{.blue-text}
 
 ```{r pollinators_ht_ans1.1}
 sites_apidae_syrphidae <- site_metadata |>
@@ -72,14 +92,28 @@ country_family_counts <- sites_apidae_syrphidae |>
   count(country, dominant_family)
 ```
 
-Plot a bar chart of the data.
-
-```{r pollinators_ht_ans1.2}
-ggplot(country_family_counts, aes(x = country, y = n, fill = dominant_family)) +
+[Plot a bar chart of the data.]{.blue-text}
+```{r pollinators-ht_ans1.2_alttext, include=FALSE}
+gg <- ggplot(country_family_counts, aes(x = country, y = n, fill = dominant_family)) +
   geom_col() +
+  xlab("Country of Site") +
+  ggtitle("N sites dominated by Syrphidae or Apidae by country") +
+  theme_bw()
+# alt <- get_alt(gg)
+```
+
+```{r pollinators_ht_ans1.2, message = FALSE}
+ggplot(country_family_counts,
+       aes(x = country,
+           y = n,
+           fill = dominant_family)) +
+  geom_col() +
+  xlab("Country of Site") +
+  ggtitle("N sites dominated by Syrphidae or Apidae by country") +
   theme_bw()
 ```
-Make a contingency table.
+
+[Make a contingency table.]{.blue-text}
 
 ```{r pollinators_ht_ans1.3}
 cont_table <- xtabs(
@@ -89,21 +123,26 @@ cont_table <- xtabs(
 print(cont_table)
 ```
 
-Perform a chi-squared test.
+[Perform a chi-squared test.]{.blue-text}
 
 ```{r pollinators_ht_ans1.4}
 cs <- chisq.test(cont_table)
 print(cs)
 ```
+
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+::: {.highlight-box}
 There is evidence of an association between dominant insect family (Apidae vs Syrphidae) and country ($\chi^2$(2) = `r round(cs$statistic, 2)`, $p$ = `r round(cs$p.value, 4)`). Sites in Scotland and Wales were observed to be more frequently dominated by Syrphidae, whereas sites in England were more frequently dominated by Apidae.
+:::
 
 :::
 
-2.  Very broadly, increased biomass is thought to be associated with higher temperatures and higher precipitation. Test the hypothesis that total insect biomass (column `total_insect_biomass`) is associated with annual mean temperature (`annual_mean_temp`) and annual total precipitation (`annual_total_prec`), with an additive effect, at these UK sites. Does the direction of each estimated relationship agree with the hypothesis?
+2.  Very broadly, increased biomass is thought to be associated with higher temperatures and higher precipitation. Test the hypothesis that total insect biomass (column `total_insect_biomass`) is associated with annual mean temperature (`annual_mean_temp`) and annual total precipitation (`annual_total_prec`), assuming additive effects of temperature and precipitation, at these UK sites. Does the direction of each estimated relationship agree with the hypothesis?
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans2}
 
-Convert the data to long format.
+[Convert the data to long format.]{.blue-text}
 
 ```{r pollinators_ht_ans2.1}
 biomass_tp <- site_metadata |>
@@ -115,10 +154,10 @@ biomass_tp <- site_metadata |>
   )
 ```
 
-Plot the relationship between insect biomass and each explanatory variable.
+[Plot the relationship between insect biomass and each explanatory variable.]{.blue-text}
 
 ```{r pollinators_ht_ans2.2}
-ggplot(biomass_tp, aes(
+gg <- ggplot(biomass_tp, aes(
   x = measurement,
   y = total_insect_biomass
 )) +
@@ -128,7 +167,7 @@ ggplot(biomass_tp, aes(
   theme_bw()
 ```
 
-Perform a multiple linear regression.
+[Perform a multiple linear regression.]{.blue-text}
 
 ```{r pollinators_ht_ans2.3}
 lm_biomass_tp <- lm(total_insect_biomass ~ annual_mean_temp + annual_total_prec, data = site_metadata)
@@ -165,7 +204,11 @@ prec_coeff <- round(lm_biomass_tp_summary$coefficients["annual_total_prec", "Est
 prec_p <- round(lm_biomass_tp_summary$coefficients["annual_total_prec", "Pr(>|t|)"], 4)
 ```
 
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+::: {.highlight-box}
 There is no evidence that total insect biomass is associated with annual mean temperature and annual total precipitation in this model ($F$(`r degf1`, `r degf2`) = `r valf`, p=`r pval`). The model explained only `r perc_explained`% of the variation in total insect biomass ($R^2$ = `r rsq`). There was no evidence of an association with either annual mean temperature (coefficient = `r temp_coeff`, p=`r temp_p`) or annual total precipitation (coefficient = `r prec_coeff`, p=`r prec_p`), after accounting for the other variable. Both estimated relationships were negative, which is opposite to the direction predicted by our hypothesis.
+:::
 
 :::
 
@@ -173,7 +216,7 @@ There is no evidence that total insect biomass is associated with annual mean te
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans3}
 
-Plot a scatter plot of the two variables.
+[Plot a scatter plot of the two variables.]{.blue-text}
 
 ```{r pollinators_ht_ans3.1}
 ggplot(
@@ -183,7 +226,7 @@ ggplot(
   geom_point()
 ```
 
-Perform a linear regression.
+[Create a linear regression.]{.blue-text}
 
 ```{r pollinators_ht_ans3.2}
 temp_elev <- lm(temp_annual_range ~ elevation, data = site_metadata)
@@ -209,15 +252,18 @@ rsq <- round(temp_elev_summ$r.squared, 4)
 perc_explained <- round(rsq * 100, 1)
 ```
 
-There is no evidence of an association between elevation and annual temperature range at these sites (coefficient = `r elev_coeff`, $t$(`r dff`) = `r elev_t`, $p$ = `r elev_p`, $R^2$ = `r rsq`). The estimated relationship is negative, which is opposite to the direction predicted by our hypothesis.
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
 
+::: {.highlight-box}
+There is no evidence of an association between elevation and annual temperature range at these sites (coefficient = `r elev_coeff`, $t$(`r dff`) = `r elev_t`, $p$ = `r elev_p`, $R^2$ = `r rsq`). The estimated relationship is negative, which is opposite to the direction predicted by our hypothesis.
+:::
 :::
 
 4. *Melanostoma scalare*, the chequered hoverfly, can be associated with sand dunes and undercliffs. Test the hypothesis that sites where *M. scalare* is present (you will need to create this column from the insect counts data frame and join it to the site metadata data frame) have a different mean distance from the coast (column `distance_to_coast`) from sites where it is absent. Does the direction of the observed difference agree with the biological prediction?
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans4}
 
-Add a column showing the presence or absence of *M. scalare* to the site metadata data frame.
+[Add a column showing the presence or absence of *M. scalare* to the site metadata data frame.]{.blue-text}
 
 ```{r pollinators_ht_ans4.1}
 ms_present <- insect_counts |>
@@ -226,7 +272,7 @@ ms_present <- insect_counts |>
   left_join(site_metadata)
 ```
 
-Plot the distribution of distance from the coast according to the presence or absence of M. scalare.
+[Plot the distribution of distance from the coast according to the presence or absence of *M. scalare*.]{.blue-text}
 
 ```{r pollinators_ht_ans4.2}
 ggplot(
@@ -241,7 +287,7 @@ ggplot(
   theme_bw()
 ```
 
-Perform a t-test.
+[Perform a t-test.]{.blue-text}
 
 ```{r pollinators_ht_ans4.3}
 ms_coast_test <- t.test(
@@ -253,7 +299,7 @@ ms_coast_test <- t.test(
 print(ms_coast_test)
 ```
 
-```{r pollinators_h5_ans4.4}
+```{r pollinators_h5_ans4.4, include=FALSE}
 ms_t <- round(ms_coast_test$statistic, 2)
 ms_df <- round(ms_coast_test$parameter)
 ms_p <- round(ms_coast_test$p.value, 4)
@@ -265,15 +311,18 @@ ms_mean_absent <- round(ms_coast_test$estimate[1], 2)
 ms_mean_present <- round(ms_coast_test$estimate[2], 2)
 ```
 
-There is evidence that mean distance from the coast differs between sites where *M. scalare* is present and sites where it is absent ($t$(`r ms_df`) = `r ms_t`, $p$ = `r ms_p`, 95% CI [`r ms_ci_lower`, `r ms_ci_upper`] km). Mean distance from the coast was `r ms_mean_present` km at sites where *M. scalare* was present, compared with `r ms_mean_absent` km where it was absent. The direction of the observed difference therefore does not agree with the biological prediction: *M. scalare* was found at sites that were, on average, further from the coast.
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
 
+:::{.highlight-box}
+There is evidence that mean distance from the coast differs between sites where *M. scalare* is present and sites where it is absent ($t$(`r ms_df`) = `r ms_t`, $p$ = `r ms_p`, 95% CI [`r ms_ci_lower`, `r ms_ci_upper`] km). Mean distance from the coast was `r ms_mean_present` km at sites where *M. scalare* was present, compared with `r ms_mean_absent` km where it was absent. The direction of the observed difference therefore does not agree with the biological prediction: *M. scalare* was found at sites that were, on average, further from the coast.
+:::
 :::
 
 5. Buff-tailed bumblebees, *Bombus terrestris*, are big. Test the hypothesis that total insect biomass (column `total_insect_biomass`) differs according to presence/absence of *B. terrestris* (you will need to create this column based on the insect counts data frame).
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans5}
 
-Add a column showing the presence or absence of *B. terrestris* to the site metadata data frame.
+[Add a column showing the presence or absence of *B. terrestris* to the site metadata data frame.]{.blue-text}
 
 ```{r pollinators_ht_ans5.1}
 bumblebees <- insect_counts |>
@@ -282,7 +331,7 @@ bumblebees <- insect_counts |>
   left_join(site_metadata)
 ```
 
-Plot the total insect biomass according to the presence or absence of *B. terrestris*.
+[Plot the total insect biomass according to the presence or absence of *B. terrestris*.]{.blue-text}
 
 ```{r pollinators_ht_ans5.2}
 ggplot(
@@ -297,7 +346,8 @@ ggplot(
   theme_bw()
 ```
 
-Perform a t-test.
+[Perform a t-test.]{.blue-text}
+
 
 ```{r pollinators_ht_ans5.3}
 big_bee_test <- t.test(
@@ -309,7 +359,7 @@ big_bee_test <- t.test(
 print(big_bee_test)
 ```
 
-```{r pollinators_ht_ans5.4}
+```{r pollinators_ht_ans5.4, include=FALSE}
 bb_t <- round(big_bee_test$statistic, 2)
 bb_df <- round(big_bee_test$parameter)
 bb_p <- big_bee_test$p.value
@@ -321,15 +371,20 @@ bb_mean_absent <- round(big_bee_test$estimate[1], 2)
 bb_mean_present <- round(big_bee_test$estimate[2], 2)
 ```
 
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+:::{.highlight-box}
+
 There is evidence that the total insect biomass differs between sites where *B. terrestris* is present and sites where it is absent ($t$(`r bb_df`) = `r bb_t`, $p$ = `r formatC(bb_p, format = "f", digits = 4)`, 95% CI [`r bb_ci_lower`, `r bb_ci_upper`] g). Mean total insect biomass was `r bb_mean_present` g at sites where *B. terrestris* was present, compared with `r bb_mean_absent` g where it was absent. The direction of the observed difference therefore agrees with the biological prediction: *B. terrestris* was found at sites with, on average, higher total insect biomass.
 
 :::
+:::
 
-6. The heath bumblebee *Bombus jonellus* is named because it likes heathland, and heathland is often dominated by the plant heather, *Calluna vulgaris*. Test the hypothesis that the presence of *B. jonellus* (you will need to create this column based on the insect counts data frame) is associated with the presence of *C.vulgaris* (you will need to create this column based on the flower counts data frame). 
+6. The heath bumblebee *Bombus jonellus* is so-named because it likes heathland, and heathland is often dominated by the plant heather, *Calluna vulgaris*. Test the hypothesis that the presence of *B. jonellus* (you will need to create this column based on the insect counts data frame) is associated with the presence of *C. vulgaris* (you will need to create this column based on the flower counts data frame). 
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans6}
 
-Count the groups for the plot.
+[Count the groups for the plot.]{.blue-text}
 
 ```{r pollinators_ht_ans6.1}
 heath_df <- insect_counts |>
@@ -346,7 +401,7 @@ heath_counts <- heath_df |>
   count(bees_detected, heather_detected)
 ```
 
-Plot a bar chart of the data.
+[Plot a bar chart of the data.]{.blue-text}
 
 ```{r pollinators_ht_ans6.2}
 ggplot(heath_counts, aes(x = bees_detected, y = n, fill = heather_detected)) +
@@ -354,7 +409,7 @@ ggplot(heath_counts, aes(x = bees_detected, y = n, fill = heather_detected)) +
   theme_bw()
 ```
 
-Make a contingency table.
+[Make a contingency table.]{.blue-text}
 
 ```{r pollinators_ht_ans6.3}
 cont_table <- xtabs(
@@ -364,23 +419,27 @@ cont_table <- xtabs(
 print(cont_table)
 ```
 
-Perform a chi-squared test.
+[Perform a chi-squared test.]{.blue-text}
 
 ```{r pollinators_ht_ans6.4}
 cs <- chisq.test(cont_table)
 print(cs)
 ```
+
+Note: Some expected cell counts are too small for the chi-squared approximation to be reliable, so R may give you a warning. For the purposes of this exercise, you can ignore this warning.
+
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+:::{.highlight-box}
 There is evidence of an association between the presence of the heath bumblebee *B. jonellus* and of heather *C. vulgaris* ($\chi^2$(`r cs$parameter`) = `r round(cs$statistic, 2)`, $p$ = `r formatC(cs$p.value, format = "f", digits = 4)`). Sites in which *B. jonellus* is present more frequently have *C. vulgaris* present. 
-
-Note: there are technically not quite enough values here for a chi-squared test, so you may see a warning. For the purposes of this exercise, don't worry about it.
-
+:::
 :::
 
-7. Environmental conditions and the diversity of available floral resources may influence the types of insects supported at a site. Test the hypothesis that mean insect mass (column `mean_insect_mass`) is associated with flower biodiversity (column `n_unique_flowers`), annual mean temperature (column `annual_mean_temp`), or an interaction between these two variables.
+7. Environmental conditions and the diversity of available floral resources may influence the types of insects supported at a site. Test the hypothesis that mean insect mass (column `mean_insect_mass`) is associated with flower diversity (column `n_unique_flowers`), annual mean temperature (column `annual_mean_temp`), or an interaction between these two variables. Centre the explanatory variables before performing the test.
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans7}
 
-Centre the explanatory variables.
+[Centre the explanatory variables.]{.blue-text}
 
 ```{r pollinators_ht_ans7.1}
 centered_site_md <- site_metadata |>
@@ -392,7 +451,7 @@ centered_site_md <- site_metadata |>
   )
 ```
 
-Convert the data to long format.
+[Convert the data to long format.]{.blue-text}
 
 ```{r pollinators_ht_ans7.2}
 biomass_biodiv_temp <- centered_site_md |>
@@ -411,7 +470,7 @@ biomass_biodiv_temp <- centered_site_md |>
   )
 ```
 
-Plot the relationship between mean insect mass and each explanatory variable.
+[Plot the relationship between mean insect mass and each explanatory variable.]{.blue-text}
 
 ```{r pollinators_ht_ans7.3}
 ggplot(biomass_biodiv_temp, aes(
@@ -424,7 +483,7 @@ ggplot(biomass_biodiv_temp, aes(
   theme_bw()
 ```
 
-Perform a multiple linear regression.
+[Perform a multiple linear regression.]{.blue-text}
 
 ```{r pollinators_ht_ans7.4}
 lm_mass_biodiv_temp <- lm(mean_insect_mass ~ centered_annual_mean_temp * centered_n_unique_flowers, data = centered_site_md)
@@ -483,15 +542,43 @@ model_p <- pf(
 
 model_rsq <- round(lm_mass_biodiv_temp_summary$r.squared, 3)
 model_perc_explained <- round(lm_mass_biodiv_temp_summary$r.squared * 100, 1)
+
+temp_t <- round(
+  lm_mass_biodiv_temp_summary$coefficients[
+    "centered_annual_mean_temp", "t value"
+  ],
+  2
+)
+
+flower_t <- round(
+  lm_mass_biodiv_temp_summary$coefficients[
+    "centered_n_unique_flowers", "t value"
+  ],
+  2
+)
+
+interaction_t <- round(
+  lm_mass_biodiv_temp_summary$coefficients[
+    "centered_annual_mean_temp:centered_n_unique_flowers", "t value"
+  ],
+  2
+)
+
+resid_df <- lm_mass_biodiv_temp_summary$df[2]
 ```
+
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+:::{.highlight-box}
 
 There is evidence that the overall model is associated with mean insect mass ($F$(`r model_df1`, `r model_df2`) = `r model_f`, $p$ = `r model_p`, $R^2$ = `r model_rsq`), with the model explaining `r model_perc_explained`% of the variation in mean insect mass.
 
-At the average annual mean temperature, there is evidence of an association between flower diversity and mean insect mass (coefficient = `r flower_coeff`, $p$ = `r flower_p`). The estimated coefficient is negative, indicating that sites with greater flower diversity tend to have lower mean insect mass.
+At the average annual mean temperature, there is evidence of a negative association between flower diversity and mean insect mass (coefficient = `r flower_coeff`, $t$(`r resid_df`) = `r flower_t`, $p$ = `r flower_p`). This indicates that, at average temperature, sites with greater flower diversity tend to have lower mean insect mass.
 
-At the average level of flower diversity, there is no evidence of an association between annual mean temperature and mean insect mass (coefficient = `r temp_coeff`, $p$ = `r temp_p`).
+At the average level of flower diversity, there is no evidence of an association between annual mean temperature and mean insect mass (coefficient = `r temp_coeff`, $t$(`r resid_df`) = `r temp_t`, $p$ = `r temp_p`).
 
-There is also no evidence of an interaction between annual mean temperature and flower diversity (interaction coefficient = `r interaction_coeff`, $p$ = `r interaction_p`). Therefore, there is no evidence that the relationship between flower diversity and mean insect mass changes with annual mean temperature.
+There is also no evidence of an interaction between annual mean temperature and flower diversity (interaction coefficient = `r interaction_coeff`, $t$(`r resid_df`) = `r interaction_t`, $p$ = `r interaction_p`). Therefore, there is no evidence that the relationship between flower diversity and mean insect mass changes with annual mean temperature.
+:::
 
 :::
 
@@ -501,7 +588,7 @@ Note: If you want to use facet_wrap to plot both `dominant_family` and presence/
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans8}
 
-Add a column showing the presence or absence of *R. fruticosus* to the site metadata data frame.
+[Add a column showing the presence or absence of *R. fruticosus* to the site metadata data frame.]{.blue-text}
 
 ```{r pollinators_ht_ans8.1}
 blackberries <- flower_counts |>
@@ -510,7 +597,7 @@ blackberries <- flower_counts |>
   left_join(site_metadata)
 ```
 
-Convert the data to long format for plotting.
+[Convert the data to long format for plotting.]{.blue-text}
 
 ```{r pollinators_ht_ans8.2}
 blackberries_long <- blackberries |>
@@ -531,7 +618,7 @@ blackberries_long <- blackberries |>
   )
 ```
 
-Plot box plots for each explanatory variable.
+[Plot box plots for each explanatory variable.]{.blue-text}
 
 ```{r pollinators_ht_ans8.3}
 ggplot(
@@ -543,7 +630,7 @@ ggplot(
   theme_bw()
 ```
 
-Perform a two-way ANOVA.
+[Perform a two-way ANOVA.]{.blue-text}
 
 ```{r pollinators_ht_ans8.4}
 lm_blackberries <- lm(mean_insect_mass ~ detected * dominant_family, data = blackberries)
@@ -578,15 +665,19 @@ interaction_p <- round(
 resid_df <- blackberry_anova["Residuals", "Df"]
 ```
 
-There is evidence that mean insect mass differs according to the presence or absence of *R. fruticosus* ($F$(`r rubus_df`, `r resid_df`) = `r rubus_f`, $p$ = `r rubus_p`) and according to dominant insect family ($F$(`r family_df`, `r resid_df`) = `r family_f`, $p$ = `r family_p`). There is no evidence of an interaction between *R. fruticosus* presence and dominant insect family ($F$(`r interaction_df`, `r resid_df`) = `r interaction_f`, $p$ = `r interaction_p`). Therefore, there is no evidence that the relationship between dominant insect family and mean insect mass differs depending on whether *R. fruticosus* is present.
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+:::{.highlight-box}
+There is evidence that mean insect mass differs according to the presence or absence of *R. fruticosus* ($F$(`r rubus_df`, `r resid_df`) = `r rubus_f`, $p$ = `r rubus_p`) and according to dominant insect family once presence or absence of *R. fruticosus* has been taken into account ($F$(`r family_df`, `r resid_df`) = `r family_f`, $p$ = `r family_p`). There is no evidence of an interaction between *R. fruticosus* presence and dominant insect family ($F$(`r interaction_df`, `r resid_df`) = `r interaction_f`, $p$ = `r interaction_p`). Therefore, there is no evidence that the relationship between dominant insect family and mean insect mass differs depending on whether *R. fruticosus* is present.
+:::
 
 :::
 
-9. Members of the plant order *Rosales* are popular with hoverflies (members of the family Syrphidae). Test the hypothesis that having *Rosales* as the dominant flower order (you will need to create a new column based on the column `dominant_flower_order`) is associated with having members of the hoverfly family (Syrphidae) as the dominant insect family as opposed to members of the bee family Apidae (column `dominant_family`, you will need to filter to include only these families).
+9. Members of the plant order Rosales are popular with hoverflies (members of the family Syrphidae). Test the hypothesis that having Rosales as the dominant flower order (you will need to create a new column based on the column `dominant_flower_order`) is associated with having members of the hoverfly family (Syrphidae) as the dominant insect family as opposed to members of the bee family Apidae (column `dominant_family`, you will need to filter to include only these families).
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans9}
 
-Add a column showing the presence or absence of *Rosales* as the dominant flower order to the site metadata data frame and filter to include only Apidae and Syrphidae.
+[Add a column showing the presence or absence of *Rosales* as the dominant flower order to the site metadata data frame and filter to include only Apidae and Syrphidae.]{.blue-text}
 
 ```{r pollinators_ht_ans9.1}
 rosales <- site_metadata |>
@@ -594,21 +685,22 @@ rosales <- site_metadata |>
   filter(dominant_family %in% c("Apidae", "Syrphidae"))
 ```
 
-Count the groups for the plot.
+[Count the groups for the plot.]{.blue-text}
 
 ```{r pollinators_ht_ans9.2}
 rosales_counts <- rosales |>
   count(rosales_dom, dominant_family)
 ```
 
-Plot a bar chart of the data.
+[Plot a bar chart of the data.]{.blue-text}
 
 ```{r pollinators_ht_ans9.3}
 ggplot(rosales_counts, aes(x = rosales_dom, y = n, fill = dominant_family)) +
   geom_col() +
   theme_bw()
 ```
-Make a contingency table.
+
+[Make a contingency table.]{.blue-text}
 
 ```{r pollinators_ht_ans9.4}
 cont_table <- xtabs(
@@ -618,20 +710,26 @@ cont_table <- xtabs(
 print(cont_table)
 ```
 
-Perform a chi-squared test.
+[Perform a chi-squared test.]{.blue-text}
 
 ```{r pollinators_ht_ans9.5}
 cs <- chisq.test(cont_table)
 print(cs)
 ```
-There is no evidence of an association between dominant insect family (Apidae vs Syrphidae) and having Rosales as the dominant flower order ($\chi^2$(`r cs$parameter`) = `r round(cs$statistic, 2)`, $p$ = `r round(cs$p.value, 4)`)
+
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+:::{.highlight-box}
+
+There is no evidence of an association between dominant insect family (Apidae vs Syrphidae) and having Rosales as the dominant flower order ($\chi^2$(`r cs$parameter`) = `r round(cs$statistic, 2)`, $p$ = `r round(cs$p.value, 4)`).
+:::
 :::
 
 10. Different habitat types may favour smaller or larger insects. Test the hypothesis that mean insect mass (`mean_insect_mass`) differs among habitat types (`broad_habitat`).
 
 ::: {.callout-answer collapse="true" #ex-pollinators_ht_ans10}
 
-Plot mean insect mass for each habitat type.
+[Plot mean insect mass for each habitat type.]{.blue-text}
 
 ```{r pollinators_ht_ans10.1}
 ggplot(
@@ -642,7 +740,7 @@ ggplot(
   theme_bw()
 ```
 
-Perform a one-way ANOVA.
+[Perform a one-way ANOVA.]]{.blue-text}
 
 ```{r pollinators_ht_ans10.2}
 lm_hab <- lm(mean_insect_mass ~ broad_habitat, data = site_metadata)
@@ -660,27 +758,24 @@ hab_p <- round(hab_anova["broad_habitat", "Pr(>F)"], 4)
 hab_resid_df <- hab_anova["Residuals", "Df"]
 ```
 
+[Interpret the result using the relevant test statistic, degrees of freedom and p-value. Where relevant to the test used, also consider the confidence interval, effect size and proportion of variation explained by the model.]{.blue-text}
+
+:::{.highlight-box}
+
 There is no evidence that mean insect mass differs among broad habitat types ($F$(`r hab_df`, `r hab_resid_df`) = `r hab_f`, $p$ = `r hab_p`).
+:::
 
 :::
 :::
 
-## Review {#sec-summary_0405}
 
-[↑ top](#)
+For this part of the practical, the main files you have edited are:
 
-::: {.callout-note #note-summary_0405}
-
-### Summary
-
-
-:::
-
-For this part of the practical, the main files you have created are:
+* `pollinators.qmd`
 
 These are the files you should select when making your Git commit.
 
 
-Remember to save and commit your work before moving on to Part 3.
+Remember to save and commit your work before moving on to Part 6.
 
 {{< include ../includes/git_commit.qmd >}}
