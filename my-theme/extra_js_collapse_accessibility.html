@@ -1,0 +1,157 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  /* ========================================================================
+     COLLAPSIBLE SECTIONS
+     ======================================================================== */
+
+  document
+    .querySelectorAll("h2.fold, h3.fold, h4.fold")
+    .forEach(function (heading) {
+
+      const section = heading.closest("section");
+      if (!section) return;
+
+      const details = document.createElement("details");
+      details.classList.add("collapse-section");
+
+      /* Copy content-level class from heading to details */
+      ["core", "rec", "extension", "bonus", "ref"].forEach(function (cls) {
+        if (heading.classList.contains(cls)) {
+          details.classList.add(cls);
+        }
+      });
+
+      /* Create clickable summary */
+      const summary = document.createElement("summary");
+      summary.textContent = heading.textContent.trim();
+      details.appendChild(summary);
+
+      /*
+       * Move everything after this heading that belongs to
+       * this Quarto section into the details element.
+       */
+      let node = heading.nextSibling;
+
+      while (node) {
+        const nextNode = node.nextSibling;
+        details.appendChild(node);
+        node = nextNode;
+      }
+
+      /* Insert the details element and hide the duplicate heading */
+      heading.insertAdjacentElement("afterend", details);
+      heading.style.display = "none";
+    });
+
+
+  /*
+   * Folded sections are collapsed by default.
+   * Open one automatically if it is reached through a
+   * sidebar link or cross-reference.
+   */
+  function openLinkedSection() {
+    if (!window.location.hash) return;
+
+    const target = document.querySelector(window.location.hash);
+    if (!target) return;
+
+    const section = target.closest("section");
+    if (!section) return;
+
+    const details = section.querySelector(
+      ":scope > details.collapse-section"
+    );
+
+    if (details) {
+      details.open = true;
+    }
+  }
+
+  openLinkedSection();
+  window.addEventListener("hashchange", openLinkedSection);
+
+
+  /* ========================================================================
+     ACCESSIBILITY FIXES FOR QUARTO-GENERATED ELEMENTS
+     ======================================================================== */
+
+  /*
+   * Give an element button behaviour when using the keyboard.
+   * This is needed for Quarto controls that are clickable
+   * but are not native <button> elements.
+   */
+  function makeKeyboardButton(element) {
+    element.setAttribute("role", "button");
+    element.setAttribute("tabindex", "0");
+
+    element.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        element.click();
+      }
+    });
+  }
+
+
+  /* Collapsible callout headers */
+  document
+    .querySelectorAll(".callout-header[data-bs-toggle='collapse']")
+    .forEach(makeKeyboardButton);
+
+  /* Sidebar section toggles */
+  document
+    .querySelectorAll(
+      "#quarto-sidebar [data-bs-toggle='collapse'][role='navigation']"
+    )
+    .forEach(makeKeyboardButton);
+
+
+  /* Give the navbar logo link an accessible name */
+  document
+    .querySelectorAll(".navbar-brand-logo")
+    .forEach(function (link) {
+      if (!link.getAttribute("aria-label")) {
+        link.setAttribute("aria-label", "Home");
+      }
+    });
+
+
+  /* Give navigation landmarks unique accessible names */
+  document
+    .querySelectorAll("nav.navbar")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "Main navigation");
+    });
+  document
+    .querySelectorAll("#TOC")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "On this page");
+    });
+  document
+    .querySelectorAll("#quarto-sidebar")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "Sidebar navigation");
+    });
+/* ========================================================================
+   EXERCISE TITLES
+   Remove Quarto's automatic exercise numbers
+   ======================================================================== */
+
+  document
+    .querySelectorAll(
+      ".callout-exercise > .callout-header .callout-title-container"
+    )
+    .forEach(function (title) {
+  
+      title.childNodes.forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.textContent = node.textContent.replace(
+            /^\s*Exercise\s+\d+\s*[-–—:]\s*/,
+            "Exercise - "
+          );
+        }
+      });
+    });
+});
+</script>

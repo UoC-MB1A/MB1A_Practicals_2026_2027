@@ -2,84 +2,110 @@
 /* Font Awesome */
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css");
 
-/*-- scss:defaults --*/
-/* Quarto theme variables for navbar, callouts, and palette */
-$navbar-bg: #97C4E6;
-$navbar-fg: black;
 
-$body-color: black;
-$link-color: #D65B42;
+/*-- scss:defaults --*/
+/* Quarto layout */
+$grid-body-width: 1000px;
+
+/* Base theme colours */
+$navbar-bg: #666661;
+$navbar-fg: #FFFFFF;
+
+$body-color: #1F1F1F;
+$link-color: #B4442F;
+
+/* Main palette */
+$primary: #1F1F1F;
+$primary-dark: #1F1F1F;
+$primary-darker: #000000;
+$accent: #B4442F;
+$white: #FFFFFF;
+$muted: #F5F5F5;
+
+/* Content-level colours
+   Dark colours are used for text/icons/borders;
+   pale colours are used for backgrounds. */
+$core: #416356;
+$core-bg: #CADED6;
+
+$rec: #768DCF;
+$rec-bg: #EEF4F8;
+
+$extension: #7D6594;
+$extension-bg: #F3EFF6;
+
+$bonus: #CC6868;
+$bonus-bg: #FCE1E1;
+
+$reference: #5F6368;
+$reference-bg: #F3F3F3;
 
 /* Callout colours */
-$callout-color-note: #D6EFFF;
-$callout-color-tip: #D6EFFF;
-$callout-color-caution: #9C3359;
-$callout-color-warning: #9C3359;
-$callout-color-important: #F5B427;
-
-/* Custom palette for convenience / reuse */
-$primary: #1D3A75;
-$primary-dark: #152C5C;
-$primary-darker: #10244D;
-$accent: #D65B42;
-$white: #ffffff;
-$muted: #f5f5f5;
+$callout-color-note: #D9D9DB;
+$callout-color-tip: #D9D9DB;
+$callout-color-caution: #8A2D4E;
+$callout-color-warning: #8A2D4E;
+$callout-color-important: #B36B00;
 
 /* Accessibility / UI */
-$btn-focus-box-shadow: 0 0 0 0.15rem rgba(62,35,102,0.12);
+$btn-focus-box-shadow: 0 0 0 0.18rem rgba(29, 58, 117, 0.28);
+
 $font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
                          "Helvetica Neue", "Noto Sans", "Liberation Sans",
                          Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
                          "Segoe UI Symbol", "Noto Color Emoji";
+
 $font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
                         "Liberation Mono", "Courier New", monospace;
 
+
 /*-- scss:rules --*/
-/* Base typography */
+
+
+/*============================================================================
+  1. Base typography and headings
+============================================================================*/
+
 body {
   color: $body-color;
   font-family: $font-family-sans-serif;
   line-height: 1.6;
 }
 
-pre, code {
+pre,
+code {
   font-family: $font-family-monospace;
   line-height: 1.45;
 }
 
-/* Headings */
 .quarto-secondary-nav-title,
 title,
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: $primary-darker;
 }
 
-/* Active sidebar item */
-div.sidebar-item-container .active {
-  font-weight: bold;
-}
 
-/* Active links in side nav */
+/*============================================================================
+  2. Navigation, sidebar and footer
+============================================================================*/
+
+/* Active sidebar item */
+div.sidebar-item-container .active,
 .sidebar .nav-link.active {
   font-weight: bold;
 }
 
-/* Header-specific active link */
-.navbar-dark .navbar-nav .nav-link.active {
-  color: $white;
-  text-decoration: underline;
-}
-
-/* Header link hover/visited */
+/* Navbar active / hover / visited links */
+.navbar-dark .navbar-nav .nav-link.active,
 .navbar-dark .navbar-nav .nav-link:hover,
 .navbar-dark .navbar-nav .nav-link:visited {
+  color: $primary-darker;
   text-decoration: underline;
-  color: $white;
-}
-
-/* Footer font size */
-.nav-footer, .nav-footer-left, .nav-footer-right, .nav-footer-center {
-  font-size: 1rem;
 }
 
 /* Navbar title spacing */
@@ -87,8 +113,19 @@ div.sidebar-item-container .active {
   padding-left: 20px;
 }
 
+/* Footer font size */
+.nav-footer,
+.nav-footer-left,
+.nav-footer-right,
+.nav-footer-center {
+  font-size: 1rem;
+}
 
-/*-- Buttons --------------------------------------------------------------*/
+
+/*============================================================================
+  3. Buttons and focus states
+============================================================================*/
+
 /* Global buttons */
 .btn {
   background-color: $primary;
@@ -104,9 +141,11 @@ div.sidebar-item-container .active {
     color: $white;
   }
 
-  &:focus {
+  &:focus,
+  &:focus-visible {
     box-shadow: $btn-focus-box-shadow;
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
   }
 }
 
@@ -122,13 +161,15 @@ div.sidebar-item-container .active {
 
     &:hover,
     &:focus,
+    &:focus-visible,
     &:active {
       background-color: $white;
       color: $primary-darker;
       border: none;
       background-image: none;
       box-shadow: $btn-focus-box-shadow;
-      outline: none;
+      outline: 2px solid transparent;
+      outline-offset: 2px;
     }
 
     /* Icons inherit button colour */
@@ -139,7 +180,10 @@ div.sidebar-item-container .active {
 }
 
 
-/*-- Callouts -------------------------------------------------------------*/
+/*============================================================================
+  4. General callout behaviour and typography
+============================================================================*/
+
 /* Fix for nested callouts padding bug */
 .callout.callout-titled .callout-body > :last-child:not(.sourceCode),
 .callout.callout-titled .callout-body > div > :last-child:not(.sourceCode) {
@@ -152,18 +196,145 @@ div.sidebar-item-container .active {
   padding-bottom: 0.5rem;
 }
 
-/* Exercise callout */
-div.callout-exercise.callout {
-  border-left-color: $callout-color-note;
+/* Keep callout text consistent with the main body */
+.callout .callout-body p,
+.callout .callout-body li,
+.callout .callout-header,
+.callout .callout-header .callout-title-container,
+.callout code {
+  font-size: 1rem;
 }
+
+
+/*============================================================================
+  5. Exercise callouts and content levels
+============================================================================*/
+
+/* Default exercise appearance */
 div.callout-exercise.callout-style-default > .callout-header {
-  background-color: #f9f9f8;
+  background-color: #F9F9F8;
 }
-.callout-exercise > .callout-header::before {
+
+/* Shared exercise icon styling */
+.callout.callout-exercise > .callout-header::before {
   font-family: "Font Awesome 6 Free";
-  content: "\f303";
+  font-weight: 900;
   margin-right: 10px;
 }
+
+.callout-header::before {
+  font-size: 1.25rem;
+}
+
+.callout.callout-exercise {
+  border-left-width: 5px !important;
+  border-right-width: 5px !important;
+}
+
+/* Core: circle */
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .core
+) {
+  border-left-color: $core !important;
+  border-right-color: $core !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .core
+) > .callout-header {
+  background-color: $core-bg !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .core
+) > .callout-header::before {
+  content: "\f111";
+  color: $core;
+}
+
+
+/* Recommended: flask */
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .rec
+) {
+  border-left-color: $rec-bg !important;
+  border-right-color: $rec-bg !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .rec
+) > .callout-header {
+  background-color: $rec-bg !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .rec
+) > .callout-header::before {
+  content: "\f0c3";
+  color: $rec;
+}
+
+
+/* Extension: magnifying glass */
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .extension
+) {
+  border-left-color: $extension-bg !important;
+  border-right-color: $extension-bg !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .extension
+) > .callout-header {
+  background-color: $extension-bg !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .extension
+) > .callout-header::before {
+  content: "\f002";
+  color: $extension;
+}
+
+
+/* Bonus: rocket */
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .bonus
+) {
+  border-left-color: $bonus-bg !important;
+  border-right-color: $bonus-bg !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .bonus
+) > .callout-header {
+  background-color: $bonus-bg !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .bonus
+) > .callout-header::before {
+  content: "\f135";
+  color: $bonus;
+}
+
+
+/* Reference */
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .ref
+) {
+  border-left-color: $reference !important;
+}
+
+.callout.callout-exercise:has(
+  > .callout-collapse > .callout-body > .ref
+) > .callout-header {
+  background-color: $reference-bg !important;
+}
+
+/*============================================================================
+  6. Answer, hint, copy-code and standalone extension/bonus callouts
+============================================================================*/
 
 /* Answer callout */
 .callout-answer > .callout-header::before {
@@ -171,11 +342,13 @@ div.callout-exercise.callout-style-default > .callout-header {
   content: "\f002 ";
   margin-right: 10px;
 }
+
 div.callout-answer.callout {
-  border-left-color: $callout-color-tip;
+  border-left: 1px solid #dee2e6;
 }
+
 div.callout-answer.callout-style-default > .callout-header {
-  background-color: #DFE1E8;
+  background-color: #E3E5E8;
 }
 
 /* Hint callout */
@@ -184,79 +357,190 @@ div.callout-answer.callout-style-default > .callout-header {
   content: "\f12e ";
   margin-right: 10px;
 }
+
 div.callout-hint.callout {
-  border-left-color: #6c757d;
+  border-left-color: $reference;
 }
+
 div.callout-hint.callout-style-default > .callout-header {
-  background-color: #f9f9f8;
+  background-color: #F5F5F5;
 }
 
 /* Code copy callout */
 div.callout.copycode.callout {
-  border-left-color: #A3D1BE;
+  border-left-color: #FFF1B8;
 }
 
 div.callout.copycode.callout-style-default > .callout-header {
-  background-color: #A3D1BE;
-  color: black;
+  background-color: #FFF1B8;
+  color: #000000;
 }
 
-div.callout.copycode > .callout-header::before {
+div.callout.copycode .callout-title-container::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   content: "\f0c5";
+  font-size: 1.25rem;
   margin-right: 10px;
+  vertical-align: middle;
+}
+/*============================================================================
+  7. Collapsible sections
+============================================================================*/
+
+details.collapse-section > summary {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
 }
 
-/* Bonus callouts */
-div.callout.extension.callout {
-  border-left-color: #F7B686;
+/* Preserve a visible keyboard focus indicator */
+details.collapse-section > summary:focus-visible {
+  outline: 3px solid rgba(29, 58, 117, 0.35);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
-div.callout.extension.callout-style-default > .callout-header {
-  background-color: #F7B686;
-  color: black;
+/* Collapsible section colours */
+details.core > summary {
+  color: $core;
 }
 
-div.callout.extension .callout-icon::before {
+details.rec > summary {
+  color: $rec;
+}
+
+details.extension > summary {
+  color: $extension;
+}
+
+details.bonus > summary {
+  color: $bonus;
+}
+
+details.ref > summary {
+  color: $reference;
+}
+
+
+/*============================================================================
+  8. Coloured ordinary headings
+============================================================================*/
+
+h2.core,
+h3.core,
+h4.core {
+  color: $core;
+}
+
+h2.rec,
+h3.rec,
+h4.rec {
+  color: $rec;
+}
+
+h2.extension,
+h3.extension,
+h4.extension {
+  color: $extension;
+}
+
+h2.bonus,
+h3.bonus,
+h4.bonus {
+  color: $bonus;
+}
+
+h2.ref,
+h3.ref,
+h4.ref {
+  color: $reference;
+}
+
+h2.core::before,
+h3.core::before,
+h4.core::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f610";
+  content: "\f111"; // apple-whole
+  margin-right: 0.5rem;
 }
 
-div.callout.extension > .callout-header {
-  padding: 0.55rem 0.8rem;
-}
-
-div.callout.bonus.callout {
-  border-left-color: #C4B0F7;
-}
-
-div.callout.bonus.callout-style-default > .callout-header {
-  background-color: #C4B0F7;
-  color: black;
-}
-
-div.callout.bonus .callout-icon::before {
+h2.rec::before,
+h3.rec::before,
+h4.rec::before {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  content: "\f135";
+  content: "\f0c3"; // flask
+  margin-right: 0.5rem;
+}
+
+h2.extension::before,
+h3.extension::before,
+h4.extension::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  content: "\f002"; // star
+  margin-right: 0.5rem;
+}
+
+h2.bonus::before,
+h3.bonus::before,
+h4.bonus::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  content: "\f135"; // rocket
+  margin-right: 0.5rem;
+}
+
+/*============================================================================
+  9. Tabs and internal navigation links
+============================================================================*/
+
+/* Base tab appearance */
+.panel-tabset .nav-link {
+  font-weight: 400;
+  opacity: 0.85;
+  color: $primary-darker;
+  transition: opacity 0.2s ease, font-weight 0.2s ease;
+}
+
+/* Active tab */
+.panel-tabset .nav-link.active {
+  font-weight: 600;
+  opacity: 1;
+  color: $primary-darker;
+}
+
+/* Don't format links in the part menu or objectives */
+.partmenu a,
+.objectives a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.partmenu a:hover,
+.objectives a:hover {
+  text-decoration: underline;
 }
 
 
+/*============================================================================
+  10. Figures, screenshots, code and output
+============================================================================*/
 
-
-/*-- Figures & code output ------------------------------------------------*/
 .figure {
   text-align: center;
   text-indent: 0;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #D5D9DE;
 }
 
 img.screenshot {
-  border: 1px solid #ced4da;
+  border: 1px solid #C5CBD1;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Custom output code block */
@@ -266,6 +550,7 @@ pre.output {
   background-color: $muted;
   padding-top: 1.5em;
 }
+
 pre.output::before {
   content: "Output";
   position: absolute;
@@ -284,63 +569,19 @@ pre.text {
   background-color: $muted;
 }
 
-/*-- Tabs -------------------------------------------------------------*/
-
-/* Base tab appearance */
-.panel-tabset .nav-link {
-  font-weight: 400;
-  opacity: 0.8;
-  color: $primary-darker;
-  transition: opacity 0.2s ease, font-weight 0.2s ease;
+pre.sourceCode {
+  background-color: #F7F7F7;
 }
 
-/* Active tab */
-.panel-tabset .nav-link.active {
-  font-weight: 600;
-  opacity: 1;
-  color: $primary-darker;
+/* R code comments */
+code span.co {
+  color: $core !important;
 }
 
-/* Don't format links in the part menu or objectives*/
-.partmenu a {
-  color: inherit;
-  text-decoration: none;
-}
 
-.partmenu a:hover {
-  text-decoration: underline;
-}
-
-.objectives a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.objectives a:hover {
-  text-decoration: underline;
-}
-
-/* Make the text in callouts bigger */
-
-.callout .callout-body p {
-  font-size: 1rem;
-}
-
-.callout .callout-body li {
-  font-size: 1rem;
-}
-
-.callout .callout-header {
-  font-size: 1rem;
-}
-
-.callout .callout-header .callout-title-container {
-  font-size: 1rem;
-}
-
-.callout code {
-  font-size: 1rem;
-}
+/*============================================================================
+  11. Utility classes and custom components
+============================================================================*/
 
 /* Inline icons */
 img.inline-icon {
@@ -348,19 +589,33 @@ img.inline-icon {
   vertical-align: -0.15em;
 }
 
+/* Text helpers */
 .red-text {
-  color: crimson;
+  color: #B51F3A;
 }
 
 .blue-text {
-  color: #244885;
-  font-weight: bold;
+  color: #940746;
 }
 
 .orange-text {
-  color: darkorange;
+  color: #BD6800;
 }
 
+.core-text {
+  color: $core;
+}
+.rec-text {
+  color: $rec;
+}
+.extension-text {
+  color: $extension;
+}
+.bonus-text {
+  color: $bonus;
+}
+
+/* Function tables */
 .function-table td {
   vertical-align: top;
 }
@@ -369,18 +624,48 @@ img.inline-icon {
   min-width: 20em;
 }
 
+/* Highlight box */
 .highlight-box {
-  border: 1px solid #007724;
+  border: 1px solid $core;
   border-radius: 5px;
   padding: 1em;
   margin: 1em 0;
-  background-color: #F2FFF6;
+  background-color: #F1F8F3;
 }
 
-code span.co {
-  color: #4D8F5E !important;
+section:has(> h2.hide-heading) > h2.hide-heading {
+  display: none;
 }
 
-pre.sourceCode {
-  background-color: #F7F7F7;
+.collapse-heading-hidden {
+  display: none;
+}
+details.collapse-section > summary::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  margin-right: 0.5rem;
+}
+
+details.core > summary::before {
+  content: "\f5d1"; // apple-whole
+  color: $core;
+}
+
+details.rec > summary::before {
+  content: "\f0c3"; // flask
+  color: $rec;
+}
+
+details.extension > summary::before {
+  content: "\f002"; // star
+  color: $extension;
+}
+
+details.bonus > summary::before {
+  content: "\f135"; // rocket
+  color: $bonus;
+}
+
+div.callout.copycode .callout-icon {
+  display: none;
 }

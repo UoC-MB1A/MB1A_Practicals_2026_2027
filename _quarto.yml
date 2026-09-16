@@ -17,6 +17,8 @@ project:
 format:
   html:
     theme: [default, my-theme/theme.scss]
+    include-after-body:
+      - my-theme/extra_js_collapse_accessibility.html
     toc: true
     number-sections: false
     number-depth: 3
@@ -49,7 +51,7 @@ book:
   page-footer: 
     center: |
       Licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 
-      ![](https://creativecommons.org/images/deed/cc_icon_black_x2.png){width=25px} 
+      ![](https://creativecommons.org/images/deed/cc_icon_black_x2.png){width=25px fig-alt=""} 
   search:
     location: sidebar
   sidebar:
