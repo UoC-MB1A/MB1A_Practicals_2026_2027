@@ -13,6 +13,8 @@ library(styler)
 ::: {.callout-note .partmenu #parts-0102}
 ## Sections
 - @sec-quarto
+- @sec-formatting_quarto
+- @sec-analysis_in_quarto
 - @sec-documenting_and_formatting_your_code
 - @sec-summary_0102
 :::
@@ -27,50 +29,60 @@ By the end of this part of the practical you should be able to:
 
 :::
 
-### Quarto {#sec-quarto}
+## Introduction to Quarto {#sec-quarto .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
-Throughout this course, we will write our code in Quarto documents (with the suffix .qmd) rather than using the R Console or standalone R scripts. 
+Throughout this course, we will write our code in Quarto documents (with the suffix `.qmd`) rather than using the R Console or standalone R scripts. 
 
 * The console is useful for trying out individual commands, but anything you type there is easily lost.
 * R scripts allow you to save your code, but it is not easy to include explanations, figures, or results in the same file.
-* Quarto documents combine text, code and output into a single file, making it easy to explain what you are doing, present your results, and reproduce your analysis. This helps you keep an organised record of your work and is widely used for teaching, research and data science.
+* Quarto documents **combine text, code and output into a single file**, making it easy to explain what you are doing, present your results, and reproduce your analysis. This helps you keep an organised record of your work and is widely used for teaching, research and data science.
 
 Quarto allows you to create quite complex documents, for example, these teaching materials are written in Quarto.
 
-The main reason to use Quarto is to make your research **reproducible**. You will likely have learned about this previously for lab-based research, but reproducibility is just as important for computer-based science.
+The main reason to use Quarto is to make your research **reproducible**. You will likely have learned about this previously for lab-based research, but reproducibility is just as important for computer-based research.
 
 Optional homework: There is an interesting lecture [here](https://youtu.be/7gYIs7uYbMo?si=uU9m308A8AtqvKCC) about the importance of reproducibility in computational biology.
 
+## Creating a Quarto document {#sec-creating_quarto .core}
 
-#### Creating a Quarto document
+[**Core**]{.core-text}
 
-To create a new Quarto document in RStudio, select `File` > `New File` > `Quarto Document`. Give the document a title and add your own name as the author, then uncheck the box next to `Use visual markdown editor` and select `Create empty document`.
+[↑ top](#)
 
-![New quarto document](images/new_quarto.png){.screenshot #fig-new_quarto width="50%"}
+To create a new Quarto document in RStudio, select `File` > `New File` > `Quarto Document`. Give the document a title and add your own name as the author, then **uncheck** the box next to `Use visual markdown editor` and select `Create empty document`.
+
+![New quarto document](images/new_quarto.png){.screenshot #fig-new_quarto width="50%" fig-alt="The new Quarto document popup window. Document is selected in the left panel. The title is MB1A Practical 1 and the author is Katy Brown. HTML is selected, from the options of HTML, PDF or Word. Engine is knitr. Use visual markdown editor is unchecked. There are three buttons at the bottom, create empty document is on the left."}
 
 You should see something like this:
 
-![Empty quarto document](images/first_quarto.png){#fig-first_quarto .screenshot width="50%"}
+![Empty quarto document](images/first_quarto.png){#fig-first_quarto .screenshot width="50%" fig-alt='A screenshot of the beginning of the empty Quarto document showing --- on line 1, title: "MB1A Practical 1" on line 2, author: "Katy Brown" on line 3, format: html on line 4 and --- on line 5.'}
 
 In this document, we can combine code, text and images.
 
 We can type explanatory text directly into the document.
 
-To add code, click on the `Insert a New Code Chunk` ![chunk_button](../images/chunk_button.png){.inline-icon} button and choose `R`. Anything within this chunk will be interpreted as R code.
+To add code, click on the `Insert a New Code Chunk` ![Chunk button](../images/chunk_button.png){.inline-icon} button and choose `R`. Anything within this chunk will be interpreted as R code.
 
+:::{.callout-exercise #ex-first_quarto .core}
+
+### Create your first Quarto document
+
+[**Core**]{.core-text}
 
 Type the following into your Quarto document, below the header.
 
 ```markdown
 I have measured the diameter of four bacterial colonies.
-The results were as follows: 2.2mm 1.6mm, 3.3mm, 4.0mm.
+The results were as follows: 2.2mm, 1.6mm, 3.3mm, 4.0mm.
 
 I want to calculate the total diameter of these colonies.
 ```
 
-Then, using the ![chunk_button](../images/chunk_button.png){.inline-icon} button, add the following code chunk.
+Then, using the ![Chunk button](../images/chunk_button.png){.inline-icon} button, add the following code chunk.
 
 ```{r}
 total_colony_diameter <- sum(2.2, 1.6, 3.3, 4.0)
@@ -79,31 +91,37 @@ print(total_colony_diameter)
 
 You can run just this code chunk by clicking the small play button in the corner of the chunk, or by clicking on it and then pressing  {{< kbd Control >}} + {{< kbd Shift >}} + {{< kbd Enter >}}.
 
-![Run button](images/code_chunk.png){#fig-code_chunk}
+![Run button](images/code_chunk.png){#fig-code_chunk fig-alt="Screenshot showing a code chunk with the run button - a small button with a play icon in the top right corner of the code chunk - highlighted"}
 
 Below your code chunk, type the following:
 
 ```markdown
-The total diameter of my colonies is 11.1cm.
+The total diameter of my colonies is 11.1 mm.
 ```
 
 Your whole document should look something like this:
 
-![Quarto document](images/quarto_doc.png){#fig-quarto_doc}
+![Quarto document](images/quarto_doc.png){#fig-quarto_doc fig-alt="A screenshot of the whole Quarto document, which is available as plain text in data/quarto_doc.qmd"}
 
 Running a code chunk with the play button executes only that piece of code. Rendering a Quarto document runs all the code and creates the final report.
 
-You can produce a report based on your document by clicking the `Render` button - ![render_button](../images/render_button.png){.inline-icon}. This runs all of the code and formats the document into **html** format, so it is easy to read and share. 
+You can produce a report based on your document by clicking the `Render` button - ![Render button](../images/render_button.png){.inline-icon}. This runs all of the code and formats the document into **HTML** format, so it is easy to read and share. 
 
-Save your document in the `{{< meta practical >}}` folder as `my_first_quarto.qmd`. Then click on the ![render_button](../images/render_button.png){.inline-icon}.
+Save your document in the `{{< meta practical >}}` folder as `my_first_quarto.qmd`. Then click on the ![Render button](../images/render_button.png){.inline-icon}.
 
-Your first Quarto report should open in a new window. A **html** file will also be created in the same folder as your Quarto file, which you can open in a web browser.
+Your first Quarto report should open in a new window. A **HTML** file will also be created in the same folder as your Quarto file, which you can open in a web browser.
 
-![Rendered quarto document](images/first_quarto_rendered.png){#fig-first_quarto_rendered .screenshot}
+![Rendered quarto document](images/first_quarto_rendered.png){#fig-first_quarto_rendered .screenshot fig-alt="A screenshot of the whole Quarto document, which is available in HTML format as data/quarto_doc.html"}
 
 As our code becomes more complicated, the value of using Quarto will become much clearer.
 
-:::{.callout-note #note-markdown}
+:::
+
+## Formatting text in Quarto {#sec-formatting_quarto .rec}
+
+[**Recommended**]{.rec-text}
+
+[↑ top](#)
 
 Text in Quarto outside of code chunks is interpreted using a language called **Markdown**, and as well as plain text you can format it in various ways.
 
@@ -115,7 +133,6 @@ For example:
 **bold text**
 *italic text*
 [link text](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-# Header
 ```
 produces
 
@@ -125,15 +142,21 @@ produces
 
 [link text](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-# Header
+## Performing analysis in Quarto {#sec-analysis_in_quarto .rec}
 
-:::
+[**Recommended**]{.rec-text}
 
-::: {.callout-exercise #ex-quarto}
+[↑ top](#)
 
-{{< fa solid flask >}}
+We will now do a short data analysis exercise in a new Quarto document.
 
-The Human Protein Atlas (HPA) is a research project which was initiated in 2003 with the aim to map all the human proteins in cells, tissues, and organs using  various omics technologies.
+::: {.callout-exercise #ex-quarto .rec}
+
+### Analysis in Quarto
+
+[**Recommended**]{.rec-text}
+
+The Human Protein Atlas (HPA) is a research project which was initiated in 2003 with the aim of mapping all the human proteins in cells, tissues, and organs using  various omics technologies.
 
 We are going to look at a small amount of data from the HPA brain resource, which explores the distribution of proteins in various regions of the mammalian brain.
 
@@ -162,13 +185,61 @@ Example (after rendering)
 :::
 :::
 
-## Documenting and formatting your code {#sec-documenting_and_formatting_your_code}
+
+### Advanced Quarto formatting {#sec-advanced_quarto_formatting .fold .extension}
+
+::: {.callout-exercise #ex-advanced_quarto_formatting .extension}
+
+### Advanced Quarto formatting
+
+[**Extension**]{.extension-text}
+
+Your `hpa_quarto.qmd` Quarto document currently produces a very simple HTML report. Explore the [Quarto documentation](https://quarto.org/docs/authoring/) and improve your report by adding at least three features that we have not covered.
+
+For example, you could incorporate:
+
+* Headings
+* Bulleted lists
+* Highlighted text
+* Images
+* Tables
+* Callouts
+* Adding a different theme
+* Foldable code
+* Tabs
+
+Choose features that you think make the report more useful or easier to read.
+
+:::
+
+[secret]: Bonus secret-seekers - congratulations! You found the hidden message. 🚀 Please reward yourself with a biscuit.
+
+::: {.callout-exercise #ex-advanced_quarto_formatting2 .bonus}
+
+### See how the sausage is made
+
+[**Bonus**]{.bonus-text}
+
+This document is written in Quarto. The source code is available [here](https://github.com/UoC-MB1A/MB1A_Practicals_2026_2027/blob/main/materials/Practical_1_Introduction_to_R/01-02_quarto.qmd). 
+
+By looking at the source code, see if you can figure out how:
+
+* Exercises are assigned as core, recommended, extension or bonus.
+* Exercises and answers are structured.
+* Links to other sections of the document are created.
+
+I have hidden a secret message in the source code - see if you can find it.
+:::
+
+## Documenting and formatting your code {#sec-documenting_and_formatting_your_code .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
-### Documentation
+### Documentation {#sec-documentation .core}
 
-It's always a good idea to add explanations to your code. We can do so in Quarto, by writing a description of what we're trying to do.
+It's always a good idea to add explanations to your code. We can do so in Quarto, by writing a description of what we're trying to do, as you did above.
 
 Within a code chunk, we can also use  the hash tag `#` symbol to add comments, as shown below.
 
@@ -179,15 +250,15 @@ Within a code chunk, we can also use  the hash tag `#` symbol to add comments, a
 1 + 9
 ```
 
-It's always a good idea to add lots of comments to your code. What makes sense to you in that moment, might not a week later. Similarly, when sharing code with colleagues and collaborators, it's always good to be as clear as possible.
+Documenting your code is almost always helpful. What makes sense to you in that moment, might not a week later. Similarly, when sharing code with colleagues and collaborators, it's always good to be as clear as possible.
 
-### Formatting your code
+### Formatting your code {#sec-formatting_code .core}
 
 Writing code that is well formatted - arranged neatly on the page with appropriate line breaks and spaces -  makes it easier for you and others to understand, check, and reuse. 
 
 Good formatting:
 
-* Helps you to structure of your code
+* Helps you to structure your code
 * Makes mistakes easier to spot
 * Allows collaborators to quickly see what your code is doing.
 
@@ -198,7 +269,7 @@ In this course, we will use the [tidyverse style guide](https://style.tidyverse.
 In the HPA Quarto document you created above, click on `Addins` on the menu and then `Style active file` - this will automatically change your code to the tidyverse style where possible. 
 
 ::: {.callout-important #note-quarto_errors}
-This function will only work if your code is able to run without errors and you've saved your Quarto document
+This function will only work if your code is able to run without errors and you've saved your Quarto document.
 :::
 
 ![Style Active File](images/styler.png){#fig-styler .screenshot width="50%"}
@@ -215,13 +286,35 @@ After:
 
 Also, where you need to give something a name in R, it is helpful to use a name which describes what it is. For example, rather than `x <- 12` it is preferable to write e.g. `mean_size <- 12`.
 
-::: {.callout-exercise #ex-formatting}
+::: {.callout-exercise #ex-formatting .rec}
 
-{{< fa solid flask >}}
+### Formatting Quarto
+
+[**Recommended**]{.rec-text}
 
 Format the code in the HPA data Quarto document you created earlier using the `Style active file` feature. It may not change at all, or it may change a lot. Change any variable names to be informative, if they are not already.
 
 Save the document and render it again.
+
+:::
+
+::: {.callout-exercise #ex-formatting_ext .extension}
+
+### Manual formatting
+
+[**Extension**]{.extension-text}
+
+Look through the [tidyverse style guide](https://style.tidyverse.org/syntax.html) and format your code in the HPA data Quarto document manually. Save the document and render it again. Did you change anything that the Addin did not change?
+
+:::
+
+::: {.callout-exercise #ex-formatting_bon .bonus}
+
+### Comparing styles between languages
+
+[**Bonus**]{.bonus-text}
+
+Look through the [tidyverse style guide](https://style.tidyverse.org/syntax.html) - does anything here surprise you compared to languages you've used previously?
 
 :::
 
@@ -230,9 +323,11 @@ Save the document and render it again.
 [↑ top](#)
 
 ::: {.callout-note #note-summary_0102}
+
 ## Summary
-- **Quarto** documents combine text, code and images to make your analysis clear and reproducible.
-- Code **formatting** and **documentation** are important to keep your code readable and reusable.
+* Quarto documents combine **text, code and output** to create clear and reproducible analyses.
+* R code can be run directly within **code chunks** in a Quarto document.
+* **Clear documentation and formatting** make code easier to understand, check and reuse.
 :::
 
 For this part of the practical, the main files you have created are:

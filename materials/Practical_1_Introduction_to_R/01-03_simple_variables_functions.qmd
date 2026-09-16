@@ -17,6 +17,7 @@ library(gt)
 - @sec-arguments
 - @sec-variables
 - @sec-variable_types
+- @sec-r_quirks
 - @sec-summary_0103
 
 :::
@@ -25,16 +26,18 @@ library(gt)
 ## Learning objectives
 By the end of this part of the practical you should be able to:
 
-- Understand what a function is and use some simple functions.
-- Understand how and why we provide arguments to functions.
+- Explain what a function is and use some simple functions.
+- Explain how and why we provide arguments to functions.
 - Explain the concept of a variable and use variables in your code.
-- Know the difference between a character, numeric and logical variable.
+- Recognise and use common types of variable, including numeric, character and logical variables.
 
 :::
 
-For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, ``{{< meta practical >}}/prac1_part3_4.qmd`. You can describe the code if you wish, or just label it with the exercise number. For the data analysis exercises in Part 4: exercises 5 and 6, please create a second Quarto document `{{< meta practical >}}/ukhsa_data_analysis.qmd` and briefly describe your analysis.
+For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, ``{{< meta practical >}}/prac1_exercises.qmd`. You can describe the code if you wish, or just label it with the exercise name. For the data analysis exercises in Part 4: exercises 5 and 6, please create a second Quarto document `{{< meta practical >}}/ukhsa_data_analysis.qmd` and briefly describe your analysis.
 
-## Functions {#sec-functions}
+## Functions {#sec-functions .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
@@ -60,13 +63,15 @@ sqrt(9)
 
 Here, the input `9` is given as an argument to the `sqrt()` function. The function calculates the square root, and returns the value. This function is very simple, because it takes just one argument and has no additional options.
 
-::: {.callout-exercise #ex-first_functions}
+::: {.callout-exercise #ex-first_functions .core}
 
-{{< fa solid anchor >}}
+### Using functions
+
+[**Core**]{.core-text}
 
 The function `round()` rounds a number, by default into the nearest whole number.
 
-Write some code to round the number 3.14159 to the nearest whole number.
+In your `prac1_exercises.qmd` Quarto file, write some code to round the number 3.14159 to the nearest whole number.
 
 ::: {.callout-answer collapse="true" #ex-first_functions_ans}
 ```{r first_functions_ans}
@@ -75,15 +80,17 @@ round(3.14159)
 :::
 :::
 
-## Arguments {#sec-arguments}
+## Arguments {#sec-arguments .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
 Arguments allow you to control the behaviour of a function. They can be anything, not only numbers. Exactly what each argument means differs per function and can be looked up in the documentation. 
 
-Some functions take arguments which may either be specified by the user, or, if left out, take on a **default** value: these are called **options**.
+Some functions take arguments which may either be specified by the user, or, if left out, take on a **default** value.
 
-Options are typically used to alter the way the function operates.
+Arguments can be used to provide something to the function, such as the input data, or to alter the way the function operates.
 
 Let's look at the `round()` function again.
 
@@ -104,7 +111,7 @@ However, if we want e.g. two digits after the decimal point, we can type `digits
 round(3.14159, digits = 2)
 ```
 
-### Ordering arguments
+### Ordering arguments {#sec-ordering_arguments .core}
 
 When a function has several arguments, there are two common ways to provide them. You can either give the arguments in the correct order, or you can name each argument explicitly.
 
@@ -131,10 +138,9 @@ print(seq(by = 2, from = 1, to = 10))
 print(seq(by = 5, to = 15, from = 5))
 ```
 
-::: {.callout-exercise #ex-arg_order}
+::: {.callout-exercise #ex-arg_order .core}
 
-{{< fa solid anchor >}}
-
+### Argument order
 
 The function `rep()` repeats a value, `x` a specific number of times.
 The order of arguments is: `rep(x, times)` - so you first specify `x`, then the number of `times` you want it to be repeated.
@@ -144,9 +150,10 @@ For example:
 print(rep(2, 5))
 ```
 ```{r rep2}
-print(rep(x=2, times=5))
+print(rep(x = 2, times = 5))
 ```
-Write some code to repeat the number 5, 7 times, first by specifying arguments in order and then using their names.
+
+In your `prac1_exercises.qmd` Quarto file, write some code to repeat the number 5, 7 times, first by specifying arguments in order and then using their names.
 
 ::: {.callout-answer collapse="true" #ex-arg_order_ans}
 ```{r arg_order_ans}
@@ -159,7 +166,9 @@ print(rep(times = 7, x = 5))
 :::
 :::
 
-## Variables {#sec-variables}
+## Variables {#sec-variables .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
@@ -168,7 +177,7 @@ Another fundamental concept in programming is a **variable**.
 Basically, a variable associates a specific name with a specific value. In R, we use the operator `<-` to assign a value to a name, we've done this several times already.
 
 For example, by running the code below, we are saying that the name `my_variable` refers to the value `12`. 
-When you run the code, it will seem like nothing has happened, but, interally, R now knows that `my_variable` is equal to `12`.
+When you run the code, it will seem like nothing has happened, but, internally, R now knows that `my_variable` is equal to `12`.
 
 ```{r variable_basic}
 my_variable <- 12
@@ -189,11 +198,13 @@ my_variable <- 10
 print(my_variable)
 ```
 
-::: {.callout-exercise #ex-varorder}
+::: {.callout-exercise #ex-varorder .core}
 
-{{< fa solid anchor >}}
+### Assigning values to variables
 
-What would be the value of `whatsmynumber` after running all of code below?
+[**Core**]{.core-text}
+
+What would be the value of `whatsmynumber` after running all of the code below?
 
 ```{r varorder}
 whatsmynumber <- 1
@@ -205,60 +216,41 @@ whatsmynumber <- 5
 :::
 :::
 
-### Variable Names
+### Variable Names {#sec-variable_names .core}
 
 You can have as many variables as you like, and use any name, with a few exceptions.
 
-Your variable names should be one word, without spaces and without punctuation except underscores ("_"), so the following won't work:
+Your variable names should be one word, without spaces and ideally without punctuation except underscores ("_"), so the following won't work:
 
-```{r variable_punc}
-#| error: true
+```{r error1, error=TRUE}
 my-var <- 12
 ```
 
 
-```{r variable_space}
-#| error: true
+```{r error2, error=TRUE}
 my var <- 12
 ```
 
 In R, variable names can't start with a number.
 
-```{r variable_num}
-#| error: true
+```{r error3, error=TRUE}
 1var <- 12
 ```
 
-Some words are used by the R language itself, so although you can use them as variable names, it can become confusing and stop other functions from working. 
+Some words have a special meaning in R and cannot be used as variable names. For example:
 
-Some will not work at all:
-
-```{r variable_if}
-#| error: true
+```{r error4, error=TRUE}
 if <- 12
 ```
 
-Others will work, but cause problems. For example, if you assign a value to the word `sum`, then you won't be able to calculate mean values using the R function `sum`.
 
-To check if a word already exists as a function in R, you can type `?` followed by the word. This will show the help screen for any existing functions. 
+## Types of variable {#sec-variable_types .core}
 
-e.g.
-
-```{r variable_check_used}
-?sum
-```
-
-Compare this to a variable name which is not already in use:
-
-```{r variable_check_ok}
-?banana
-```
-
-## Types of variable {#sec-variable_types}
+[**Core**]{.core-text}
 
 [↑ top](#)
 
-### Numeric, character and logical variables
+### Numeric, character and logical variables {#sec-var_types_ncl .core}
 
 Different types of data can be stored as variables. 
 
@@ -267,8 +259,7 @@ There are many types of variable in R.
 Some of the most important are:
 
 #### Numeric
-(sometimes also called `double`)
-
+(You may sometimes see the term `double` used for numeric values in R — you don't need to worry about the distinction yet.)
 
 All variables which are numbers can be classed as numeric (there are some more specific number types but you don't need these yet)
 
@@ -311,7 +302,7 @@ print(x)
 
 #### Identifying types of variables
 
-We can find out what type of variable we have using the function `class`.
+We can find out what type of variable we have using the function `class()`.
 ```{r print_class}
 x <- "hi there"
 print(class(x))
@@ -323,11 +314,13 @@ x <- FALSE
 print(class(x))
 ```
 
-::: {.callout-exercise #ex-var_types}
+::: {.callout-exercise #ex-var_types .core}
 
-{{< fa solid anchor >}}
+### Character, numerical and logical variables
 
-Create character, numerical and logical variables, print them, then check their classes.
+[**Core**]{.core-text}
+
+In your `prac1_exercises.qmd` Quarto file, create character, numerical and logical variables, print them, then check their classes.
 
 ::: {.callout-answer collapse="true" #ex-var_types_ans}
 ```{r var_types_ans}
@@ -343,9 +336,11 @@ print(class(is_this_true))
 :::
 :::
 
-::: {.callout-exercise #ex-celldata}
+::: {.callout-exercise #ex-celldata .core}
 
-{{< fa solid anchor >}}
+### Using variables of different types
+
+[**Core**]{.core-text}
 
 You have conducted an experiment in which you have treated one batch of cells with radiation and kept the other as a control, then counted the number of live cells before and after.
 
@@ -362,7 +357,7 @@ df <- data.frame(
 gt(df)
 ```
 
-In your Quarto document, create eight variables of appropriate types which together contain all of the information in the table.
+In your `prac1_exercises.qmd` Quarto document, create eight variables of appropriate types which together contain all of the information in the table.
 
 ::: {.callout-answer collapse="true" #ex-celldata_ans}
 ```{r celldata_ans}
@@ -382,6 +377,99 @@ n_after_2 <- 7543
 :::
 :::
 
+## Exploring the quirks of R {#sec-r_quirks .fold .bonus}
+
+::: {.callout-exercise #ex-explore_r_quirks .bonus}
+
+### Explore the quirks of R 
+
+[**Bonus**]{.bonus-text}
+
+If you have programmed before, some of R's behaviour may be different from languages you have previously used.
+
+Predict the outcome of the following expressions, then test them in R. Are they as you expected?
+
+```{r weird_r1, eval=FALSE}
+print(TRUE + TRUE)
+print(TRUE + FALSE)
+print(5 + TRUE)
+```
+
+::: {.callout-answer collapse="true" #bon-explore_r_quirks_ans1}
+
+**Logical values can behave like numbers**
+
+When logical values are used in arithmetic, R converts `TRUE` to `1` and `FALSE` to `0`. Therefore:
+
+- `TRUE + TRUE` gives `2`
+- `TRUE + FALSE` gives `1`
+- `5 + TRUE` gives `6`
+:::
+
+Predict the outcomes of the following chunks of code, then test them in R.
+
+```{r weird_r2, eval=FALSE}
+x <- NA
+print(x == NA)
+print(is.na(x))
+```
+
+::: {.callout-answer collapse="true" #bon-explore_r_quirks_ans2}
+
+**Missing values are unknown**
+
+`NA` represents a missing or unknown value. Asking whether an unknown value is equal to another unknown value does not give `TRUE` or `FALSE` — the answer is also unknown (`NA`).
+
+For this reason, use `is.na()` to test whether a value is missing rather than `== NA`.
+:::
+
+```{r weird_r3, eval=FALSE}
+x <- 0 / 0
+print(x)
+print(is.na(x))
+print(is.nan(x))
+```
+
+::: {.callout-answer collapse="true" #bon-explore_r_quirks_ans3}
+
+**`NaN` is a special kind of missing value**
+
+`0 / 0` has no defined numerical value, so R returns `NaN` ("Not a Number"). `NaN` is considered missing, so `is.na(NaN)` is `TRUE`, but `is.nan()` can be used to distinguish `NaN` from other missing values.
+
+:::
+
+```{r weird_r4, eval=FALSE}
+print(round(2.5))
+print(round(3.5))
+```
+
+::: {.callout-answer collapse="true" #bon-explore_r_quirks_ans4}
+
+**R may round halves differently than you expect**
+
+R uses "round to even" for numbers exactly halfway between two possibilities. Therefore `round(2.5)` gives `2`, while `round(3.5)` gives `4`.
+
+This reduces systematic bias that could result from always rounding `.5` upwards.
+:::
+
+R has several other special values and objects. Use the R Help system to find out what `Inf`, `-Inf` and `NULL` represent. Can you write an expression that produces `Inf` and `-Inf`? How does `NULL` differ from `NA` and `NaN`?
+
+::: {.callout-answer collapse="true" #bon-explore_r_quirks_ans5}
+
+**Other special values and objects**
+
+`Inf` and `-Inf` represent positive and negative infinity. For example:
+
+```{r weird_r_ans1}
+print(1 / 0)
+print(-1 / 0)
+```
+
+NULL represents the absence of a value or object. This is different from NA, which represents a value that exists but is missing or unknown.
+
+:::
+:::
+
 ## Review {#sec-summary_0103}
 
 [↑ top](#)
@@ -396,4 +484,10 @@ n_after_2 <- 7543
 - The `class()` function tells you what type of data a variable contains.
 :::
 
+For this part of the practical, the main files you have created are:
 
+- `prac1_exercises.qmd`
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}

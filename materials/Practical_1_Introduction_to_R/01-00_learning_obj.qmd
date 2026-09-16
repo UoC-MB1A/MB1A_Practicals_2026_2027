@@ -19,6 +19,8 @@ library(tidyverse)
 ### @sec-p1_r_and_rstudio
 
 #### Sections
+
+- @sec-open_r
 - @sec-r_language
 - @sec-coding_in_the_console
 - @sec-rstudio_interface
@@ -29,62 +31,65 @@ library(tidyverse)
 By the end of this part of the practical you should be able to:
 
 - Explain what R is and why it is useful for biological data analysis.
-- Use some features of the RStudio interface
+- Use some features of the RStudio interface.
 - Use the R console and R scripts to run R code.
 
 ### @sec-p2_quarto
 
 #### Sections
+
 - @sec-quarto
+- @sec-formatting_quarto
+- @sec-analysis_in_quarto
 - @sec-documenting_and_formatting_your_code
+- @sec-advanced_quarto_formatting
 
 #### Learning Objectives
 
 By the end of this part of the practical you should be able to:
 
-- Explain what R is and why it is useful for biological data analysis.
-- Use some features of the RStudio interface
-- Use the R console, scripts and Quarto documents to run R code.
+- Use Quarto documents to run R code.
 - Create a simple reproducible analysis using Quarto.
-- Understand the benefits of writing clear, well-formatted and documented R code.
-
+- Explain the benefits of writing clear, well-formatted and documented R code.
 
 ### @sec-p3_functions_and_variables
 
 #### Sections
+
 - @sec-functions
 - @sec-arguments
 - @sec-variables
 - @sec-variable_types
+- @sec-r_quirks
 
 #### Learning Objectives
 
 By the end of this part of the practical you should be able to:
 
-- Understand what a function is and use some simple functions.
-- Understand how and why we provide arguments to functions.
-- Explain the concept of a variable and use variables in your code.
-- Know the difference between a character, numeric and logical variable.
+- Explain what a function is and use simple functions.
+- Explain the purpose of function arguments and provide arguments to functions.
+- Explain what a variable is and create and use variables in R.
+- Recognise and use common variable types, including numeric, character and logical variables.
 
 ### @sec-p4_vectors_data_frames_plots
 
 #### Sections
+
 - @sec-packages
 - @sec-vectors
 - @sec-data_frames
 - @sec-csv
 - @sec-plots
 
-By the end of this part of the practical you should be able to:
-
 #### Learning Objectives
 
-- Install and load a package in R
+By the end of this part of the practical you should be able to:
+
+- Install and load a package in R.
 - Recognise and use the vector variable type.
 - Isolate elements of the vector using an index.
-- Create and view a simple data frame
-- Recognise and use the CSV file type
-- Plot a simple scatter plot in R
+- Create and view a simple data frame.
+- Recognise and use the CSV file type.
+- Plot a simple scatter plot in R.
 
 :::
-
