@@ -17,7 +17,7 @@ library(gt)
 - @sec-arguments
 - @sec-variables
 - @sec-variable_types
-- @sec-r_quirks
+- @sec-r_quirks [(Bonus)]{.bonus-text}
 - @sec-summary_0103
 
 :::

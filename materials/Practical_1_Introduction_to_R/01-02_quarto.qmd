@@ -13,6 +13,7 @@ library(styler)
 ::: {.callout-note .partmenu #parts-0102}
 ## Sections
 - @sec-quarto
+- @sec-creating_quarto
 - @sec-formatting_quarto
 - @sec-analysis_in_quarto
 - @sec-documenting_and_formatting_your_code

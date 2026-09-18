@@ -25,6 +25,7 @@ library(tidyverse)
 - @sec-coding_in_the_console
 - @sec-rstudio_interface
 - @sec-console_scripts
+- @sec-summary_0101
 
 #### Learning Objectives
 
@@ -39,10 +40,11 @@ By the end of this part of the practical you should be able to:
 #### Sections
 
 - @sec-quarto
+- @sec-creating_quarto
 - @sec-formatting_quarto
 - @sec-analysis_in_quarto
 - @sec-documenting_and_formatting_your_code
-- @sec-advanced_quarto_formatting
+- @sec-summary_0102
 
 #### Learning Objectives
 
@@ -50,7 +52,7 @@ By the end of this part of the practical you should be able to:
 
 - Use Quarto documents to run R code.
 - Create a simple reproducible analysis using Quarto.
-- Explain the benefits of writing clear, well-formatted and documented R code.
+- Understand the benefits of writing clear, well-formatted and documented R code.
 
 ### @sec-p3_functions_and_variables
 
@@ -60,16 +62,17 @@ By the end of this part of the practical you should be able to:
 - @sec-arguments
 - @sec-variables
 - @sec-variable_types
-- @sec-r_quirks
+- @sec-r_quirks [(Bonus)]{.bonus-text}
+- @sec-summary_0103
 
 #### Learning Objectives
 
 By the end of this part of the practical you should be able to:
 
-- Explain what a function is and use simple functions.
-- Explain the purpose of function arguments and provide arguments to functions.
-- Explain what a variable is and create and use variables in R.
-- Recognise and use common variable types, including numeric, character and logical variables.
+- Explain what a function is and use some simple functions.
+- Explain how and why we provide arguments to functions.
+- Explain the concept of a variable and use variables in your code.
+- Recognise and use common types of variable, including numeric, character and logical variables.
 
 ### @sec-p4_vectors_data_frames_plots
 
@@ -77,19 +80,21 @@ By the end of this part of the practical you should be able to:
 
 - @sec-packages
 - @sec-vectors
+- @sec-vectorisation [(Extension)]{.extension-text}
 - @sec-data_frames
 - @sec-csv
+- @sec-api [(Bonus)]{.bonus-text}
 - @sec-plots
+- @sec-additional_plot_styling [(Extension)]{.extension-text}
 
 #### Learning Objectives
 
 By the end of this part of the practical you should be able to:
 
 - Install and load a package in R.
-- Recognise and use the vector variable type.
-- Isolate elements of the vector using an index.
+- Create and use vectors in R.
+- Access individual elements of a vector using an index.
 - Create and view a simple data frame.
-- Recognise and use the CSV file type.
-- Plot a simple scatter plot in R.
-
+- Recognise and read data stored in CSV format.
+- Create a simple line plot in R using ggplot2.
 :::

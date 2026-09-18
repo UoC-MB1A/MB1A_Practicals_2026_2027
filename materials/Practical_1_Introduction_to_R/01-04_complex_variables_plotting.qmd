@@ -12,13 +12,17 @@ library(gt)
 # Part 4: Vectors, data frames and plots {#sec-p4_vectors_data_frames_plots}
 
 ::: {.callout-note .partmenu #parts-0104}
-## Sections
+
+#### Sections
 - @sec-packages
 - @sec-vectors
+- @sec-vectorisation [(Extension)]{.extension-text}
 - @sec-data_frames
 - @sec-csv
+- @sec-api [(Bonus)]{.bonus-text}
 - @sec-plots
-- @sec-summary_0104
+- @sec-additional_plot_styling [(Extension)]{.extension-text}
+
 :::
 
 :::{.callout-tip .objectives #objectives-0104}

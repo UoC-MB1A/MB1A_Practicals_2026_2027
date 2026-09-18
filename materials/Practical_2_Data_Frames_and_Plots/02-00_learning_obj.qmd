@@ -21,6 +21,7 @@ library(tidyverse)
 - @sec-dataset
 - @sec-pipe
 - @sec-select
+- @sec-comparisons
 - @sec-filter
 - @sec-summary_0201
 
@@ -30,6 +31,9 @@ By the end of this part of the practical you will be able to:
 
 * Use the pipe operator to create multi-step analyses.
 * Select specific columns from a data frame.
+* Use comparison operators to compare values.
+* Filter rows in a data frame based on specific criteria.
+
 
 ### @sec-p2_complex_data_frame_operations
 
@@ -37,15 +41,16 @@ By the end of this part of the practical you will be able to:
 - @sec-summary_stats
 - @sec-merge
 - @sec-long_wide
+- @sec-divide
 - @sec-summary_0202
 
 #### Learning Objectives
 
 By the end of this part of the practical you will be able to:
 
-* Calculate summary statistics for groups of observations.
-* Merge information from multiple data frames.
-* Convert data from "wide" to "long" format.
+- Calculate summary statistics for groups of observations.
+- Merge information from multiple data frames using joins.
+- Recognise wide and long data formats.
 
 ### @sec-p3_visualisation
 
@@ -56,6 +61,7 @@ By the end of this part of the practical you will be able to:
 - @sec-axis_limits
 - @sec-group_points
 - @sec-add_paths
+- @sec-nice_plot [(Extension)]{.extension-text}
 - @sec-summary_0203
 
 #### Learning Objectives
@@ -64,23 +70,24 @@ By the end of this part of the practical you will be able to:
 
 * Generate a new blank plot and add axes.
 * Add points to a scatter plot.
-* Calculate appropriate axis limits and add these to the plot.
-* Change the colours and shapes of the points based on categorical data.
-* Add paths connecting points based on categorical data.
+* Set appropriate axis limits.
+* Map categorical variables to the colour and shape of points.
+* Connect related observations using paths.
 
 ### @sec-p4_visualisation_exercise
 
 #### Sections
-- @sec-load_packages_ve
-- @sec-download_data_ve
-- @sec-read_data_ve
-- @sec-process_df_ve
-- @sec-plot_data_ve
+- @sec-movebank [(Extension)]{.extension-text}
+- @sec-load_packages_ve [(Extension)]{.extension-text}
+- @sec-download_data_ve [(Extension)]{.extension-text}
+- @sec-read_data_ve [(Extension)]{.extension-text}
+- @sec-process_df_ve [(Extension)]{.extension-text}
+- @sec-plot_data_ve [(Extension)]{.extension-text}
 - @sec-summary_0204
 
 #### Learning objectives
 By the end of this part of the practical you will have:
 
-* Applied the data manipulation and plotting techniques introduced throughout Practical 2 to a real animal tracking dataset.
+- Applied the data manipulation and plotting techniques introduced throughout Practical 2 to a different real animal tracking dataset. [(Extension)]{.extension-text}
 
 :::

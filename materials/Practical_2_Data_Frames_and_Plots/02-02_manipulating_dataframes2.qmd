@@ -28,23 +28,35 @@ bird_migration_exc <- read_csv("output/bird_migration_exc.csv")
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
-* Calculate summary statistics for groups of observations.
-* Merge information from multiple data frames.
-* Convert data from "wide" to "long" format.
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+- Calculate summary statistics for groups of observations.
+- Merge information from multiple data frames using joins.
+- Recognise wide and long data formats.
 
 :::
 
-## Grouping and summarising data {#sec-summary_stats}
+## Grouping and summarising data {#sec-summary_stats .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
-At the moment, the data frame `bird_breeding_exc` has seven rows, one for each breeding site - as the breeding sites are small, fixed locations. However, the data frame `bird_migration_exc` has multiple measurements for each location for each bird population - as the numerous birds were tracked as they migrated.
+At the moment, the data frame `bird_breeding_exc` has seven rows, one for each breeding site - as the breeding sites are small, fixed locations. However, the data frame `bird_migration_exc` has **multiple** measurements for each location for each bird population - as the numerous birds were tracked as they migrated.
 
-For our visualisation, it's sufficient to just take the median values for the migration locations.
+For our visualisation, it's sufficient to just take the median values for the migration locations in `bird_migration_exc`.
 
 To do this, we can *group* our data by the values in a specific column, then calculate summary statistics for each group.
 
-We group data using the `group_by()` function, then summarise for each group using the `summarize()` function.
+We group data using the `group_by()` function, then summarise for each group using the `summarise()` function.
+
+::: {.callout-note #note-UK_US}
+
+The packages we use for data frame manipulation (`tidyverse` and `ggplot`) accept UK and US spellings - so `summarise()` and `summarize()` will both work, as will `color` and `colour`. However, this is unusual! Usually when programming we need to stick to whichever convention was used by whoever wrote the package.
+
+:::
 
 First, let's group our migration frame by the `Site` column.
 
@@ -61,7 +73,7 @@ We can see `Groups: Site [7]` at the top, which tells us our data frame is group
 
 `group_by()` does not change the data itself. It tells R how later calculations should be applied.
 
-We can then use the function `summarize()` to calculate specific statistics per group and generate a new data frame containing these values.
+We can then use the function `summarise()` to calculate specific statistics per group and generate a new data frame containing these values.
 
 For example, the following code creates a new data frame, `lat_df`, with one column `Highest_Lat_Stopover`, which contains the maximum (calculated with the function `max()`) value in the `Stopover_Latitude` column for each Site.
 
@@ -84,7 +96,7 @@ lat_df <- bird_migration_grouped |>
     Highest_Lat_Stopover = max(Stopover_Latitude, na.rm = TRUE),
     Lowest_Lat_Stopover = min(Stopover_Latitude, na.rm = TRUE),
     Mean_Lat_Stopover = mean(Stopover_Latitude, na.rm = TRUE),
-    Higher_Lat_Winter = max(Winter_Latitude, na.rm = TRUE),
+    Highest_Lat_Winter = max(Winter_Latitude, na.rm = TRUE),
     Lowest_Lat_Winter = min(Winter_Latitude, na.rm = TRUE),
     Mean_Lat_Winter = mean(Winter_Latitude, na.rm = TRUE)
   )
@@ -92,11 +104,13 @@ lat_df <- bird_migration_grouped |>
 gt(lat_df)
 ```
 
-::: {.callout-exercise #ex-medians_migration}
+::: {.callout-exercise #ex-medians_migration .core}
 
-{{< fa solid flask >}}
+### Summarise a data frame
 
-In your **worked example** Quarto document, for the migration site data frame, group by site and then make a new summary data frame which contains **median** values for all of the latitude and longitude columns:
+[**Core**]{.core-text}
+
+In your `worked_example.qmd` Quarto document, for the migration site data frame, group by site and then make a new summary data frame which contains **median** values for all of the latitude and longitude columns:
 
 * `Stopover_Latitude`
 * `Stopover_Longitude`
@@ -126,14 +140,50 @@ bird_migration_summary <- bird_migration_grouped |>
     Westmost_Longitude = median(Westmost_Longitude, na.rm = TRUE),
     Westmost_Latitude = median(Westmost_Latitude, na.rm = TRUE),
     Winter_Longitude = median(Winter_Longitude, na.rm = TRUE),
-    Winter_Latitude = median(Winter_Latitude, na.rm = TRUE),
+    Winter_Latitude = median(Winter_Latitude, na.rm = TRUE)
   )
 gt(bird_migration_summary)
 ```
 :::
 :::
 
-## Joining data frames {#sec-merge}
+### Summarising multiple columns {#sec-summ_multiple_columns .fold .extension}
+
+::: {.callout-exercise #ex-across .extension}
+
+### Summarising multiple columns
+
+[**Extension**]{.extension-text}
+
+In the exercise above, we calculated the median of each latitude and longitude column separately. This involved writing very similar code eight times.
+
+The `across()` function can be used with `summarise()` to apply the same function to several columns at once.
+
+Explore the documentation for [`across()`](https://dplyr.tidyverse.org/reference/across.html) and see if you can use it to recreate `bird_migration_summary` with less code.
+
+::: {.callout-answer collapse="true" #ex-across_ans}
+
+```{r across_ans}
+bird_migration_summary <- bird_migration_exc |>
+  group_by(Site) |>
+  summarise(
+    across(
+      c(Stopover_Longitude, Stopover_Latitude,
+        Iberian_Longitude, Iberian_Latitude,
+        Westmost_Longitude, Westmost_Latitude,
+        Winter_Longitude, Winter_Latitude),
+      ~ median(.x, na.rm = TRUE)
+    )
+  )
+
+gt(bird_migration_summary)
+```
+:::
+:::
+
+## Joining data frames {#sec-merge .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
@@ -141,9 +191,9 @@ Datasets often contain information spread across several tables, as we see here.
 
 A **join** allows us to combine two data frames into one, assuming they have a column in common.
 
-To demonstrate, here are two small example data frames, showing the Department name and Assessment Score for several individuals in an university. Some people are in both tables, some are only in one or the other. The shared column `Name` allows them to be joined easily.
+To demonstrate, here are two small example data frames, showing the Department name and Assessment Score for several individuals in a university. Some people are in both tables, some are only in one or the other. The shared column `Name` allows them to be joined easily.
 
-```{r read_dfs}
+```{r read_dfs, message=FALSE}
 df_dept <- read_csv("data/depts.csv")
 df_score <- read_csv("data/scores.csv")
 ```
@@ -191,13 +241,16 @@ gt(right_join_example)
 
 For our bird data, the `Site` column is shared between the two data frames - `bird_breeding_exc` and `bird_migration_exc`.
 
-We can actually use any type of join, because all of the sites are in both data frames, let's use a **full join**.
+In this case, all of the sites are present in both data frames, so any of these joins would produce the same result. We'll use a **full join**.
 
-::: {.callout-exercise #ex-join}
+::: {.callout-exercise #ex-join .core}
 
-{{< fa solid flask >}}
+### Joining data frames
 
-In your **worked example** Quarto document, perform a full outer join on the `bird_breeding_exc` data frame and the `bird_migration_summary` data frame. Store the resulting data frame in a new variable, named `combined_bird_data`.
+[**Core**]{.core-text}
+
+
+In your `worked_example.qmd` Quarto document, perform a full outer join on the `bird_breeding_exc` data frame and the `bird_migration_summary` data frame. Store the resulting data frame in a new variable, named `combined_bird_data`.
 
 ::: {.callout-answer #ex-join_ans}
 ```{r join_birds}
@@ -209,7 +262,52 @@ gt(combined_bird_data)
 :::
 :::
 
-## Long and wide formats {#sec-long_wide}
+### Joining with non-unique values {#sec-joining_non_unique .fold .extension}
+
+::: {.callout-exercise #ex-join_duplicates .extension}
+
+### Joining with non-unique values
+
+[**Extension**]{.extension-text}
+
+Joins do not always produce the number of rows you might expect.
+
+Create these two data frames:
+
+```{r join_duplicates1}
+birds <- tibble(
+  Bird = c("Robin", "Robin", "Blackbird"),
+  Mass = c(18, 19, 100)
+)
+
+observations <- tibble(
+  Bird = c("Robin", "Robin", "Robin", "Blackbird"),
+  Count = c(4, 7, 2, 5)
+)
+```
+
+Before running any more code, predict how many rows you think the following join will produce:
+
+```{r join_duplicates2, eval=FALSE}
+inner_join(birds, observations, by = "Bird")
+```
+
+
+Now run the join and examine the result.
+
+Why does the resulting data frame contain so many rows?
+
+::: {.callout-answer collapse="true" #ex-join_duplicates_ans}
+
+When joining data frames, each matching row in one data frame is matched with every matching row in the other. Here, two Robin rows in one data frame and three in the other produce 2 × 3 = 6 rows.
+
+:::
+
+:::
+
+## Long and wide formats {#sec-long_wide .rec}
+
+[**Recommended**]{.rec-text}
 
 [↑ top](#)
 
@@ -248,13 +346,11 @@ After:
 | A | Breeding | 10 | 50 |
 | A | Winter | 20 | 40 |
 
-We won't ask you to do this in the visualisation exercise, but it's needed in this case.
-
 ::: {.callout-note .copycode #copy-pivot}
 
 ### Include this code
 
-Include this code chunk in your **worked example** Quarto document to convert your data frame from wide to long format.
+Include this code chunk in your `worked_example.qmd` Quarto document to convert your data frame from wide to long format.
 
 ```{r pivotpivotpivot}
 combined_bird_piv <- combined_bird_data |>
@@ -269,17 +365,54 @@ gt(combined_bird_piv)
 
 :::
 
-## Subsetting your data frame {#sec-divide}
+### Pivoting to wide format {#sec-pivot_wide .fold .extension}
+::: {.callout-exercise #ex-pivot_wider .extension}
+
+### Going the other way
+
+[**Extension**]{.extension-text}
+
+We used `pivot_longer()` to convert our bird data from wide to long format.
+
+There is also a function called `pivot_wider()`.
+
+Without changing `combined_bird_data`, see if you can use `pivot_wider()` on `combined_bird_piv` to reconstruct the original wide-format data.
+
+You may need to explore the documentation to work out which arguments you need.
+
+:::{.callout-hint #hint-glue}
+The argument `names_glue` might be useful.
+:::
+
+::: {.callout-answer collapse="true" #ex-pivor_wider_ans}
+```{r pivot_wider}
+combined_bird_wide <- combined_bird_piv |>
+  pivot_wider(
+    names_from = Location_Type,
+    values_from = c(Longitude, Latitude),
+    names_glue = "{Location_Type}_{.value}"
+  )
+
+gt(combined_bird_wide)
+```
+:::
+:::
+
+## Subsetting your data frame {#sec-divide .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 In order to create the two plots shown in Figure 1A and Figure 1B in the publication, we need to make two subsets of our data frame, one with only the **spring migration** data and one with only the **autumn migration** data.
 
-The spring migration data has the following values in the "Location_Type" column:
+The spring migration data has the following values in the `Location_Type` column:
 
 * Breeding
 * Stopover
 * Winter
 
-The autumn migration data has the following values in the "Location_Type" column:
+The autumn migration data has the following values in the `Location_Type` column:
 
 * Breeding
 * Iberian
@@ -305,11 +438,13 @@ df_eng_maths <- df_dept |>
 gt(df_eng_maths)
 ```
 
-::: {.callout-exercise #ex-divide}
+::: {.callout-exercise #ex-divide .core}
 
-{{< fa solid flask >}}
+### Subset data
 
-In your **worked example** Quarto document, generate two subsets of your `combined_bird_piv` data frame, one with the **spring** data and one with the **winter** data. Store these in two variables `spring_data` and `autumn_data`.
+[**Core**]{.core-text}
+
+In your `worked_example.qmd` Quarto document, generate two subsets of your `combined_bird_piv` data frame, one with the **spring** data and one with the **autumn** data. Store these in two variables `spring_data` and `autumn_data`.
 
 ::: {.callout-answer #ex-divide_ans}
 ```{r divide_ans}
@@ -336,7 +471,7 @@ We can save copies using the function `write_csv()`. The first argument is the v
 ::: {.callout-note .copycode #copy-pivot}
 ### Include this code
 
-Include this code chunk in your **worked example** Quarto document to save your data frame into the `output` folder for the practical.
+Include this code chunk in your `worked_example.qmd` Quarto document to save your data frame into the `output` folder for the practical.
 
 ```{r write_birds}
 write_csv(spring_data, "output/birds_spring.csv")
@@ -354,15 +489,17 @@ write_csv(autumn_data, "output/birds_autumn.csv")
 ### Summary
 
 * `group_by()` and `summarise()` allow us to calculate statistics for groups of observations.
-* **Joins** allow us to combine information from multiple data frames using shared columns.
-* `pivot_longer()` converts data from **wide format** into **long format**, making it easier to analyse and visualise.
+* **Joins** combine information from multiple data frames using shared columns.
+* `pivot_longer()` converts data from **wide** to **long** format.
+* `%in%` allows us to test whether values occur within a set of values, which is useful when filtering on several categories.
 
 :::
 
 For this part of the practical, the main files you have edited are:
 
 - `worked_example.qmd`
-- `output/combined_birds.csv`
+- `output/birds_spring.csv`
+- `output/birds_autumn.csv`
 
 These are the files you should select when making your Git commit.
 
