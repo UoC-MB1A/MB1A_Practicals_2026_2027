@@ -13,12 +13,12 @@ site_metadata <- read_csv("data/site_metadata.csv")
 flower_counts <- read_csv("data/flower_counts.csv")
 ```
 
-# Part 7: Estimators and Bootstrapping
+# Part 7: Estimators and Bootstrapping {#sec-p7_estimators_and_bootstrapping}
 
 ::: {.callout-note .partmenu #parts-0407}
 ## Sections
-- @sec-estimators
-- @sec-bootstrapping
+- @sec-estimators [(Extension)]{.extension-text}
+- @sec-bootstrapping [(Extension)]{.extension-text}
 - @sec-summary_0407
 :::
 
@@ -26,9 +26,9 @@ flower_counts <- read_csv("data/flower_counts.csv")
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
-* Compare estimators using bias, variance and MSE
-* Use simulation to investigate the sampling distribution of an estimator.
-* Use bootstrapping to estimate uncertainty and construct a confidence interval.
+* Compare estimators using bias, variance and MSE  [(Extension)]{.extension-text}
+* Use simulation to investigate the sampling distribution of an estimator. [(Extension)]{.extension-text}
+* Use bootstrapping to estimate uncertainty and construct a confidence interval. [(Extension)]{.extension-text}
 
 :::
 
@@ -517,6 +517,11 @@ Based on this analysis, there is a fairly wide confidence interval around the me
 Normally, this would be our end point, but, in this case, we do have a better estimate of the population median. In this dataset, relatively few (85) organisms had data for all our traits of interest, but 917 had data for at least iron concentration. This data is provided as `data/inverts_iron.csv`. This data will not provide a population median, but it can give us a more accurate estimate of the population median than our 85 organism sample.
 
 ::: {.callout-exercise #ex-bootstrap_invert_full .extension}
+
+### Estimating population median
+
+[**Bonus**]{.bonus-text}
+
 In your `prac4_exercises.qmd` Quarto file:
 
 * Read the iron dataset `data/inverts_iron.csv`.
@@ -557,6 +562,10 @@ The true population value for the 75th percentile is `r round(qgamma(0.75, shape
 ![Procrastination (https://xkcd.com/1906)](images/xkcd.png){#fig-bob width="25%"}
 
 ::: {.callout-exercise #ex-bootstrap_ci .bonus}
+
+### Bootstrapp confidence intervals
+
+[**Bonus**]{.bonus-text}
 
 In your `prac4_exercises.qmd` Quarto file:
 

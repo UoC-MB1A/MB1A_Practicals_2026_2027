@@ -27,8 +27,6 @@ flower_counts <- read_csv("data/flower_counts.csv")
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
-By the end of this part of the practical you will be able to:
-
 * Use a fitted statistical model to predict the expected value of a response variable.
 * Interpret a confidence interval around a model prediction.
 * Explain how a linear model describes a probability distribution for individual observations around the expected value.
@@ -98,7 +96,7 @@ ggplot(
 
 The model therefore gives us more than a single predicted value. For each value of the explanatory variable, it estimates the mean of a probability distribution for the response variable. For a linear model, observations are assumed to be normally distributed around this mean, with the residual standard deviation estimated by `sigma()`.
 
-You can make predictions using a linear model with a continuous explanatory variable by using `predict()` in exactly the same way. If there are multiple explanatory variables, the value of each variable needs to be passed to the model, the process is otherwise identical.
+You can make predictions using a linear model with a continuous explanatory variable by using `predict()` in exactly the same way. If there are multiple explanatory variables, the value of each variable needs to be passed to the model, but the process is otherwise identical.
 
 ::: {.callout-exercise #ex-predict_lm .core}
 
@@ -110,7 +108,7 @@ In your `pollinators.qmd` Quarto file, fit a linear model to the relationship be
 
 Predict the mean total annual precipitation and its 95% confidence interval when annual mean temperature is 10°C.
 
-::: {.callout-answer collapse="true" #ex-predict_lm}
+::: {.callout-answer collapse="true" #ex-predict_lm_ans}
 
 [Fit a linear model to the relationship between annual precipitation (column `annual_total_prec`) and mean annual temperature (column `annual_mean_temp`), with annual precipitation as the response variable]{.blue-text}
 

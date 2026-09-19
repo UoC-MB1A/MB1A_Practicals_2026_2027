@@ -22,7 +22,7 @@ set.seed(42)
 ## Sections
 - @sec-linear_regression
 - @sec-multiple_linear_regression
-- @sec-multicollinearity
+- @sec-multicollinearity [(Extension)]{.extension-text}
 - @sec-chi_squared
 - @sec-summary_0404
 :::
@@ -73,6 +73,8 @@ ggplot(site_metadata,
 ```
 
 :::{.callout-exercise #ex_temp_prec .core}
+
+### Linear regression
 
 [**Core**]{.core-text}
 
@@ -193,7 +195,7 @@ ggplot(elev_temp_long,
        aes(x = value,
            y = annual_total_prec)) +
   geom_point() +
-  facet_wrap(~variable, scale='free_x') +
+  facet_wrap(~variable, scales='free_x') +
   geom_smooth(method = "lm")
 
 ```
@@ -446,7 +448,7 @@ Even when the explanatory variables are highly correlated, the model as a whole 
 
 Chi-squared looks for an association between two categorical variables. Unlike all the other tests we've covered so far, it is not based on a linear model.
 
-For a chi-squared we typically report:
+For a chi-squared test we typically report:
 
 * $X^2$ test statistic
 * Degrees of freedom
@@ -456,8 +458,8 @@ For a chi-squared we typically report:
 
 In our pollinator data set, let's investigate the following hypothesis:
 
-* **Null hypothesis**: There is no association between land cover and UK country amongst the sites in the POMS dataset.
-* **Alternative hypothesis**: There is an association between land cover (agricultural or semi-natural, all of our sites are in one of these two categories) and UK country (England, Scotland or Wales, this dataset doesn't cover Northern Ireland) amongst the sites in the POMS dataset.
+* **Null hypothesis**: There is no association between land cover and UK country amongst the sites in the PoMS dataset.
+* **Alternative hypothesis**: There is an association between land cover (agricultural or semi-natural, all of our sites are in one of these two categories) and UK country (England, Scotland or Wales, this dataset doesn't cover Northern Ireland) amongst the sites in the PoMS dataset.
 
 **Plot**
 
@@ -470,7 +472,7 @@ country_habitat_counts <- site_metadata |>
 gt(country_habitat_counts)
 ```
 
-A useful visualisation is a stacked bar chart, where the y-axis is count, and each bar represents one categorial variable and has different coloured sections representing the other categorical variable. We can do this by setting country as `x`, the number of sites in each category, `n` as the bar height, `y`, then setting `fill` to the land cover. We could equally do the opposite - set land cover as `x` and country as `y`.
+A useful visualisation is a stacked bar chart, where the y-axis is count, and each bar represents one categorical variable and has different coloured sections representing the other categorical variable. We can do this by setting country as `x`, the number of sites in each category, `n` as the bar height, `y`, then setting `fill` to the land cover. We could equally do the opposite - set land cover as `x` and country as `fill`.
 
 ```{r bar_chart_country_habitat}
 #| fig-alt: "Bar plot with number of sites on the y-axis and country - England, Scotland or Wales on the x-axis. Bars are divided by land cover into agricultural and semi-natural. England has the most sites, 36, and a large majority are agricultural. Scotland has 23, a large majority of which are semi-natural. Wales has 17, around half of which have each type of land cover."
@@ -510,7 +512,7 @@ chisq_country_habitat <- chisq.test(cont_table_country_habitat)
 print(chisq_country_habitat)
 ```
 
-There was strong evidence of an association between country and habitat type ($\chi^2$(2) = 19.40, $p$ = 6.13 × 10^-5^).
+There was strong evidence of an association between country and habitat type ($\chi^2$(2) = `r round(chisq_country_habitat$statistic, 2)`, $p$ = 6.13 × 10^-5^).
 
 With the chi-squared test, we can also see the expected counts for each category - the counts we would expect if the null hypothesis were true.
 
@@ -534,26 +536,15 @@ In this part of the practical, you used simple and multiple linear regression to
 
 | Function | What it does |
 |---|---|
-| `lm()` | Fits a linear model to a response variable and one or more explanatory variables. |
-| `summary()` | Summarises a fitted linear model, including coefficients, test statistics, p-values and R-squared. |
-| `mean()` | Calculates the arithmetic mean of a variable. |
-| `cor()` | Calculates the correlation between two variables. |
-| `rnorm()` | Generates random values from a normal distribution. |
-| `seq()` | Generates a sequence of values. |
-| `count()` | Counts the number of observations in each combination of categories. |
 | `xtabs()` | Creates a contingency table from categorical variables. |
 | `chisq.test()` | Performs a chi-squared test of association. |
-| `pivot_longer()` | Converts data from wide to long format. |
-| `geom_point()` | Adds points to a `ggplot`, for example to create a scatter plot. |
-| `geom_smooth()` | Adds a fitted trend to a `ggplot`; `method = "lm"` adds a linear regression line. |
-| `geom_col()` | Creates a bar chart where bar heights are taken from values in the data. |
-| `facet_wrap()` | Splits a plot into separate panels according to a variable. |
 :::
 
 For this part of the practical, the main files you have created are:
 
-These are the files you should select when making your Git commit.
 - `pollinators.qmd`
+
+These are the files you should select when making your Git commit.
 
 Remember to save and commit your work before moving on to Part 5.
 

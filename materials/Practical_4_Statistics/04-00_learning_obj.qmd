@@ -4,3 +4,130 @@ format: html
 practical: Practical_4_Statistics
 doc-id: "0400"
 ---
+
+# Practical 4 - Statistics
+
+::: {.callout-tip .partmenu #parts-0100}
+
+## Practical 4 - Statistics
+
+## @sec-p1_data
+
+### Sections
+
+- @sec-dataset_pollinators
+- @sec-summary_0401
+
+
+#### Learning objectives
+By the end of this part of the practical you will:
+
+* Understand the structure of the pollinator dataset
+* Have recapped some data frame operations from @sec-p1_basic_data_frame_operations and @sec-p2_complex_data_frame_operations.
+
+
+## @sec-p2_hypothesis_testing_1
+
+### Sections
+
+- @sec-examining_data
+- @sec-choose_test
+- @sec-run_test
+- @sec-t_dist [(Extension)]{.extension-text}
+- @sec-confidence_intervals
+- @sec-linear_models_cat
+- @sec-anova_cat
+- @sec-summary_0402
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Interpret and report the test statistic, degrees of freedom, p-value and confidence interval from a t-test.
+* Fit and interpret a linear model with a categorical explanatory variable.
+* Explain the relationship between a two-sample t-test, a linear model and a one-way ANOVA with two groups.
+* Perform and interpret a one-way ANOVA in R.
+* Report statistical results in the context of a biological question.
+
+
+## @sec-p3_anova
+
+### Sections
+
+- @sec-one_way_anova
+- @sec-f_dist [(Extension)]{.extension-text}
+- @sec-multi_way_anova
+- @sec-interactions [(Recommended)]{.recommended-text}
+- @sec-summary_0403
+
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Use one-way ANOVA to compare a continuous response among more than two groups.
+* Fit and interpret an ANOVA with multiple categorical explanatory variables.
+* Explain what an interaction between explanatory variables means.
+* Fit and interpret a linear model containing an interaction.
+
+
+## @sec-p4_linear_regression_chisq
+
+### Sections
+- @sec-linear_regression
+- @sec-multiple_linear_regression
+- @sec-multicollinearity [(Extension)]{.extension-text}
+- @sec-chi_squared
+- @sec-summary_0404
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Fit and interpret a linear regression between two continuous variables.
+* Fit and interpret a multiple linear regression containing an interaction.
+* Explain why centring continuous explanatory variables can make model coefficients easier to interpret.
+* Use a chi-squared test to test for an association between two categorical variables.
+
+## @sec-p5_h_t_exercises
+
+### Sections
+- @sec-stats_tests
+- @sec-hypothesis_testing_exercises
+
+
+#### Learning objectives
+By the end of this part of the practical you will have practised:
+
+* Selecting an appropriate statistical test based on the types of response and explanatory variables.
+* Selecting an appropriate visualisation for different combinations of variable types.
+* Applying hypothesis tests and linear models to biological questions.
+* Interpreting statistical results using appropriate evidence, including test statistics, degrees of freedom, p-values and effect estimates.
+* Relating statistical results back to a biological hypothesis.
+
+## @sec-p6_predictions
+
+### Sections
+- @sec-predictions
+- @sec-summary_0406
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Use a fitted statistical model to predict the expected value of a response variable.
+* Interpret a confidence interval around a model prediction.
+* Explain how a linear model describes a probability distribution for individual observations around the expected value.
+
+## @sec-p7_estimators_and_bootstrapping
+
+### Sections
+- @sec-estimators [(Extension)]{.extension-text}
+- @sec-bootstrapping [(Extension)]{.extension-text}
+- @sec-summary_0407
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Compare estimators using bias, variance and MSE  [(Extension)]{.extension-text}
+* Use simulation to investigate the sampling distribution of an estimator. [(Extension)]{.extension-text}
+* Use bootstrapping to estimate uncertainty and construct a confidence interval. [(Extension)]{.extension-text}
+
+:::
+

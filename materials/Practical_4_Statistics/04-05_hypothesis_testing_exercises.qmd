@@ -15,7 +15,7 @@ flower_counts <- read_csv("data/flower_counts.csv")
 source("../../../devel/alt_text.R")
 ```
 
-# Part 5: Hypothesis Testing Exercises {#sec-h_t_exercises}
+# Part 5: Hypothesis Testing Exercises {#sec-p5_h_t_exercises}
 
 ::: {.callout-note .partmenu #parts-0405}
 ## Sections
@@ -740,7 +740,7 @@ ggplot(
   theme_bw()
 ```
 
-[Perform a one-way ANOVA.]]{.blue-text}
+[Perform a one-way ANOVA.]{.blue-text}
 
 ```{r pollinators_ht_ans10.2}
 lm_hab <- lm(mean_insect_mass ~ broad_habitat, data = site_metadata)

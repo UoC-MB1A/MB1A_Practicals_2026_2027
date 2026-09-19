@@ -22,9 +22,9 @@ set.seed(42)
 ## Sections
 
 - @sec-one_way_anova
-- @sec-f_dist
+- @sec-f_dist [(Extension)]{.extension-text}
 - @sec-multi_way_anova
-- @sec-interactions
+- @sec-interactions [(Recommended)]{.recommended-text}
 - @sec-summary_0403
 :::
 
@@ -75,7 +75,7 @@ In your `pollinators.qmd` Quarto document, plot a box plot showing the value of 
 
 Remember that:
 * The R function `geom_boxplot()` draws a box plot.
-* The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the arguments `x = mean_insect_mass` and `y = dominant_family`. 
+* The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the arguments `x = dominant_family` and `y = mean_insect_mass`. 
 
 :::{.callout-answer collapse="true" #ex-boxplot_domfam_ans}
 
@@ -112,7 +112,7 @@ Let's try it:
 
 In your `pollinators.qmd` Quarto file, fit a linear model using the function `lm()` and the formula above. As for the t-test, you'll need to add the argument `data = site_metadata` so R can see the data frame. Store the output in the variable `lm_mass_domfam`. View the results using the `summary()` function.
 
-::: {.callout-answer collapse="true" #ex-first_lm_ans}
+::: {.callout-answer collapse="true" #ex-lm_mass_domfam_ans}
 
 ```{r lm_mass_domfam}
 lm_mass_domfam <- lm(mean_insect_mass ~ dominant_family, data = site_metadata)
@@ -437,12 +437,12 @@ Interaction:
 In your `prac4_exercises.qmd` Quarto file:
 
 * Generate four simulated samples, each of 10 students, with response times normally distributed around the means above and a standard deviation of 3.
-* Convert each of these into a data frame with the columns `utensil`, `food` and `time`, using the following syntax, where `time_sim` is your vector of simulated response times - `tibble(time = time_sim, food = "soup", utensil = "spoon")
+* Convert each of these into a data frame with the columns `utensil`, `food` and `time`, using the following syntax, where `time_sim` is your vector of simulated response times - `tibble(time = time_sim, food = "soup", utensil = "spoon")`.
 * Convert these to a single data frame using the function `bind_rows()`. You can pass any number of data frames as arguments to this function and it will return a single data frame combining all of the rows (assuming the data frames all have the same columns) (e.g. as `bind_rows(df1, df2, df3)`)
 * Fit a linear model with `time` as the response variable and `utensil`, `food` and their interaction as explanatory variables.
 * Run an ANOVA on the linear model.
 
-:::{.callout-answer #ex_simulate_interaction_ans}
+:::{.callout-answer collapse="true" #ex_simulate_interaction_ans}
 
 **Data**
 
@@ -672,7 +672,7 @@ In your `pollinators.qmd` Quarto file:
 * Run an ANOVA on this model and view the results.
 * Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.
 
-::: {.callout-answer collapse="true" #ex_anova_twoway_ans}
+::: {.callout-answer collapse="true" #ex_anova_interaction_ans}
 
 **Statistical test**
 
@@ -759,21 +759,18 @@ In this part of the practical, you extended ANOVA to compare more than two group
 
 ### Programming summary
 
-| Function | What it does |
+| Function | What it does | Level |
 |---|---|
 | `lm()` | Fits a linear model to a response variable and one or more explanatory variables. |
 | `anova()` | Performs an ANOVA on a fitted linear model. |
+
+
+**Extension material also introduced:**
+
+| Function     | What it does                                                                |
+| ------------ | --------------------------------------------------------------------------- |
 | `rf()` | Generates random values from an F-distribution. |
-| `pf()` | Calculates cumulative probabilities from an F-distribution. |
-| `tibble()` | Creates a data frame. |
-| `bind_rows()` | Combines data frames by adding their rows together. |
-| `select()` | Selects particular columns from a data frame. |
-| `pivot_longer()` | Converts data from wide to long format. |
-| `ggplot()` | Creates a plot using a data frame and aesthetic mappings. |
-| `geom_boxplot()` | Adds a box plot to a `ggplot`. |
-| `geom_density()` | Adds an estimated density distribution to a `ggplot`. |
-| `geom_vline()` | Adds a vertical reference line to a `ggplot`. |
-| `facet_wrap()` | Splits a plot into separate panels according to a variable. |
+| `pf()` | Calculates cumulative probabilities from an F-distribution. | 
 
 :::
 

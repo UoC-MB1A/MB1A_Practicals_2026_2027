@@ -14,6 +14,7 @@ library(maps)
 insect_metadata <- read_csv("data/insect_metadata.csv")
 ```
 
+
 # Part 1: UK Pollinator Monitoring Scheme Dataset {#sec-p1_data}
 
 ::: {.callout-note .partmenu #parts-0401}
@@ -40,13 +41,25 @@ For this practical, we recommend that you create two Quarto documents:
 * `{{< meta practical >}}/pollinators.qmd` - analysis of the pollinator dataset
 * `{{< meta practical >}}/prac4_exercises.qmd` - general practice exercises
 
-We will use the following research dataset repeatedly throughout both this practical and Practical 6 (Further Statistics) and visit others as needed.
+::: {.callout-important}
+
+### Levels
+
+In this practical, the [**core**]{.core-text} exercises will introduce you to performing a range of statistical tests and making predictions in R. There is a lot of content, so please focus on completing the [**core**]{.core-text} material and exercises and reading the [**recommended**]{.rec-text} material first, completing the exercises where possible. Move on to the [**extension**]{.extension-text} and [**bonus**]{.bonus-text} exercises if you have time.
+
+The [**extension**]{.extension-text} exercises explore statistical concepts in more depth. The programming may be slightly more advanced, but should be possible using only the R skills introduced in Practicals 1 to 3.
+
+The [**bonus**]{.bonus-text} exercises are intended for students who are already very comfortable with both R and statistics and have plenty of time to spare.
+
+:::
 
 ## Pollinator dataset {#sec-dataset_pollinators .core}
 
 [**Core**]{.core-text}
 
-The main dataset we will use in this practical is [pan-trap survey data](https://catalogue.ceh.ac.uk/documents/9df83130-e98f-48b0-bbfc-32f5920eedb0) from the UK Pollinator Monitoring Scheme (POMS). In this scheme, multiple [pan-traps](https://en.wikipedia.org/wiki/Pan_trap) are set in each of a set of specific 1km squares across the UK. On four days each summer, volunteers will set out traps for six hours, then send the insects to be counted. Flowering plants within a 2m radius of the trap are also recorded.
+We will use this research dataset repeatedly throughout both this practical and Practical 6 (Further Statistics) and visit others as needed.
+
+The main dataset we will use in this practical is [pan-trap survey data](https://catalogue.ceh.ac.uk/documents/9df83130-e98f-48b0-bbfc-32f5920eedb0) from the UK Pollinator Monitoring Scheme (PoMS). In this scheme, multiple [pan-traps](https://en.wikipedia.org/wiki/Pan_trap) are set in each of a set of specific 1km squares across the UK. On four days each summer, volunteers will set out traps for six hours, then send the insects to be counted. Flowering plants within a 2m radius of the trap are also recorded.
 
 [comment]: todo_katy link to the preprocessing.
 
@@ -85,7 +98,7 @@ In your `pollinators.qmd` Quarto file:
   * `data/site_metadata.csv`
 
 * Count how many unique sites there are. Site ID is in the `x1km_square` column of the insect counts data frame and site metadata data frame. 
-* Count how many unique observations of insects there are - including multiple observations of the same insect at the same site. Number of observations is in the `n_observed` column of the insect counts data frame.
+* Count how many observations of insects there are - including multiple observations of the same insect at the same site. Number of observations is in the `n_observed` column of the insect counts data frame.
 * Find the insect species which was observed most frequently and how many times it was observed. Insect species is in the column `species` of the insect counts data frame.
 
 ::: {.callout-answer #ex_summarise_bees_ans}
@@ -106,7 +119,7 @@ print(site_count)
 ```
 There are `r site_count` sites.
 
-[Count how many unique observations of insects there are - including multiple observations of the same insect at the same site. Number of observations is in the `n_observed` column os the insect counts data frame]{.blue-text}
+[Count how many observations of insects there are - including multiple observations of the same insect at the same site. Number of observations is in the `n_observed` column of the insect counts data frame]{.blue-text}
 
 ```{r summarise_bees_ans3, message=FALSE}
 total_insect_obs <- insect_counts |>
@@ -114,9 +127,9 @@ total_insect_obs <- insect_counts |>
   sum()
 print(total_insect_obs)
 ```
-There are `r format(total_insect_obs, scientific=FALSE)` unique insect observations.
+There are `r format(total_insect_obs, scientific=FALSE)` insect observations.
 
-[Find the insect species which was observed most frequently and how many times it was observed. Insect species is in the column `species` of the insect counts data frame and the insect metadata data frame.]{.blue-text}
+[Find the insect species which was observed most frequently and how many times it was observed. Insect species is in the column `species` of the insect counts data frame.]{.blue-text}
 
 ```{r summarise_bees_ans4, message=FALSE}
 insect_totals <- insect_counts |>
@@ -142,9 +155,9 @@ The most commonly observed species was `r pull(insect_totals, species)[1]`, whic
 
 ### Summary
 
-* The POMS data contains detailed information about pollinator species across the UK.
-* Here we have also added detailed climate data for each site.
-* You have recapped various ways to manipulate data frames in R.
+* The PoMS dataset contains information about pollinator and flowering plant observations at sites across the UK.
+* Site metadata includes information about location, habitat and climate.
+* You have used data frame operations from Practical 2 to explore and summarise the dataset.
 
 :::
 

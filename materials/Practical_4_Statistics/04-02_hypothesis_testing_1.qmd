@@ -22,11 +22,9 @@ site_metadata <- read_csv("data/site_metadata.csv")
 - @sec-examining_data
 - @sec-choose_test
 - @sec-run_test
-- @sec-t_dist
+- @sec-t_dist [(Extension)]{.extension-text}
 - @sec-confidence_intervals
 - @sec-linear_models_cat
-- @sec-fitting_linear_models_cat
-- @sec-visualising_linear_models_cat
 - @sec-anova_cat
 - @sec-summary_0402
 :::
@@ -54,6 +52,7 @@ For now, let's concentrate on a single species, the "bronze furrow bee" *Halictu
 ![*Halictus tumulorum*](images/bee.jpg){#fig-bee width="50%" fig-alt="A photo of H. tumulorum"}
 
 ::: {.callout-exercise #ex-filter_ht .core}
+
 ### Build *H. tumulorum* data frame.
 
 [**Core**]{.core-text}
@@ -63,7 +62,7 @@ In your `pollinators.qmd` Quarto document:
 * Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.
 * Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.
 * Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.
-* Store the resulting data frame in as a variable named `ht_df`.
+* Store the resulting data frame as a variable named `ht_df`.
 * Write the data frame to the file `output/ht_df.tsv`.
 
 ::: {.callout-answer collapse="true" #ex_filter_ht_ans}
@@ -88,12 +87,12 @@ ht_df <- ht_counts |>
 
 ```{r presence_absence_ht, message=FALSE}
 ht_df <- ht_df |>
-  left_join(site_metadata)
+  inner_join(site_metadata)
 
 gt(head(ht_df))
 ```
 
-[Write the data frame to the file `output/ht_df.tsv`.]{.blue-text}
+[Write the data frame to the file `output/ht_df.csv`.]{.blue-text}
 
 ```{r save_ht}
 write_csv(ht_df, "output/ht_df.csv")
@@ -420,8 +419,9 @@ gt(ht_temp_summ)
 
 ::: {.callout-exercise #ex-cis .extension}
 
-[**Extension**]{.extension-text}
+### Simulate confidence intervals
 
+[**Extension**]{.extension-text}
 
 Next, in your `pollinators.qmd` Quarto file:
 
@@ -712,6 +712,8 @@ Let's see if this is correct by fitting a linear model to our data in R. We do t
 
 ::: {.callout-exercise #ex-first_lm .core}
 
+### Fit a linear model
+
 [**Core**]{.core-text}
 
 In your `pollinators.qmd` Quarto file, fit a linear model using the function `lm()` and the same formula as for the t-test above. As for the t-test, you'll need to add the argument `data = ht_temp_df` so R can see the data frame. Store the output in the variable `lm_ht`.
@@ -858,7 +860,11 @@ This is asking the same question we've already asked twice, in a different way.
 
 Let's try an ANOVA. We run ANOVA in R on an existing linear model - which we already created above, in the variable `lm_ht`, using the function `anova()`.
 
-::: {.callout-exercise #ex-first_anova.core}
+::: {.callout-exercise #ex-first_anova .core}
+
+### ANOVA
+
+[**Core**]{.core-text}
 
 In your `pollinators.qmd` Quarto file, run an ANOVA on your existing linear model, `lm_ht`, using the function `anova()`.
 
@@ -953,9 +959,6 @@ In this part of the practical, you have used the following R functions:
 | `confint()`      | Calculates confidence intervals for the coefficients of a fitted model.                                           |
 | `anova()`        | Produces an ANOVA table for a fitted model, partitioning variation into explained and residual components.        |
 | `as.numeric()`   | Converts values to numbers; for logical values, `FALSE` becomes 0 and `TRUE` becomes 1.                           |
-| `geom_boxplot()` | Adds a box plot to a `ggplot`, allowing the distributions of a continuous variable to be compared between groups. |
-| `geom_smooth()`  | Adds a fitted model to a `ggplot`; `method = "lm"` fits a linear model.                                           |
-| `geom_hline()`   | Adds a horizontal reference line to a `ggplot`.                                                                   |
 
 **Extension material also introduced:**
 
