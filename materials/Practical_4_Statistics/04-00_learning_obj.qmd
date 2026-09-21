@@ -13,7 +13,7 @@ doc-id: "0400"
 
 ## @sec-p1_data
 
-### Sections
+#### Sections
 
 - @sec-dataset_pollinators
 - @sec-summary_0401
@@ -28,7 +28,7 @@ By the end of this part of the practical you will:
 
 ## @sec-p2_hypothesis_testing_1
 
-### Sections
+#### Sections
 
 - @sec-examining_data
 - @sec-choose_test
@@ -51,7 +51,7 @@ By the end of this part of the practical you will be able to:
 
 ## @sec-p3_anova
 
-### Sections
+#### Sections
 
 - @sec-one_way_anova
 - @sec-f_dist [(Extension)]{.extension-text}
@@ -71,7 +71,7 @@ By the end of this part of the practical you will be able to:
 
 ## @sec-p4_linear_regression_chisq
 
-### Sections
+#### Sections
 - @sec-linear_regression
 - @sec-multiple_linear_regression
 - @sec-multicollinearity [(Extension)]{.extension-text}
@@ -88,7 +88,7 @@ By the end of this part of the practical you will be able to:
 
 ## @sec-p5_h_t_exercises
 
-### Sections
+#### Sections
 - @sec-stats_tests
 - @sec-hypothesis_testing_exercises
 
@@ -104,7 +104,7 @@ By the end of this part of the practical you will have practised:
 
 ## @sec-p6_predictions
 
-### Sections
+#### Sections
 - @sec-predictions
 - @sec-summary_0406
 
@@ -117,7 +117,7 @@ By the end of this part of the practical you will be able to:
 
 ## @sec-p7_estimators_and_bootstrapping
 
-### Sections
+#### Sections
 - @sec-estimators [(Extension)]{.extension-text}
 - @sec-bootstrapping [(Extension)]{.extension-text}
 - @sec-summary_0407
