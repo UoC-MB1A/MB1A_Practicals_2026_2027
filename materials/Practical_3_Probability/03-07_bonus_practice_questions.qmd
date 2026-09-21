@@ -6,7 +6,10 @@ toc-depth: 4
 ---
 # Probability Problem Sheets
 
-These solutions use primarily simulation to solve the problems, rather than calculating exact mathematical solutions.
+These are the solutions to the Probability problem sheets you completed earlier in the course, solved using simulation alone.
+
+You are **not expected to work through all of these problems**, and they have not been assigned to different levels. They are provided as a reference to demonstrate how useful simulation can be for solving probability problems.
+
 
 ```{r setup_0307}
 library(tidyverse)
@@ -86,7 +89,7 @@ times_f_second <- 0
 
 first_animal <- c()
 second_animal <- c()
-for (i in seq_len(10000)) {
+for (i in seq_len(n_sim)) {
   # Sample 2 animals from the habitat
   # and remove each after sampling
   samps <- sample(
@@ -145,13 +148,12 @@ transmitter <- rbinom(n = n_sim, size = 1, prob = 2 / 3)
 # Run R1 10,000 times, with a 98% probability of success
 # 1 - correct
 # 0 - incorrect
-R1_correct <- rbinom(n = n_sim, size=1, prob = 0.98)
+R1_correct <- rbinom(n = n_sim, size = 1, prob = 0.98)
 
 # Run R2 10,000 times, with a 97% probability of success
 # 1 - correct
 # 0 - incorrect
-R2_correct <- rbinom(n = n_sim, size=1, prob = 0.97)
-
+R2_correct <- rbinom(n = n_sim, size = 1, prob = 0.97)
 ```
 
 #### a
@@ -219,77 +221,27 @@ R1_correct_prop <- R1_reports_zero_correctly / sum(R1_0_R2_1 == 1)
 R2_correct_prop <- R2_reports_one_correctly / sum(R1_0_R2_1 == 1)
 
 
-print (paste("R1 = ", R1_correct_prop))
-print (paste("R2 = ", R2_correct_prop))
+print(paste("R1 = ", R1_correct_prop))
+print(paste("R2 = ", R2_correct_prop))
 ```
 
 Given that R1 has reported 0 and R2 has reported 1, R2 is more likely to be correct, with a probability of `r round(R2_correct_prop, 4)`, compared to `r round(R1_correct_prop, 4)` for R1.
 
 ### Question 3
 
-a. Of a batch of 22 imported oak saplings, 12 are healthy and 10 have hidden oak
+::: {.callout-important #note-choose}
+Parts 3a and 3c here cannot be reliably answered using simulation, so they are omitted here.
+:::
+
+Of a batch of 22 imported oak saplings, 12 are healthy and 10 have hidden oak
 processionary moth eggs. A tree health officer is aware that there may be an
-issue and chooses 5 trees at random to inspect in detail. As there are slightly
-more healthy trees than infested trees, we might predict that the batch will
-consist of 3 healthy trees and 2 infested trees. How many ways are there to
-select 3 healthy trees and 2 infested trees from the 22 saplings?
+issue and chooses 5 trees at random to inspect in detail. 
 
 b. What is the probability that a sample of five trees, chosen at random from the
 batch of 22 imported trees, consists of three healthy and two infested trees?
 
-c. Suppose instead that all 5 of the trees selected are healthy (and so the
-infestation remains undetected). How many ways are there that the sample
-could have been chosen at random from the batch to give this result?
-
-d. What is the probability the sample of five, chosen at random from the batch
+d. What is the probability that a sample of five, chosen at random from the batch
 consists only of healthy trees?
-
-::: {.callout-note #note-choose}
-For a and c, this simulation will usually give approximately the right number of combinations, but it may not find every answer.
-:::
-
-#### a
-
-How many ways are there to select 3 healthy trees and 2 infested trees from the 22 saplings?
-```{r q3a}
-# Create a population of 12 healthy trees and
-# 10 infested trees, all with unique names
-healthy <- paste("healthy", seq(1, 12))
-eggs <- paste("eggs", seq(1, 10))
-
-# Take three healthy trees 10,000 times
-# Keep track of all combinations encountered
-# Sort by name as order doesn't matter
-healthy_samps <- c()
-for (i in seq_len(n_sim)) {
-  samp <- sample(x = healthy, size = 3, replace = FALSE)
-  samp_s <- paste(samp[order(samp)], collapse = " ")
-  healthy_samps <- c(healthy_samps, samp_s)
-}
-
-# Take two infested trees 10,000 times
-# Keep track of all combinations encountered
-# Sort by name as order doesn't matter
-egg_samps <- c()
-for (i in seq_len(n_sim)) {
-  samp <- sample(x = eggs, size = 2, replace = FALSE)
-  samp_s <- paste(samp[order(samp)], collapse = " ")
-  egg_samps <- c(egg_samps, samp_s)
-}
-
-# Find all the unique combinations encountered
-unique_healthy <- length(unique(healthy_samps))
-unique_eggs <- length(unique(egg_samps))
-
-# Multiply these together to get the total
-# number of combinations of 3 healthy and 2
-# infested
-total_count <- unique_healthy * unique_eggs
-print (total_count)
-```
-There are `r total_count` ways to select 3 healthy and 2 infested.
-
-Note that this only works because the outcome is fairly likely - for improbable outcomes more simulations would be needed to encounter every possible outcome.
 
 #### b
 
@@ -307,7 +259,7 @@ combined <- c(healthy, eggs)
 healthy_counts <- c()
 for (i in seq_len(n_sim)) {
   samp <- sample(x = combined, size = 5, replace = FALSE)
-  n_healthy <- sum(samp == 'healthy')
+  n_healthy <- sum(samp == "healthy")
   healthy_counts <- c(healthy_counts, n_healthy)
 }
 # Count how many times 3 were healthy
@@ -319,32 +271,6 @@ print(prop)
 ```
 
 There is a probability of `r round(prop, 4)` that 3 trees are healthy and two are infested.
-
-#### c
-Suppose instead that all 5 of the trees selected are healthy (and so the infestation remains undetected). How many ways are there that the sample could have been chosen at random from the batch to give this result?
-
-```{r q3c}
-# Make a sample of 12 healthy trees, with unique
-# names
-healthy <- paste("healthy", seq(1, 12))
-
-# Take five healthy trees 10,000 times
-# Keep track of all combinations encountered
-# Sort by name as order doesn't matter
-healthy_samps <- c()
-for (i in seq_len(10000)) {
-  samp <- sample(x = healthy, size = 5, replace = FALSE)
-  samp_s <- paste(samp[order(samp)], collapse = " ")
-  healthy_samps <- c(healthy_samps, samp_s)
-}
-
-unique_healthy <- unique(healthy_samps)
-n_unique_healthy <- length(unique_healthy)
-print(n_unique_healthy)
-```
-There are `r n_unique_healthy` ways to select 5 healthy trees.
-
-Note that this only works because the outcome is fairly likely - for improbable outcomes more simulations would be needed to encounter every possible outcome.
 
 #### d
 What is the probability the sample of five, chosen at random from the batch consists only of healthy trees?
@@ -379,7 +305,7 @@ Find the probability that an email is spam given that it has the phrase “check
 out” in the subject
 
 ```{r q4}
-# Simulate 10,000 emails with a 40% chance of being spam
+# Simulate 100,000 emails with a 40% chance of being spam
 # 1 = spam
 # 0 = not spam
 is_spam <- rbinom(100000, size = 1, prob = 0.4)
@@ -390,19 +316,19 @@ n_not_spam <- 100000 - n_spam
 
 # For the results which are spam, simulate a 1% chance
 # of saying CTO
-is_cto_spam <- rbinom(n_spam, size=1, prob = 0.01)
+is_cto_spam <- rbinom(n_spam, size = 1, prob = 0.01)
 
 # For the results which are not spam, simulate a 0.4% chance
 # of saying CTO
-is_cto_not_spam <- rbinom(n_not_spam, size=1, prob = 0.004)
+is_cto_not_spam <- rbinom(n_not_spam, size = 1, prob = 0.004)
 
 # Calculate the total number of simulations that are CTO
-cto = sum(is_cto_spam, is_cto_not_spam)
+cto <- sum(is_cto_spam, is_cto_not_spam)
 
 # Calculate the proportion of CTO simulations which are spam
 prob_spam_cto <- sum(is_cto_spam) / cto
 
-print (prob_spam_cto)
+print(prob_spam_cto)
 ```
 The probability that an email is spam given that it has the phrase “check this out” in the subject is `r round(prob_spam_cto, 4)`
 
@@ -452,7 +378,7 @@ Find the probability that 3 particles are emitted in 2 minutes
 particles_per_2min <- rpois(n_sim, 8)
 # How many of the simulated data points have a count of exactly 3
 ans_c <- sum(particles_per_2min == 3) / n_sim
-print (ans_c)
+print(ans_c)
 ```
 
 The probability that 3 particles are emitted in 2 minutes is `r round(ans_c, 4)`.
@@ -475,7 +401,7 @@ of:
 #### a
 The survival rate of a specific disease is forty percent. In a certain day eight patients are admitted into hospital with that disease. What are the chances that three will survive?
 ```{r q6a}
-# Sample 8 individuals from a binomial distribution 
+# Sample 8 individuals from a binomial distribution
 # 10,000 times with a 40% probability of survival
 survival <- rbinom(n_sim, 8, 0.4)
 
@@ -493,33 +419,33 @@ A new drug is discovered that can cure the disease but can only be administered 
 ```{r q6b}
 # Simulate giving four doses of the drug 10,000
 # times with a 0.6 probability of success
-success <- rbinom(10000, 4, 0.6)
+success <- rbinom(n_sim, 4, 0.6)
 ```
 
 ##### i
 Three doses successfully administered
 ```{r q6bi}
 # Number of times there were exactly 3 successes
-ans_i <- sum(success == 3) / 10000
-print (ans_i)
+ans_i <- sum(success == 3) / n_sim
+print(ans_i)
 ```
-The probability that three doses were successfully adminstered is `r round(ans_i, 4)`
+The probability that three doses were successfully administered is `r round(ans_i, 4)`
 
 ##### ii
 No doses successfully administered
 ```{r q6bii}
 # Number of times there were exactly 0 successes
-ans_ii <- sum(success == 0) / 10000
-print (ans_ii)
+ans_ii <- sum(success == 0) / n_sim
+print(ans_ii)
 ```
-The probability that no doses were successfully adminstered is `r round(ans_ii, 4)`
+The probability that no doses were successfully administered is `r round(ans_ii, 4)`
 
 ##### iii
 At least one dose successfully administered
 ```{r q6biii}
 # Number of times at least one success (i.e. not zero successes)
-ans_iii <- sum(success != 0) / 10000
-print (ans_iii)
+ans_iii <- sum(success != 0) / n_sim
+print(ans_iii)
 ```
 The probability that at least one dose was successfully administered is `r round(ans_iii, 4)`
 
@@ -527,8 +453,8 @@ The probability that at least one dose was successfully administered is `r round
 At most two doses successfully administered
 ```{r q6biv}
 # Number of times 2 or less successes
-ans_iv <- sum(success <= 2) / 10000
-print (ans_iv)
+ans_iv <- sum(success <= 2) / n_sim
+print(ans_iv)
 ```
 The probability that at most two doses were successfully administered is `r round(ans_iv, 4)`
 
@@ -545,7 +471,7 @@ b. What is the probability that she must select more than 6 dolphins before she
 finds one with a tracking device?
 
 ```{r q7}
-# Simulate a geometric distribution with 10,000 data points, with a 
+# Simulate a geometric distribution with 10,000 data points, with a
 # 20% probability of success in each trial.
 dolphins <- rgeom(n_sim, 0.2)
 ```
@@ -556,7 +482,7 @@ What is the probability that the scientist must select exactly 4 dolphins before
 ```{r q7a}
 # Probability there are 3 failures before the first success
 ans_a <- sum(dolphins == 3) / n_sim
-print (ans_a)
+print(ans_a)
 ```
 
 There is a `r round(ans_a, 4)` probability that she must select exactly 4 dolphins to find one with a tracking device.
@@ -567,7 +493,7 @@ b. What is the probability that she must select more than 6 dolphins before she 
 ```{r q7b}
 # Probability there are at least 6 failures before the first success
 ans_b <- sum(dolphins >= 6) / n_sim
-print (ans_b)
+print(ans_b)
 ```
 
 There is a `r round(ans_b, 6)` probability that she will have to select more than 6 dolphins before finding one with a tracking device.
@@ -591,7 +517,7 @@ Find the probability that no results come in a given 1 minute period.
 ```{r q8a}
 # Probability of a count of exactly 0
 ans_a <- sum(results_per_min == 0) / n_sim
-print (ans_a)
+print(ans_a)
 ```
 The probability no results come in a given 1 minute period is `r round(ans_a, 4)`.
 
@@ -599,10 +525,10 @@ The probability no results come in a given 1 minute period is `r round(ans_a, 4)
 The probability that at least two results will come in a given two minute period.
 ```{r q8b}
 # Simulate a Poisson distribution with lambda 6
-results_per_2min <- rpois(10000, 6)
+results_per_2min <- rpois(n_sim, 6)
 # Probability of a count of at least 2
 ans_b <- sum(results_per_2min >= 2) / n_sim
-print (ans_b)
+print(ans_b)
 ```
 The probability at least two results will come in a given 2 minute period is `r round(ans_b, 4)`.
 
@@ -618,11 +544,11 @@ another?
 
 ```{r qq1}
 # Rate per year if it lasts 10 years on average
-rate = 1 / 10
+rate <- 1 / 10
 
 # Simulate an exponential distribution with this
 # rate and 10,000 observations
-distri <- rexp(n_sim, rate=rate)
+distri <- rexp(n_sim, rate = rate)
 ```
 
 #### a
@@ -630,7 +556,7 @@ What is the probability that the spectrophotometer part lasts more than 7 years?
 ```{r qq1a}
 # Proportion of intervals > 7
 ans_a <- sum(distri > 7) / n_sim
-print (ans_a)
+print(ans_a)
 ```
 There is an `r round(ans_a, 4)` probability the part lasts more than 7 years.
 
@@ -643,7 +569,7 @@ average_time <- mean(distri)
 # Multiply by 5
 total_time <- average_time * 5
 
-print (total_time)
+print(total_time)
 ```
 On average, 5 parts would last `r round(total_time, 4)` years.
 
@@ -673,7 +599,7 @@ total_cost <- cold_cost + hot_cost
 # Convert to a proportion of the number of units
 ans_2 <- total_cost / n_sim
 
-print (ans_2)
+print(ans_2)
 ```
 The expected production cost per unit for this drug is £`r round(ans_2, 2)` per unit.
 
@@ -690,11 +616,11 @@ The probability that the third time we pick a ball, we get a red ball for the se
 ```{r qq3a}
 # Draw two balls 10,000 times and count how many
 # are red
-first_two <- rbinom(n_sim, size = 2, prob = 5/8)
+first_two <- rbinom(n_sim, size = 2, prob = 5 / 8)
 
 # Draw one ball 10,000 times and count how many
 # are red
-third <- rbinom(n_sim, size = 1, prob = 5/8)
+third <- rbinom(n_sim, size = 1, prob = 5 / 8)
 
 # How many times is either ball 1 or ball 2 red
 # but not both and ball 3 is red
@@ -703,7 +629,7 @@ count <- sum(first_two == 1 & third == 1)
 # As a proportion
 prop <- count / n_sim
 
-print (prop)
+print(prop)
 ```
 The probability that the third time we pick a ball, we get a red ball for the second time is `r round(prop, 4)`.
 
@@ -712,11 +638,11 @@ The probability that the 4th time we pick a ball, a red ball appears for the fir
 ```{r qq3b}
 # Draw three balls 10,000 times and count how many
 # are red
-first_three <- rbinom(n_sim, size = 3, prob = 5/8)
+first_three <- rbinom(n_sim, size = 3, prob = 5 / 8)
 
 # Draw one ball 10,000 times and count how many
 # are red
-fourth <- rbinom(n_sim, size = 1, prob = 5/8)
+fourth <- rbinom(n_sim, size = 1, prob = 5 / 8)
 
 # How many times are none of the first three balls
 # red but ball 4 is red
@@ -725,7 +651,7 @@ count <- sum(first_three == 0 & fourth == 1)
 # As a proportion
 prop <- count / n_sim
 
-print (prop)
+print(prop)
 ```
 The probability that the 4th time we pick a ball, a red ball appears for the first time is `r round(prop, 4)`.
 
@@ -735,8 +661,8 @@ The expected number of times we pick a ball until we get a red ball for the seco
 ```{r qq3c}
 # Simulate the number of green balls picked before the first red
 # twice
-ball_1 <- rgeom(n_sim, 5/8)
-ball_2 <- rgeom(n_sim, 5/8)
+ball_1 <- rgeom(n_sim, 5 / 8)
+ball_2 <- rgeom(n_sim, 5 / 8)
 
 # Add them together - add two for the two red balls then picked
 combined_balls <- ball_1 + ball_2 + 2
@@ -744,7 +670,7 @@ combined_balls <- ball_1 + ball_2 + 2
 # The mean of these values is the expectation
 expected <- mean(combined_balls)
 
-print (expected)
+print(expected)
 ```
 The expected number of times we pick a ball until we get a red ball for the second time is `r round(expected, 4)`.
 
@@ -766,20 +692,20 @@ prob_3_bdays <- sum(bdays_per_day == 3) / 1000000
 
 n_days <- 365 * prob_3_bdays
 
-print (n_days)
+print(n_days)
 ```
 
 ```{r qq4b}
 prop_distinct <- sum(bdays_per_day != 0) / 1000000
 n_distinct <- 365 * prop_distinct
 
-print (n_distinct)
+print(n_distinct)
 ```
 
 ### Question 5
 
 ::: {.callout-note #note-non_standard_dist}
-Answering this question using simulation depends on the bonus material in @sec-non-standard.
+Answering this question using simulation depends on the bonus material in @sec-p6_non_standard.
 :::
 
 A continuous random variable X has the following probability density function:
@@ -801,12 +727,16 @@ Verify that f(x) is a valid probability density function.
 
 ```{r qq5a}
 # Calculate the area under the curve
-area <- integrate(function (x) {((4 * x) * (9 - x^2)) / 81},
-                  lower=0,
-                  upper=3)
+area <- integrate(
+  function(x) {
+    ((4 * x) * (9 - x^2)) / 81
+  },
+  lower = 0,
+  upper = 3
+)
 print(area)
 ```
-The area under the curve is `r area$value` so the PDF is valid.
+The function is non-negative over its specified range and the area under the curve is `r area$value` so the PDF is valid.
 
 #### b
 
@@ -815,7 +745,9 @@ Find (a) the mean of f(x), (b) the mode of f(x) and (c) the median of f(x)
 ```{r qq5b}
 # Make a random number generator using this function
 rand_gen <- pinv.new(
-  pdf = function(x) {((4 * x) * (9 - x^2)) / 81},
+  pdf = function(x) {
+    ((4 * x) * (9 - x^2)) / 81
+  },
   lb = 0,
   ub = 3
 )
@@ -823,7 +755,7 @@ rand_gen <- pinv.new(
 # Generate 10,000 random points
 simu <- ur(rand_gen, n_sim)
 
-# Calcualte the mean and median of the points
+# Calculate the mean and median of the points
 mean_simu <- mean(simu)
 median_simu <- median(simu)
 
@@ -831,7 +763,7 @@ median_simu <- median(simu)
 print(mean_simu)
 
 # Median
-print (median_simu)
+print(median_simu)
 ```
 The simulated mean is `r round(mean_simu, 4)`.
 
@@ -844,15 +776,15 @@ The mode is trickier, as R doesn't by default calculate the mode for continuous 
 simu_df <- tibble(simulated_data = simu)
 
 # Plot a histogram
-ggplot(simu_df, aes(x = simulated_data)) + 
-  geom_histogram(bins=50)
+ggplot(simu_df, aes(x = simulated_data)) +
+  geom_histogram(bins = 50)
 ```
 The peak is apparent on this plot at about 1.7.
 
 ### Question 6
 
-::: {.callout-note #note-non_standard_dist}
-Answering this question using simulation depends on the bonus material in @sec-non-standard.
+::: {.callout-note #note-non_standard_dist2}
+Answering this question using simulation depends on the bonus material in @sec-p6_non_standard.
 :::
 
 ### a
@@ -874,7 +806,9 @@ $$
 ```{r qq6a}
 # Create a random number generator for this distribution
 rand_gen <- pinv.new(
-  pdf = function(x) {4 * x^3},
+  pdf = function(x) {
+    4 * x^3
+  },
   lb = 0,
   ub = 1
 )
@@ -887,19 +821,21 @@ rand_df <- tibble(points = simu)
 
 # Extract the points where x > 1/3
 # within this interval
-rand_df_2_3 <- rand_df |> 
-  filter(points <= (2/3),
-         points > 1/3)
+rand_df_2_3 <- rand_df |>
+  filter(
+    points <= (2 / 3),
+    points > 1 / 3
+  )
 
 # Extract the points where x > 1/3
-rand_df_1_3 <- rand_df |> 
-  filter(points > (1/3))
+rand_df_1_3 <- rand_df |>
+  filter(points > (1 / 3))
 
 # Calculate the proportion of points within the interval
 prop_between <-
   nrow(rand_df_2_3) / nrow(rand_df_1_3)
 
-print (prop_between)
+print(prop_between)
 ```
 
 ### b
@@ -928,7 +864,9 @@ $$
 ```{r qq6b}
 # Create a random number generator for this function
 rand_gen <- pinv.new(
-  pdf = function(x) {x^2 * (2*x + (3/2))},
+  pdf = function(x) {
+    x^2 * (2 * x + (3 / 2))
+  },
   lb = 0,
   ub = 1
 )
@@ -939,21 +877,21 @@ simu <- ur(rand_gen, 100000)
 
 # Calculate the Y value for each point and store it.
 simu_y <- c()
-for (sim_x in simu){
-  y = (2 / sim_x) + 3
+for (sim_x in simu) {
+  y <- (2 / sim_x) + 3
   simu_y <- c(simu_y, y)
 }
 
 # Find the variance of Y
 var_y <- var(simu_y)
 
-print (var_y)
+print(var_y)
 ```
 The variance of Y is `r round(var_y, 4)`.
 
 The simulated estimate of the variance may differ noticeably from the exact answer of approximately 1.97, because values of X close to zero produce very large values of Y, making the sample variance relatively unstable.
 
-### Question 8
+### Question 7
 
 A polar bear is hunting for food. From its current position, there are three different
 routes. The first one brings it back to the same point after 1 hours of walking. The
@@ -964,7 +902,8 @@ time it will take for the bear gets some food?
 
 ::: {.callout-note #note-while_loops}
 
-This solution uses conditional statements **if** and **else**, along with a  **while** loop - a loop which runs over and over again until something becomes true. We haven't covered these yet, but we will in Practicals 4 and 6. 
+This solution uses conditional statements **if** and **else**, along with a  **while** loop - a loop which runs over and over again until something becomes true. We have not covered these programming techniques in the practicals.
+
 :::
 
 ```{r qq8}
@@ -984,27 +923,27 @@ food <- FALSE
 # Vector to track the time taken in each simulation
 total_times <- c()
 
-for (i in seq_len(n_sim)){
+for (i in seq_len(n_sim)) {
   total_time <- 0
-  food = FALSE
+  food <- FALSE
   # Keep running these steps until he finds food
   while (!food) {
     # Randomly, based on the probabilities above, choose a route
     which_route <- sample(seq_len(3), 1, prob = c(prob1, prob2, prob3))
-    
+
     # If it is route 1, add 1 hour to the total time
-    if (which_route == 1){
+    if (which_route == 1) {
       total_time <- total_time + route1
     }
     # If it is route 2, add 6 hours to the total time
-    else if (which_route == 2){
+    else if (which_route == 2) {
       total_time <- total_time + route2
     }
     # If it is route 3, add 2 hours to the total time
     # then stop the loop because he has found food.
-    else if (which_route == 3){
+    else if (which_route == 3) {
       total_time <- total_time + route3
-      food = TRUE
+      food <- TRUE
     }
   }
   # Store the total time taken
@@ -1012,6 +951,6 @@ for (i in seq_len(n_sim)){
 }
 # Calculate the mean of the time taken over the 10,000 simulations
 mean_total <- mean(total_times)
-print (mean_total)
+print(mean_total)
 ```
 The mean time for the polar bear to find food is `r round(mean_total, 4)`.

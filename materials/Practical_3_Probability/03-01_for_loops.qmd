@@ -8,8 +8,8 @@ author: "Katy Brown"
 ```{r setup_0301, include=FALSE}
 library(tidyverse)
 library(gt)
-library(cowsay)
 ```
+
 
 # Part 1: Loops {#sec-p3_loops}
 
@@ -18,7 +18,6 @@ library(cowsay)
 ## Sections
 - @sec-loops
 - @sec-storing_results
-- @sec-repeat_samples
 - @sec-summary_0301
 
 :::
@@ -30,33 +29,65 @@ By the end of this part of the practical you will be able to:
 - Explain the purpose of a `for` loop in programming.
 - Use a `for` loop to repeat a task.
 - Store results generated using a loop.
-- Apply loops to process multiple datasets.
 
 :::
 
-In this practical, you will need two Quarto documents:
+In this practical, you will need 5 Quarto documents:
 
 * `prac3_exercises.qmd` for basic exercises
 * `squirrels.qmd` for a squirrel based simulation exercise
-* `drosophila.qmd` for investigating mutation counts in Drosophila
+* `drosophila.qmd` to investigate mutation accumulation data from Drosophila
 * `distributions.qmd` for quick investigations of different probability distributions
 * `hpv.qmd` for analysing human papillomavirus data
 
-## For Loops {#sec-loops}
+## Sync your Git repository
+{{< include ../includes/git_pull.qmd >}}
+
+::: {.callout-important}
+
+### Levels
+
+In this practical, the [core]{.core-text} exercises will introduce you to using R to explore probability and perform a range of probability-based simulations. There is a lot of content, so please focus on completing the [core]{.core-text} material and exercises and reading the [recommended]{.rec-text} material first, completing the exercises where possible. Move on to the [extension]{.extension-text} and [bonus]{.bonus-text} exercises if you have time.
+
+The [extension]{.extension-text} exercises explore concepts in more depth. The programming may be slightly more advanced, but should be possible using only the R skills introduced in Practicals 1 and 2.
+
+The [bonus]{.bonus-text} exercises are intended for students who are already very comfortable with both R and probability and have plenty of time to spare.
+
+:::
+
+::: {.callout-important}
+
+### Part 7
+
+Part 7 demonstrates how you can answer almost all of the questions from the Probability problem sheets you completed earlier in the course using simulation alone.
+
+You are **not expected to work through all of these problems**, and they have not been assigned to different levels. They are provided as a reference to demonstrate how useful simulation can be for solving probability problems.
+
+:::
+
+## For Loops {#sec-loops .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 A loop is a way of repeating a task multiple times in a computer program. 
 
 There are two main types of loop, a **for loop**, which runs once for every item in a vector (or other sequence), or a **while loop** which runs until a certain condition is met. 
 
-In this part of the practical we will focus on **for loops**, which perform a task a fixed number of times. 
+In these practicals we will focus on **for loops**, which perform a task a fixed number of times or once for each item in a sequence.
 
 We usually loop over a vector, meaning we perform the task once for each item in the vector.
 
 To repeat a task `n` times, we can use `seq_len(n)`. This creates a sequence from `1` to `n`. The loop then runs `n` times, once for each number in this sequence. If we run our loop as `for (i in seq_len(n))`, each time we pass through the loop, the value of `i` increases by one.
 
+::: {.callout-note}
+We can also use the syntax `1:n` to iterate through the numbers from 1 to `n`. We will always use `seq_len(n)` in these practicals, but you may see this alternative elsewhere.
+:::
+
 We refer to each pass through the loop as an **iteration** - we **iterate** over a loop.
 
-In a loop, like in a function, we use curly brackets `{}` to show which code is part of the loop - so everything inside the brackets will be repeated every time we iterate through the loop.
+In a loop we use curly brackets `{}` to show which code is part of the loop - so everything inside the brackets will be repeated every time we iterate through the loop.
 
 For example:
 
@@ -65,6 +96,7 @@ for (i in seq_len(10)) {
   print(i)
 }
 ```
+
 We can add steps to our loop to run on each iteration.
 
 ```{r for_loop_complex_n}
@@ -80,9 +112,14 @@ for (i in seq_len(10)) {
 }
 ```
 
-We also don't have to actually use our variable `i` inside the loop, we can just use it to set the number of iterations.
+We can use our variable `i` inside the loop but we don't have to, we can just use it to set the number of iterations.
 
-::: {.callout-exercise #ex-loops_1}
+::: {.callout-exercise #ex-loops_1 .core}
+
+### For loops
+
+[**Core**]{.core-text}
+
 In your `prac3_exercises.qmd` quarto document, generate two for loops:
 
 1. A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
@@ -101,7 +138,7 @@ Using a `for` loop, generate 5 such strings.
 
 ::: {.callout-answer collapse="true" #ex-loops_1_ans}
 
-A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
+[A `for` loop which calculates and prints the **cube** of each number from 1 to 20.]{.blue-text}
 
 ```{r loops_1_ans}
 for (i in seq_len(20)) {
@@ -109,11 +146,7 @@ for (i in seq_len(20)) {
 }
 ```
 
-This code snippet generates a random 5 letter character string.
-
-`paste(sample(letters, 5, replace = TRUE), collapse="")`
-
-Using a `for` loop, generate 5 such strings.
+[This code snippet generates a random 5 letter character string: `paste(sample(letters, 5, replace = TRUE), collapse="")`. Using a `for` loop, generate 5 such strings.]{.blue-text}
 
 ```{r loops_2_ans}
 for (i in seq_len(5)) {
@@ -128,17 +161,16 @@ You can also use a for loop to do something to each item in a vector.
 
 For example, in the below, we loop through the animals in our vector `species`. Inside the loop, the value of the variable `spp` changes on each iteration.
 
-The cowsay package uses the `say()` function and the argument <code>by = [animal_name]{.orange-text}</code> (where [animal_name]{.orange-text} is the name of an animal) to print ascii art of animals (and their associates) saying things.
+The cowsay package uses the `say()` function and the argument <code>by = [animal_name]{.orange-text}</code> (where [animal_name]{.orange-text} is the name of an animal) to print [ascii art](https://en.wikipedia.org/wiki/ASCII_art) of animals (and their associates) saying things.
 
 ```{r for_loop_vector}
 library(cowsay)
 species <- c("frog", "stegosaurus", "squirrel", "ghost")
 
 for (spp in species) {
-  say(paste("I am your friend, a", spp), by = spp)
+  say(paste("I am a", spp), by = spp)
 }
 ```
-
 As before, you can add as many steps as you like to perform during each iteration.
 
 Here, we check if each "species" name starts with the letter `s`.
@@ -177,7 +209,11 @@ cat("\nThe bird arrives in west Africa.")
 
 Everything inside the brackets is repeated, everything outside of the brackets is not.
 
-## Storing results from loops {#sec-storing_results}
+## Storing results from loops {#sec-storing_results .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 We sometimes want to store the results of running our loop in a vector or data frame.
 
@@ -194,11 +230,18 @@ for (i in seq_len(20)) {
 print(cubed_nums)
 ```
 
-We can also store the results of each iteration of a loop in a data frame. One way to do this is to create an empty data frame before starting the loop using `tibble()`. During each iteration, we create a new one-row data frame containing the results from that iteration, then add it to the results data frame using `bind_rows()`.
+We can also store the results of each iteration of a loop in a data frame.
 
-Each time the loop runs, current_row is replaced with the results for the current species, while species_df grows by one row.
+One way to do this is to create an empty data frame before starting the loop using `tibble()`. During each iteration, we create a new one-row data frame containing the results from that iteration, then add it to the results data frame using the function `bind_rows()`.
+
+`bind_rows()` combines two data frames row-wise — that is, it adds the rows of one data frame underneath the rows of the other. If the data frames do not contain exactly the same columns, the resulting data frame contains all columns present in either data frame, with `NA` used where a row has no value for a particular column.
+
+![`bind_rows()` and `bind_cols()`](images/rbind_cbind.png){#fig-bind width="100%"}
+
+In this case, each time the loop runs, `current_row` is replaced with the results for the current species, then `species_df` grows by one row.
 
 For example, we can adapt our animal loop above to store both the species name and whether it starts with "s":
+
 
 ```{r bind_rows}
 species <- c("monkey", "shark", "turkey", "snowman")
@@ -206,15 +249,71 @@ species_df <- tibble()
 
 for (spp in species) {
   has_s <- startsWith(spp, "s")
-  
-  
-  current_row <- tibble(Species=spp,
-                        Starts_with_S = has_s)
+  current_row <- tibble(
+    Species = spp,
+    Starts_with_S = has_s
+  )
   species_df <- species_df |> bind_rows(current_row)
 }
 gt(species_df)
 ```
 
+::: {.callout-exercise #ex-loop_df .core}
+
+### Build a 10-course breakfast
+
+[**Core**]{.core-text}
+
+The function `sample()` can select as single item from a vector.
+
+For example:
+
+```{r sample_animals}
+breakfast <- c("eggs", "bacon", "sausages", "toast")
+print(sample(breakfast, size = 1))
+```
+In your `prac3_exercises.qmd` Quarto document, using a `for` loop with 10 iterations, build a random 10-course breakfast. In each iteration:
+
+* Choosing a random breakfast food from the vector above (or a vector of your choice)
+* Choosing a random number between 1 and 5, to represent the number of that item you will have.
+* Store the item and the number in a one-row data frame.
+* Add this row to a data frame containing your complete breakfast
+
+After this is complete, display your data frame.
+
+::: {#copy-libraries .callout-note .copycode}
+### Include this code
+
+You will need to include the following as an R code chunk at the start of the document.
+
+```{r libraries_visex, eval=FALSE}
+library(tidyverse)
+library(gt)
+```
+:::
+
+::: {.callout-answer collapse="true" #ex-loop_df_ans}
+
+```{r loop_df_ans}
+breakfast <- c("eggs", "bacon", "sausages", "toast")
+nums <- seq_len(5)
+
+break_df <- tibble()
+
+for (i in seq_len(10)) {
+  item <- sample(breakfast, size = 1)
+  num <- sample(nums, size = 1)
+  row <- tibble(
+    item = item,
+    count = num
+  )
+  break_df <- bind_rows(break_df, row)
+}
+gt(break_df)
+```
+
+:::
+:::
 
 ## Review {#sec-summary_0301}
 
@@ -238,3 +337,4 @@ For this part of the practical, the main files you have edited are:
 These are the files you should select when making your Git commit.
 
 {{< include ../includes/git_commit.qmd >}}
+

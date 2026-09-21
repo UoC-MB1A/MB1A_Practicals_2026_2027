@@ -10,43 +10,77 @@ library(gt)
 set.seed(42)
 ```
 
-# Part 5: Conditional Probability and Bayes' Theorem {#sec-bayes}
+# Part 5: Conditional Probability {#sec-p5_bayes}
 
-:::{.callout-tip .objectives}
-#### Learning objectives
+::: {.callout-note .partmenu #parts-0305}
+
+## Sections
+- @sec-dataset_cc
+- @sec-hpv_data
+- @sec-variation_with_age_cc
+- @sec-cc_as_outcome [(Bonus)]{.bonus-text}
+- @sec-summary_0305
+
+:::
+
+::: {.callout-tip .objectives #objectives-0305}
+
+## Learning objectives
 
 By the end of this part of the practical you will be able to:
 
 - Calculate conditional probabilities from observed data in R.
-- Calculate and interpret the sensitivity and specificity of a biological marker in R.
-- Use simulation to investigate conditional probability and Bayes' theorem.
-- Use simulation to estimate the probability of an outcome given observed evidence.
+- Calculate and interpret the sensitivity and specificity of a biological marker.
+- Use simulation to investigate conditional probabilities.
 - Explain how the prevalence of an outcome affects the interpretation of a marker or test result.
 
 :::
 
-## UK cervical screening data
+## UK cervical screening data {#sec-dataset_cc .core}
 
-In the UK, cervical screening is routinely offered to any individual with a cervix aged 25 to 64. This screening tests for high risk strains of human papillomavirus (HPV). Members of this group of viruses can damage cells in the cervix and cause cervical cancer. Where tests are positive for high risk HPV (hrHPV), the samples are further tested for abnormal cells and, if abnormal cells are found, additional tests for pre-cancerous cells and cervical cancer are performed.
+[**Core**]{.core-text}
 
-Therefore, testing for hrHPV can be considered to be a marker for abnormal cervical cells, and therefore for pre-cancerous conditions of the cervix and cervical cancer.
+[↑ top](#)
 
-The following data are from [this publication](https://doi.org/10.1038/sj.bjc.6603210), published in 2006 in the British Journal of Cancer (note that this is before routine vaccination against HPV was introduced in the UK. In this study 24,510 people in the UK were screened for hrHPV and cytology was performed in all cases to detect abnormal cells. In this practical we will consider 21,843 of these people - excluding people who had borderline or mild abnormal cytology.
+In the UK, cervical screening is routinely offered regularly to any individual with a cervix aged 25 to 64. This screening tests for high-risk strains of **human papillomavirus** (HPV). Members of this group of viruses can damage cells in the cervix and cause cervical cancer. Where tests are positive for **high-risk HPV (hrHPV)**, the samples are further tested for abnormal cells and, if abnormal cells are found, additional tests for pre-cancerous cells and cervical cancer are performed.
+
+For the purposes of this practical, we will treat hrHPV status as a marker associated with abnormal cervical cytology, and later explore how this relates to the probability of cervical cancer.
+
+The following data are from [this publication](https://doi.org/10.1038/sj.bjc.6603210), published in 2006 in the British Journal of Cancer (note that this is before routine vaccination against HPV was introduced in the UK).
+
+In this study 24,510 people in the UK were screened for hrHPV and cytology was performed in all cases to detect abnormal cells. In this practical we will consider 21,843 of these people - by excluding people who had borderline or mild abnormal cytology.
+
+## HPV data analysis {#sec-hpv_data .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 Of these 21,843, 12.1% of people tested positive for hrHPV. 2.1% of people had moderately or severely abnormal cytology, the remainder were normal.
 
 The number of people with and without hrHPV and with and without abnormal cytology are provided in CSV format in `data/cm_all_ages.csv`. 
 
-:::{.callout-exercise #ex-confusion_matrix_all_ages}
+:::{.callout-exercise #ex-confusion_matrix_all_ages .core}
+
+### Calculate conditional probabilities
+
+[**Core**]{.core-text}
+
 In your `hpv.qmd` Quarto file, read `data/cm_all_ages.csv` into a data frame and view the contents with `gt()`.
 
 For this first part of the exercise you do not need to use simulation, you can directly calculate the values from the data frame.
 
 Calculate:
-* The proportion of people with hrHPV who have abnormal cells.
-* The proportion without hrHPV who have abnormal cells.
-* The proportion of people with abnormal cells who have hrHPV - the sensitivity of hrHPV as a marker.
-* The proportion of people who have normal cells and don't have hrHPV - the specificity of hrHPV as a marker.
+* The proportion of people with hrHPV who have abnormal cells. Store this as `prop_abnormal_given_hpv`
+* The proportion without hrHPV who have abnormal cells. Store this as `prop_abnormal_given_no_hpv`
+* The proportion of people with abnormal cells who have hrHPV - the sensitivity of hrHPV as a marker. Store this as `prop_hpv_given_abnormal`.
+* The proportion of people who have normal cells and don't have hrHPV - the specificity of hrHPV as a marker. Store this as `prop_no_hpv_given_normal`.
+
+:::{.callout-note #note-filter_pull}
+
+Remember that you can use the `pull()` function to extract a column from a data frame and the `filter()` function to filter rows based on specific criteria.
+
+:::
 
 :::{.callout-answer collapse="true" #ex-confusion_matrix_all_ages_ans}
 
@@ -66,16 +100,28 @@ Extract the true positives, true negatives, false positives, false negatives:
 
 ```{r extract_values_hrhpv}
 tp <- hpv_df |>
-  filter(HPV_Status == "HPV+", Cytology == "Abnormal") |>
+  filter(
+    HPV_Status == "HPV+",
+    Cytology == "Abnormal"
+  ) |>
   pull(N_individuals)
 tn <- hpv_df |>
-  filter(HPV_Status == "HPV-", Cytology == "Normal") |>
+  filter(
+    HPV_Status == "HPV-",
+    Cytology == "Normal"
+  ) |>
   pull(N_individuals)
 fp <- hpv_df |>
-  filter(HPV_Status == "HPV+", Cytology == "Normal") |>
+  filter(
+    HPV_Status == "HPV+",
+    Cytology == "Normal"
+  ) |>
   pull(N_individuals)
 fn <- hpv_df |>
-  filter(HPV_Status == "HPV-", Cytology == "Abnormal") |>
+  filter(
+    HPV_Status == "HPV-",
+    Cytology == "Abnormal"
+  ) |>
   pull(N_individuals)
 ```
 
@@ -152,6 +198,12 @@ The specificity of HPV status as a test for abnormal cells is `r round(prop_no_h
 :::
 :::
 
+## Variation with age {#sec-variation_with_age_cc .rec}
+
+[**Recommended**]{.rec-text}
+
+[↑ top](#)
+
 So far, we've calculated proportions using the whole sample of 21,843 individuals. However, the prevalence of moderate/severe abnormal cytology varies considerably with age.
 
 In this sample the authors described:
@@ -160,121 +212,165 @@ In this sample the authors described:
 * **1.81%** prevalence of moderate/severe abnormal cytology in individuals aged 30-49
 * **0.47%** prevalence of moderate/severe abnormal cytology individuals aged 50-64
 
-:::{.callout-exercise #ex-simulation_by_age}
+In the following series of exercises, we will use simulation to deduce the probability that someone with hrHPV has moderate/severe abnormal cytology.
 
-In your `HPV.qmd` Quarto file:
+:::{.callout-exercise #ex-simulation_by_age .rec}
 
-* For each of these age groups, simulate a sample of 10,000 individuals with the appropriate prevalence of moderate/severe cytology.
+### Simulate different age groups
 
-* For the individuals in your simulation with and without moderate/severe cytology, simulate the presence of HPV based on the frequencies calculated in exercise 1.
+[**Recommended**]{.rec-text}
 
-* In each iteration, store the number of people with HPV, the number of people with abnormal cells and the number of people with abnormal cells and HPV in a data frame.
+In your `hpv.qmd` Quarto file:
+
+* For each of these age groups, simulate a sample of 10,000 individuals with the appropriate prevalence of moderate/severe cytology. You can use a binomial distribution with the function `rbinom()` where `n_sim` is 10000, `size` is 1 and `prob` is the proportion of people with moderate/severe morphology from the table above.
+
+* For each age range, count how many samples in the simulation have moderate/severe cytology and how many do not.
+
+::: {.callout-answer collapse="true" #ex-simulation_by_age_ans1}
+
+[For each of these age groups, simulate a sample of 10,000 individuals with the appropriate prevalence of moderate/severe cytology. You can use a binomial distribution with the function `rbinom()` where `n_sim` is 10000, `size` is 1 and `prob` is the proportion of people with moderate/severe morphology from the table above.]{.blue-text}
+
+```{r simulation_by_age_ans1}
+cyt_statuses_20_29 <- rbinom(10000, size = 1, prob = 0.0508)
+cyt_statuses_30_49 <- rbinom(10000, size = 1, prob = 0.0181)
+cyt_statuses_50_64 <- rbinom(10000, size = 1, prob = 0.0047)
+```
+
+[For each age range, count how many samples in the simulation have moderate/severe cytology and how many do not.]{.blue-text}
+
+```{r simulation_by_age_ans2}
+n_mod_sev_20_29 <- sum(cyt_statuses_20_29)
+n_ok_20_29 <- 10000 - n_mod_sev_20_29
+n_mod_sev_30_49 <- sum(cyt_statuses_30_49)
+n_ok_30_49 <- 10000 - n_mod_sev_30_49
+n_mod_sev_50_64 <- sum(cyt_statuses_50_64)
+n_ok_50_64 <- 10000 - n_mod_sev_50_64
+```
+
+:::
+:::
+
+Now we know how many people have normal and abnormal cells. The next step is to simulate which of the people with and without abnormal cells are hrHPV positive.
+
+In @ex-confusion_matrix_all_ages we already calculated the probability of an individual having hrHPV, given that they have abnormal cells, and stored this in the variable `prop_hpv_given_abnormal`. 
+
+We didn't calculate the probability of an individual having hrHPV given that they have normal cells, but we did calculate the probability of **not** having hrHPV given that they have normal cells - this is stored as `prop_no_hpv_given_normal`. We can therefore subtract this from 1 to get the probability of having HPV given that they have normal cells.
+
+::: {.callout-note .copycode #copy-prop_hpv_given_normal}
+
+### Include this code 
+
+Include this code in your `hpv.qmd` Quarto file.
+
+```{r prop_hpv_given_normal}
+prop_hpv_given_normal <- 1 - prop_no_hpv_given_normal
+```
+
+:::
+
+:::{.callout-exercise #ex-simulation_by_age2 .rec}
+
+### Investigate the effect of prevalence
+
+[**Recommended**]{.rec-text}
+
+In your `hpv.qmd` Quarto file:
+
+* For each age range, for the number of individuals in the simulation with moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals with moderate/severe cytology and `prob` as `prop_hpv_given_abnormal`.
+
+* For each age range, for the number of individuals in the simulation without moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals without moderate/severe cytology and `prob` as `prop_hpv_given_normal`.
+
+* For each age range, find the total number of people with HPV by adding together the number of people with HPV and moderate / severe cytology and the number of people with HPV and not moderate / severe cytology.
+
+* Store the number of people with HPV, the number of people with abnormal cells and the number of people with abnormal cells and HPV in a data frame, with one row for each age range. You may find it easiest to create a one-row data frame for each age range and combine them using `bind_rows()`.
+
+::: {.callout-answer collapse="true" #ex-simulation_by_age2_ans}
+
+[For each age range, for the number of individuals in the simulation with moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals with moderate/severe cytology and `prob` as `prop_hpv_given_abnormal`.]{.blue-text}
+
+```{r simulation_by_age_ans3}
+hpv_count_ab_20_29 <- sum(rbinom(n_mod_sev_20_29, size = 1, prob = prop_hpv_given_abnormal))
+hpv_count_ab_30_49 <- sum(rbinom(n_mod_sev_30_49, size = 1, prob = prop_hpv_given_abnormal))
+hpv_count_ab_50_64 <- sum(rbinom(n_mod_sev_50_64, size = 1, prob = prop_hpv_given_abnormal))
+```
+
+[For each age range, for the number of individuals in the simulation without moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals without moderate/severe cytology and `prob` as `prop_hpv_given_normal`.]{.blue-text}
+
+```{r simulation_by_age_ans4}
+hpv_count_norm_20_29 <- sum(rbinom(n_ok_20_29, size = 1, prob = prop_hpv_given_normal))
+hpv_count_norm_30_49 <- sum(rbinom(n_ok_30_49, size = 1, prob = prop_hpv_given_normal))
+hpv_count_norm_50_64 <- sum(rbinom(n_ok_50_64, size = 1, prob = prop_hpv_given_normal))
+```
+
+[For each age range, find the total number of people HPV by adding together the number of people with HPV and moderate / severe cytology and the number of people with HPV and not moderate / severe cytology.]{.blue-text}
+
+```{r simulation_by_age_ans5}
+n_hpv_20_29 <- hpv_count_ab_20_29 + hpv_count_norm_20_29
+n_hpv_30_49 <- hpv_count_ab_30_49 + hpv_count_norm_30_49
+n_hpv_50_64 <- hpv_count_ab_50_64 + hpv_count_norm_50_64
+```
+
+[Store the number of people with HPV, the number of people with abnormal cells and the number of people with abnormal cells and HPV in a data frame, with one row for each age range.]{.blue-text}
+
+```{r simulation_by_age_ans6}
+row_20_29 <- tibble(
+  age_range = "20-29",
+  n_hpv = n_hpv_20_29,
+  n_abnormal_cells = n_mod_sev_20_29,
+  n_hpv_and_abnormal_cells = hpv_count_ab_20_29
+)
+
+row_30_49 <- tibble(
+  age_range = "30-49",
+  n_hpv = n_hpv_30_49,
+  n_abnormal_cells = n_mod_sev_30_49,
+  n_hpv_and_abnormal_cells = hpv_count_ab_30_49
+)
+
+row_50_64 <- tibble(
+  age_range = "50-64",
+  n_hpv = n_hpv_50_64,
+  n_abnormal_cells = n_mod_sev_50_64,
+  n_hpv_and_abnormal_cells = hpv_count_ab_50_64
+)
+
+results <- bind_rows(row_20_29, row_30_49, row_50_64)
+gt(results)
+```
+
+:::
+:::
+
+Now, based on these data, we can deduce the probability that someone with hrHPV will go on to be diagnosed with moderate/severe abnormal cytology for each age group. 
+
+::: {.callout-exercise #ex-simulation_by_age3 .rec}
+
+### Count HPV positive individuals
+
+[**Recommended**]{.rec-text}
+
+In your `hpv.qmd` Quarto file:
 
 * Use your simulated data to estimate the probability that an individual in each group with hrHPV has moderate-or-worse abnormal cytology. 
 
-* Use your simulated data to estimate the probability that an individual in each group with moderate-or-worse abnormal cytology has hrHPV.
+* Why does the probability that an individual in each group with hrHPV has moderate-or-worse abnormal cytology differ so much, even though the sensitivity and specificity of hrHPV as a marker were kept constant?
 
-* Why does the probability that an individual in each group with hrHPV has moderate-or-worse abnormal cytology differ so much, even though the sensitivity and specificity of hrHPV as a marker were kept constant? 
+::: {.callout-answer collapse="true" #ex-simulation_by_age3_ans}
 
+[Use your simulated data to estimate the probability that an individual in each group with hrHPV has moderate-or-worse abnormal cytology. ]{.blue-text}
 
-::: {.callout-answer collapse="true" #ex-simulation_by_age_ans}
-
-[For each of these age groups, simulate a sample of 10,000 individuals with the appropriate prevalence of moderate/severe cytology.]{.blue-text}
-
-[For the individuals in your simulation with and without moderate/severe cytology, simulate the presence of HPV based on the frequencies calculated in exercise 1.]{.blue-text}
-
-[In each iteration, store the number of people with HPV, the number of people with abnormal cells and the number of people with abnormal cells and HPV in a data frame.]{.blue-text}
-
-```{r simulation_by_age_ans1}
-prevs <- c(0.0508, 0.0181, 0.0047)
-
-n_sim <- 10000
-results <- tibble()
-
-for (prop_abnormal in prevs) {
-  # Simulate a population of people with normal and
-  # abnormal cells at the population rate
-  # 1 = abnormal
-  # 0 = normal
-  cyt_statuses <- rbinom(n_sim, 1, prop_abnormal)
-
-  # Count how many people have abnormal cells
-  n_abnormal <- sum(cyt_statuses == 1)
-  n_normal <- sum(cyt_statuses == 0)
-
-  # For the people with abnormal cells, simulate HPV
-  # presence based on the proportion of people with HPV
-  # given abnormal cells calculated in ex1.
-
-  hpv_statuses_abnormal <- rbinom(
-    n_abnormal, 1,
-    prop_hpv_given_abnormal
-  )
-
-  # For the people with normal cells, simulate HPV
-  # presence
-
-  # Calculate the proportion of people with HPV given
-  # normal cells
-  prop_hpv_given_normal <- 1 - prop_no_hpv_given_normal
-
-  hpv_statuses_normal <- rbinom(
-    n_normal, 1,
-    prop_hpv_given_normal
-  )
-
-  # How many people have HPV
-  n_hpv <- sum(hpv_statuses_normal == 1) + sum(hpv_statuses_abnormal == 1)
-
-  # How many people have HPV and abnormal cells - true positives
-  n_hpv_abnormal <- sum(hpv_statuses_abnormal == 1)
-
-  # Generate a row for the data frame with these results
-  current <- tibble(
-    Prevalence = prop_abnormal,
-    N_Abnormal = n_abnormal,
-    N_HPV = n_hpv,
-    N_TP = n_hpv_abnormal
-  )
-
-  # Add this result to the data frame
-  results <- results |> bind_rows(current)
-}
-
-# Add a column to the data frame with the age ranges
-# .before = 1 - put it before the first column
-
-results <- results |> mutate(age_group = c(
-  "20-29",
-  "30-49",
-  "50-64"
-), .before = 1)
-```
-
-[Use your simulated data to estimate the probability that an individual in each group with hrHPV has moderate-or-worse abnormal cytology.]{.blue-text}
-
-[Use your simulated data to estimate the probability that an individual in each group with moderate-or-worse abnormal cytology has hrHPV.]{.blue-text}
-
-```{r simulation_by_age_ans2}
-# Calculate the proportion of people with abnormal cells given that
-# they have HPV and the proportion of people with HPV given that they
-# have abnormal cells, add these to the data frame.
-
+```{r simulation_by_age_ans7}
 results <- results |> mutate(
-  Abnormal_given_hrHPV = N_TP / N_HPV,
-  hrHPV_given_Abnormal = N_TP / N_Abnormal
+  Abnormal_given_hrHPV = n_hpv_and_abnormal_cells / n_hpv
 )
 
 gt(results)
 ```
 
-* `r round(results |> filter(age_group == "20-29") |> pull(Abnormal_given_hrHPV)*100, 2)`% of people aged 20-29 with HPV have abnormal cells.
-* `r round(results |> filter(age_group == "30-49") |> pull(Abnormal_given_hrHPV)*100, 2)`% of people aged 30-49 with HPV have abnormal cells.
-* `r round(results |> filter(age_group == "50-64") |> pull(Abnormal_given_hrHPV)*100, 2)`% of people aged 50-64 with HPV have abnormal cells.
+* `r round(results |> filter(age_range == "20-29") |> pull(Abnormal_given_hrHPV)*100, 2)`% of people aged 20-29 with HPV have abnormal cells.
+* `r round(results |> filter(age_range == "30-49") |> pull(Abnormal_given_hrHPV)*100, 2)`% of people aged 30-49 with HPV have abnormal cells.
+* `r round(results |> filter(age_range == "50-64") |> pull(Abnormal_given_hrHPV)*100, 2)`% of people aged 50-64 with HPV have abnormal cells.
 
-* `r round(results |> filter(age_group == "20-29") |> pull(hrHPV_given_Abnormal)*100, 2)`% of people aged 20-29 with abnormal cells have HPV.
-* `r round(results |> filter(age_group == "30-49") |> pull(hrHPV_given_Abnormal)*100, 2)`% of people aged 30-49 with abnormal cells have HPV.
-* `r round(results |> filter(age_group == "50-64") |> pull(hrHPV_given_Abnormal)*100, 2)`% of people aged 50-64 with abnormal cells have HPV.
 
 [Why does the probability that an individual in each group with hrHPV has moderate-or-worse abnormal cytology differ so much, even though the sensitivity and specificity of hrHPV as a marker were kept constant?]{.blue-text}
 
@@ -283,9 +379,9 @@ Because the prevalence of abnormal cells changes so much between the groups. The
 :::
 :::
 
-::: {.callout-note .extension #ex-cc}
+## Cervical cancer as an outcome {#sec-cc_as_outcome .fold .bonus}
 
-### Extension exercise: Cervical cancer
+[**Bonus**]{.bonus-text}
 
 We can extend this simulation to consider cervical cancer as an outcome, rather than just abnormal cells.
 
@@ -299,14 +395,21 @@ Based on [this paper](https://doi.org/10.1111/cyt.12259) published in Cytopathol
 
 This means that, based on this sample, for example, 1.5% of people aged 20-29 with at least moderately abnormal cells will then be diagnosed with cervical cancer. In this study no-one of any age with normal cells was diagnosed with cervical cancer.
 
+::: {.callout-exercise #ex-cc_outcome .bonus}
+
+### Cervical cancer as an outcome
+
+[**Bonus**]{.bonus-text}
+
 Extend your simulation to calculate the probability that a 24 year old who is HPV positive and has a cervix would be diagnosed with cervical cancer on further testing (assuming prevalence is constant across the 20-29 age group).
 
-::: {.callout-answer collapse="true" #ex-cc_ans}
+::: {.callout-answer collapse="true" #ex-cc_ans }
 
 ```{r cc_ans}
 results_cc <- tibble()
 prop_cc_given_abnormal <- 0.015
 prop_abnormal <- 0.0508
+n_sim <- 10000
 
 # Simulate a population of people with normal and
 # abnormal cells at the population rate for age 20-29
@@ -317,7 +420,7 @@ cyt_statuses <- rbinom(n_sim, 1, prop_abnormal)
 # Count how many people have abnormal cells
 n_abnormal <- sum(cyt_statuses == 1)
 n_normal <- sum(cyt_statuses == 0)
-  
+
 # For the people with abnormal cells, simulate HPV
 # presence based on the proportion of people with HPV
 # given abnormal cells calculated in ex1.
@@ -325,16 +428,14 @@ hpv_statuses_abnormal <- rbinom(
   n_abnormal, 1,
   prop_hpv_given_abnormal
 )
-
 # For the people with normal cells, simulate HPV
-# presence based on the proportion of people with HPV
-# given abnormal cells calculated in ex1.
+# presence based on the probability of HPV
+# given normal cells calculated above.
 hpv_statuses_normal <- rbinom(
   n_normal, 1,
   prop_hpv_given_normal
 )
 
-# Only the abnormal cells people can have HPV in this example
 # For the people with abnormal cells, simulate cervical
 # cancer with a prevalence of 0.015
 cc_statuses_abnormal <- rbinom(
@@ -352,6 +453,7 @@ prop_cc <- n_hpv_cc / n_hpv
 
 print(prop_cc)
 ```
+
 Under this simplified model, we estimate that `r round(prop_cc*100, 2)`% of HPV-positive individuals aged 20–29 would be diagnosed with cervical cancer.
 
 :::{.callout-note #note-cc}
@@ -362,6 +464,13 @@ This is a simplified model designed to explore conditional probability and shoul
 :::
 :::
 
+## Review {#sec-summary_0305}
+
+[↑ top](#)
+
+In this part of the practical, you have explored conditional probability using cervical screening data. You have seen that the probability of an outcome given a test result depends not only on the properties of the test or marker, but also on how common the outcome is in the population.
+
+
 For this part of the practical, the main files you have edited are:
 
 * `hpv.qmd`
@@ -369,4 +478,3 @@ For this part of the practical, the main files you have edited are:
 These are the files you should select when making your Git commit.
 
 {{< include ../includes/git_commit.qmd >}}
-

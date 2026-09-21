@@ -13,7 +13,7 @@ library(moments)
 set.seed(42)
 ```
 
-# Part 3: Using simulation to understand your data {#sec-distributions}
+# Part 3: Using simulation to understand data {#sec-p3_distributions}
 
 ::: {.callout-note .partmenu #parts-0303}
 
@@ -21,6 +21,7 @@ set.seed(42)
 - @sec-other_distributions
 - @sec-comparing_sim_real
 - @sec-continuous
+- @sec-summary_0303
 :::
 
 :::{.callout-tip .objectives #objectives-0303}
@@ -28,16 +29,20 @@ set.seed(42)
 ## Learning Objectives
 
 By the end of this section, you will be able to:
-* Work with both discrete and continuous probability distributions.
+* Distinguish between discrete and continuous probability distributions.
 * Use R functions to generate random values and calculate probabilities or probability densities.
 * Compare observed data with theoretical probability distributions.
-* Use simulation to investigate whether observed data are consistent with a distribution
+* Use simulation to investigate whether observed data are consistent with a theoretical probability distribution.
 
 :::
 
 
 
-## Other distributions {#sec-other_distributions}
+## Other distributions {#sec-other_distributions .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 In part 2, you used:
 
@@ -74,7 +79,11 @@ For example:
 
 This means we can use a lot of what we've learned already with many different probability distributions.
 
-## Comparing real, simulated and expected data - discrete distributions {#sec-comparing_sim_real}
+## Comparing real, simulated and expected data - discrete distributions {#sec-comparing_sim_real .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 We can use these functions to help establish the distribution of real datasets. 
 
@@ -95,7 +104,7 @@ This seems reasonable:
 
 In this practical, we will just look at data from one chromosome arm, the right arm of chromosome 2.
 
-### Examining the data
+### Examining the data {#sec-examine_drosophila .core}
 
 This data is provided in a CSV file extracted from the supplementary data associated with the publication - `data/drosophila_counts.csv`. Let's read it.
 
@@ -107,9 +116,13 @@ gt(dcounts)
 * The `Population_ID` column is the ID of the Drosophila population in which the mutations were counted.
 * The `Novel_Mutation_Count` column is the number of mutations accumulated on chromosome arm 2R in that population.
 
-::: {.callout-exercise #ex-summary_drosophila}
+::: {.callout-exercise #ex-summary_drosophila .core}
 
-In your `drosophila.qmd` Quarto file, read the csv file and create a data frame using the function `summarize()` which shows:
+### Summarise data
+
+[**Core**]{.core-text}
+
+In your `drosophila.qmd` Quarto file, read the csv file and create a data frame using the function `summarise()` which shows:
 
 * Total novel mutation count  (function `sum()`), in the column `total_nm`.
 * Maximum novel mutation count  (function `max()` in the column `max_nm`)
@@ -126,7 +139,7 @@ Looking at the mean and variance, do you think that these data are Poisson distr
 dcounts <- read_csv("data/drosophila_counts.csv")
 
 dros_summary <- dcounts |>
-  summarize(
+  summarise(
     total_nm = sum(Novel_Mutation_Count),
     max_nm = max(Novel_Mutation_Count),
     mean_nm = mean(Novel_Mutation_Count),
@@ -135,19 +148,23 @@ dros_summary <- dcounts |>
 
 gt(dros_summary)
 ```
+
 The variance is a bit higher than the mean - maybe the data is not Poisson distributed? We can do some more analysis to find out.
 
 :::
 :::
 
-### Plotting the data
+### Plotting the data {#sec-plot_drosophila .core}
 
 Let's plot a bar chart of our mutation counts and have a look at its distribution.
 
-We can plot the number of occurrences of each value of discrete variable in R by adding a `geom_bar` layer to our ggplot. The mapping function `aes()` for geom_bar only needs one argument, the column to map to the x axis. The y axis will be generated automatically by counting the number of times each value of x occurs.
+We can plot the number of occurrences of each value of a discrete variable in R by adding a `geom_bar()` layer to our ggplot. The mapping function `aes()` for geom_bar only needs one argument, the column to map to the x axis. The y axis will be generated automatically by counting the number of times each value of x occurs.
 
+::: {.callout-exercise #ex-bar_drosophila .core}
 
-::: {.callout-exercise #ex-bar_drosophila}
+### Plot a bar chart
+
+[**Core**]{.core-text}
 
 In your `drosophila.qmd` Quarto file, plot a bar chart of the number of populations in which each number of mutations was observed, using `ggplot()` and `geom_bar()`.
 
@@ -164,9 +181,9 @@ ggplot(dcounts, aes(x = Novel_Mutation_Count)) +
 
 Again, this kind of looks Poisson distributed, but it's hard to be sure.
 
-::: {.callout-note .extension #bon-theoretical_pois}
+### Adding a theoretical distribution {#sec-theroretical_drosophila .fold .extension}
 
-### Extension content: Adding a theoretical distribution
+[**Extension**]{.extension-text}
 
 It might help to compare this data to a theoretical, perfect, Poisson distribution.
 
@@ -182,7 +199,7 @@ So, to calculate the probability of observing exactly *k* mutations under a Pois
 
 `k` is the particular mutation count for which we want to calculate the probability.
 
-We can calculate this using the R function `dpois`.
+We can calculate this using the R function `dpois()`.
 
 Let's look at our summary data frame again:
 
@@ -243,7 +260,7 @@ theor_df <- tibble(
 ```
 
 ::: {.callout-note .copycode #copy-theoretical}
-### Include this code
+### Include this code (Extension only)
 
 Include this code in your `drosophila.qmd` Quarto file.
 
@@ -277,8 +294,8 @@ theor_df <- tibble(
 
 We can now add the theoretical points to our plot using `geom_point()`. We can give this function the new data frame to use instead of `dcounts`. 
 
-::: {.callout-note .copycode #copy-theoretical}
-### Include this code
+::: {.callout-note .copycode #copy-theoretical2}
+### Include this code (Extension only)
 
 Include this code in your `drosophila.qmd` Quarto file.
 
@@ -294,20 +311,24 @@ ggplot(data = dcounts, mapping = aes(x = Novel_Mutation_Count)) +
 ```
 
 Again, the data looks *kind of* Poisson distributed, but it is not particularly definitive.
+
 :::
-:::
+
+### Simulation {#sec-simulation_drosophila .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 One explanation for the difference between the sample mean and variance is the small sample size. This would also explain why our data don't look like an ideal Poisson distribution.
 
 We only have `r n_populations` populations, so the values we calculate from our sample will not exactly match the true properties of the underlying distribution. Even if the mutations really do follow a Poisson distribution, different random samples of only `r n_populations` populations will likely give slightly different means and variances simply due to chance.
 
-### Simulation
-
-This is another case where simulating data is really helpful. Let's simulate some data sets which are definitely Poisson distributed and have a sample size of `r n_populations`, and see how they look.
+This is another case where simulating data is really helpful. Let's simulate some data sets which are definitely drawn from a Poisson distribution and have a sample size of `r n_populations`, and see how often the difference between the mean and the variance is as big or bigger than for our data.
 
 We can use the `rpois` function for this. 
 
-First, let's generate simulated mutation counts on chromosome 2R for 17 populations.
+First, let's generate simulated mutation counts drawn from a Poisson distribution for 17 populations, with lambda corresponding to our sample mean.
 
 ```{r simulate_mut_counts_drosophila}
 simulated_counts <- rpois(
@@ -339,22 +360,55 @@ sample_diff <- abs(sample_mean - sample_variance)
 
 We saw a difference of `r round(sample_diff, 2)` between the two values.
 
-::: {.callout-exercise #ex-sim_drosophila}
+::: {.callout-exercise #ex-sim_drosophila .core}
+
+### Simulate Poisson data
+
+[**Core**]{.core-text}
 
 In your `drosophila.qmd` Quarto file, simulate the mutation counts on chromosome 2R for 17 populations 1000 times.
 
-Store the mean of each simulation in a vector `mean_sim` and the variance of each simulation in another vector `var_sim`. 
+You will need to combine the simulation above with the `for` loops you learned in Part 1.
 
-Make a new data frame, stored as the variable `df_sim`, where the column `mean` contains your simulated means and the column `var` contains your simulated variances.
+Before starting your loop:
 
-Then, add a third column, `diff`, which shows the absolute value (function `abs()`)  of the difference between the mean and the variance. 
+* Create an empty vector called `mean_sim`.
+* Create an empty vector called `var_sim`.
+
+Then, on each iteration of your loop:
+
+* Use `rpois()` to simulate mutation counts for 17 populations, as demonstrated above.
+* Calculate the mean (`mean()`) of the simulated counts.
+* Calculate the variance (`var()`) of the simulated counts.
+* Append these values to the `mean_sim` and `var_sim` vectors.
+
+After the loop has finished:
+
+* Create `df_sim`, containing the two vectors as columns called `mean` and `var`.
+* Add a third column, `diff`, containing the absolute difference between the mean and variance.
 
 ::: {.callout-answer collapse="true" #ex-sim_drosophila_ans}
-```{r sim_drosophila_ans}
+
+[Create an empty vector called `mean_sim`.]{.blue-text}
+[Create an empty vector called `var_sim`.]{.blue-text}
+
+```{r sim_drosophila_ans1}
 mean_sim <- c()
 var_sim <- c()
+```
+
+[Then, on each iteration of your loop:]{.blue-text}
+
+* [Use `rpois()` to simulate mutation counts for 17 populations, as demonstrated above.]{.blue-text}
+* [Calculate the mean (`mean()`) of the simulated counts.]{.blue-text}
+* [Calculate the variance (`var()`) of the simulated counts.]{.blue-text}
+* [Append these values to the `mean_sim` and `var_sim` vectors.]{.blue-text}
+
+
+```{r sim_drosophila_ans2}
 for (i in seq_len(1000)) {
-  # Simulate the counts
+  # Use `rpois()` to simulate mutation counts for
+  # 17 populations
   simulated_counts <- rpois(
     n = n_populations,
     lambda = sample_mean
@@ -364,11 +418,17 @@ for (i in seq_len(1000)) {
   current_mean <- mean(simulated_counts)
   current_var <- var(simulated_counts)
 
-  # Add these to your vectors
+  # Append these values to the `mean_sim` and `var_sim` vectors.
   mean_sim <- c(mean_sim, current_mean)
   var_sim <- c(var_sim, current_var)
 }
+```
 
+[Create `df_sim`, containing the two vectors as columns called `mean` and `var`.]{.blue-text}
+
+[Add a third column, `diff`, containing the absolute difference between the mean and variance.]{.blue-text}
+
+```{r sim_drosophila_ans3}
 df_sim <- tibble(
   mean = mean_sim,
   var = var_sim,
@@ -380,17 +440,25 @@ df_sim <- tibble(
 
 Now, let's plot histograms of the 1000 differences between the mean and variance we calculated and see how they compare to our value of `r round(sample_diff, 2)`.
 
-::: {.callout-exercise #ex-plot_sim_drosophila}
+::: {.callout-exercise #ex-plot_sim_drosophila .core}
 
-In your `drosophila.qmd` Quarto file, using ggplot, plot a histogram showing the difference between the mean and variance values in your simulated data.
+### Plot differences between mean and variance
+
+[**Core**]{.core-text}
+
+* In your `drosophila.qmd` Quarto file, using ggplot, plot a histogram (`geom_histogram()`) showing the difference between the mean and variance values in your simulated data.
+
+::: {.callout-note #note-geom_histogram}
 
 You can add a histogram in ggplot using the function `geom_histogram()`. Like `geom_bar()` it only requires one mapping, the x axis variable, in this case the difference between the mean and variance. The y axis frequencies are calculated from the data.
 
 You can change the number of bins in the histogram using the argument `bins = n`, where `n` is the number of bins.
 
-Look at your histogram - does our observed value of `r round(sample_diff, 2)` fit within the values observed for small samples pulled from a Poisson distribution?
+:::
 
-Calculate the percentage of your simulated samples in which the difference between the sample mean and sample variance is **greater** than the difference observed in the study.
+* Look at your histogram - does our observed value of `r round(sample_diff, 2)` fit within the values observed for small samples pulled from a Poisson distribution?
+
+* Calculate the percentage of your simulated samples in which the difference between the sample mean and sample variance is **greater** than the difference observed in the study.
 
 ::: {.callout-answer collapse="true" #ex-plot_sim_drosophila_ans}
 
@@ -399,7 +467,7 @@ ggplot(df_sim, aes(x = diff)) +
   geom_histogram(bins = 50)
 ```
 
-The differences seen in the study are consistent with what we'd expect for a sample of 17 populations if the mutation counts on chromosome 2R are Poisson distributed.
+The difference between the mean and variance seen in the study is consistent with what we could observe in a sample of 17 populations drawn from a Poisson distribution.
 
 ```{r percentile_pois_ans}
 greater <- df_sim |> filter(diff > sample_diff)
@@ -412,9 +480,6 @@ In my simulation, `r round(prop, 2)*100`% of simulated samples had a difference 
 :::
 :::
 
-::: {.callout-note .extension #bon-lines_mean_var}
-### Extension content: Adding sample difference to the histogram
-
 You can add a vertical line to the plot using the function `geom_vline()` with the mapping  `x_intercept`. ggplot will add a vertical line at the position you give to `x_intercept`.
 
 ```{r adding_lines_drosophila}
@@ -423,9 +488,12 @@ ggplot(df_sim, aes(x = diff)) +
   geom_vline(xintercept = sample_diff, color = "red")
 ```
 
-:::
 
-## Comparing real, simulated and expected data - continuous distributions {#sec-continuous}
+## Comparing real, simulated and expected data - continuous distributions {#sec-continuous .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 Whatever type of distribution our data is from, this process is very similar.
 
@@ -442,9 +510,14 @@ The data, which are identical to Supplementary File S1 from the paper, are saved
 ![*Geotria macrostoma*](images/geo.jpg){#fig-geo width="50%"}
 
 
-::: {.callout-exercise #ex-dunkle}
+::: {.callout-exercise #ex-dunkle .core}
+
+### Visualise fish length
+
+[**Core**]{.core-text}
 
 In your `distributions.qmd` Quarto file:
+
 * Read the file `fish.csv` into a data frame variable. Use the `clean_names()` function to clean the column names.
 * Filter the data to keep only rows where the `genus` column is equal to `Geotria`, store the result as a variable named `geo`.
 * Plot the column `total_length_cm` as a histogram
@@ -470,6 +543,7 @@ The data looks basically normally distributed.
 :::
 :::
 
+### Converting probability to density {#sec-prob_dens .core}
 With continuous data, the probability distribution is described by a **probability density function** (PDF) rather than a PMF. The theoretical distribution is therefore represented by a continuous curve rather than probabilities at a series of discrete values.
 
 So that our data is comparable with the PDF, we can easily transform our data to show density, rather than counts, using the function `after_stat()` with the argument `density`, which we use as a mapping to the `geom_histogram()` function. `after_stat(density)` rescales the histogram so that its total area is 1, allowing it to be compared directly with a probability density function.
@@ -482,6 +556,8 @@ ggplot(geo, aes(
     bins = 30
   )
 ```
+
+### Adding a theoretical normal distribution {#sec-theoretical_normal .core}
 
 It might be helpful to compare our data to a perfect, theoretical normal distribution. For a continuous distribution, it's very easy to add a theoretical distribution to our plot.
 
@@ -520,28 +596,34 @@ ggplot(geo, aes(
     args = list(mean = mean_obs, sd = sd_obs)
   )
 ```
-One property that can help us describe how the shape of a distribution differs from a normal distribution is skewness - a measure of the asymmetry of the  distribution
+
+### Comparing skewness between our observed data and a theoretical distribution {#sec-skewness .fold .extension}
+
+[**Extension**]{.extension-text}
+
+One property that can help us describe how the shape of a distribution differs from a normal distribution is skewness - a measure of the asymmetry of the distribution. We can use simulation to establish if the skewness of our observed sample is within the range of skewness values for samples of the same size pulled from a normal distribution.
 
 ![Skewness](images/skewness.png){#fig-skew}
 
-We can calculate this using the R functions `skewness()` from the package `moments`.
+We can calculate skewness using the R function `skewness()` from the package `moments`.
 
-The theoretical normal distribution has a skewness of 0. However, a finite sample drawn from a normal distribution will not usually have a skewness of exactly 0.
+The theoretical normal distribution has a skewness of 0. However, a finite sample drawn from a normal distribution will not usually have a skewness of exactly 0. 
 
-The only argument to this function is our observed data vector.
+The only argument to this function is a  vector. For example, for our observed data:
 
 ```{r get_body_length}
-# Pull the total_length_cm column from the geo data frame
-body_length <- geo |> pull(total_length_cm)
-
 # Calculate the skewness
-skew <- skewness(body_length)
+skew <- skewness(pull(geo, total_length_cm))
 print (skew)
 ```
 
 Our observed value is `r round (skew, 2)` — reasonably close to 0. But how close should we expect it to be for a sample of this size? Let's simulate normally distributed data for comparison.
 
-::: {.callout-exercise #ex-sim_dunkle}
+::: {.callout-exercise #ex-sim_dunkle .extension}
+
+### Skewness in simulated data
+
+[**Extension**]{.extension-text}
 
 In your `distributions.qmd` Quarto file:
 
@@ -549,6 +631,8 @@ In your `distributions.qmd` Quarto file:
 * Store the skewness for each simulation as a vector.
 * Calculate the proportion of simulated datasets which were more skewed than the observed data.
 
+Because skewness can be positive or negative, use the absolute values of the observed and simulated skewness when comparing how far they are from zero (function `abs()`)
+ 
 ::: {.callout-answer collapse="true" #ex-sim_dunkle_ans}
 
 [For 10,000 repeats, using the `rnorm()` function, generate the same number of data points as in the `geo` table with the same mean and standard deviation as *Geotria*.]{.blue-text}
@@ -576,6 +660,7 @@ skew_df <- tibble(Skewness = skews)
 # Retrieve the observed skewness
 body_length <- geo |> pull(total_length_cm)
 skew_obs <- skewness(body_length)
+
 # Calculate the absolute value of the observed skewness
 abs_skew_obs <- abs(skew_obs)
 
@@ -602,7 +687,11 @@ The observed skewness is therefore consistent with what we might expect from a s
 
 [↑ top](#)
 
-We have now used simulation both to model stochastic biological processes and to investigate whether observed biological data are consistent with theoretical probability distributions.
+In this part of the practical, you have used simulation to investigate whether properties of observed biological data are consistent with those expected from theoretical probability distributions.
+
+* Discrete probability distributions describe probabilities associated with discrete outcomes.
+* Continuous distributions use probability densities.
+* Simulation can be used to investigate whether features of an observed dataset are consistent with those expected under a theoretical probability distribution.
 
 ::: {.callout-note #note-summary_0303}
 

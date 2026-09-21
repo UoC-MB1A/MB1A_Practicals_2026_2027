@@ -3,35 +3,37 @@ format: html
 practical: Practical_3_Probability
 doc-id: "0306"
 ---
-```{r setup_0304, include=FALSE}
+```{r setup_0306, include=FALSE}
 library(tidyverse)
 set.seed(42)
 ```
 
-# Part 5 - Bonus: Sampling from a user-defined probability distribution {#sec-non_standard}
+# Part 6 - Sampling from a user-defined probability distribution {#sec-p6_non_standard}
 
-**This whole page is bonus content**
-
-::: {.callout-note .partmenu #parts-0303}
+::: {.callout-note .partmenu #parts-0306}
 
 ## Sections
 - @sec-user_defined
-
+- @sec-exercise_pdf
 :::
 
-:::{.callout-tip .objectives #objectives-0303}
+:::{.callout-tip .objectives #objectives-0306}
 
 ## Learning Objectives
 
 By the end of this section, you will be able to:
 
-* Plot a user-defined PDF.
-* Check a probability function is valid using `integrate()`
-* Simulate data based on a user defined PDF.
+* Plot a user-defined PDF. [(Bonus)]{.bonus-text}
+* Check a probability function is valid using `integrate()` [(Bonus)]{.bonus-text}
+* Simulate data based on a user-defined PDF. [(Bonus)]{.bonus-text}
 
 :::
 
-## Sampling from a user defined probability distribution {#sec-user_defined}
+## Sampling from a user-defined probability distribution {#sec-user_defined .fold .bonus}
+
+[**Bonus**]{.bonus-text}
+
+[↑ top](#)
 
 Earlier, we used functions such as `rbinom()`, `rpois()` and `rnorm()` to simulate data from named probability distributions. However, sometimes we may want to simulate from a probability distribution for which R does not provide a built-in random-sampling function, or from a PDF that we have defined ourselves.
 
@@ -71,7 +73,7 @@ ggplot() +
 
 As expected, cats like to sit in the middle where they can obscure the most keys and, ideally, block the view of the screen.
 
-For a function to be a valid PDF, its total area must equal 1. We can check this in R using `integrate()`. `integrate()` takes 3 arguments - the PDF, `lower` - the lower bound - and `upper` - the upper bound.
+For a function to be a valid PDF, it must be non-negative over its range and its total area must equal 1. We can check the area in R using integrate(). Here, we will use `integrate()` with 3 arguments - the PDF, `lower` - the lower bound - and `upper` - the upper bound.
 
 ```{r integrate_cats}
 cat_int <- integrate(function(x) {
@@ -86,7 +88,8 @@ Using our probability density function, let's simulate the positions of 10,000 c
 
 First, we use the function `pinv.new()` to create a **random number generator** which can sample values from a continuous distribution described by a user-defined PDF.
 
-The arguments are:
+The arguments we will use are:
+
 * `pdf` - the PDF
 * `lb` - the lower bound, in our case 0
 * `ub` - the upper bound, in our case 40
@@ -135,11 +138,15 @@ print(prop_middle)
 
 Based on our simulation, cats will sit in the middle 10 cm of the keyboard approximately `r round(prop_middle * 100, 2)`% of the time.
 
-::: {.callout-exercise #ex-cats}
+## User-defined PDF Exercise {#sec-exercise_pdf .fold .bonus}
+
+[**Bonus**]{.bonus-text}
+
+[↑ top](#)
 
 Some cat parents like to, for their own amusement, pile objects onto their sleeping cat, a game known as [cat buckaroo](https://knowyourmeme.com/memes/cat-buckaroo).
 
-![Example data point](images/jethro1.jpeg){#fig-cataroo width="50%"}
+![Example data point](images/jethro1.jpeg){#fig-cataroo1 width="50%"}
 
 Cats will tolerate this to a certain extent but, at some point, will get up and shake the objects off. The weight of objects the cat will tolerate varies considerably between cats.
 
@@ -157,7 +164,7 @@ $$
 
 ::: {.callout-note #note-cos_pi}
 
-To use pi in R, you can just type pi.
+The value of $\pi$ is available in R as pi
 
 ```{r pi}
 print(pi)
@@ -165,6 +172,8 @@ print(pi)
 To calculate a cosine you can use the function `cos()` with one argument, the number for which you want to calculate the cosine.
 
 :::
+
+::: {.callout-exercise #ex-cataroo .bonus}
 
 In your `distributions.qmd` Quarto file:
 
@@ -174,7 +183,7 @@ In your `distributions.qmd` Quarto file:
 * Simulate 10,000 values.
 * A cat has already tolerated 500 g of objects. Estimate the probability that it will tolerate the addition of a 75 g Yoda figurine without shaking everything off.
 
-![Example data point](images/jethro2.jpeg){#fig-cataroo width="50%"}
+![Example data point](images/jethro2.jpeg){#fig-cataroo2 width="50%"}
 
 ::: {.callout-answer collapse="true" #ex-cats_ans}
 
@@ -242,10 +251,23 @@ prop <- nrow(over_575) / nrow(over_500)
 print(prop)
 ```
 
-![Example data point](images/jethro3.jpeg){#fig-cataroo width="50%"}
+![Example data point](images/jethro3.jpeg){#fig-cataroo3 width="50%"}
 
 If a cat has tolerated the addition of 500g of objects, there is an estimated `r round(prop*100, 2)`% probability they will tolerate an additional 75g Yoda figurine.
 
-![Example data point](images/jethro4.jpeg){#fig-cataroo width="50%"}
+![Example data point](images/jethro4.jpeg){#fig-cataroo4 width="50%"}
 :::
 :::
+## Review {#sec-summary_0306}
+
+[↑ top](#)
+
+In this part of the practical, you have seen that simulation is not limited to the named probability distributions built into R. A probability density function can be defined directly, checked to ensure that it is valid, and used to generate simulated observations.
+
+For this part of the practical, the main files you have edited are:
+
+* `distributions.qmd`
+
+These are the files you should select when making your Git commit.
+
+{{< include ../includes/git_commit.qmd >}}

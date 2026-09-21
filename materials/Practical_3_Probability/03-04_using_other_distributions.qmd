@@ -3,25 +3,26 @@ format: html
 practical: Practical_3_Probability
 doc-id: "0304"
 ---
-# Part 4: Simulation exercises {#sec-using_other_distributions}
+# Part 4: Simulation exercises {#sec-p4_using_other_distributions}
 
-::: {.callout-note .partmenu #parts-0303}
+::: {.callout-note .partmenu #parts-0304}
 
 ## Sections
 - @sec-distribution_1
 - @sec-distribution_2
+- @sec-summary_0304
 
 :::
 
-:::{.callout-tip .objectives #objectives-0303}
+:::{.callout-tip .objectives #objectives-0304}
 
 ## Learning Objectives
 
-By the end of this section, you will have practiced:
+By the end of this section, you will have practised:
 
-* Simulating data based on any probability distribution implemented in R.
+* Simulating data from different probability distributions implemented in R.
 * Comparing observed data with theoretical probability distributions.
-* Using simulation to investigate whether observed data are consistent with a distribution.
+* Using simulation to investigate whether observed data are consistent with a theoretical probability distribution.
 
 :::
 
@@ -35,15 +36,23 @@ set.seed(42)
 
 Using the skills we've built so far, we can now simulate data from any probability distribution implemented in R, whether to compare with observed data, test a hypothesis or model a process.
 
-### Distribution 1 {#sec-distribution_1}
+## Neuronal firing intervals {#sec-distribution_1 .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 The data in `data/neurons.csv` is from [this paper](https://doi.org/10.3389/fncom.2019.00069), published by Koepcke et al. in Frontiers in Computational Neuroscience in 2019. 
 
-These authors investigated whether a single neuron can rapidly detect changes in a sensory stimulus by analysing the time between successive action potentials (interspike intervals). The analysis was performed using multiple neurons.
+These authors investigated whether a single neuron can rapidly detect changes in a sensory stimulus by analysing the time between successive action potentials (inter-spike intervals). The analysis was performed using multiple neurons.
 
 The data in data/neurons.csv come from a single neuron and contain a series of waiting times between successive spikes, measured in seconds.
 
-::: {.callout-exercise #ex-neurons}
+::: {.callout-exercise #ex-neurons .extension}
+
+### Investigate neuronal firing
+
+[**Extension**]{.extension-text}
 
 Imagine that you are a researcher and you notice that this neuron seems to fire very regularly. In particular, it never seems to pause for very long between spikes. By estimating the probability distribution of the waiting times and using simulation, investigate whether the longest observed wait is unusually short.
 
@@ -56,15 +65,10 @@ In your `distributions.qmd` Quarto file:
 * Using the appropriate function from the table in @sec-other_distributions, generate 1000 random datasets with the same number of measurements from the distribution you have selected, generating parameters from your data as needed. Record the longest wait time.
 * Assuming the observed data follows the same distribution as the simulated data, plot a histogram of your simulated maxima and estimate if the maximum observed wait time is unexpectedly short. 
 * Calculate the percentage of your simulated samples in which the maximum wait time is **less** than or equal to the maximum observed in the study.
-
-::: {.callout-note .extension #bon-pexp}
-
-### Extension Exercise: Cumulative probability
 * Using the appropriate cumulative probability function, calculate the theoretical probability that a single wait time will be less than or equal to your observed maximum.
+* Use this probability to calculate the theoretical probability that all observed waiting times would be less than or equal to the observed maximum.
 
-:::
-
-::: {.callout-answer #ex-neurons_ans}
+::: {.callout-answer collapse="true" #ex-neurons_ans}
 
 [Read the file containing the data.]{.blue-text}
 
@@ -81,6 +85,7 @@ ggplot(
 ) +
   geom_histogram(bins = 50)
 ```
+
 [Based on the shape of the histogram and the biological process being measured, decide which probability distribution might provide an appropriate model for the waiting times.]{.blue-text}
 
 The distribution of waiting times between spikes looks approximately exponential.
@@ -102,6 +107,7 @@ If spike occurrences can be modelled as a Poisson process, the waiting times bet
 max_observed <- max(pull(neuron_df, Inter_Spike_Interval))
 print(max_observed)
 ```
+
 [Using the appropriate function from the table in @sec-other_distributions, generate 1000 random datasets with the same number of measurements from the distribution you have selected, generating parameters from your data as needed. Record the longest wait time.]{.blue-text}
 
 ```{r calc_rate_neurons}
@@ -135,6 +141,7 @@ ggplot(
   geom_histogram(bins = 50) +
   geom_vline(xintercept = max_observed, color = "red")
 ```
+
 The observed maximum waiting time is towards the lower end of the simulated maxima, but still falls within the range expected under the fitted exponential model.
 
 [Calculate the percentage of your simulated samples in which the maximum wait time is **less** than or equal to the maximum observed in the study.]{.blue-text}
@@ -146,10 +153,6 @@ filt_maxi <- maxi_df |>
 prop <- nrow(filt_maxi) / nrow(maxi_df)
 print(prop)
 ```
-
-
-::: {.callout-note .extension #bon-pexp_ans}
-### Extension Exercise: Cumulative probability - Answer
 
 [Using the appropriate cumulative probability function, calculate the theoretical probability that a single wait time will be less than or equal to your observed maximum.]{.blue-text}
 
@@ -164,18 +167,15 @@ print(prob_one_wt)
 prob_all_wt <- prob_one_wt^n_observations
 print(prob_all_wt)
 ```
-:::
 
 Based on these results, the observed maximum waiting time is shorter than many of the simulated maxima. However, it is still well within the range expected from an exponential distribution, so there is no strong evidence that its behaviour is unusual, assuming our wait times are exponentially distributed.
 
 :::
 :::
 
-## Distribution 2 {#sec-distribution_2}
+## Pancreatic islet sizes {#sec-distribution_2 .fold .bonus}
 
-::: {.callout-note .extension #bon-weibull}
-
-### Extension Exercise: Distribution 2 
+[**Bonus**]{.bonus-text}
 
 Pancreatic islets of Langerhans are clusters of endocrine cells in the pancreas. Individual pancreatic islets vary in size - measurements from human pancreatic islet isolations show a distribution of islet diameters.
 
@@ -183,12 +183,18 @@ In [this paper](https://doi.org/10.3727/096368909X476968), published in Cell Tra
 
 They found that the distribution of individual islet diameters could be described by a Weibull probability distribution with shape parameter κ=1.5 and scale parameter λ=105.
 
-The Weibull probability distribution is available in R using the functions `rweibull()`, `dweibull()`, `pweibull()` and `qweibull`. 
+The Weibull probability distribution is available in R using the functions `rweibull()`, `dweibull()`, `pweibull()` and `qweibull()`. 
 
-The parameters for `rweibull` are:
-* n - number of points to simulate
-* shape - the shape parameter of the distribution
-* scale - the scale parameter of the distribution
+The main arguments for `rweibull` are:
+* `n` - number of points to simulate
+* `shape` - the shape parameter of the distribution
+* `scale` - the scale parameter of the distribution
+
+::: {.callout-exercise #ex-weibull .bonus}
+
+### The Weibull distribution
+
+[**Bonus**]{.bonus-text}
 
 In your `distributions.qmd` Quarto file:
 * Plot a density-scaled histogram of the diameters of 10,000 simulated islets.
@@ -250,6 +256,12 @@ print(prop_counted_islets_100_150)
 
 :::
 :::
+
+## Review {#sec-summary_0304}
+
+[↑ top](#)
+
+In this part of the practical, you have applied the simulation techniques introduced earlier to less familiar probability distributions and biological datasets. The same general approach can be used with many different probability distributions available in R.
 
 For this part of the practical, the main files you have edited are:
 

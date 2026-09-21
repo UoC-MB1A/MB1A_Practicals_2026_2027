@@ -2,5 +2,112 @@
 title: "Plan and Learning Objectives"
 format: html
 practical: Practical_3_Probability
-doc-id: "0200"
+doc-id: "0300"
 ---
+
+# Practical 3 - Probability
+
+::: {.callout-tip .partmenu #parts-0100}
+
+## @sec-p3_loops
+
+#### Sections
+- @sec-loops
+- @sec-storing_results
+- @sec-summary_0301
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+- Explain the purpose of a `for` loop in programming.
+- Use a `for` loop to repeat a task.
+- Store results generated using a loop.
+
+## @sec-p2_simulation
+
+#### Sections
+- @sec-simulation
+- @sec-how_simulation
+- @sec-unequal_probabilities
+- @sec-repeating_simulations
+- @sec-binomial
+- @sec-inbuilt_functions
+- @sec-summary_0302
+
+#### Learning Objectives
+
+By the end of this part of the practical you will be able to:
+
+- Approximate the outcome of stochastic processes using simulation
+- Use `sample()` to simulate random events with equal or unequal probabilities.
+- Use a `for` loop to repeat a simulation.
+- Calculate binomial probabilities using `dbinom()` and `pbinom()`.
+- Generate random values from a binomial distribution using `rbinom()`.
+- Compare an empirical distribution obtained by simulation with a theoretical probability mass function.
+
+## @sec-p3_distributions
+
+#### Sections
+- @sec-other_distributions
+- @sec-comparing_sim_real
+- @sec-continuous
+- @sec-summary_0303
+
+#### Learning Objectives
+
+By the end of this section, you will be able to:
+* Distinguish between discrete and continuous probability distributions.
+* Use R functions to generate random values and calculate probabilities or probability densities.
+* Compare observed data with theoretical probability distributions.
+* Use simulation to investigate whether observed data are consistent with a theoretical probability distribution.
+
+
+## @sec-p4_using_other_distributions
+
+#### Sections
+- @sec-distribution_1
+- @sec-distribution_2
+- @sec-summary_0304
+
+#### Learning Objectives
+
+By the end of this section, you will have practised:
+
+* Simulating data from different probability distributions implemented in R.
+* Comparing observed data with theoretical probability distributions.
+* Using simulation to investigate whether observed data are consistent with a theoretical probability distribution.
+
+## @sec-p5_bayes
+
+### Sections
+- @sec-dataset_cc
+- @sec-hpv_data
+- @sec-variation_with_age_cc
+- @sec-cc_as_outcome [(Bonus)]{.bonus-text}
+- @sec-summary_0305
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+- Calculate conditional probabilities from observed data in R.
+- Calculate and interpret the sensitivity and specificity of a biological marker.
+- Use simulation to investigate conditional probabilities.
+- Explain how the prevalence of an outcome affects the interpretation of a marker or test result.
+
+## @sec-p6_non_standard
+
+### Sections
+- @sec-user_defined
+- @sec-exercise_pdf
+
+#### Learning Objectives
+
+By the end of this section, you will be able to:
+
+* Plot a user-defined PDF. [(Bonus)]{.bonus-text}
+* Check a probability function is valid using `integrate()` [(Bonus)]{.bonus-text}
+* Simulate data based on a user-defined PDF. [(Bonus)]{.bonus-text}
+
+:::
+
