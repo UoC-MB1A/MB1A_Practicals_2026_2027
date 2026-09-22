@@ -20,7 +20,7 @@ author: "Katy Brown"
 By the end of this part of the practical you will be able to:
 
 * Construct multiple sequence alignments of related sequences.
-* Build phylogenetic trees
+* Build phylogenetic trees.
 * Visualise phylogenetic trees.
 
 :::
@@ -30,14 +30,17 @@ library(ORFik)
 library(tidyverse)
 library(gt)
 library(msa)
-library(treeio)
 library(ggtree)
-
-identified_orf_df <- read_csv("output/identified_orfs.tsv")
+library(ape)
+library(DECIPHER)
+library(treeio)
+identified_orf_df <- read_csv("output/identified_orfs.csv")
 identified_orf_seqs <- readAAStringSet("output/identified_orf_aa_seqs.fasta")
 ```
 
-## Build multiple sequence alignments {#sec-alignment}
+## Build multiple sequence alignments {#sec-alignment .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
@@ -61,7 +64,8 @@ identified_current <- identified_orf_seqs["Ccan_ERV_1_ORF_4"]
 
 print(identified_current)
 ```
-Then, I will read file `output/Ccan_ERV_1_ORF_4.fasta`, generated earlier when I saved my BLAST output as a FASTA file, into a second `AAStringSet` with the `readAAStringSet()` function.
+
+Then, I will read the file `output/Ccan_ERV_1_ORF_4_refs.fasta`, generated earlier when I saved my BLAST output as a FASTA file, into a second `AAStringSet` with the `readAAStringSet()` function.
 
 ```{r current_refs}
 refs_current <- readAAStringSet("output/Ccan_ERV_1_ORF_4_refs.fasta")
@@ -84,7 +88,8 @@ Now I can generate a multiple sequence alignment for these sequences directly in
 combined_current_aligned <- msa(combined_current, method = "Muscle")
 combined_current_aligned_ss <- as(combined_current_aligned, "AAStringSet")
 ```
-I will  save the aligned sequences into a new FASTA file, in my output directory, named as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.fasta</code>, replacing <span style="color: orange;">gene</span> with the gene I am currently analysing (gag, pol or env), <span style="color: red;">j</span> with my ERV ID and <span style="color: blue;">i</span> with my ORF ID.
+
+I will save the aligned sequences into a new FASTA file, in my output directory, named <code>[gene]{.orange-text}\_Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.green-text}.fasta</code>, replacing <code>[gene]{.orange-text}</code> with the gene I am currently analysing (**gag**, **pol** or **env**), <code>[ERV_j]{.red-text}</code> with my ERV ID and <code>[i]{.green-text}</code> with my ORF ID.
 
 ```{r save_alignment}
 writeXStringSet(combined_current_aligned_ss, "output/gag_Ccan_ERV_1_ORF_4.fasta")
@@ -96,62 +101,94 @@ You can look at this file directly in a text editor, however it's quite difficul
 Retroviruses, especially endogenous retroviruses, are very divergent, so the sequences might not look to be particularly well aligned - don't worry, this is expected.
 :::
 
-::: {.callout-exercise #ex-build_msas}
+::: {.callout-exercise #ex-build_msas .core}
 
-{{< fa solid flask >}}
+### Generate multiple sequence alignments
 
-Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one multiple sequence alignment for each gene.
+[**Core**]{.core-text}
 
-Save all of the alignments in your output directory in FASTA format as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.fasta</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
+Repeat the steps above for each of the three ORF sequences in your `identified_orf_df` data frame, so that you have one multiple sequence alignment for each gene.
+
+* Create an `AAStringSet` with the single ORF sequence.
+* Create a second `AAStringSet` based on the BLAST output for the same ORF sequence.
+* Concatenate the two using `c()`
+* Align using `msa()`.
+* Convert back to `AAStringSet` format using `as()`.
+* Save using `writeXStringSet()`.
+
+Save all of the alignments in your output directory in FASTA format as <code>[gene]{.orange-text}\_Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.green-text}.fasta</code>, replacing <code>[gene]{.orange-text}</code> with the gene you are currently analysing (**gag**, **pol** or **env**), <code>[ERV_j]{.red-text}</code> with your ERV ID and <code>[i]{.green-text}</code> with your ORF ID.
 
 :::
 
-## Build phylogenies {#sec-phylogeny}
+## Build phylogenies {#sec-phylogeny .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
-There are various ways we can create phylogenies from our sequences, including directly inside R. However, in R the options for tree-building algorithms are quite limited.
+There are various ways we can create phylogenies from our sequences. We will use a distance-based, neighbour-joining approach.
 
-Instead, we can take our aligned sequences to an external web server to generate a phylogeny. Today we'll use the [IQTREE](https://www.hiv.lanl.gov/content/sequence/IQTREE/iqtree.html) web server.
+First, we create a distance matrix for our sequences, then we use the function `nj()` from the package `ape` to create a tree.
 
-IQTREE is a **maximum likelihood** approach to tree building which allows a specific **amino acid substitution** model to be specified.
+A distance matrix contains an estimate of the evolutionary distance between every pair of sequences in our alignment. Smaller distances indicate more similar sequences. The neighbour-joining method uses these distances to construct a tree in which more similar sequences tend to be grouped together.
 
-Upload one of your multiple sequence alignments in the Input section.
+I will again demonstrate this process with one of my ORFs, `Ccan_ERV_1_ORF_4`, which is a `gag` gene from the `gamma` genus. These are currently aligned with the related sequences we identified with BLAST and stored in my `combined_current_aligned_ss` variable.
 
-![IQTree](images/iqtree1.png){#fig-iqtree1}
+First, I will read the relevant FASTA file. We use `readAAStringSet()` rather than `readDNAStringSet()` because our sequences are in amino acid format.
 
-In the Options section, choose an amino acid model, RtREV. We would ideally use the `find best and apply` option to find the best fitting model, however this takes a very long time to run. The RtREV model, based on a retrovirus specific amino acid substitution matrix, is a good compromise in this case.
+```{r read_fasta_aabin}
+fasta_current <- readAAStringSet(
+  "output/gag_Ccan_ERV_1_ORF_4.fasta")
+```
 
-Please also select `Simple midpoint` in the "Root tree" section, as we don't have a specific outgroup sequence in this case.
+Next, we make a distance matrix based on our aligned sequences, using the function `DistanceMatrix()`, with one argument, our new `fasta_current` variable.
 
-![IQTree Options](images/iqtree2.png){#fig-iqtree2}
+```{r convert_aabin, message=FALSE}
+distance_matrix <- DistanceMatrix(fasta_current)
+```
 
-The default options are OK for our purposes for the other options, so choose **Submit**.
+Now, we're ready to make our neighbour-joining tree. This is very easy in R, just using the function `nj()`.
 
-::: {.callout-note #note-alignment_warning}
-You may see some warning messages that the sequence names in your phylogeny are not found in the alignment file - this is because IQTree replaces the `|` symbols in sequence names with `_` symbols, and is nothing to worry about.
-:::
+```{r make_tree}
+tree <- nj(distance_matrix)
+```
 
-Once the tree-building algorithm has finished (this might take a couple of minutes), click on `Newick` in the results section - this will show your tree in [Newick format](https://en.wikipedia.org/wiki/Newick_format). Paste the text displayed on the next screen into an empty text file and save it in your `output` directory as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.newick</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
+We can save it with the function `write.tree()`. The standard format for saving phylogenetic trees is called [Newick format](https://en.wikipedia.org/wiki/Newick_format) and has the suffix `.nwk`. 
+
+```{r save_tree}
+write.tree(tree, file = "output/gag_Ccan_ERV_1_ORF_4.nwk")
+```
 
 ::: {.callout-exercise #ex-build_newick}
 
-{{< fa solid flask >}}
+### Build phylogenetic trees
 
-Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one Newick file for each gene. Save all of the alignments in NEWICK format with names formatted as above.
+[**Core**]{.core-text}
+
+Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one Newick file for each gene.
+
+* Read the amino acid alignment.
+* Create a distance matrix.
+* Build a neighbour-joining tree.
+* Save the tree.
+
+Save all of the trees in Newick format with names formatted as <code>[gene]{.orange-text}\_Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.green-text}.nwk</code>, replacing <code>[gene]{.orange-text}</code> with the gene you are currently analysing (**gag**, **pol** or **env**), <code>[ERV_j]{.red-text}</code> with your ERV ID and <code>[i]{.green-text}</code> with your ORF ID.
 
 :::
 
-## Visualise phylogenies {#sec-visualise_phylogeny}
+
+## Visualise phylogenies {#sec-visualise_phylogeny .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
 Once the phylogenetic analyses are complete, we can then read our trees into R using the function `read.newick()`.
 
-For example, for my `gag_Ccan_ERV_1_ORF_4.fasta` newick file:
+For example, for my `output/gag_Ccan_ERV_1_ORF_4.nwk` Newick file:
 
 ```{r gag_gamma_newick}
-current_newick <- read.newick("output/gag_Ccan_ERV_1_ORF_4.newick")
+current_newick <- read.newick("output/gag_Ccan_ERV_1_ORF_4.nwk")
 ```
 
 To visualise phylogenies in R, a good option is the `ggtree()` package, which works similarly to `ggplot()`.
@@ -167,7 +204,7 @@ To label them, we add the function `geom_tiplab()`. The `size` argument to `geom
 
 ::: {.callout-note #note-quarto_figsize}
 
-Sometimes, the Quarto figure size will be too small to display your tree nicely, you can adjust this by clicking on the "Settings" button at the top of the code chunk and changing the `width` and `height` options.
+Sometimes, the Quarto figure size will be too small to display your tree nicely. You can adjust this by clicking on the "Settings" button at the top of the code chunk and changing the `width` and `height` options.
 
 ![Quarto Figure Size](images/chunksize.png){#fig-chunksize width="50%"}
 :::
@@ -195,7 +232,7 @@ ggtree(current_newick) +
 
 It's also good practice to add a scale bar to your tree. The scale bar represents evolutionary distance, in substitutions per site.
 
-Change the x and y co-ordinates to move it around so it's not on top of your tree.
+Change the x and y co-ordinates to move it around so it's not displayed on top of your tree.
 
 ```{r ggtree_scale, fig.width=10, fig.height=10}
 ggtree(current_newick) +
@@ -209,9 +246,9 @@ ggtree(current_newick) +
   geom_treescale(x = 0, y = 0, fontsize = 3)
 ```
 
-You can save your tree as a pdf using ggsave, again you may need to adjust the width and height to fit it nicely on the page, you can do this with the `width` and `height` arguments.
+You can save your tree as a PDF using `ggsave()`, again you may need to adjust the width and height to fit it nicely on the page, you can do this with the `width` and `height` arguments.
 
-```{r save_tree, fig.width=10, fig.height=10}
+```{r save_pdf_tree, fig.width=10, fig.height=10}
 tree_plot <- ggtree(current_newick) +
   geom_tiplab(aes(subset = label != "Ccan_ERV_1_ORF_4"),
     color = "black", size = 2
@@ -223,20 +260,42 @@ tree_plot <- ggtree(current_newick) +
   geom_treescale(x = 0, y = 0, fontsize = 3)
 
 ggsave(
-  "output/Ccan_ERV_1_ORF_4.pdf",
+  "output/gag_Ccan_ERV_1_ORF_4.pdf",
   plot=tree_plot,
   width = 10,
   height = 10
 )
 ```
 
-::: {.callout-exercise #ex-draw_trees}
+::: {.callout-exercise #ex-draw_trees .core}
 
-{{< fa solid flask >}}
+### Visualise phylogenetic trees
 
-Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one PDF tree for each gene.
+[**Core**]{.core-text}
 
-Save all of the trees as PDFs in your output directory as <code><span style="color: orange;">gene</span>\_Ccan\_ERV\_<span style="color: red;">j</span>\_ORF\_<span style="color: blue;">i</span>.pdf</code>, replacing <span style="color: orange;">gene</span> with the gene you are currently analysing (gag, pol or env), <span style="color: red;">j</span> with your ERV ID and <span style="color: blue;">i</span> with your ORF ID.
+Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one saved file for each gene.
+
+* Read the tree into R using `read.newick()`.
+* Plot the tree using `ggtree()`.
+* Add tip labels.
+* Adjust height and width.
+* Identify your new ORF in red.
+* Add a scale bar, move it so it doesn't overlap with the tree.
+* Save as PDF.
+
+Save all of the trees as PDFs in your output directory as <code>[gene]{.orange-text}\_Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.green-text}.pdf</code>, replacing <code>[gene]{.orange-text}</code> with the gene you are currently analysing (**gag**, **pol** or **env**), <code>[ERV\_j]{.red-text}</code> with your ERV ID and <code>[i]{.green-text}</code> with your ORF ID.
+
+:::
+
+::: {.callout-exercise #ex-compare_phylogenies .core}
+
+### Compare your phylogenies
+
+[**Core**]{.core-text}
+
+Compare the phylogenetic trees you generated for **gag**, **pol** and **env**.
+
+Do your ERV sequences appear most closely related to the same retroviruses in all three trees? If not, what biological processes might explain why different retroviral genes show different relationships?
 
 :::
 
@@ -248,10 +307,14 @@ Save all of the trees as PDFs in your output directory as <code><span style="col
 
 ### Summary
 
-* `DNAStringSet` and `AAStringSet` objects can be concatenated with the `c()` function
-* The `msa` function can be used to generate multiple sequence alignments from sets of biologist sequences.
-* The IQ-TREE web server is a good way to construct maximum-likelihood phylogenies.
-* `ggtree` is used to visualise and annotate phylogenetic trees.
+You have now completed the first ever phylogenetic analysis for your ORFs!
+
+* Multiple sequence alignments arrange related sequences so that homologous positions are aligned.
+* The `msa()` function can be used to generate multiple sequence alignments from sets of biological sequences.
+* We can create a distance matrix for our sequences using `DistanceMatrix()`.
+* The `nj()` function can be used to construct a neighbour-joining phylogenetic tree from a distance matrix.
+* Phylogenetic trees can be saved in Newick format using `write.tree()`.
+* `ggtree` can be used to visualise and annotate phylogenetic trees.
 
 :::
 

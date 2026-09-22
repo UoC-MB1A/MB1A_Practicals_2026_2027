@@ -29,16 +29,19 @@ library(tidyverse)
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
-* Use some of the tools from the R Bioconductor repository.
-* Identify and understand a FASTA file
-* Load a set of DNA sequences into R
-* Isolate a specific sequence
+* Describe the basic structure of a FASTA file.
+* Use Bioconductor packages for biological sequence analysis.
+* Read DNA sequences from a FASTA file into R.
+* Examine the lengths of sequences in a `DNAStringSet`.
+* Extract an individual sequence from a `DNAStringSet` using its identifier.
 
 
 ### @sec-p2_finding_orfs
 
 #### Sections
+- @sec-genes
 - @sec-orfs
+- @sec-add_names
 - @sec-translate
 - @sec-save
 - @sec-summary_0502
@@ -48,8 +51,9 @@ By the end of this part of the practical you will be able to:
 By the end of this part of the practical you will be able to:
 
 * Identify open reading frames in a DNA/RNA sequence.
+* Extract ORF sequences from DNA/RNA sequences.
 * Translate DNA/RNA sequences into amino acid sequences.
-* Save sequences as a FASTA file
+* Save biological sequences in FASTA format.
 
 
 ### @sec-p3_blast
@@ -58,6 +62,8 @@ By the end of this part of the practical you will be able to:
 - @sec-run_blast
 - @sec-blast_results
 - @sec-process_blast
+- @sec-join_orf_blast
+- @sec-select_longest
 - @sec-summary_0503
 
 
@@ -67,6 +73,7 @@ By the end of this part of the practical you will be able to:
 * Use BLASTp to find proteins related to a sequence of interest.
 * Interpret the results of a BLAST search.
 * Extract and organise information from BLAST results.
+* Use BLAST results to identify likely retroviral genes and genera.
 
 
 ### @sec-p4_msa_phylogeny
@@ -81,7 +88,7 @@ By the end of this part of the practical you will be able to:
 By the end of this part of the practical you will be able to:
 
 * Construct multiple sequence alignments of related sequences.
-* Build phylogenetic trees
+* Build phylogenetic trees.
 * Visualise phylogenetic trees.
 
 
@@ -93,14 +100,15 @@ By the end of this part of the practical you will be able to:
 - @sec-transfer_ervs
 - @sec-push_ervs
 - @sec-pull_request_ervs
+- @sec-summary_0505
 
 #### Learning objectives
-By the end of this part of the practical you will be able to:
+By the end of this part of the practical you will have:
 
 * Forked the MB1A_ERV_Submissions GitHub repository.
 * Cloned your fork onto your computer using RStudio.
 * Transferred your final results and analysis pipeline to the submission repository.
 * Pushed your results to your GitHub fork.
-* Created a Pull Request to contribute your results to the central MB1A_ERV_Submissions repository
+* Created a Pull Request to contribute your results to the central MB1A_ERV_Submissions repositoryry
 
 :::

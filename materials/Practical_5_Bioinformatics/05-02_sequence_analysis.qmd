@@ -9,7 +9,9 @@ author: "Katy Brown"
 
 ::: {.callout-note .partmenu #parts-0502}
 ## Sections
+- @sec-genes
 - @sec-orfs
+- @sec-add_names
 - @sec-translate
 - @sec-save
 - @sec-summary_0502
@@ -20,8 +22,9 @@ author: "Katy Brown"
 By the end of this part of the practical you will be able to:
 
 * Identify open reading frames in a DNA/RNA sequence.
+* Extract ORF sequences from DNA/RNA sequences.
 * Translate DNA/RNA sequences into amino acid sequences.
-* Save sequences as a FASTA file
+* Save biological sequences in FASTA format.
 
 :::
 
@@ -29,11 +32,14 @@ By the end of this part of the practical you will be able to:
 library(ORFik)
 library(tidyverse)
 library(gt)
+library(Biostrings)
 beaver_fasta <- readDNAStringSet("data/C_canadensis_ervs.fasta")
 current_erv <- beaver_fasta["Ccan_ERV_1"]
 ```
 
-## Retrovirus genes  {#sec-genes}
+## Retrovirus genes  {#sec-genes .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
@@ -47,15 +53,17 @@ All retroviruses have three genes in common (some also have additional genes):
 
 When the retrovirus first enters the host genome, it will be identical to the viral genome. However, over time, the retrovirus will pick up mutations and become less and less recognisable.
 
-## Open Reading Frames {#sec-orfs}
+## Open Reading Frames {#sec-orfs .core}
 
 [↑ top](#)
+
+[**Core**]{.core-text}
 
 When a retrovirus first integrates into the host genome, its copy in the host genome will contain intact, full length **open reading frames** (ORFs) for at least *gag*, *pol* and *env*.
 
 An ORF is a stretch of DNA that could potentially encode a protein. It typically begins with a start codon and continues until the next stop codon.
 
-When we translate a sequence, it can be translated in 3 **reading frames** on each strand.
+A DNA sequence has **three** possible reading frames on each strand, giving **six** possible reading frames in total.
 
 For example, lets say we have the sequence below:
 
@@ -93,21 +101,24 @@ my_orfs <- findORFs(my_seq)[[1]]
 
 print(my_orfs)
 ```
+
 The result is an [`IRanges`](https://www.rdocumentation.org/packages/IRanges/versions/2.6.1/topics/IRanges-class) object which shows us there is an ORF running from the start codon at position 3 to the stop codon at position 20, with a width of 18 nucleotides.
 
-### ORFs in the ERV sequence
+### ORFs in the ERV sequence {.core}
 
-::: {.callout-exercise #ex-orfs}
+::: {.callout-exercise #ex-orfs .core}
 
-{{< fa solid flask >}}
+### Find ORFs in your ERV sequence
 
-Find ORFs in your ERV sequence (stored in the variable `current_erv`) using the findORFs function. As in the example, you will need to add `[[1]]` at the end, as you only have a single sequence.
+[**Core**]{.core-text}
 
-The longest ORFs in the sequence are likely to represent the retroviral genes, so we can add the argument `minimumLength = 200` to filter out ORFs less than 200 amino acids in length.
+In your `beaver_ervs.qmd` Quarto file, find ORFs in your ERV sequence (stored in the variable `current_erv`) using the `findORFs()` function. As in the example, you will need to add `[[1]]` at the end, as you only have a single sequence.
+
+The longest ORFs in the sequence are likely to represent the retroviral genes, so we can add the argument `minimumLength = 200` to restrict our search to ORFs encoding 200 or more amino acids.
 
 Store the result in a variable named `orfs`.
 
-::: {.callout-answer callout="true" #ex-orfs_ans}
+::: {.callout-answer collapse="true" #ex-orfs_ans}
 ```{r orfs_ans}
 orfs <- findORFs(current_erv, minimumLength = 200)[[1]]
 ```
@@ -120,7 +131,7 @@ Have a look at your `orfs` variable, it is an `IRanges` object showing the `star
 print(orfs)
 ```
 
-### Adding sequence names
+### Adding sequence names {#sec-add_names .core}
 
 Currently, our ORFs don't have names, so it may be hard to identify which is which later.
 
@@ -130,35 +141,48 @@ e.g.
 ```{r paste0_ex}
 print(paste0("abc", 1))
 ```
+
 If one of the arguments to paste0 is a vector, R will combine each element of the vector with the other arguments.
 
 ::: {.callout-note #note-seq_function}
-Remember that the function `seq(start, end, increment)` generates a vector of numbers from `start` to `end` with a step size of `increment`, e.g. `seq(1, 10, 2)` = `r seq(1, 10, 2)`.
+Remember that the function `seq_len(end)` generates a vector of numbers from 1 to `end` with a step size of 1.
 :::
 
 e.g. 
 ```{r paste0_ex2}
-print(paste0("abc", seq(1, 10)))
+print(paste0("abc", seq_len(10)))
 ```
-::: {.callout-exercise #ex-orf_names}
 
-{{< fa solid anchor >}}
+::: {.callout-exercise #ex-orf_names .core}
 
-Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named 'Ccan_ERV_j_ORF_i' where j is the ID of your specific ERV region and i is a unique number for each ORF. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq()`. Store the names as a variable `orf_names`.
+### Name your sequences
+
+[**Core**]{.core-text}
+
+Generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named <code>Ccan\_[ERV_ID]{.orange-text}\_ORF\_[i]{.red-text}</code>, replacing <code>[ERV_ID]{.orange-text}</code> with your [ERV_ID]{.orange-text} and <code>[i]{.red-text}</code> with a unique number for each ORF. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq_len()`. Store the names as a variable `orf_names`.
 
 ::: {.callout-answer collapse="true" #ex-orf_names_ans}
+
 ```{r orf_names_ans}
 # Replace ERV_1 with the ID of your specific ERV region
-orf_names <- paste0("Ccan_ERV_1_ORF_", seq(1, length(orfs)))
+orf_names <- paste0("Ccan_ERV_1_ORF_", seq_len(length(orfs)))
 ```
 :::
 :::
 
 You can assign these names to the ORFs in your IRanges variable as follows:
 
+::: {.callout-note .copycode #copy-name_orfs}
+
+### Include this code 
+
+Include this code in your `beaver_ervs.qmd` Quarto file.
+
 ```{r paste0_names}
 names(orfs) <- orf_names
 ```
+
+:::
 
 Have another look at the resulting variable - the ORFs should now have unique names.
 
@@ -166,33 +190,48 @@ Have another look at the resulting variable - the ORFs should now have unique na
 print(orfs)
 ```
 
-Now we can retrieve the sequences for our ORFs from the longer ERV sequence we got from our FASTA file.
+Now we can retrieve the DNA sequences for our ORFs from the longer ERV sequence we got from our FASTA file.
 
 To do so, we can use the function `extractAt()`. 
+
+::: {.callout-note .copycode #copy-get_orfs}
+
+### Include this code 
+
+Include this code in your `beaver_ervs.qmd` Quarto file.
 
 ```{r get_orf_seqs}
 # Again this function can work on multiple sequences at once
 # We only have one sequence so we only want the first result, hence the [[1]].
 orf_seqs <- extractAt(current_erv, orfs)[[1]]
+```
 
+:::
+
+```{r show_orf_seqs}
 print(orf_seqs)
 ```
 
-## Translation {#sec-translate}
+## Translation {#sec-translate .core}
 
 [↑ top](#)
 
-Now we have our open reading frame sequences. Given that they are open reading frames, they should translate into amino acid sequences with no issues - each should start with a start codon and end with a stop codon, and there should be no internal stop codons.
+[**Core**]{.core-text}
 
-::: {.callout-exercise #ex-translate_orfs}
+Now we have our open reading frame sequences. Because these sequences were identified as ORFs, each should begin with a start codon and end with a stop codon, with no in-frame stop codons in between. We can now translate them into amino acid sequences.
 
-{{< fa solid anchor >}}
+::: {.callout-exercise #ex-translate_orfs .core}
+
+### Translate your sequences
+
+[**Core**]{.core-text}
 
 Translate your open reading frames into amino acid sequences. The Bioconductor function `translate()` will do this, with just one argument, your ORF nucleotide sequences.
 
 Store the result in a variable named `orf_aa_seqs`. Look at your amino acid sequences using the `print()` function.
 
 ::: {.callout-answer collapse="true" #ex-translate_orfs_ans}
+
 ```{r translate_orfs}
 orf_aa_seqs <- translate(orf_seqs)
 
@@ -201,15 +240,26 @@ print(orf_aa_seqs)
 
 :::
 :::
-## Saving sequences in FASTA format {#sec-save}
+
+## Saving sequences in FASTA format {#sec-save .core}
+
+[**Core**]{.core-text}
 
 [↑ top](#)
 
 We can write these amino acid sequences into a new FASTA file with the function `writeXStringSet()`.
 
+::: {.callout-note .copycode #copy-save_seqs}
+
+### Include this code 
+
+Include this code in your `beaver_ervs.qmd` Quarto file.
+
 ```{r write_aa_seqs}
 writeXStringSet(orf_aa_seqs, "output/orf_aa_seqs.fasta")
 ```
+
+:::
 
 On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta` and contains the amino acid sequences for your ORFs.
 
@@ -221,12 +271,13 @@ On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta
 
 ### Summary
 
-* RNA can be translated in different **reading frames**.
-* Potential **open reading frames (ORFs)** can be identified in a DNA/RNA sequence using `findORFs()`.
-* `IRanges` objects to represent the positions of features within a sequence.
-* These positions can be extracted from a `DNAStringSet` or `AAStringSet` sequence with the function `extractAt()`.
-* DNA/RNA sequences are translated itno amino acid sequences using `translate()`.
-* Sequences can be saved in FASTA format using `writeXStringSet()`.
+* In cells, DNA is transcribed into RNA, and RNA is translated into protein. In R, we can translate directly from a DNA sequence because R can infer the corresponding RNA sequence.
+* A sequence can be read in different **reading frames**.
+* Potential **open reading frames (ORFs)** can be identified in a DNA sequence using `findORFs()`.
+* `IRanges` objects can represent the positions of features within a sequence.
+* Sequences at these positions can be extracted using `extractAt()`.
+* DNA sequences can be translated into amino acid sequences using `translate()`.
+* Biological sequences can be saved in FASTA format using `writeXStringSet()`.
 
 :::
 
