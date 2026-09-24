@@ -12,30 +12,71 @@ library(effectsize)
 library(pwr)
 ```
 
-# Part 7: Power Analysis
+# Part 7: Power Analysis {#sec-p7_power_analysis}
+
+::: {.callout-note .partmenu #parts-0607}
+## Sections
+
+- @sec-power [(Extension)]{.extension-text}
+- @sec-effect_size [(Extension)]{.extension-text}
+- @sec-t_test_power [(Extension)]{.extension-text}
+- @sec-power_anova [(Extension)]{.extension-text}
+- @sec-other_tests_power [(Extension)]{.extension-text}
+- @sec-simulation_power [(Extension)]{.extension-text}
+- @sec-power_fixed_sample_sizes [(Bonus)]{.bonus-text}
+- @sec-summary_0607
+
+:::
+:::{.callout-tip .objectives #objectives-0607}
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Explain statistical power and the factors that affect it. [(Extension)]{.extension-text}
+* Use effect sizes to describe the magnitude of differences or relationships. [(Extension)]{.extension-text}
+* Use analytical power calculations to estimate the sample size required to detect an effect of a specified size. [(Extension)]{.extension-text}
+* Use simulation to estimate statistical power for more complex models. [(Extension)]{.extension-text}
+* Use power analysis to investigate the size of effect that can be reliably detected when sample size is fixed. [(Extension)]{.extension-text}
+
+:::
+
+In this part of the practical, you will need one Quarto document:
+
+* `power.qmd` for power analysis on TCGA data.
+
+## Power Analysis {#sec-power .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 Before collecting data, we need to consider whether our experiment will have enough observations to detect an effect if one really exists. The statistical power of a hypothesis test is the probability that it will correctly reject the null hypothesis when a real effect of a specified size exists.
 
 It is affected by:
 
-* Effect size - how big of a difference do you want to be able to detect
+* Effect size
 * Sample size
 * Sample variation
 * Significance level
 
 We therefore need to decide:
 
-  * Our desired power - 80% is often considered to be good - the percentage of effects with this effect size that we can detect.
+  * Our desired power - 80% is a commonly used target - the percentage of effects with this effect size that we can detect.
   * A significance level - 5% is often used.
   * Our desired effect size.
   
-Power analysis functions all operate under the assumption that the data that you will collect will meet all of the assumptions of your chosen statistical test perfectly. 
+Power analysis functions all operate under the assumption that the data you will collect will meet all of the assumptions of your chosen statistical test perfectly. 
 
-Power analysis should be carried out early, before we perform our data collection. We are learning about it last **not because you do it last**, but because it's helpful to understand the various hypothesis tests first.
+Power analysis should be carried out early, before we perform our data collection. We are learning about it late in the practical **not because you do it last**, but because it's helpful to understand the various hypothesis tests first.
 
 For simple standard tests, R provides analytical power functions. For more complicated models, power can be estimated by simulation.
 
-## Effect size
+## Effect size {#sec-effect_size .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 Effect size is tricky - it requires us to know, before an experiment is carried out, how big an effect we would consider to be of interest.
 
@@ -52,11 +93,15 @@ We can get the desired effect size from pilot data, from the literature, or usin
 We should use empirical effect sizes (based on pilot data or the literature) where possible.
 
 
-## T-test power analysis
+## T-test power analysis {#sec-t_test_power .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 Let's say that we are designing a study to determine if people diagnosed with lung adenocarcinoma differ in age from people diagnosed with lung squamous cell carcinoma.
 
-We have identified data from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/ccg/research/genome-sequencing/tcga) to help us design our study. TCGA is a **cancer genomics** research project which collected and analysed thousands of matched pairs of tumour and normal tissue samples from the same individuals, across 33 types of cancer. The samples were compared in terms of their genome, transcriptome, epigenome and proteome.
+We have identified data from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/ccg/research/genome-sequencing/tcga) to use as test data to help us design our new study. TCGA is a real **cancer genomics** research project which collected and analysed thousands of matched pairs of tumour and normal tissue samples from the same individuals, across 33 types of cancer. The samples were compared in terms of their genome, transcriptome, epigenome and proteome.
 
 ![The Cancer Genome Atlas](images/TCGA.png){#fig-tcga}
 
@@ -120,12 +165,7 @@ print (power_test)
 
 To have 80% power to detect an effect of this size at a significance level of 0.05, we would need at least `r ceiling(power_test$n)` individuals in each group.
 
-```{r anova_power_ans_1}
-dig <- by_indiv |>
-  filter(Cancer_Category == "digestive")
-```
-
-## Anova power analysis
+## Anova power analysis {#sec-power_anova .fold .extension}
 
 Power analysis for ANOVA follows a very similar process to for a t-test. 
 
@@ -139,7 +179,13 @@ The differences are:
   * `power` - the desired power
   * `k` - the number of groups in the ANOVA
   
-::: {.callout-exercise #ex-power}
+::: {.callout-exercise #ex-power .extension}
+
+### Power analysis - ANOVA
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 Using the same cancer data frame, imagine that we are planning a new study to investigate whether age differs between different types of digestive cancer. We want to know how many individuals to include in each group.
 
@@ -192,7 +238,12 @@ We would need `r ceiling(power_ct_age$n)` individuals per group.
 :::
 :::
 
-## Other tests
+## Other tests {#sec-other_tests_power .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
+
 
 We can run power analysis for other types of test by following the same basic process.
 
@@ -203,7 +254,11 @@ We can run power analysis for other types of test by following the same basic pr
 | Linear model | Cohen's \(f^2\) | `pwr.f2.test()` |
 | Chi-squared test | Cohen's \(w\) | `pwr.chisq.test()` |
 
-## Simulation-based power analysis
+## Simulation-based power analysis {#sec-simulation_power .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 For more complicated statistical models, there may not be a simple analytical function for calculating power. Instead, we can estimate power using **simulation**. We repeatedly simulate datasets containing an effect of a specified size, analyse each simulated dataset using our planned statistical test or model, and record whether the effect is detected. The proportion of simulated experiments in which the effect is detected provides an estimate of the power of the proposed study. By repeating this process for different sample sizes, we can estimate the sample size required to achieve our desired power.
 
@@ -222,7 +277,7 @@ Let's simulate group sizes of between 5 and 300, with an interval of 20.
 * For each group size, we will run 1000 simulations, in which we generate two random binomial datasets, one with a probability of 0.4 (lucky) of the toast landing butter-side-down and one with a probability of 0.6 (unlucky). 
 * We can then compare these groups using a GLM with the model `toast_bsd ~ luck`, where `toast_bsd` is 1 when the toast landed butter-side-down and 0 when it landed butter-side-up, and luck is 1 for lucky and 0 for unlucky.
 * We can extract our p-value from the model using `summary(model)$coefficients[2, 4]` and determine if this is less than our significance threshold of 0.05.
-* For each group size, we then determine the proportion of the time we detected a significant effect. Once this reaches 80%, we have our sample size.
+* The smallest group size for which the estimated power reaches at least 80% is our estimated required sample size.
 
 ```{r toast}
 # Vector to store the percentages for all groups sizes
@@ -289,7 +344,11 @@ ggplot(power_df, aes(x = group_size, y = power)) +
 ```
 We can see that our power increases dramatically with sample size, but eventually approaches 100%. Once power is already very high, further increasing the sample size provides little additional statistical benefit, despite potentially increasing the time and cost of the experiment.
 
-### Fixed sample sizes
+## Fixed sample sizes {#sec-power_fixed_sample_sizes .fold .bonus}
+
+[**Bonus**]{.bonus-text}
+
+[↑ top](#)
 
 In the example above, we started with an effect that we wanted to be able to detect and used power analysis to determine the sample size that we would need.
 
@@ -297,7 +356,11 @@ However, in real experiments there may be practical limits on the number of obse
 
 Imagine that we can recruit a maximum of **100 lucky and 100 unlucky participants** for our toast-dropping experiment. We will continue to assume that toast dropped by lucky participants has a 0.4 probability of landing butter-side-down.
 
-::: {.callout-exercise #ex-toast-power}
+::: {.callout-exercise #ex-toast-power .bonus}
+
+### Calculating detectable effect size with fixed sample size
+
+[**Bonus**]{.bonus-text}
 
 In your `power.qmd` Quarto document:
 
@@ -397,3 +460,34 @@ ggplot(df_toast_fixed, aes(x = prob_diff, y = power)) +
 When there is no real difference between the groups, the null hypothesis is true. Under the null hypothesis, p-values are uniformly distributed, so approximately 5% will be below our significance threshold of 0.05.
 
 :::
+:::
+
+## Review {#sec-summary_0607}
+
+[↑ top](#)
+
+::: {.callout-note #note-summary_0607}
+
+### Summary
+
+* **Statistical power** is the probability that a hypothesis test will correctly reject the null hypothesis when an effect of a specified size exists.
+* Power depends on the **effect size**, **sample size**, variation in the data and significance level.
+* **Effect sizes** describe the magnitude of an effect independently of sample size. Different statistical tests use different standardised measures of effect size.
+* Power analysis can be used before collecting data to estimate the sample size required to detect an effect of interest with a specified level of power.
+* If sample size is constrained, power analysis can instead be used to determine how large an effect the proposed experiment could reliably detect.
+* Analytical power calculations are available for many standard statistical tests.
+* For more complicated models, power can be estimated by repeatedly **simulating** the proposed experiment and calculating the proportion of simulations in which the effect is detected.
+* Power analysis depends on assumptions about the expected effect and data, so its results are only as appropriate as those assumptions.
+
+#### Programming
+
+* The `pwr` package provides functions for analytical power calculations, including `pwr.t.test()` and `pwr.anova.test()`.
+
+:::
+
+
+For this part of the practical, the main file you have edited is:
+
+* `power.qmd`
+
+This is the file you should select when making your Git commit.

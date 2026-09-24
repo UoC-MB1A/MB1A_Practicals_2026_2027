@@ -16,25 +16,67 @@ library(gt)
 
 ## Sections
 
+- @sec-choosing_a_model
+- @sec-septin_dataset
+- @sec-nested_models
+- @sec-lrt
+- @sec-AIC [(Extension)]{.extension-text}
+- @sec-automate_bss [(Extension)]{.extension-text}
+- @sec-summary_0606
 :::
 
 :::{.callout-tip .objectives}
 
 #### Learning objectives
+
 By the end of this part of the practical you will be able to:
+
+* Explain what is meant by nested and minimal models.
+* Compare nested models to determine whether removing an explanatory variable significantly worsens model fit.
+* Use likelihood-ratio tests to compare nested GLMs.
+* Use backwards stepwise elimination to identify a minimal model. 
+* Use AIC as an alternative approach to model selection. [(Extension)]{.extension-text}
 
 :::
 
-When we fit a model, we generally aim for the simplest model that adequately fits the data. We can therefore simplify a model by removing explanatory variables, provided that doing so does not significantly worsen the fit of the model. The simplest model which adequately fits the data is known as the minimal model.
+In this part of the practical, you will need one Quarto document:
+
+* `septin.qmd` for analysis of data about Septin proteins
+
+## Choosing a model {#sec-choosing_a_model .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
+
+When we fit a model, we generally aim for the simplest model that adequately fits the data. We can therefore simplify a model by removing explanatory variables, provided that doing so does not significantly worsen the fit of the model. The simplest model which adequately fits the data is known as the **minimal model**.
 
 The approaches we use for model comparison apply to both linear models and to both binomial and Poisson GLMs, although the specific statistical test used to compare nested models differs between linear models and GLMs.
 
-For linear models, the **residual sum of squares (RSS)** measures the discrepancy between the observed values and those predicted by the model. For GLMs, the equivalent role is played by **deviance** (see @sec-assumptions_glms) - a measure of how much mismatch remains between the observed data and the fitted GLM - or, in other words, of how well the model fits the data.In both cases, simplifying a model will generally worsen its fit, and we can test whether this worsening is sufficiently large to justify retaining the more complex model.
+For linear models, the **residual sum of squares (RSS)** measures the discrepancy between the observed values and those predicted by the model. For GLMs, the equivalent role is played by **deviance** (see @sec-assumptions_glms) - a measure of how much mismatch remains between the observed data and the fitted GLM - or, in other words, of how well the model fits the data. In both cases, simplifying a model will generally worsen its fit, and we can test whether this worsening is sufficiently large to justify retaining the more complex model.
 
+## Septin dataset {#sec-septin_dataset .core}
 
-We will use our **Septin* dataset to determine if the $P_n$ of the six Septin proteins can be used to predict if an HSC is young or old, and to explore the methods of establishing a minimal model. 
+[**Core**]{.core-text}
 
-## Nested models and backwards stepwise elimination
+[↑ top](#)
+
+We will use a dataset based on [this article](https://doi.org/10.1038/s41467-024-54638-8), published in Nature Communications in 2024. These authors developed a tool to determine the spatial distribution of components inside cells using 3D image analysis. This is based on a measure, $P_n$, of how polar the distribution of a protein is within a cell.
+
+* low $P_n$ → protein distributed relatively symmetrically → less polar
+* high $P_n$ → protein concentrated asymmetrically toward one part of the cell → more polar.
+
+Using their tool, they characterised the distribution of 6 members of a family of proteins called **Septins**, which are involved in cellular compartmentalisation, in haematopoietic stem cells (HSCs) from young mice (aged 10–18 weeks) and aged mice (aged 80+ weeks). They found that most Septins had a lower $P_n$ in aged HSCs, indicating a less polar distribution, and that the organisation of the Septin network was altered with age. This is shown in their Figure 3B.
+
+The data is in your `data/septin.csv` folder.
+
+We will use the Septin dataset to determine if the $P_n$ of the six Septin proteins can be used to predict if an HSC is young or old, and to explore the methods of establishing a minimal model. 
+
+## Nested models and backwards stepwise elimination {#sec-nested_models .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 One model is **nested** within another if the simpler model can be obtained just by removing one or more terms from the more complex model.
 
@@ -59,9 +101,11 @@ There are various options to choose which element to remove, including:
 * Sequentially removing the element with the highest p-value - the element with the least significant effect on the model fit.
 * Removing the element whose removal results in the lowest AIC - a statistic which specifically balances how well the model fits with the complexity of the model.
 
-## Removing elements by p-value
+::: {.callout-exercise #ex_septin_pval .core}
 
-::: {.callout-exercise #ex_septin_nested}
+### Removing elements by p-value
+
+[**Core**]{.core-text}
 
 In your `septin.qmd` Quarto file:
 * Read `data/septin.csv` into a data frame.
@@ -103,7 +147,7 @@ model_2 <- glm(Is_Old ~ Septin1 + Septin2 + Septin6 + Septin7 + Septin9, septin,
 summary(model_2)
 ```
 
-[Continue to do this until you have no remaining varibles.]{.blue-text}
+[Continue to do this until you have no remaining variables.]{.blue-text}
 
 Septin 2 is the least significant.
 
@@ -142,7 +186,7 @@ model_7 <- glm(Is_Old ~ 1, septin, family = binomial)
 summary(model_7)
 ```
 
-[Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (`model$deviance) for each model.]{.blue-text}
+[Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (`model$deviance`) for each model.]{.blue-text}
 
 ```{r septin_model_df}
 df_septin <- tibble(
@@ -183,7 +227,11 @@ ggplot(
 :::
 :::
 
-## Likelihood-Ratio tests
+## Likelihood-Ratio tests {#sec-lrt .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 As we removed explanatory variables from our model, the **residual deviance** increased. However, this does not tell us whether the increase in deviance is large enough to indicate that removing a variable has significantly worsened the fit of the model.
 
@@ -196,7 +244,7 @@ The test statistic for a likelihood ratio test is:
 $$
 LR = 2\left[\log(L_{\text{full}}) - \log(L_{\text{reduced}})\right]
 $$
-We can measure the log-likelihood of a model using the R function `logLik()`.
+We can measure the log-likelihood of a fitted model using the R function `logLik()`.
 
 The test statistics for likelihood-ratio tests are approximately chi-squared distributed, with degrees of freedom as the difference between the residual degrees of freedom for the two models.
 
@@ -204,7 +252,11 @@ $$
 df_{\mathrm{LR}} = df_{\mathrm{reduced}} - df_{\mathrm{full}}
 $$
 
-::: {.callout-exercise #ex-log_lik}
+::: {.callout-exercise #ex-log_lik .core}
+
+### Likelihood-ratio test
+
+[**Core**]{.core-text}
 
 In your `septin.qmd` Quarto file:
 
@@ -247,9 +299,9 @@ The test statistic for a likelihood ratio test comparing two models is identical
 print (model_2$deviance - model_1$deviance)
 ```
 
-Therefore, we can calculate the change in significance for each model in our data frame sequentially.
+Therefore, we can calculate the change in deviance between each pair of successive models.
 
-The R function `lead()` returns the following value in a data frame column, so we can use it as follows to compare each value of `deviance` with the following value of `deviance`. The final value will be `NA` because there is nothing to compare it too.
+The R function `lead()` returns the following value in a data frame column, so we can use it as follows to compare each value of `deviance` with the following value of `deviance`. The final value will be `NA` because there is nothing to compare it to.
 
 ```{r calc_diff_deviance_septin_df}
 df_septin <- df_septin |>
@@ -292,7 +344,11 @@ ggplot(
       labels = paste0("Model ", seq(1, 7))))
 ```
 
-:::{.callout-exercise #ex-minimal_model_septin}
+:::{.callout-exercise #ex-minimal_model_septin .core}
+
+### Find the minimal model
+
+[**Core**]{.core-text}
 
 Based on the plot above, which model is our minimal model?
 
@@ -303,9 +359,9 @@ The change between model 4 and model 5 is the first significant change - this is
 :::
 :::
 
-For a linear model, the process above is very similar. As for the GLM, we sequentially remove the predictor with the highest p-value from the model. 
+For a linear model, the process above is very similar. As for the GLM, we sequentially remove predictors from the model. 
 
-Instead of deviance, we use the sum of the residual sum of squares (RSS) for each model, `sum(residuals(model)^2)`. Conveniently but confusingly, you can also use the `deviance(model)` function in R to get this value from a fitted linear model.
+Instead of deviance, we use the residual sum of squares (RSS) for each model, `sum(residuals(model)^2)` to measure model fit. Conveniently but confusingly, you can also use the `deviance(model)` function in R to get this value from a fitted linear model.
 
 Instead of a likelihood ratio test, we calculate the test statistic F as follows:
 
@@ -329,7 +385,11 @@ $$
 df_2 = df_{\mathrm{full}}
 $$
 
-## Removing elements by AIC
+## Removing elements by AIC {#sec-AIC .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 Now let's try finding a minimal model using the AIC (Akaike Information Criterion) rather than p-value to choose which explanatory variables to remove.
 
@@ -360,7 +420,11 @@ In the following exercise, we will use **AIC** for model selection with a linear
 
 :::
 
-::: {.callout-exercise #ex_septin_nested}
+::: {.callout-exercise #ex_septin_lrt .extension}
+
+### Model selection using AIC
+
+[**Extension**]{.extension-text}
 
 In your `septin.qmd` Quarto file:
 
@@ -416,13 +480,21 @@ None of these improve the AIC, so we can stop here.
 :::
 :::
 
-## Automating backwards stepwise selection
+## Automating backwards stepwise selection {#sec-automate_bss .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 The process we have just carried out — starting with a full model and sequentially removing variables — is known as backwards stepwise selection.
 
 R can automate this process using the `step()` function with the argument `direction = "backward"`. By default, `step()` uses AIC to decide whether removing a variable improves the model.
 
-::: {.callout-exercise #ex-step_function}
+::: {.callout-exercise #ex-step_function .extension}
+
+### Automating backwards stepwise elimination
+
+[**Extension**]{.extension-text}
 
 In your `septin.qmd` Quarto file, run `step()` on your first linear model (with all five explanatory variables) with the argument `direction = "backward"`
 
@@ -448,6 +520,25 @@ This is the same as the result we obtained manually.
 
 ### Summary
 
+* A **minimal model** is the simplest model that adequately describes the data.
+* Models are **nested** when a simpler model can be obtained by removing terms from a more complex model.
+* Removing explanatory variables generally reduces model fit, so we can compare nested models to determine whether the reduction in fit is sufficiently large to justify retaining a variable.
+* For GLMs, differences in **deviance** between nested models can be tested using a **likelihood-ratio test**.
+* For linear models, nested models can instead be compared using an **F-test** based on their residual sums of squares.
+* **Backwards stepwise elimination** starts with a more complex model and sequentially removes explanatory variables to identify a simpler model that adequately describes the data.
+
+#### Programming
+
+* Components of fitted models, such as residual deviance and residual degrees of freedom, can be accessed using `$`.
+* `logLik()` returns the log-likelihood of a fitted model.
+* `pchisq()` can be used to calculate a p-value from a likelihood-ratio test statistic.
+* `lead()` can be used to compare each value in a data-frame column with the following value.
+
+#### Extension
+
+* **AIC** balances model fit against model complexity and provides another approach to model selection.
+* `drop1()` can be used to examine how removing individual terms would affect the AIC of a model.
+* `step()` can automate backwards stepwise model selection using AIC.
 
 :::
 
@@ -456,6 +547,6 @@ For this part of the practical, the main files you have created are:
 These are the files you should select when making your Git commit.
 
 
-Remember to save and commit your work before moving on to Part 6.
+Remember to save and commit your work before moving on to Part 7.
 
 {{< include ../includes/git_commit.qmd >}}

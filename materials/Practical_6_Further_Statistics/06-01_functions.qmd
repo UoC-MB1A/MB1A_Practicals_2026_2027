@@ -12,10 +12,12 @@ library(gt)
 ```
 
 # Part 1: Functions {#sec-p1_functions}
+
 ::: {.callout-note .partmenu #parts-0601}
 ## Sections
 
 - @sec-writing_functions
+- @sec-functions_multiple_outputs [(Extension)]{.extension-text}
 - @sec-summary_0601
 :::
 
@@ -24,17 +26,36 @@ library(gt)
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
-* Understand what functions are and when they are used. 
-* Write functions to automate aspects of your analysis.
-* Use a function to run a multi-step analysis on a data frame.
+* Understand what functions are and why they are useful.
+* Write a function that takes an input and returns an output.
+* Apply a function to different values and to columns in a data frame.
 
 :::
 
-In this practical, you will need one Quarto documents:
+## Sync your Git repository
+{{< include ../includes/git_pull.qmd >}}
 
-* `prac6_exercises.qmd` for basic exercises
+In this part of the practical, you will need one Quarto document:
 
-## Writing functions {#sec-writing_functions}
+* `prac6_exercises.qmd` for basic exercises.
+
+::: {.callout-important}
+
+### Levels
+
+In this practical, the [**core**]{.core-text} material will introduce you to using R for a range of statistical tasks. There is a lot of content, so please focus first on completing the [**core**]{.core-text} material and exercises and reading the [**recommended**]{.rec-text} material, completing the recommended exercises where possible.
+
+If you still have time, the [**extension**]{.extension-text} exercises explore statistical concepts in more depth. There are **a lot** of these — there is no need to complete them all. Choose topics that interest you or that you would like to understand in more depth. The programming may be slightly more advanced, but should be possible using only the R skills introduced in Practicals 1 to 5.
+
+The [**bonus**]{.bonus-text} exercises are intended for students who are already very comfortable with both R and statistics and have plenty of time to spare.
+
+:::
+
+## Writing functions {#sec-writing_functions .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 In the practical course so far, we have used many of the different **functions** (see @sec-functions) which are built into R and provided by additional packages.
 
@@ -79,12 +100,16 @@ Let's use our function to calculate the age in dog years of some dogs.
 
 Monty is 6 in human years.
 
+![Monty](images/monty.jpg){#fig-monty width="25%"}
+
 ```{r dog_age_1}
 print(human_years_to_dog_years(6))
 ```
 
 
 Noodle is 2 in human years:
+
+![Noodle](images/noodle.jpg){#fig-noodle width="25%"}
 
 ```{r dog_age_2}
 print(human_years_to_dog_years(2))
@@ -110,11 +135,10 @@ gt(dog_data)
 
 Using our `human_years_to_dog_years()` function, we can calculate the age in dog years of each dog.
 
-[comment]: todo_katy link to the mutate explanation once I've written it.
 
 ::: {.callout-note #note-mutate}
 
-Remember that the `mutate()` function allows us to create a new column in a data frame by applying a function to an existing column.
+Remember that the `mutate()` function (see @sec-examining_data) allows us to create a new column in a data frame by applying a function to an existing column.
 :::
 
 ```{r dog_years_df}
@@ -124,6 +148,9 @@ dog_data_updated <- dog_data |>
 gt(dog_data_updated)
 ```
 
+## Features of functions {#sec-function_structure .core}
+
+[**Core**]{.core-text}
 
 There are two important things to learn about functions:
 
@@ -177,14 +204,18 @@ result <- human_years_to_dog_years(10)
 print(paste("Age in human years:", age_in_dog_years))
 ```
 
-:::{.callout-exercise #ex-dog_function}
+:::{.callout-exercise #ex-dog_function .core}
+
+### Write your first function
+
+[**Core**]{.core-text}
 
 In your `prac6_exercises.qmd` Quarto document, write a function to convert dog years to human years (the reverse of the above). Round the answer to the nearest whole number.
 
 Apply your function to the following:
 
-* Billy, a human aged 180 dog years
-* Ahmed, a human aged 44 dog years
+* Billy, a human aged 180 in dog years
+* Ahmed, a human aged 44 in dog years
 * The `Age_Dog_Years` column of the following data frame of four humans:
 
 ```{r human_tibble}
@@ -236,6 +267,53 @@ gt(human_data_updated)
 ```
 :::
 :::
+
+### Returning multiple outputs from a function {#sec-functions_multiple_outputs .fold .extension}
+
+So far, our functions have returned a single object. Sometimes we want a function to return several different results.
+
+We can do this by putting the results into a **list**. A list can contain multiple objects, including objects of different types, and we can give each element a name.
+
+For example, this function returns a mean, a vector of centred values, and a data frame:
+
+```{r function_return_list}
+calculate_stats <- function(x) {
+  x_mean <- mean(x)
+  centred_values <- x - x_mean
+
+  summary_df <- tibble(
+    observation = x,
+    centred = centred_values
+  )
+
+  results <- list(
+    mean = x_mean,
+    centred_values = centred_values,
+    summary_data = summary_df
+  )
+
+  return(results)
+}
+```
+
+We can run the function and store the returned list:
+
+```{r run_multi_function}
+my_results <- calculate_stats(c(2, 4, 6, 8, 10))
+print(my_results)
+```
+
+We can access an individual named element of the list using $:
+
+```{r dollar_operator}
+print(my_results$mean)
+print(my_results$centred_values)
+gt(my_results$summary_data)
+```
+
+
+Here, mean contains a single number, centred_values contains a vector, and summary_data contains an entire data frame. Lists are therefore useful when a function needs to return several different types of outputs.
+
 ## Review {#sec-summary_0601}
 
 [↑ top](#)
@@ -244,6 +322,14 @@ gt(human_data_updated)
 
 ### Summary
 
+* A **function** is a reusable set of instructions that can be applied to different inputs.
+* We can define our own functions in R using `function()`.
+* Values supplied to a function are called **arguments**.
+* The code inside `{}` defines the operations performed by the function.
+* `return()` specifies the output returned by a function.
+* Defining a function does not run it: we use a **function call** to run it.
+* Variables created inside a function normally only exist within that function.
+* Functions allow us to repeat the same analysis with different inputs without duplicating code.
 
 :::
 

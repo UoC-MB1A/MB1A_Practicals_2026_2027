@@ -14,13 +14,37 @@ set.seed(42)
 # Part 8: P-values and Multiple testing {#sec-p8_p_multiple_testing}
 
 ::: {.callout-note .partmenu #parts-0608}
+## Sections
 
+- @sec-p_values
+- @sec-multiple_testing
+- @sec-family_wise_error
+- @sec-multiple_testing_corrections
+- @sec-summary_0608
 :::
 
 :::{.callout-tip .objectives #objectives-0608}
 #### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Explain why p-values are uniformly distributed under the null hypothesis. [(Extension)]{.extension-text}
+* Explain why performing many statistical tests increases the probability of obtaining false-positive results. [(Extension)]{.extension-text}
+* Distinguish between family-wise error rate and false discovery rate. [(Extension)]{.extension-text}
+* Explain how Bonferroni and Benjamini–Hochberg corrections address multiple testing. [(Extension)]{.extension-text}
+* Apply multiple-testing corrections to a set of p-values in R. [(Extension)]{.extension-text}
+
 :::
 
+In this part of the practical, you will need one Quarto document:
+
+* `multiple_testing.qmd` for multiple testing exercises.
+
+## P-value distributions {#sec-p_values .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 As we discussed in @sec-p_distributions, when the null hypothesis is true and the assumptions of a statistical test are met, p-values from repeated tests are expected to be uniformly distributed between 0 and 1.
 
@@ -34,7 +58,12 @@ This is known as the probability integral transform - if $X$ is a continuous ran
 
 We can reproduce this in R.
 
-::: {.callout-exercise #ex-p_uniform}
+::: {.callout-exercise #ex-p_uniform .extension}
+
+### P-values and cumulative probability
+
+[**Extension**]{.extension-text}
+
 * Generate a simulated set of 1000 values which are normally distributed with mean 0 and standard deviation 1.
 * For each value, use `pnorm()` to calculate its cumulative probability — the proportion of a standard normal distribution that lies below that value.
 * Plot these probabilities as a histrogram using `geom_histogram()` with the arguments `boundary = 0, binwidth = 0.05`.
@@ -60,7 +89,11 @@ ggplot(histo, aes(x = props)) +
 
 Two interesting (optional) further reading articles about p-values are the American Statistical Association statement on p-values [here](https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#d1e849) and [this article](https://doi.org/10.1080/00031305.2018.1529625) by Greenland in 2018.
 
-## Multiple testing
+## Multiple testing {#sec-multiple_testing .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 If we perform many tests for which the null hypothesis is true, and the assumptions of the tests are met, approximately 5% of the tests will produce $p \le 0.05$ purely by chance. This corresponds to the 5% Type I error rate when we use a significance threshold of 0.05.
 
@@ -70,7 +103,7 @@ In [this article](https://doi.org/10.1016/j.jclinepi.2006.01.012), Austin et al.
 
 Their initial analysis identified apparently significant associations between astrological signs and hospitalisation. They then tested selected associations in an independent validation dataset and found that, for example, Sagittarians had a significantly increased risk of humerus fracture, with $p = 0.0125$, while Leos had a significantly increased risk of gastrointestinal haemorrhage $p=0.0483$. However, after correcting for the large number of statistical comparisons being made, none of the associations remained statistically significant.
 
-### Multiple testing exercise
+### Multiple testing exercise {#sec-mt_exercise .extension}
 
 We can reproduce this ourselves with our pollinator dataset.
 
@@ -95,7 +128,11 @@ species_over_10 <- insect_counts |>
   pull(species)
 ```
 
-::: {.callout-exercise #ex-vibes}
+::: {.callout-exercise #ex-vibes .extension}
+
+### Multiple testing
+
+[**Extension**]{.extension-text}
 
 In your `multiple_testing.qmd` Quarto file, for each pollinator species observed at least 10 times, we are going to test whether its presence or absence is associated with vibes.
 
@@ -157,7 +194,7 @@ df_vibes <- tibble(
   pval = pvals
 )
 
-ggplot(df_vibes, aes(x = pvals)) +
+ggplot(df_vibes, aes(x = pval)) +
   geom_histogram(boundary = 0, binwidth = 0.05)
 ```
 
@@ -184,7 +221,11 @@ gt(df_sig)
 :::
 :::
 
-## Family-wise error rate
+## Family-wise error rate {#sec-family_wise_error .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 The family-wise error rate (FWER) is the probability of making at least one Type I error across a whole set (family) of statistical tests.
 
@@ -192,12 +233,19 @@ For example, in our pollinator vibes experiment above, if all the null hypothese
 
 The FWER is the probability that at least one of our 86 tests will produce a false positive.
 
+If we assume that the tests are independent, the FWER can be calculated as:
+
 $$
 \mathrm{FWER} = 1 - (1 - \alpha)^n
 $$
+
 Where $\alpha$ is our p-value threshold and $n$ is the number of tests.
 
-::: {.callout-exercise #ex-fwer}
+::: {.callout-exercise #ex-fwer .extension}
+
+### Family-wise error rate
+
+[**Extension**]{.extension-text}
 
 In R, calculate FWER for our example above, where alpha is 0.05 and n is 86.
 
@@ -211,7 +259,9 @@ There is a `r round(fwer * 100, 2)`% probability that at least one test will be 
 :::
 :::
 
-## Multiple testing corrections
+## Multiple testing corrections {#sec-multiple_testing_corrections .fold .extension}
+
+[**Extension**]{.extension-text}
 
 To avoid this issue, there are various corrections we can apply, which basically lower the threshold at which we consider a p-value to be significant.
 
@@ -336,7 +386,11 @@ For the remaining bars, the blue part represents **false negatives**, where ther
 
 Let's calculate the FDP for each of our three simulations - the proportion of our significant results which are false positives
 
-::: {.callout-exercise #ex-fdp}
+::: {.callout-exercise #ex-fdp .extension}
+
+### Calculate FDP
+
+[**Extension**]{.extension-text}
 
 In your `multiple_testing.qmd` Quarto file, calculate the FDP for each of the three scenarios. You will need to group the data frame by `scenario` then implement the equation above.
 
@@ -362,7 +416,11 @@ $$
 
 Let's see what effect this would have on the number of false positives and false negatives in our simulations.
 
-::: {.callout-exercise #ex-bonf}
+::: {.callout-exercise #ex-bonf .extension}
+
+### Calculate false positive and false negative rates
+
+[**Extension**]{.extension-text}
 
 In your `multiple_testing.qmd` Quarto file, based on the `df_probs` data frame, calculate the false positive and false negative rates with a Bonferroni correction applied, so that only p-values less than 0.05/1000 are considered to be significant.
 
@@ -427,20 +485,20 @@ In each scenario, the threshold p-value would be the highest ranking p-value whi
 Let's find the highest p-value which was lower than its threshold for 10% and 20% true effects.
 
 ```{r bh_pthresh}
-threshold_p <- df_bh |>
+threshold_df <- df_bh |>
   group_by(scenario) |>
   filter(sig) |>
   summarise(
     threshold_p = max(pvalue)
   )
 
-gt(threshold_p)
+gt(threshold_df)
 ```
 
 We can join these into our data frame.
 
 ```{r add_p_thresh_bh, message = FALSE}
-df_bh <- left_join(df_bh, threshold_p)
+df_bh <- left_join(df_bh, threshold_df)
 gt(head(df_bh))
 ```
 
@@ -526,14 +584,27 @@ gt(r_false_neg)
 
 ### Summary
 
+* When the null hypothesis is true and the assumptions of a statistical test are met, p-values are expected to be uniformly distributed between 0 and 1.
+* When many hypotheses are tested, some small p-values are expected to occur by chance even when all null hypotheses are true.
+* The **family-wise error rate (FWER)** is the probability of making at least one Type I error across a family of tests.
+* The **Bonferroni correction** controls FWER by using a more stringent significance criterion as the number of tests increases.
+* Reducing false positives comes at the cost of increasing false negatives, so very conservative corrections can reduce statistical power.
+* The **false discovery proportion (FDP)** is the proportion of significant results in a particular analysis that are false positives. The **false discovery rate (FDR)** is the expected FDP across repeated analyses.
+* The **Benjamini–Hochberg procedure** controls FDR rather than FWER and is generally less conservative than Bonferroni when many tests are performed.
+
+#### Programming
+
+* `pnorm()` can be used to calculate cumulative probabilities from a normal distribution.
+* `p.adjust()` can be used to adjust a set of p-values for multiple testing, including using the Benjamini–Hochberg method with `method = "BH"`.
 
 :::
 
-For this part of the practical, the main files you have created are:
+For this part of the practical, the main file you have edited is:
 
-These are the files you should select when making your Git commit.
+* `multiple_testing.qmd`
 
-
-Remember to save and commit your work before moving on to Part 4.
+This is the file you should select when making your Git commit.
 
 {{< include ../includes/git_commit.qmd >}}
+
+{{< include ../includes/git_push.qmd >}}

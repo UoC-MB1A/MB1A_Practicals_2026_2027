@@ -14,18 +14,37 @@ library(gt)
 
 ::: {.callout-note .partmenu #parts-0605}
 ## Sections
+- @sec-poisson_glms
 - @sec-log_link
 - @sec-fitting_pois_glms
 - @sec-prediction_pois_glm
-- @sec_assumptions_glms
+- @sec-assumptions_glms
 - @sec-summary_0605
 :::
 
 :::{.callout-tip .objectives}
 #### Learning objectives
+
+
 By the end of this part of the practical you will be able to:
 
+* Explain when a Poisson generalised linear model (GLM) is appropriate.
+* Fit and interpret a Poisson GLM in R.
+* Explain the role of the log link function in a Poisson GLM.
+* Use a fitted Poisson GLM to predict expected counts.
+* Assess whether count data are overdispersed relative to a fitted Poisson model.
+
 :::
+
+In this part of the practical, you will need one Quarto document:
+
+* `glms.qmd` for applying GLMs to pollinator data.
+
+## Poisson GLMs {#sec-poisson_glms .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 A binomial GLM is appropriate when the response variable represents one of two possible outcomes. A Poisson GLM can be used to model count data when a Poisson distribution (@sec-comparing_sim_real) is appropriate. In a Poisson GLM, we model how $\lambda$, the expected count, changes with our explanatory variables.
 
@@ -33,7 +52,11 @@ As with the binomial GLM, the model coefficients are estimated using maximum lik
 
 Note: Although Poisson GLMs are used for count data, not every count response is adequately described by a Poisson model. We will discuss this below in @sec-assumptions_glms.
 
-## Log-link function {#sec-log_link}
+## Log-link function {#sec-log_link .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 By default, a Poisson GLM uses a log link function, which models the logarithm of the expected count, $\lambda$, as a linear function of the explanatory variables, with $\beta_0$ as the intercept and $\beta_1$ as the coefficient for the explanatory variable.
 
@@ -47,7 +70,11 @@ $$
 $$
 This transformation ensures that the expected count is always positive, even though the linear predictor can take any value.
 
-## Fitting Poisson GLMs in R {#sec-fitting_pois_glms}
+## Fitting Poisson GLMs in R {#sec-fitting_pois_glms .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 Let's use a Poisson GLM to test the following hypotheses:
 
@@ -65,7 +92,11 @@ site_metadata <- site_metadata |>
 
 Now we are ready to fit the GLM. This is very similar to fitting a binomial GLM, except we use the argument `family = poisson` for the Poisson model.
 
-::: {.callout-exercise #ex-fit_pois_glm}
+::: {.callout-exercise #ex-fit_pois_glm .core}
+
+### Fitting a Poisson GLM
+
+[**Core**]{.core-text}
 
 In your `glms.qmd` Quarto file, use a GLM to test whether the number of Apidae species at a site is associated with the number of non-Apidae insect species.
 
@@ -117,11 +148,20 @@ ggplot(site_metadata,
   theme_bw()
 ```
 
-## Prediction {#sec-prediction_pois_glm}
+## Prediction {#sec-prediction_pois_glm .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 We can make predictions with our Poisson GLMs using the `predict()` function, just like for our other models.
 
-::: {.callout-exercise #ex-prediction_pois_glm}
+::: {.callout-exercise #ex-prediction_pois_glm .core}
+
+### Making predictions
+
+[**Core**]{.core-text}
+
 Use `predict()` to estimate the expected number of Apidae species at a site with **8 non-Apidae species**.
 
 Remember to use `type = "response"` to return the prediction as an expected count rather than on the log scale.
@@ -141,18 +181,22 @@ The model predicts an expected count of `r round(pred, 2)` Apidae species at a s
 :::
 :::
 
-## Assumptions of Poisson GLMs {#sec-assumptions_glms}
+## Assumptions of Poisson GLMs {#sec-assumptions_glms .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 As well as the assumptions we discussed in @sec-assumptions_binom, for Poisson GLMs, we additionally assume that:
 
-* The response is compatible with a Poisson distribution (see @sec-distributions).
+* The response is compatible with a Poisson distribution (see @sec-p3_distributions).
 * The variance of the response, conditional on the explanatory variables, is equal to its mean.
 
 The relationship between the variance of the response and the mean can be calculated from our model.
 
 Two statistics are commonly used:
 
-### Pearson dispersion
+### Pearson dispersion {#sec-pearson .core}
 
 $$
 \hat{\phi}_{P} =
@@ -172,7 +216,12 @@ The sum of the squares of these values is ${\sum_{i=1}^{n} r_{P,i}^{2}}$.
 
 $(n - p)$ is the residual degrees of freedom, which we can also access from the model, as e.g. `glm_apidae$df.residual`.
 
-::: {.callout-exercise #ex_pearson_dispersion}
+::: {.callout-exercise #ex_pearson_dispersion .core}
+
+### Calculating Pearson dispersion 
+
+[**Core**]{.core-text}
+
 In your `glms.qmd` Quarto file, write a function named `pearson_dispersion` to calculate the Pearson dispersion of a GLM, where the input is the fitted GLM and the output is the Pearson dispersion. Apply it to your fitted Apidae GLM.
 
 ::: {.callout-answer #ex_pearson_dispersion_ans}
@@ -190,7 +239,7 @@ print (p_disp_apidae)
 :::
 :::
 
-### Deviance dispersion
+### Deviance dispersion {#sec-deviance .core}
 
 $$
 \hat{\phi}_{D} =
@@ -210,7 +259,12 @@ We can access the residual deviance using e.g. `glm_apidae$deviance`.
 
 As we know, $n - p$ is the residual degrees of freedom.
 
-::: {.callout-exercise #ex_dev_dispersion}
+::: {.callout-exercise #ex_dev_dispersion .core}
+
+### Calculating deviance dispersion
+
+[**Core**]{.core-text}
+
 In your `glms.qmd` Quarto file, write a function named `deviance_dispersion` to calculate the deviance dispersion of a GLM, where the input is the fitted GLM and the output is the deviance dispersion. Apply it to your fitted Apidae GLM.
 
 ::: {.callout-answer #ex_dev_dispersion_ans}
@@ -231,9 +285,13 @@ In general, we want both of these statistics to be close to 1. Values substantia
 
 Let's fit another GLM to demonstrate how this can impact our model.
 
-::: {.callout-exercise #ex-overdispersion}
+::: {.callout-exercise #ex-overdispersion .core}
 
-In your `glms.qmd` Quarto file, using your site metadata data frame, fit a Poisson GLM to address the following hypotheses.
+### Fitting a Poisson GLM and checking dispersion
+
+[**Core**]{.core-text}
+
+In your `glms.qmd` Quarto file, using your site metadata data frame, fit a Poisson GLM to address the following hypotheses based on our pollinator data:
 
 * **Null hypothesis**: There is no association between the number of unique flower species (column `n_unique_flowers`) at a site and the number of unique insect species (column `n_unique`).
 * **Alternative hypothesis**: There is an association between the number of unique flower species at a site and the number of unique insect species.
@@ -266,18 +324,26 @@ print(d_disp_unique_spp)
 
 Both dispersion statistics are greater than 1, indicating that there is more variation in the observed counts than expected under the fitted Poisson model. A Poisson model may therefore not be appropriate for these data.
 
-### Visualising overdispersion
+### Visualising overdispersion {#sec-visualising_dispersion .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 Our dispersion statistics suggest that the observed insect counts vary more than we would expect under our fitted Poisson model. We can use simulation to visualise what this means.
 
 The fitted values from our model are the expected counts ($\lambda$) for each site. If the Poisson model is appropriate, we can use these values to simulate the sort of counts we would expect to observe under the fitted model.
 
-::: {.callout-exercise #ex-visualise_overdispersion}
+::: {.callout-exercise #ex-visualise_overdispersion .extension}
+
+### Visualising overdispersion
+
+[**Extension**]{.extension-text}
 
 In your `glms.qmd` Quarto file:
 
 * Use `fitted()` to extract the expected insect count for each site from your fitted Poisson GLM.
-* Use `rpois()` to simulate one new insect count for each site, using the fitted values as the values of $\lambda$.
+* Use `rpois()` to simulate one new insect count for each site (so set `n` to be the number of sites), using the fitted values as the values of $\lambda$.
 * Create a data frame containing:
     * the fitted count for each site
     * the observed insect count
@@ -350,7 +416,7 @@ Clearly, our data are more dispersed than the model predicts.
 :::
 :::
 
-### Accounting for overdispersion
+### Accounting for overdispersion {#sec-accounting_for_overdispersion .fold .extension}
 
 One way to account for overdispersion is to use a **quasi-Poisson model**. A standard Poisson model assumes:
 
@@ -380,7 +446,11 @@ glm_unique_spp_quasi <- glm(
 
 summary(glm_unique_spp_quasi)
 ```
-::: {.callout-exercise #ex-quasipoisson}
+::: {.callout-exercise #ex-quasipoisson .extension}
+
+### Examining quasi-Poisson output
+
+[**Extension**]{.extension-text}
 
 Compare the output from the Poisson and quasi-Poisson models.
 
@@ -407,12 +477,29 @@ This does not change our conclusion, but accounting for the overdispersion gives
 
 ### Summary
 
+* A **Poisson GLM** can be used to model count data when a Poisson distribution is appropriate.
+* A Poisson GLM models how the expected count, $\lambda$, changes with one or more explanatory variables.
+* By default, a Poisson GLM uses a **log link function**, ensuring that predicted expected counts are always positive.
+* Poisson GLM coefficients represent changes in the log of the expected count. Exponentiating a coefficient gives the factor by which the expected count is multiplied for a one-unit increase in the explanatory variable.
+* We can use a fitted Poisson GLM to predict expected counts for new values of the explanatory variables.
+* A Poisson model assumes that the conditional variance of the response is equal to its conditional mean.
+* **Pearson dispersion** and **deviance dispersion** can be used to assess whether the variation in the data is consistent with that expected under a Poisson model.
+* Dispersion substantially greater than 1 indicates **overdispersion**, while dispersion substantially less than 1 indicates **underdispersion**.
+
+#### Programming
+
+* We can fit a Poisson GLM using `glm()` with `family = poisson`.
+* We can use `predict()` with `type = "response"` to obtain predicted expected counts on the response scale.
+* We can extract Pearson residuals from a fitted GLM using `residuals()` with `type = "pearson"`.
+* Components of a fitted model, such as its residual degrees of freedom and deviance, can be accessed using `$`.
 
 :::
 
-For this part of the practical, the main files you have created are:
+For this part of the practical, the main file you have edited is:
 
-These are the files you should select when making your Git commit.
+* `glms.qmd`
+
+This is the file you should select when making your Git commit.
 
 
 Remember to save and commit your work before moving on to Part 6.

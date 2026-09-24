@@ -15,13 +15,13 @@ library(gt)
 ::: {.callout-note .partmenu #parts-0604}
 ## Sections
 - @sec-binary_response
-- @sec-not_linear
+- @sec-not_linear [(Extension)]{.extension-text}
 - @sec-fitting_binomial_glms
 - @sec-link_functions
 - @sec-predictions_binom_glms
-- @sec-multiple_predictors
-- @sec-parameter_estimation
-- @sec-parameter_space
+- @sec-multiple_predictors [(Recommended)]{.rec-text}
+- @sec-parameter_estimation [(Extension)]{.extension-text}
+- @sec-parameter_space [(Extension)]{.extension-text}
 - @sec-assumptions_binom
 - @sec-summary_0604
 :::
@@ -30,15 +30,30 @@ library(gt)
 #### Learning objectives
 By the end of this part of the practical you will be able to:
 
+* Fit and interpret a binomial generalised linear model (GLM) in R.
+* Explain the role of the logit link function in a binomial GLM.
+* Use a fitted binomial GLM to predict probabilities.
+* Fit binomial GLMs containing multiple explanatory variables and interactions.
+* Describe the main assumptions of a binomial GLM.
+
 :::
+
+In this part of the practical, you will need two Quarto documents:
+
+* `prac6_exercises.qmd` for short programming exercises.
+* `glms.qmd` for applying GLMs to pollinator data.
 
 As you may have noticed, all of the statistical tests introduced in Practical 4 (except for chi-squared) expect a **continuous response variable**.
 
 A standard linear model assumes that the response variable is continuous, with observations normally distributed around an expected value. A linear combination of the explanatory variables determines this expected value.
 
-However, not all response variables are continuous or normally distributed. A **generalised linear model** (GLM) extends the idea of a linear model to response variables with other distributions.
+However, not all response variables are continuous or normally distributed. As you learned in the lectures, a **generalised linear model** (GLM) extends the idea of a linear model to response variables with other distributions.
 
-## Binomial response variables {#sec-binary_response}
+## Binomial response variables {#sec-binary_response .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 In @sec-p2_hypothesis_testing_1, we treated the presence or absence of a species as our explanatory variable when asking whether mean temperature differed between sites where a species was present and absent. We then used our model to predict mean temperature in the presence of this species in @sec-p6_predictions.
 
@@ -46,14 +61,18 @@ However, we may instead want to ask: **does the probability of species presence 
 
 In the case of *H. tumulorum* we would therefore have the following hypotheses:
 
-* **Alternative**: There is a relationship between minimum temperature in the coldest month and the probability of detecting *H. tumulorum*.
-* **Null**: There is no relationship between minimum temperature in the coldest month and the probability of detecting *H. tumulorum*.
+* **Null hypothesis**: There is no relationship between minimum temperature in the coldest month and the probability of detecting *H. tumulorum*.
+* **Alternative hypothesis**: There is a relationship between minimum temperature in the coldest month and the probability of detecting *H. tumulorum*.
 
 In this case, detection of *H. tumulorum* becomes our response variable and minimum temperature becomes our explanatory variable.
 
 Our response variable is **binary**: at each site H. tumulorum was either detected (1) or not detected (0). We can model this using a binomial distribution, where $p$ represents the **probability** of detection. We therefore need our predicted values of $p$ to lie between 0 and 1.
 
-## Why not use a linear model? {#sec-not_linear}
+## Why not use a linear model? {#sec-not_linear .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 Let's try just using a linear model. First, we need to load our *H. tumulorum* dataset. We should also use the `as.integer()` function to convert our logical (TRUE / FALSE) `detected` column into a numerical column with `1` for detected and `0` for not detected.
 
@@ -83,7 +102,11 @@ Our model predicts a `r round(pred * 100, 2)`% probability of detecting *H. tumu
 
 Let's try some more extreme temperatures.
 
-::: {.callout-exercise #ex-binary_lm}
+::: {.callout-exercise #ex-binary_lm .extension}
+
+### Predictions using a linear model
+
+[**Extension**]{.extension-text}
 
 In your `glms.qmd` Quarto file, use `predict()` with this model to predict the probability of detecting *H. tumulorum* when the minimum temperature in the coldest month is:
 
@@ -115,9 +138,13 @@ ggplot(
 
 A linear model can predict any numerical value, whereas a probability must always lie between 0 and 1 (0–100%). We therefore need a model that retains the useful linear relationship with our explanatory variable, but converts its predictions onto a scale appropriate for a probability.
 
-## Link functions in binomial GLMs {#sec-link_functions}
+## Link functions in binomial GLMs {#sec-link_functions .core}
 
-Link functions connect the predictors in our model to the response variables in a linear way.
+[**Core**]{.core-text}
+
+[↑ top](#)
+
+A link function transforms the expected value of the response so that it can be modelled as a linear combination of the explanatory variables.
 
 In a binomial GLM, the **logit** link function transforms probabilities into log-odds. 
 
@@ -125,13 +152,17 @@ $$
 \operatorname{logit}(p) = \ln\left(\frac{p}{1-p}\right)
 $$
 
-::: {.callout-exercise #ex-odds}
+::: {.callout-exercise #ex-odds .core}
+
+### Write a log-odds function
+
+[**Core**]{.core-text}
 
 In your `prac6_exercises.qmd` Quarto file, write a function to calculate the log-odds from a probability. In R `log()` is the natural logarithm.
 
-Use your function to calculate the log-odds for a sequence of probabiliies from 0 to 1, with increment 0.1.  Observe what happens to the log-odds as the probability increases.
+Use your function to calculate the log-odds for a sequence of probabilities from 0 to 1, with increment 0.1 (you can generate this with `seq(0, 1, 0.1)`).  Observe what happens to the log-odds as the probability increases.
 
-::: {.callout-ans collapse="true" #ex-odds_ans}
+::: {.callout-answer collapse="true" #ex-odds_ans .core}
 ```{r odds_ans}
 # Write the function
 calc_log_odds <- function(prob) {
@@ -154,13 +185,17 @@ There is an increase in log-odds as probability increases.
 
 The natural logarithm of the odds (log-odds) can take any value from $-\infty$ to $\infty$. We can therefore model the log-odds as a linear combination of our explanatory variables. 
 
-## Fitting binomial GLMs in R {#sec-fitting_binomial_glms}
+## Fitting binomial GLMs in R {#sec-fitting_binomial_glms .core}
 
 If we use a GLM instead of a linear model, it estimates the linear relationship between minimum temperature and presence / absence on the log-odds scale.
 
-We can apply a GLM in R `glm()` function. We use the argument `family = binomial` to specify that we want to predict a binomial response. Otherwise, the function is applied in the same way as a linear model, but with `glm()` instead of `lm()`.
+We can apply a GLM in R using the `glm()` function. We use the argument `family = binomial` to specify that we want to predict a binomial response. Otherwise, the function is applied in the same way as a linear model, but with `glm()` instead of `lm()`.
 
-::: {.callout-exercise #ex-fit_binomial_glm_ht}
+::: {.callout-exercise #ex-fit_binomial_glm_ht .core}
+
+### Fit a GLM
+
+[**Core**]{.core-text}
 
 In your `glms.qmd` Quarto file, use `glm()` to test whether the probability of detecting *H. tumulorum* is associated with minimum temperature in the coldest month.
 
@@ -199,11 +234,12 @@ beta <- glm_ht$coefficients[2]
 expo <- exp(beta)
 print(expo)
 ```
+
 So, for every 1°C increase in minimum temperature, the odds of detecting *H. tumulorum* are multiplied by approximately 5.2.
 
 Let's plot our data and our GLM prediction.
 
-To plot the predicted values we again use `geom_smooth()` but with the arguments `method = "glm"` and `method.args = list(family = binomial)`.
+To plot the predicted values we use `geom_smooth()`, as we did for linear models, but with the arguments `method = "glm"` and `method.args = list(family = binomial)`.
 
 ```{r visualise_glm}
 ggplot(
@@ -223,8 +259,13 @@ ggplot(
 
 As you can see, the prediction is limited to probabilities between 0 and 1.
 
-## Making predictions {#sec-predictions_binom_glms}
-::: {.callout-exercise #ex-predict_with_glm}
+## Making predictions {#sec-predictions_binom_glms .core}
+
+::: {.callout-exercise #ex-predict_with_glm .core}
+
+### Make predictions using a GLM
+
+[**Core**]{.core-text}
 
 In your `glms.qmd` Quarto file, use your GLM to predict the probability of detecting *H. tumulorum* at the following temperatures:
 
@@ -312,11 +353,19 @@ According to our model, we are guaranteed to find *H. tumulorum* at this tempera
 
 Using the logit function forces the predicted probability to be between 0 and 1, however it doesn't guarantee it is correct.
 
-## Multiple predictors {#sec-multiple_predictors}
+## Multiple predictors {#sec-multiple_predictors .rec}
 
-Additional predictors and interactions can be added to GLMs exactly as we added them to linear models in @sec-p3_anova and @sec-p4_linear_regression_chisq.
+[**Recommended**]{.rec-text}
 
-::: {.callout-exercise #ex-two_predictors}
+[↑ top](#)
+
+Additional predictors and interactions can be added to GLMs exactly as we added them to linear models in  @sec-multiple_linear_regression.
+
+::: {.callout-exercise #ex-two_predictors .rec}
+
+### Fitting a GLM with multiple predictors
+
+[**Recommended**]{.rec-text}
 
 In your `glms.qmd` Quarto file, apply a single binomial GLM to assess the following hypotheses, based on the data in `data/site_metadata.csv`.
 
@@ -339,7 +388,7 @@ You will need to add a column to `site_metadata` with 1 if the value of the colu
 
 Draw a conclusion based on the summary of the fitted model.
 
-```{r glm_hali_setup}
+```{r glm_hali_setup, message=FALSE}
 site_metadata <- read_csv("data/site_metadata.csv")
 site_metadata <- site_metadata |>
   mutate(
@@ -367,17 +416,25 @@ For the **interaction between latitude and annual mean temperature**, the estima
 :::
 :::
 
-## Estimating model parameters using maximum likelihood {#sec-parameter_estimation}
+## Estimating model parameters using maximum likelihood {#sec-parameter_estimation .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 R uses maximum likelihood to estimate the parameters for the model.
 
-Let's fit a two-parameter model to some simple data. Seagulls like to steal chips, and are more common near to the sea. 
+Let's fit a two-parameter model to some simple data. Seagulls like to steal chips, and are more common near to the sea.  Let's see if there is an association between being nearer to the sea and having your chips stolen.
 
 ![A seagull stealing a chip](images/seagull.jpg){#fig-gull width="50%"}
 
 You've been provided with a dataset in `data/seagulls.csv`.
 
-::: {.callout-exercise #ex-seagulls}
+::: {.callout-exercise #ex-seagulls .extension}
+
+### Fit a binomial GLM
+
+[**Extension**]{.extension-text}
 
 In your `prac6_exercises.qmd` Quarto file:
 
@@ -521,7 +578,11 @@ Our maximum likelihood estimate of $\beta_1$ is `r pull(max_likelihood, beta)[1]
 
 Note that maximising the likelihood and maximising the log-likelihood will identify the same value of $\beta_1$. Log-likelihood is generally more convenient to work with because it allows products of many small probabilities to be replaced by sums of their logarithms, avoiding extremely small numbers.
 
-::: {.callout-exercise #ex-not_log_likelihood}
+::: {.callout-exercise #ex-not_log_likelihood .extension}
+
+### Non-log likelihood
+
+[**Extension**]{.extension-text}
 
 In your `prac6_exercises.qmd` Quarto file, adapt the code above to use the product of the likelihood of the data under the model for each $\beta_1$ value, rather than the log likelihood. The R function for product is `prod()`.
 
@@ -555,7 +616,7 @@ for (beta in possible_beta1s) {
     mutate(probs = (1 - probs)) |>
     filter(chips_stolen == FALSE)
 
-  # Calculate the log likelihood of the observed data
+  # Calculate the likelihood of the observed data
   tot_stolen <- chips_stolen |> pull(probs) |> prod()
   tot_not <- chips_not_stolen |> pull(probs) |> prod()
   
@@ -585,7 +646,9 @@ ggplot(df_likelihood_nolog,
 
 This process gives the same answer, but the numbers are becoming impossibly small. With only 50 data points, R can cope with these values. Eventually, they may be too small for R to represent and be rounded to zero. Taking logarithms converts these products into sums and avoids this problem. 
 
-## Parameter space {#sec-parameter_space}
+## Parameter space {#sec-parameter_space .fold .extension}
+
+[**Extension**]{.extension-text}
 
 We are looking for the most likely value of a single parameter, so we can test a suitable range of possible values. However, we have used R's estimate for $\beta_0$. Without this, we would need to find the **combination** of $\beta_0$ and $\beta_1$ that gives the highest likelihood of observing our data, requiring us to search across a two-dimensional parameter space.
 
@@ -593,7 +656,11 @@ With additional parameters, the number of dimensions increases and the search be
 
 In practice, `glm()` uses an optimisation algorithm to find the combination of parameter values that maximises the likelihood, rather than testing every possible combination.
 
-## Assumptions {#sec-assumptions_binom}
+## Assumptions {#sec-assumptions_binom .core}
+
+[**Core**]{.core-text}
+
+[↑ top](#)
 
 Some assumptions are common to all GLMs and some are specific depending on the type of response variable.
 
@@ -613,13 +680,34 @@ For binomial GLMs we additionally assume that the response is compatible with a 
 
 ### Summary
 
+#### Statistics
+
+* **Generalised linear models (GLMs)** extend linear models to response variables that are not continuous and normally distributed.
+* A **binomial GLM** can be used when the response variable is binary, such as presence or absence.
+* A standard linear model is unsuitable for a binary response because it can predict values outside the possible range of probabilities from 0 to 1.
+* In a binomial GLM, the **logit link function** transforms probabilities into log-odds, which can take any value from $-\infty$ to $\infty$.
+* The coefficients of a binomial GLM describe changes in **log-odds**. Exponentiating a coefficient gives an **odds ratio**.
+* Predictions from a binomial GLM can be converted back to probabilities between 0 and 1.
+* Predictions made outside the range of the observed data are **extrapolations** and may be unreliable, even though the predicted probabilities remain between 0 and 1.
+* Binomial GLMs can contain multiple explanatory variables and interactions in the same way as standard linear models.
+* GLMs assume independence of observations and linearity on the link scale. A binomial GLM additionally requires a response compatible with a binomial distribution.
+
+#### Programming
+
+* We can fit a generalised linear model using `glm()`, specifying the response distribution using the `family` argument.
+* We can fit a binomial GLM using `family = binomial`.
+* We can examine a fitted GLM using `summary()` and access its estimated coefficients using `coef()`.
+* We can use `predict()` to make predictions from a fitted GLM, and `type = "response"` to return predictions on the response scale.
+* We can plot a fitted binomial GLM using `geom_smooth(method = "glm", method.args = list(family = binomial))`.
 
 :::
 
 For this part of the practical, the main files you have created are:
 
-These are the files you should select when making your Git commit.
+* `prac6_exercises.qmd`
+* `glms.qmd`
 
+These are the files you should select when making your Git commit.
 
 Remember to save and commit your work before moving on to Part 5.
 

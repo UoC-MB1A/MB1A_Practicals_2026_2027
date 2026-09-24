@@ -13,38 +13,57 @@ library(gt)
 
 ::: {.callout-note .partmenu #parts-0603}
 ## Sections
-- @sec-data_break_t
-- @sec-helper_functions
-- @sec-p_distributions
-- @sec-true_normal
-- @sec-breaking_assumptions
+- @sec-data_break_t [(Extension)]{.extension-text}
+- @sec-helper_functions [(Extension)]{.extension-text}
+- @sec-p_distributions [(Extension)]{.extension-text}
+- @sec-true_normal [(Extension)]{.extension-text}
+- @sec-breaking_assumptions [(Extension)]{.extension-text}
+- @sec-breaking_assumptions_more [(Bonus)]{.bonus-text}
 - @sec-summary_0603
 :::
 
 :::{.callout-tip .objectives #objectives-0603}
 #### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Use simulation to investigate the behaviour of a statistical test.
+* Interpret distributions of p-values from repeated statistical tests.
+* Explain how Type I and Type II error rates can be estimated using repeated simulations.
+* Investigate how violations of model assumptions affect the results of a t-test.
+
 :::
+
+In this part of the practical, you will need one Quarto document:
+
+* `break_t.qmd` for trying to break a t-test [(Extension)]{.extension-text}.
 
 A standard two-sample t-test assumes that the populations being compared are normally distributed and that their residuals have equal variance, but the t-test is often described as robust to violations of these assumptions. What does this actually mean?
 
 Let's investigate two sets of hypotheses, in one we will simulate a true difference in means and in the other we will not.
 
-## Data {#sec-data_break_t}
+## Scenarios {#sec-data_break_t .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 #### Scenario 1
 
-* **Alternative**: The mean running speed of cats through a course is associated with the colour of their fur.
-* **Null**: The mean running speed of cats through a course is not associated with the colour of their fur.
-
+* **Null hypothesis**: The mean running speed of orange cats does not differ from the mean running speed of black cats.
 Population values:
+* **Alternative hypothesis**: The mean running speed of orange cats differs from the mean running speed of black cats.
+
 
 * Orange cats: mean speed, **20km/h**
 * Black cats: mean speed, **20km/h**
 
 #### Scenario 2
 
-* **Alternative**: The mean running speed of dogs through a course differs depending on whether there is a biscuit at the end of the course.
-* **Null**: The mean running speed of dogs through a course does not differ depending on whether there is a biscuit at the end of the course.
+* **Null hypothesis**: The mean running speed of dogs through a course does not differ depending on whether there is a biscuit at the end of the course.
+
+* **Alternative hypothesis**: The mean running speed of dogs through a course differs depending on whether there is a biscuit at the end of the course.
+
 
 Population values:
 
@@ -55,11 +74,16 @@ For the **cat** data, the **null hypothesis** is true, so the proportion of sign
 
 For the **dog** data, the **alternative hypothesis** is true, so the proportion of non-significant results estimates a **Type II** error rate.
 
-## Helper functions {#sec-helper_functions}
+## Helper functions {#sec-helper_functions .fold .extension}
 
 We are going to perform the same steps lots of times, so we need a function.
 
-::: {.callout-exercise #ex-function_ttest}
+::: {.callout-exercise #ex-function_ttest .extension}
+
+### Writing a helper function
+
+[**Extension**]{.extension-text}
+
 In your `break_t.qmd` Quarto file:
 
 * Write a function named `compare_vectors` for which the input is two vectors of measurements. The function should:
@@ -69,7 +93,7 @@ In your `break_t.qmd` Quarto file:
   * Fit a linear model to the measurements for the two groups.
   * Put the residuals from the linear model into the long format data frame.
   * Plot a histogram showing the distribution of the residuals in each group.
-  * Return a list containing:
+  * Return a list (see @sec-functions_multiple_outputs) containing:
     * `df` - The data frame
     * `summ_df` - The summary data frame
     * `t_test` - The t-test result
@@ -159,7 +183,7 @@ We also need an empty data frame in which to store our results.
 comparison_df <- tibble()
 ```
 
-## Distributions of p-values {#sec-p_distributions}
+## Distributions of p-values {#sec-p_distributions .fold .extension}
 
 When we repeat a statistical test many times, we can examine the distribution of the p-values it produces.
 
@@ -205,11 +229,19 @@ ggplot(p_df, aes(x = pval)) +
 
 Therefore, if we are running many tests we can use p-value distributions to investigate whether a statistical test is behaving as expected, rather than judging it from the result of a single test.
 
-## True normally distributed data {#sec-true_normal}
+## Sample from a normally distributed population  {#sec-true_normal .fold .extension}
+
+[**Extension**]{.extension-text}
+
+[↑ top](#)
 
 First, let's take values from normal distributions with equal variance which meet the assumptions of our t-test and see how the t-test performs.
 
-::: {.callout-exercise #ex-break_t_1}
+::: {.callout-exercise #ex-break_t_1 .extension}
+
+### Sample from a normally distributed population 
+
+[**Extension**]{.extension-text}
 
 In your `break_t.qmd` Quarto file:
 
@@ -426,7 +458,7 @@ The percentage of insignificant p-values for the dog dataset is `r round(prop_do
 
 #### 7
 
-[Store the type I and type II error rates as a row in a data frame.]{.blue_text}
+[Store the type I and type II error rates as a row in a data frame.]{.blue-text}
 
 ```{r break_t_ans1.17}
 dd <- tibble(
@@ -449,11 +481,15 @@ Therefore, our expected type I error rate is 0.05, our simulated rate was `r rou
 
 When the alternative hypothesis is true, the probability of correctly rejecting the null hypothesis is called the power of the test. The type II error rate is therefore $1-power$. Here, our simulations give us an estimate of the type II error rate directly - `r round (prop_dog_insig, 2)`
 
-## Breaking assumptions {#sec-breaking_assumptions}
+## Breaking assumptions {#sec-breaking_assumptions .fold .extension}
 
-Now we're going to repeat these similar steps with data which violates the assumptions of a t-test in various ways.
+Now we're going to repeat these steps with data which violates the assumptions of a t-test in various ways.
 
-::: {.callout-exercise #ex-break_t_2}
+::: {.callout-exercise #ex-break_t_2 .extension}
+
+### Try to break a t-test
+
+[**Extension**]{.extension-text}
 
 In your `break_t.qmd` Quarto file, follow these steps for **2** of the following situations. They are the same steps as for the previous exercise and you should be able to reuse the majority of the code. For the situations you didn't choose, please look at the results and conclusions, or compare results with your neighbours. 
 
@@ -1236,14 +1272,19 @@ Now let's look at the error rates for all of the simulations above.
 gt(comparison_df)
 ```
 
-This shows that even with our relatively small sample sizes, the t-test is robust to some violations of its assumptions - at least in these very controlled simulations where only one assumption is violated at a time. 
+This shows that even with our relatively small sample sizes, the t-test is robust to some violations of its assumptions - at least in these very controlled simulations. However, combinations of violations can have a much greater effect on the behaviour of the test. 
+
 We have also demonstrated that the diagnostic plots are useful but they are not definitive - sometimes the test performs well even if they look quite questionable.
 
-::: {.callout-bonus #bon-really_break_t_test}
+## Breaking assumptions even more {#sec-breaking_assumptions_more .fold .bonus}
+
+::: {.callout-exercise #ex-really_break_t_test .bonus}
+
+### Try harder to break a t-test
 
 Without changing the population means, see if you really can break the t-test. This could be by violating multiple assumptions, changing the sample sizes, adding outliers, dragging the data further from normality, or anything else you can think of!
 
-If you do manage to break it, submit your sample distributions [here]() and we will create a site to showcase your results (anonymously).
+If you do manage to break it, submit your sample distributions [here](https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=RQSlSfq9eUut41R7TzmG6f9Vv7R65eRHrxeQzsACvcxURjJSRFFRVzVHN0NFTVMxN0dDUENPMEFEQS4u) and we will create a site to showcase your results (anonymously).
 
 :::
 ## Review {#sec-summary_0603}
@@ -1254,12 +1295,22 @@ If you do manage to break it, submit your sample distributions [here]() and we w
 
 ### Summary
 
+* Statistical tests can still produce **Type I** and **Type II errors** even when all of their assumptions are met.
+* When the null hypothesis is true and a statistical test is behaving as expected, p-values should be approximately uniformly distributed between 0 and 1.
+* When the alternative hypothesis is true, the distribution of p-values depends on the **power** of the test, with greater power producing more small p-values.
+* Repeated simulation allows us to investigate the behaviour of a statistical test and estimate its Type I and Type II error rates.
+* The t-test can be robust to some violations of its assumptions, but this depends on the particular data and combination of violations.
+* Unequal sample sizes are not themselves a violation of the assumptions of a t-test, but unequal sample sizes combined with unequal variances can cause problems for a standard equal-variance t-test.
+* Diagnostic plots are useful for identifying potential violations of assumptions, but should not be treated as simple pass/fail tests.
+
 
 :::
 
-For this part of the practical, the main files you have created are:
+For this part of the practical, the main file you have created is:
 
-These are the files you should select when making your Git commit.
+* `break_t.qmd`
+
+This is the file you should select when making your Git commit.
 
 
 Remember to save and commit your work before moving on to Part 4.

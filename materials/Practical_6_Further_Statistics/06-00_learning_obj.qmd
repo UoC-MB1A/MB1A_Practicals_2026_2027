@@ -3,4 +3,184 @@ title: "Plan and Learning Objectives"
 format: html
 practical: Practical_6_Further_Statistics
 doc-id: "0600"
+author: "Katy Brown"
 ---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+# Practical 6 - Further Statistics
+
+::: {.callout-tip .partmenu #parts-0600}
+
+## Practical 6 - Further statistics
+
+### @sec-p1_functions
+
+#### Sections
+
+- @sec-writing_functions
+- @sec-functions_multiple_outputs [(Extension)]{.extension-text}
+- @sec-summary_0601
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Understand what functions are and why they are useful.
+* Write a function that takes an input and returns an output.
+* Apply a function to different values and to columns in a data frame.
+
+### @sec-p2_assumptions
+
+#### Sections
+- @sec-independent
+- @sec-continuous
+- @sec-normality
+- @sec-qq
+- @sec-constant_variance
+- @sec-res_fitted
+- @sec-scale_location
+- @sec-influential
+- @sec-plotall
+- @sec-summary_0602
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Describe the main assumptions of linear models.
+* Extract fitted values and residuals from a fitted linear model.
+* Use diagnostic plots to assess normality, constant variance and linearity.
+* Identify potentially influential observations in a linear model.
+* Use R to generate standard diagnostic plots for a fitted linear model.
+
+### @sec-p3_break_t
+
+#### Sections
+- @sec-data_break_t [(Extension)]{.extension-text}
+- @sec-helper_functions [(Extension)]{.extension-text}
+- @sec-p_distributions [(Extension)]{.extension-text}
+- @sec-true_normal [(Extension)]{.extension-text}
+- @sec-breaking_assumptions [(Extension)]{.extension-text}
+- @sec-breaking_assumptions_more [(Bonus)]{.bonus-text}
+- @sec-summary_0603
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Use simulation to investigate the behaviour of a statistical test.
+* Interpret distributions of p-values from repeated statistical tests.
+* Explain how Type I and Type II error rates can be estimated using repeated simulations.
+* Investigate how violations of model assumptions affect the results of a t-test.
+
+### @sec-p4_glms_binomial
+
+#### Sections
+- @sec-binary_response
+- @sec-not_linear [(Extension)]{.extension-text}
+- @sec-fitting_binomial_glms
+- @sec-link_functions
+- @sec-predictions_binom_glms
+- @sec-multiple_predictors [(Recommended)]{.rec-text}
+- @sec-parameter_estimation [(Extension)]{.extension-text}
+- @sec-parameter_space [(Extension)]{.extension-text}
+- @sec-assumptions_binom
+- @sec-summary_0604
+
+#### Learning objectives
+By the end of this part of the practical you will be able to:
+
+* Fit and interpret a binomial generalised linear model (GLM) in R.
+* Explain the role of the logit link function in a binomial GLM.
+* Use a fitted binomial GLM to predict probabilities.
+* Fit binomial GLMs containing multiple explanatory variables and interactions.
+* Describe the main assumptions of a binomial GLM.
+
+### @sec-p5_glms_pois
+
+#### Sections
+- @sec-poisson_glms
+- @sec-log_link
+- @sec-fitting_pois_glms
+- @sec-prediction_pois_glm
+- @sec-assumptions_glms
+- @sec-summary_0605
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Explain when a Poisson generalised linear model (GLM) is appropriate.
+* Fit and interpret a Poisson GLM in R.
+* Explain the role of the log link function in a Poisson GLM.
+* Use a fitted Poisson GLM to predict expected counts.
+* Assess whether count data are overdispersed relative to a fitted Poisson model.
+
+### @sec-p6_choosing_a_model
+
+#### Sections
+
+- @sec-choosing_a_model
+- @sec-septin_dataset
+- @sec-nested_models
+- @sec-lrt
+- @sec-AIC [(Extension)]{.extension-text}
+- @sec-automate_bss [(Extension)]{.extension-text}
+- @sec-summary_0606
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Explain what is meant by nested and minimal models.
+* Compare nested models to determine whether removing an explanatory variable significantly worsens model fit.
+* Use likelihood-ratio tests to compare nested GLMs.
+* Use backwards stepwise elimination to identify a minimal model. 
+* Use AIC as an alternative approach to model selection. [(Extension)]{.extension-text}
+
+### @sec-p7_power_analysis
+
+#### Sections
+
+- @sec-power [(Extension)]{.extension-text}
+- @sec-effect_size [(Extension)]{.extension-text}
+- @sec-t_test_power [(Extension)]{.extension-text}
+- @sec-power_anova [(Extension)]{.extension-text}
+- @sec-other_tests_power [(Extension)]{.extension-text}
+- @sec-simulation_power [(Extension)]{.extension-text}
+- @sec-power_fixed_sample_sizes [(Bonus)]{.bonus-text}
+- @sec-summary_0607
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Explain statistical power and the factors that affect it. [(Extension)]{.extension-text}
+* Use effect sizes to describe the magnitude of differences or relationships. [(Extension)]{.extension-text}
+* Use analytical power calculations to estimate the sample size required to detect an effect of a specified size. [(Extension)]{.extension-text}
+* Use simulation to estimate statistical power for more complex models. [(Extension)]{.extension-text}
+* Use power analysis to investigate the size of effect that can be reliably detected when sample size is fixed. [(Extension)]{.extension-text}
+
+### @sec-p8_p_multiple_testing
+
+#### Sections
+
+- @sec-p_values
+- @sec-multiple_testing
+- @sec-family_wise_error
+- @sec-multiple_testing_corrections
+- @sec-summary_0608
+
+#### Learning objectives
+
+By the end of this part of the practical you will be able to:
+
+* Explain why p-values are uniformly distributed under the null hypothesis. [(Extension)]{.extension-text}
+* Explain why performing many statistical tests increases the probability of obtaining false-positive results. [(Extension)]{.extension-text}
+* Distinguish between family-wise error rate and false discovery rate. [(Extension)]{.extension-text}
+* Explain how Bonferroni and Benjamini–Hochberg corrections address multiple testing. [(Extension)]{.extension-text}
+* Apply multiple-testing corrections to a set of p-values in R. [(Extension)]{.extension-text}
+
+:::
