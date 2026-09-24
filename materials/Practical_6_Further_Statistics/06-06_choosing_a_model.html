@@ -1,0 +1,4122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Katy Brown">
+
+<title>Part 6: Choosing a model</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../materials/Practical_6_Further_Statistics/06-07_power_analysis.html" rel="next">
+<link href="../../materials/Practical_6_Further_Statistics/06-05_glms_pois.html" rel="prev">
+<link href="../../my-theme/university-of-cambridge-favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/quarto-axe/axe.min.js"></script>
+<script src="../../site_libs/quarto-axe/axe-check.js" type="module"></script>
+<script id="quarto-axe-checker-options" type="text/plain">dHJ1ZQ==</script>
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-720fc985038ef0247f7450d0d56eb042.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../my-theme/university_crest_reversed.png" alt="" class="navbar-logo light-content">
+    <img src="../../my-theme/university_crest_reversed.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">MB1A Practicals 2026-2027</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+      </div> <!-- /container-fluid -->
+    
+    <style>
+    #version-dropdown {
+      list-style: none;
+    }
+    </style>
+    
+
+  <li id="version-dropdown" class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-versions" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="menu-text">Version:</span> <span class="version-badge" aria-hidden="true">Latest</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-versions">
+      <li>
+        <a class="dropdown-item" href="/MB1A_Practicals_2026_2027/index.html">
+          <span class="dropdown-text">Latest</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+</nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span id="sec-p6_choosing_a_model" class="quarto-section-identifier"><span class="chapter-title">Part 6: Choosing a model</span></span></h1>
+        </a>     
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Welcome</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Installing R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Setting up Git, GitHub and RStudio</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 1 - Basics of R and RStudio</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-01_using_r_and_rstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Using R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-02_quarto.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Reproducible Analysis with Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-03_simple_variables_functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Functions and Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-04_complex_variables_plotting.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Vectors, data frames and plots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 2 - Data Frames and Visualisation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-01_manipulating_dataframes1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Basic Data Frame Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-02_manipulating_dataframes2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Complex Data Frame Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-03_visualisation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Visualisation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-04_visualisation_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Visualisation Exercise</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 3 - Probability and Simulation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-01_for_loops.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Loops</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-02_intro_to_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Using simulation to understand probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-03_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Using simulation to understand data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-04_using_other_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Simulation exercises</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-05_Bayes_theorem.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Conditional Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-06_bonus_non_standard_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6 - Sampling from a user-defined probability distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-07_bonus_practice_questions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability Problem Sheets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 4 - Statistics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-01_data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: UK Pollinator Monitoring Scheme Dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-02_hypothesis_testing_1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-03_hypothesis_testing_2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: ANOVA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-04_hypothesis_testing_3.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Linear regression and Chi-Squared</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-05_hypothesis_testing_exercises.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Hypothesis Testing Exercises</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-06_making_predictions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Using models to make predictions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-07_estimators_and_bootstrapping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Estimators and Bootstrapping</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 5 - Bioinformatics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-01_bioconductor.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Introduction to Bioconductor and Sequence Analysis in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-02_sequence_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Finding Open Reading Frames</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-03_blast.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Identifying Sequences with BLAST</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-04_align_phylo.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Multiple Sequence Alignment and Phylogeny</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-05_share_data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Share your results</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Practical 6 - Further Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-01_functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-02_model_assumptions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Testing Assumptions of Linear Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-03_breaking_assumptions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Can we break a t-test?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-04_glms_binom.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Generalised Linear Models - Binomial</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-05_glms_pois.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Generalised Linear Models - Poisson</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-06_choosing_a_model.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 6: Choosing a model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-07_power_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Power Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-08_multiple_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: P-values and Multiple testing</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Reference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../R_reference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">R Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-choosing_a_model" id="toc-sec-choosing_a_model" class="nav-link active" data-scroll-target="#sec-choosing_a_model">Choosing a model</a></li>
+  <li><a href="#sec-septin_dataset" id="toc-sec-septin_dataset" class="nav-link" data-scroll-target="#sec-septin_dataset">Septin dataset</a></li>
+  <li><a href="#sec-nested_models" id="toc-sec-nested_models" class="nav-link" data-scroll-target="#sec-nested_models">Nested models and backwards stepwise elimination</a></li>
+  <li><a href="#sec-lrt" id="toc-sec-lrt" class="nav-link" data-scroll-target="#sec-lrt">Likelihood-Ratio tests</a></li>
+  <li><a href="#sec-AIC" id="toc-sec-AIC" class="nav-link" data-scroll-target="#sec-AIC">Removing elements by AIC</a></li>
+  <li><a href="#sec-automate_bss" id="toc-sec-automate_bss" class="nav-link" data-scroll-target="#sec-automate_bss">Automating backwards stepwise selection</a></li>
+  <li><a href="#sec-summary_0606" id="toc-sec-summary_0606" class="nav-link" data-scroll-target="#sec-summary_0606">Review</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span id="sec-p6_choosing_a_model" class="quarto-section-identifier"><span class="chapter-title">Part 6: Choosing a model</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Katy Brown </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="parts-0606" class="partmenu callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Sections
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><a href="#sec-choosing_a_model" class="quarto-xref"><span>Choosing a model</span></a></li>
+<li><a href="#sec-septin_dataset" class="quarto-xref"><span>Septin dataset</span></a></li>
+<li><a href="#sec-nested_models" class="quarto-xref"><span>Nested models and backwards stepwise elimination</span></a></li>
+<li><a href="#sec-lrt" class="quarto-xref"><span>Likelihood-Ratio tests</span></a></li>
+<li><a href="#sec-AIC" class="quarto-xref"><span>Removing elements by AIC</span></a> <span class="extension-text">(Extension)</span></li>
+<li><a href="#sec-automate_bss" class="quarto-xref"><span>Automating backwards stepwise selection</span></a> <span class="extension-text">(Extension)</span></li>
+<li><a href="#sec-summary_0606" class="quarto-xref"><span>Review</span></a></li>
+</ul>
+</div>
+</div>
+<div class="objectives callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this part of the practical you will be able to:</p>
+<ul>
+<li>Explain what is meant by nested and minimal models.</li>
+<li>Compare nested models to determine whether removing an explanatory variable significantly worsens model fit.</li>
+<li>Use likelihood-ratio tests to compare nested GLMs.</li>
+<li>Use backwards stepwise elimination to identify a minimal model.</li>
+<li>Use AIC as an alternative approach to model selection. <span class="extension-text">(Extension)</span></li>
+</ul>
+</div>
+</div>
+<p>In this part of the practical, you will need one Quarto document:</p>
+<ul>
+<li><code>septin.qmd</code> for analysis of data about Septin proteins</li>
+</ul>
+<section id="sec-choosing_a_model" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-choosing_a_model">Choosing a model</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>When we fit a model, we generally aim for the simplest model that adequately fits the data. We can therefore simplify a model by removing explanatory variables, provided that doing so does not significantly worsen the fit of the model. The simplest model which adequately fits the data is known as the <strong>minimal model</strong>.</p>
+<p>The approaches we use for model comparison apply to both linear models and to both binomial and Poisson GLMs, although the specific statistical test used to compare nested models differs between linear models and GLMs.</p>
+<p>For linear models, the <strong>residual sum of squares (RSS)</strong> measures the discrepancy between the observed values and those predicted by the model. For GLMs, the equivalent role is played by <strong>deviance</strong> (see <a href="06-05_glms_pois.html#sec-assumptions_glms" class="quarto-xref"><span>Assumptions of Poisson GLMs</span></a>) - a measure of how much mismatch remains between the observed data and the fitted GLM - or, in other words, of how well the model fits the data. In both cases, simplifying a model will generally worsen its fit, and we can test whether this worsening is sufficiently large to justify retaining the more complex model.</p>
+</section>
+<section id="sec-septin_dataset" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-septin_dataset">Septin dataset</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>We will use a dataset based on <a href="https://doi.org/10.1038/s41467-024-54638-8">this article</a>, published in Nature Communications in 2024. These authors developed a tool to determine the spatial distribution of components inside cells using 3D image analysis. This is based on a measure, <span class="math inline">\(P_n\)</span>, of how polar the distribution of a protein is within a cell.</p>
+<ul>
+<li>low <span class="math inline">\(P_n\)</span> → protein distributed relatively symmetrically → less polar</li>
+<li>high <span class="math inline">\(P_n\)</span> → protein concentrated asymmetrically toward one part of the cell → more polar.</li>
+</ul>
+<p>Using their tool, they characterised the distribution of 6 members of a family of proteins called <strong>Septins</strong>, which are involved in cellular compartmentalisation, in haematopoietic stem cells (HSCs) from young mice (aged 10–18 weeks) and aged mice (aged 80+ weeks). They found that most Septins had a lower <span class="math inline">\(P_n\)</span> in aged HSCs, indicating a less polar distribution, and that the organisation of the Septin network was altered with age. This is shown in their Figure 3B.</p>
+<p>The data is in your <code>data/septin.csv</code> folder.</p>
+<p>We will use the Septin dataset to determine if the <span class="math inline">\(P_n\)</span> of the six Septin proteins can be used to predict if an HSC is young or old, and to explore the methods of establishing a minimal model.</p>
+</section>
+<section id="sec-nested_models" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-nested_models">Nested models and backwards stepwise elimination</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>One model is <strong>nested</strong> within another if the simpler model can be obtained just by removing one or more terms from the more complex model.</p>
+<p>For example, in the following example model 1 is nested within model 2.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model_1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> temperature, <span class="at">data =</span> ...)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>model_2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> temperature <span class="sc">+</span> rainfall, <span class="at">data =</span> ...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Similarly, in the following case, model 1 is nested within model 2, because model 2 expanded to <code>y ~ temperature + rainfall + temperature:rainfall</code>, where <code>temperature:rainfall</code> is the interaction.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model_1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> temperature <span class="sc">+</span> rainfall, <span class="at">data =</span> ...)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model_2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> temperature <span class="sc">*</span> rainfall, <span class="at">data =</span> ...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We can manually remove elements from a nested model and see how the model is affected.</p>
+<p>There are various options to choose which element to remove, including:</p>
+<ul>
+<li>Sequentially removing the element with the highest p-value - the element with the least significant effect on the model fit.</li>
+<li>Removing the element whose removal results in the lowest AIC - a statistic which specifically balances how well the model fits with the complexity of the model.</li>
+</ul>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 1 - Removing elements by p-value
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex_septin_pval" class="callout-exercise core">
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p>In your <code>septin.qmd</code> Quarto file: * Read <code>data/septin.csv</code> into a data frame. * Fit a GLM to the Septin dataset with <code>Is_Old</code> as the binary response variable and all six septin levels as continuous explanatory variables. Consider only additive effects at this stage, not interactions. * Once you have the fitted model, look at the summary and find which of the explanatory variables has the least significant p-value. Remove this variable and fit another GLM.</p>
+<p>Continue to do this until you have no remaining variables, then fit the NULL model - <code>Is_Old ~ 1</code>. Keep all of your models in different variables named <code>model_1</code> to <code>model_7</code>.</p>
+<p>Once you’ve run all 7, create a data frame with the columns <code>degrees_of_freedom</code> and <code>deviance</code> containing the residual degrees of freedom (<code>model$df.residual</code>) and the residual deviance (<code>model$deviance</code>) for each model.</p>
+<p>Plot the resulting values, with <code>degrees_of_freedom</code> on the x axis and <code>deviance</code> on the y axis.</p>
+<p>On the graph, observe how the residual deviance changes as the model becomes simpler.</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_septin_nested_ans" class="callout-answer" data-collapse="true">
+<p><span class="blue-text">Read <code>data/septin.csv</code> into a data frame.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>septin <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/septin.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Fit a GLM to the Septin dataset with <code>Is_Old</code> as the binary response variable and all six septins levels as continuous explanatory variables. Consider only additive effects at this stage, not interactions.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model_1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Is_Old <span class="sc">~</span> Septin1 <span class="sc">+</span> Septin2 <span class="sc">+</span> Septin6 <span class="sc">+</span> Septin7 <span class="sc">+</span> Septin9 <span class="sc">+</span> Septin11, septin, <span class="at">family =</span> binomial)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Is_Old ~ Septin1 + Septin2 + Septin6 + Septin7 + 
+    Septin9 + Septin11, family = binomial, data = septin)
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.406e+00  2.659e-01   5.289 1.23e-07 ***
+Septin1      8.229e+05  3.931e+05   2.093   0.0363 *  
+Septin2     -6.857e+05  5.976e+05  -1.147   0.2513    
+Septin6      9.130e+05  3.989e+05   2.289   0.0221 *  
+Septin7     -2.674e+06  4.934e+05  -5.419 6.00e-08 ***
+Septin9     -8.561e+05  3.725e+05  -2.298   0.0216 *  
+Septin11    -1.872e+05  3.078e+05  -0.608   0.5431    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1051.7  on 769  degrees of freedom
+Residual deviance:  947.0  on 763  degrees of freedom
+AIC: 961
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p><span class="blue-text">Once you have the fitted model, look at the summary and find which of the explanatory variables has the least significant p-value.</span></p>
+<p>Septin 11 is the least significant.</p>
+<p><span class="blue-text">Remove this variable and fit another GLM.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Is_Old <span class="sc">~</span> Septin1 <span class="sc">+</span> Septin2 <span class="sc">+</span> Septin6 <span class="sc">+</span> Septin7 <span class="sc">+</span> Septin9, septin, <span class="at">family =</span> binomial)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Is_Old ~ Septin1 + Septin2 + Septin6 + Septin7 + 
+    Septin9, family = binomial, data = septin)
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.399e+00  2.658e-01   5.262 1.42e-07 ***
+Septin1      8.197e+05  3.935e+05   2.083 0.037243 *  
+Septin2     -7.454e+05  5.892e+05  -1.265 0.205841    
+Septin6      8.954e+05  3.974e+05   2.253 0.024249 *  
+Septin7     -2.627e+06  4.877e+05  -5.386 7.20e-08 ***
+Septin9     -1.016e+06  2.701e+05  -3.762 0.000169 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1051.68  on 769  degrees of freedom
+Residual deviance:  947.36  on 764  degrees of freedom
+AIC: 959.36
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p><span class="blue-text">Continue to do this until you have no remaining variables.</span></p>
+<p>Septin 2 is the least significant.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Is_Old <span class="sc">~</span> Septin1 <span class="sc">+</span> Septin6 <span class="sc">+</span> Septin7 <span class="sc">+</span> Septin9, septin, <span class="at">family =</span> binomial)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Is_Old ~ Septin1 + Septin6 + Septin7 + Septin9, 
+    family = binomial, data = septin)
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.358e+00  2.617e-01   5.190 2.11e-07 ***
+Septin1      6.191e+05  3.589e+05   1.725  0.08452 .  
+Septin6      7.937e+05  3.884e+05   2.044  0.04098 *  
+Septin7     -2.734e+06  4.813e+05  -5.681 1.34e-08 ***
+Septin9     -1.037e+06  2.710e+05  -3.826  0.00013 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1051.68  on 769  degrees of freedom
+Residual deviance:  948.97  on 765  degrees of freedom
+AIC: 958.97
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>Septin 1 is the least significant.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model_4 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Is_Old <span class="sc">~</span> Septin6 <span class="sc">+</span> Septin7 <span class="sc">+</span> Septin9, septin, <span class="at">family =</span> binomial)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Is_Old ~ Septin6 + Septin7 + Septin9, family = binomial, 
+    data = septin)
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.660e+00  1.978e-01   8.392  &lt; 2e-16 ***
+Septin6      8.224e+05  3.873e+05   2.124   0.0337 *  
+Septin7     -2.684e+06  4.798e+05  -5.595 2.21e-08 ***
+Septin9     -1.061e+06  2.713e+05  -3.911 9.21e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1051.68  on 769  degrees of freedom
+Residual deviance:  951.98  on 766  degrees of freedom
+AIC: 959.98
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>Septin 6 is the least significant.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model_5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Is_Old <span class="sc">~</span> Septin7 <span class="sc">+</span> Septin9, septin, <span class="at">family =</span> binomial)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_5)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Is_Old ~ Septin7 + Septin9, family = binomial, 
+    data = septin)
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.786e+00  1.893e-01   9.434  &lt; 2e-16 ***
+Septin7     -2.034e+06  3.565e+05  -5.704 1.17e-08 ***
+Septin9     -9.412e+05  2.563e+05  -3.672 0.000241 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1051.68  on 769  degrees of freedom
+Residual deviance:  956.57  on 767  degrees of freedom
+AIC: 962.57
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>Septin 9 is the least significant.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model_6 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Is_Old <span class="sc">~</span> Septin7, septin, <span class="at">family =</span> binomial)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_6)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Is_Old ~ Septin7, family = binomial, data = septin)
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.475e+00  1.660e-01   8.887  &lt; 2e-16 ***
+Septin7     -2.579e+06  3.237e+05  -7.969  1.6e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1051.68  on 769  degrees of freedom
+Residual deviance:  974.26  on 768  degrees of freedom
+AIC: 978.26
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>Septin 7 is the least significant.</p>
+<p><span class="blue-text">Fit the NULL model - <code>Is_Old ~ 1</code></span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model_7 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Is_Old <span class="sc">~</span> <span class="dv">1</span>, septin, <span class="at">family =</span> binomial)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_7)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Is_Old ~ 1, family = binomial, data = septin)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  0.28768    0.07282    3.95  7.8e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1051.7  on 769  degrees of freedom
+Residual deviance: 1051.7  on 769  degrees of freedom
+AIC: 1053.7
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p><span class="blue-text">Once you’ve run all 7, create a data frame with the columns <code>degrees_of_freedom</code> and <code>deviance</code> containing the residual degrees of freedom (<code>model$df.residual</code>) and the residual deviance (<code>model$deviance</code>) for each model.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df_septin <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">degrees_of_freedom =</span> <span class="fu">c</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    model_1<span class="sc">$</span>df.residual,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    model_2<span class="sc">$</span>df.residual,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    model_3<span class="sc">$</span>df.residual,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    model_4<span class="sc">$</span>df.residual,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    model_5<span class="sc">$</span>df.residual,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    model_6<span class="sc">$</span>df.residual,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    model_7<span class="sc">$</span>df.residual</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">deviance =</span> <span class="fu">c</span>(</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">deviance</span>(model_1),</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">deviance</span>(model_2),</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">deviance</span>(model_3),</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">deviance</span>(model_4),</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">deviance</span>(model_5),</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">deviance</span>(model_6),</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">deviance</span>(model_7)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(df_septin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="yassiwrvzg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yassiwrvzg table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#yassiwrvzg thead, #yassiwrvzg tbody, #yassiwrvzg tfoot, #yassiwrvzg tr, #yassiwrvzg td, #yassiwrvzg th {
+  border-style: none;
+}
+
+#yassiwrvzg p {
+  margin: 0;
+  padding: 0;
+}
+
+#yassiwrvzg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#yassiwrvzg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yassiwrvzg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yassiwrvzg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yassiwrvzg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yassiwrvzg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yassiwrvzg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yassiwrvzg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yassiwrvzg .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#yassiwrvzg .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#yassiwrvzg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yassiwrvzg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yassiwrvzg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yassiwrvzg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yassiwrvzg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yassiwrvzg .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#yassiwrvzg .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#yassiwrvzg .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#yassiwrvzg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yassiwrvzg .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#yassiwrvzg .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yassiwrvzg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yassiwrvzg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yassiwrvzg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yassiwrvzg .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yassiwrvzg .gt_left {
+  text-align: left;
+}
+
+#yassiwrvzg .gt_center {
+  text-align: center;
+}
+
+#yassiwrvzg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yassiwrvzg .gt_font_normal {
+  font-weight: normal;
+}
+
+#yassiwrvzg .gt_font_bold {
+  font-weight: bold;
+}
+
+#yassiwrvzg .gt_font_italic {
+  font-style: italic;
+}
+
+#yassiwrvzg .gt_super {
+  font-size: 65%;
+}
+
+#yassiwrvzg .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#yassiwrvzg .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#yassiwrvzg .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#yassiwrvzg .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#yassiwrvzg .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#yassiwrvzg .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#yassiwrvzg .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#yassiwrvzg .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#yassiwrvzg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="degrees_of_freedom" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">degrees_of_freedom</th>
+<th id="deviance" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">deviance</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">763</td>
+<td class="gt_row gt_right" headers="deviance">946.9955</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">764</td>
+<td class="gt_row gt_right" headers="deviance">947.3644</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">765</td>
+<td class="gt_row gt_right" headers="deviance">948.9726</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">766</td>
+<td class="gt_row gt_right" headers="deviance">951.9778</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">767</td>
+<td class="gt_row gt_right" headers="deviance">956.5723</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">768</td>
+<td class="gt_row gt_right" headers="deviance">974.2579</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">769</td>
+<td class="gt_row gt_right" headers="deviance">1051.6785</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><span class="blue-text">Plot the resulting values, with <code>degrees_of_freedom</code> on the x axis and <code>deviance</code> on the y axis.</span> <span class="blue-text">On the graph, observe how the residual deviance changes as the model becomes simpler.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  df_septin,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> degrees_of_freedom, <span class="at">y =</span> deviance)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="06-06_choosing_a_model_files/figure-html/septin_model_plot-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="06-06_choosing_a_model_files/figure-html/septin_model_plot-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-lrt" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-lrt">Likelihood-Ratio tests</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>As we removed explanatory variables from our model, the <strong>residual deviance</strong> increased. However, this does not tell us whether the increase in deviance is large enough to indicate that removing a variable has significantly worsened the fit of the model.</p>
+<p>For nested GLMs, we can test this using a likelihood-ratio test (LRT). The null hypothesis is that the simpler model fits the data adequately compared with the more complex model. A significant result therefore indicates that removing the variable has significantly worsened the fit of the model. The test is based on the ratio of the likelihood of our observed data given the two different models.</p>
+<p>For our nested GLMs, the difference in residual deviance between two adjacent points is identical to the likelihood-ratio test statistic.</p>
+<p>The test statistic for a likelihood ratio test is:</p>
+<p><span class="math display">\[
+LR = 2\left[\log(L_{\text{full}}) - \log(L_{\text{reduced}})\right]
+\]</span> We can measure the log-likelihood of a fitted model using the R function <code>logLik()</code>.</p>
+<p>The test statistics for likelihood-ratio tests are approximately chi-squared distributed, with degrees of freedom as the difference between the residual degrees of freedom for the two models.</p>
+<p><span class="math display">\[
+df_{\mathrm{LR}} = df_{\mathrm{reduced}} - df_{\mathrm{full}}
+\]</span></p>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 2 - Likelihood-ratio test
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-log_lik" class="callout-exercise core">
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p>In your <code>septin.qmd</code> Quarto file:</p>
+<ul>
+<li>Calculate the test statistic for the likelihood ratio test comparing your <code>model_1</code> and <code>model_2</code> from the previous exercise.</li>
+<li>Find the degrees of freedom for this likelihood ratio test.</li>
+<li>Using the cumulative probability function for the chi-squared distribution, <code>pchisq()</code>, calculate the probability that a variable with a chi-squared distribution with these degrees of freedom would be <strong>greater than or equal to</strong> your calculated value of the test statistic.</li>
+</ul>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_log_lik_ans" class="callout-answer" data-collapse="true">
+<p><span class="blue-text">Calculate the test statistic for the likelihood ratio test comparing your <code>model_1</code> and <code>model_2</code> from the previous exercise.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>log_lik_model_1 <span class="ot">&lt;-</span> <span class="fu">logLik</span>(model_1)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>log_lik_model_2 <span class="ot">&lt;-</span> <span class="fu">logLik</span>(model_2)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>test_statistic <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> (log_lik_model_1 <span class="sc">-</span> log_lik_model_2)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (test_statistic)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'log Lik.' 0.3688633 (df=7)</code></pre>
+</div>
+</div>
+<p><span class="blue-text">Find the degrees of freedom for this likelihood ratio test.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> model_1<span class="sc">$</span>df.residual</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> model_2<span class="sc">$</span>df.residual</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>df_diff <span class="ot">&lt;-</span> df2 <span class="sc">-</span> df1</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (df_diff)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<p><span class="blue-text">Using the cumulative probability function for the chi-squared distribution, <code>pchisq()</code> with the argument <code>lower.tail = FALSE</code> calculate the probability that a variable with a chi-squared distribution with these degrees of freedom would be <strong>greater than or equal to</strong> than your calculated value of the test statistic.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>prob <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(test_statistic, <span class="at">df =</span> df_diff, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (prob)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'log Lik.' 0.5436245 (df=7)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>You should see a non-significant p-value - so removing Septin 11 has not made the model significantly worse.</p>
+<p>The test statistic for a likelihood ratio test comparing two models is identical to the difference in deviance between those two models (for a GLM).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (model_2<span class="sc">$</span>deviance <span class="sc">-</span> model_1<span class="sc">$</span>deviance)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3688633</code></pre>
+</div>
+</div>
+<p>Therefore, we can calculate the change in deviance between each pair of successive models.</p>
+<p>The R function <code>lead()</code> returns the following value in a data frame column, so we can use it as follows to compare each value of <code>deviance</code> with the following value of <code>deviance</code>. The final value will be <code>NA</code> because there is nothing to compare it to.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df_septin <span class="ot">&lt;-</span> df_septin <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">test_statistic =</span> <span class="fu">lead</span>(deviance) <span class="sc">-</span> deviance)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(df_septin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="pekdbdtjvx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pekdbdtjvx table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#pekdbdtjvx thead, #pekdbdtjvx tbody, #pekdbdtjvx tfoot, #pekdbdtjvx tr, #pekdbdtjvx td, #pekdbdtjvx th {
+  border-style: none;
+}
+
+#pekdbdtjvx p {
+  margin: 0;
+  padding: 0;
+}
+
+#pekdbdtjvx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#pekdbdtjvx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#pekdbdtjvx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#pekdbdtjvx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#pekdbdtjvx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#pekdbdtjvx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#pekdbdtjvx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#pekdbdtjvx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#pekdbdtjvx .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#pekdbdtjvx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#pekdbdtjvx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pekdbdtjvx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#pekdbdtjvx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#pekdbdtjvx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#pekdbdtjvx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pekdbdtjvx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#pekdbdtjvx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#pekdbdtjvx .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#pekdbdtjvx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pekdbdtjvx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#pekdbdtjvx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pekdbdtjvx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#pekdbdtjvx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pekdbdtjvx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pekdbdtjvx .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pekdbdtjvx .gt_left {
+  text-align: left;
+}
+
+#pekdbdtjvx .gt_center {
+  text-align: center;
+}
+
+#pekdbdtjvx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#pekdbdtjvx .gt_font_normal {
+  font-weight: normal;
+}
+
+#pekdbdtjvx .gt_font_bold {
+  font-weight: bold;
+}
+
+#pekdbdtjvx .gt_font_italic {
+  font-style: italic;
+}
+
+#pekdbdtjvx .gt_super {
+  font-size: 65%;
+}
+
+#pekdbdtjvx .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#pekdbdtjvx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#pekdbdtjvx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#pekdbdtjvx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#pekdbdtjvx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#pekdbdtjvx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#pekdbdtjvx .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#pekdbdtjvx .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#pekdbdtjvx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="degrees_of_freedom" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">degrees_of_freedom</th>
+<th id="deviance" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">deviance</th>
+<th id="test_statistic" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">test_statistic</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">763</td>
+<td class="gt_row gt_right" headers="deviance">946.9955</td>
+<td class="gt_row gt_right" headers="test_statistic">0.3688633</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">764</td>
+<td class="gt_row gt_right" headers="deviance">947.3644</td>
+<td class="gt_row gt_right" headers="test_statistic">1.6082082</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">765</td>
+<td class="gt_row gt_right" headers="deviance">948.9726</td>
+<td class="gt_row gt_right" headers="test_statistic">3.0052187</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">766</td>
+<td class="gt_row gt_right" headers="deviance">951.9778</td>
+<td class="gt_row gt_right" headers="test_statistic">4.5944648</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">767</td>
+<td class="gt_row gt_right" headers="deviance">956.5723</td>
+<td class="gt_row gt_right" headers="test_statistic">17.6856280</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">768</td>
+<td class="gt_row gt_right" headers="deviance">974.2579</td>
+<td class="gt_row gt_right" headers="test_statistic">77.4205706</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">769</td>
+<td class="gt_row gt_right" headers="deviance">1051.6785</td>
+<td class="gt_row gt_right" headers="test_statistic">NA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>We can do exactly the same for the degrees of freedom.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df_septin <span class="ot">&lt;-</span> df_septin <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">df_diff =</span> <span class="fu">lead</span>(degrees_of_freedom) <span class="sc">-</span> degrees_of_freedom)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(df_septin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="rtuyayvhfj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rtuyayvhfj table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#rtuyayvhfj thead, #rtuyayvhfj tbody, #rtuyayvhfj tfoot, #rtuyayvhfj tr, #rtuyayvhfj td, #rtuyayvhfj th {
+  border-style: none;
+}
+
+#rtuyayvhfj p {
+  margin: 0;
+  padding: 0;
+}
+
+#rtuyayvhfj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#rtuyayvhfj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rtuyayvhfj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rtuyayvhfj .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rtuyayvhfj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rtuyayvhfj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rtuyayvhfj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rtuyayvhfj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rtuyayvhfj .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#rtuyayvhfj .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#rtuyayvhfj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rtuyayvhfj .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rtuyayvhfj .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rtuyayvhfj .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rtuyayvhfj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtuyayvhfj .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#rtuyayvhfj .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#rtuyayvhfj .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#rtuyayvhfj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtuyayvhfj .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#rtuyayvhfj .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtuyayvhfj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rtuyayvhfj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtuyayvhfj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rtuyayvhfj .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtuyayvhfj .gt_left {
+  text-align: left;
+}
+
+#rtuyayvhfj .gt_center {
+  text-align: center;
+}
+
+#rtuyayvhfj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rtuyayvhfj .gt_font_normal {
+  font-weight: normal;
+}
+
+#rtuyayvhfj .gt_font_bold {
+  font-weight: bold;
+}
+
+#rtuyayvhfj .gt_font_italic {
+  font-style: italic;
+}
+
+#rtuyayvhfj .gt_super {
+  font-size: 65%;
+}
+
+#rtuyayvhfj .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#rtuyayvhfj .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#rtuyayvhfj .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#rtuyayvhfj .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#rtuyayvhfj .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#rtuyayvhfj .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#rtuyayvhfj .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#rtuyayvhfj .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#rtuyayvhfj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="degrees_of_freedom" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">degrees_of_freedom</th>
+<th id="deviance" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">deviance</th>
+<th id="test_statistic" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">test_statistic</th>
+<th id="df_diff" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">df_diff</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">763</td>
+<td class="gt_row gt_right" headers="deviance">946.9955</td>
+<td class="gt_row gt_right" headers="test_statistic">0.3688633</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">764</td>
+<td class="gt_row gt_right" headers="deviance">947.3644</td>
+<td class="gt_row gt_right" headers="test_statistic">1.6082082</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">765</td>
+<td class="gt_row gt_right" headers="deviance">948.9726</td>
+<td class="gt_row gt_right" headers="test_statistic">3.0052187</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">766</td>
+<td class="gt_row gt_right" headers="deviance">951.9778</td>
+<td class="gt_row gt_right" headers="test_statistic">4.5944648</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">767</td>
+<td class="gt_row gt_right" headers="deviance">956.5723</td>
+<td class="gt_row gt_right" headers="test_statistic">17.6856280</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">768</td>
+<td class="gt_row gt_right" headers="deviance">974.2579</td>
+<td class="gt_row gt_right" headers="test_statistic">77.4205706</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">769</td>
+<td class="gt_row gt_right" headers="deviance">1051.6785</td>
+<td class="gt_row gt_right" headers="test_statistic">NA</td>
+<td class="gt_row gt_right" headers="df_diff">NA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Now our data frame contains everything we need to calculate the p-value of the LRT.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>df_septin <span class="ot">&lt;-</span> df_septin <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pvalue =</span> <span class="fu">pchisq</span>(test_statistic, df_diff, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">sig =</span> pvalue <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(df_septin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fjwxzkyjwn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fjwxzkyjwn table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#fjwxzkyjwn thead, #fjwxzkyjwn tbody, #fjwxzkyjwn tfoot, #fjwxzkyjwn tr, #fjwxzkyjwn td, #fjwxzkyjwn th {
+  border-style: none;
+}
+
+#fjwxzkyjwn p {
+  margin: 0;
+  padding: 0;
+}
+
+#fjwxzkyjwn .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#fjwxzkyjwn .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fjwxzkyjwn .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fjwxzkyjwn .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fjwxzkyjwn .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fjwxzkyjwn .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fjwxzkyjwn .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fjwxzkyjwn .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fjwxzkyjwn .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fjwxzkyjwn .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fjwxzkyjwn .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fjwxzkyjwn .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fjwxzkyjwn .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fjwxzkyjwn .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fjwxzkyjwn .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fjwxzkyjwn .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fjwxzkyjwn .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fjwxzkyjwn .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fjwxzkyjwn .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fjwxzkyjwn .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fjwxzkyjwn .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fjwxzkyjwn .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fjwxzkyjwn .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fjwxzkyjwn .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fjwxzkyjwn .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fjwxzkyjwn .gt_left {
+  text-align: left;
+}
+
+#fjwxzkyjwn .gt_center {
+  text-align: center;
+}
+
+#fjwxzkyjwn .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fjwxzkyjwn .gt_font_normal {
+  font-weight: normal;
+}
+
+#fjwxzkyjwn .gt_font_bold {
+  font-weight: bold;
+}
+
+#fjwxzkyjwn .gt_font_italic {
+  font-style: italic;
+}
+
+#fjwxzkyjwn .gt_super {
+  font-size: 65%;
+}
+
+#fjwxzkyjwn .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fjwxzkyjwn .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fjwxzkyjwn .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fjwxzkyjwn .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fjwxzkyjwn .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fjwxzkyjwn .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fjwxzkyjwn .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#fjwxzkyjwn .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#fjwxzkyjwn div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="degrees_of_freedom" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">degrees_of_freedom</th>
+<th id="deviance" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">deviance</th>
+<th id="test_statistic" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">test_statistic</th>
+<th id="df_diff" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">df_diff</th>
+<th id="pvalue" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">pvalue</th>
+<th id="sig" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">sig</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">763</td>
+<td class="gt_row gt_right" headers="deviance">946.9955</td>
+<td class="gt_row gt_right" headers="test_statistic">0.3688633</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+<td class="gt_row gt_right" headers="pvalue">5.436245e-01</td>
+<td class="gt_row gt_center" headers="sig">FALSE</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">764</td>
+<td class="gt_row gt_right" headers="deviance">947.3644</td>
+<td class="gt_row gt_right" headers="test_statistic">1.6082082</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+<td class="gt_row gt_right" headers="pvalue">2.047439e-01</td>
+<td class="gt_row gt_center" headers="sig">FALSE</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">765</td>
+<td class="gt_row gt_right" headers="deviance">948.9726</td>
+<td class="gt_row gt_right" headers="test_statistic">3.0052187</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+<td class="gt_row gt_right" headers="pvalue">8.299678e-02</td>
+<td class="gt_row gt_center" headers="sig">FALSE</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">766</td>
+<td class="gt_row gt_right" headers="deviance">951.9778</td>
+<td class="gt_row gt_right" headers="test_statistic">4.5944648</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+<td class="gt_row gt_right" headers="pvalue">3.207536e-02</td>
+<td class="gt_row gt_center" headers="sig">TRUE</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">767</td>
+<td class="gt_row gt_right" headers="deviance">956.5723</td>
+<td class="gt_row gt_right" headers="test_statistic">17.6856280</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+<td class="gt_row gt_right" headers="pvalue">2.605881e-05</td>
+<td class="gt_row gt_center" headers="sig">TRUE</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="degrees_of_freedom">768</td>
+<td class="gt_row gt_right" headers="deviance">974.2579</td>
+<td class="gt_row gt_right" headers="test_statistic">77.4205706</td>
+<td class="gt_row gt_right" headers="df_diff">1</td>
+<td class="gt_row gt_right" headers="pvalue">1.381687e-18</td>
+<td class="gt_row gt_center" headers="sig">TRUE</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="degrees_of_freedom">769</td>
+<td class="gt_row gt_right" headers="deviance">1051.6785</td>
+<td class="gt_row gt_right" headers="test_statistic">NA</td>
+<td class="gt_row gt_right" headers="df_diff">NA</td>
+<td class="gt_row gt_right" headers="pvalue">NA</td>
+<td class="gt_row gt_center" headers="sig">NA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>We can add this to our visualisation. The colour of each point indicates whether the increase in deviance between that model and the next, simpler model is significant.</p>
+<p>We can also add a second set of x axis labels to show which model corresponds to each point, using the function <code>scale_x_continuous()</code> with the <code>dup_axis()</code> function.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  df_septin,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> degrees_of_freedom, <span class="at">y =</span> deviance)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color=</span>sig), <span class="at">size=</span><span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sec.axis =</span> <span class="fu">dup_axis</span>(</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">breaks =</span> df_septin<span class="sc">$</span>degrees_of_freedom,</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">name =</span> <span class="st">"Model"</span>,</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">paste0</span>(<span class="st">"Model "</span>, <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">7</span>))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="06-06_choosing_a_model_files/figure-html/septin_model_plot_sig-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="06-06_choosing_a_model_files/figure-html/septin_model_plot_sig-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 3 - Find the minimal model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-minimal_model_septin" class="callout-exercise core">
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p>Based on the plot above, which model is our minimal model?</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex-minimal_model_septin_ans" class="callout-answer" data-collapse="true">
+<p>The change between model 4 and model 5 is the first significant change - this is where we removed Septin 6. This means our minimal model is model 4, as removing Septin 6 made the model significantly worse.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>For a linear model, the process above is very similar. As for the GLM, we sequentially remove predictors from the model.</p>
+<p>Instead of deviance, we use the residual sum of squares (RSS) for each model, <code>sum(residuals(model)^2)</code> to measure model fit. Conveniently but confusingly, you can also use the <code>deviance(model)</code> function in R to get this value from a fitted linear model.</p>
+<p>Instead of a likelihood ratio test, we calculate the test statistic F as follows:</p>
+<p><span class="math display">\[
+F =
+\frac{
+(RSS_{\mathrm{reduced}} - RSS_{\mathrm{full}}) /
+(df_{\mathrm{reduced}} - df_{\mathrm{full}})
+}{
+RSS_{\mathrm{full}} / df_{\mathrm{full}}
+}
+\]</span> This statistic follows approximately an F-distribution, so we find the p-value using the function <code>pf()</code>. The degrees of freedom for the F-distribution are as follows:</p>
+<p><span class="math display">\[
+df_1 = df_{\mathrm{reduced}} - df_{\mathrm{full}}
+\]</span></p>
+<p><span class="math display">\[
+df_2 = df_{\mathrm{full}}
+\]</span></p>
+</section>
+<section id="sec-AIC" class="level2 fold extension">
+<h2 class="fold extension anchored" data-anchor-id="sec-AIC">Removing elements by AIC</h2>
+<p><span class="extension-text"><strong>Extension</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>Now let’s try finding a minimal model using the AIC (Akaike Information Criterion) rather than p-value to choose which explanatory variables to remove.</p>
+<p>The AIC for a model is calculated based on its log likelihood and <span class="math inline">\(k\)</span>, the number of parameters in the model. It is implemented in the R function <code>AIC()</code>.</p>
+<p><span class="math display">\[
+AIC = -2\log(L) + 2k
+\]</span> We can calculate the AIC of a model directly:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>aic_septin_m1 <span class="ot">&lt;-</span> <span class="fu">AIC</span>(model_1)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (aic_septin_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 960.9955</code></pre>
+</div>
+</div>
+<p>This just tells us the AIC of the model, not the contribution of each variable. If we want to know how the AIC would change if we removed each variable in turn, we can use the function <code>drop1()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>aic_drop1 <span class="ot">&lt;-</span> <span class="fu">drop1</span>(model_1)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (aic_drop1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Single term deletions
+
+Model:
+Is_Old ~ Septin1 + Septin2 + Septin6 + Septin7 + Septin9 + Septin11
+         Df Deviance    AIC
+&lt;none&gt;        947.00 961.00
+Septin1   1   951.43 963.43
+Septin2   1   948.32 960.32
+Septin6   1   952.34 964.34
+Septin7   1   979.35 991.35
+Septin9   1   953.60 965.60
+Septin11  1   947.36 959.36</code></pre>
+</div>
+</div>
+<p>This shows us what the AIC would be for the model if we removed each variable. Low values of AIC mean the model is better - so we want to remove the variable which would give us the lowest AIC - Septin 11.</p>
+<p>We can do this sequentially until all of the single term deletions give a worse AIC than the model without any deletions - the value next to <code>&lt;none&gt;</code> in the table.</p>
+<div id="imp-aic" class="important callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;42.1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the following exercise, we will use <strong>AIC</strong> for model selection with a linear model, whereas earlier we used <strong>likelihood-ratio tests and p-values</strong> with a GLM. Both approaches can be used for model selection with <strong>either</strong> linear models or GLMs, although the statistical test used to compare nested models differs between the two types of model.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 4 - Model selection using AIC
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex_septin_lrt" class="callout-exercise extension">
+<p><span class="extension-text"><strong>Extension</strong></span></p>
+<p>In your <code>septin.qmd</code> Quarto file:</p>
+<ul>
+<li>Fit a linear model to the Septin dataset with <code>Septin1</code> as the continuous response variable and all five of the other septin levels as continuous explanatory variables. Consider only additive effects, not interactions.</li>
+<li>Once you have the fitted model, run the <code>drop1</code> function and find out which variable improves the model the least. Remove this variable and fit another linear model.</li>
+</ul>
+<p>Continue until removing any remaining variable would increase the AIC.</p>
+<p>What is your minimal model?</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex-septin_lm_ans" class="callout-answer" data-collapse="true">
+<p>[Fit a linear model to the Septin dataset with <code>Septin1</code> as the continuous response variable and all five of the other septin levels as continuous explanatory variables. Consider only additive effects, not interactions.]</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>lm_1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Septin1 <span class="sc">~</span> Septin2 <span class="sc">+</span> Septin6 <span class="sc">+</span> Septin7 <span class="sc">+</span> Septin9 <span class="sc">+</span> Septin11,</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> septin)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (<span class="fu">summary</span>(lm_1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9 + 
+    Septin11, data = septin)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-6.023e-07 -1.344e-07 -9.600e-09  1.214e-07  1.278e-06 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  3.658e-07  1.803e-08  20.292   &lt;2e-16 ***
+Septin2      6.293e-01  4.791e-02  13.137   &lt;2e-16 ***
+Septin6     -5.243e-02  3.539e-02  -1.482    0.139    
+Septin7     -3.031e-02  3.989e-02  -0.760    0.448    
+Septin9     -2.313e-02  2.627e-02  -0.880    0.379    
+Septin11     1.059e-03  2.364e-02   0.045    0.964    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.993e-07 on 764 degrees of freedom
+Multiple R-squared:  0.2118,    Adjusted R-squared:  0.2066 
+F-statistic: 41.05 on 5 and 764 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><span class="blue-text">Once you have the fitted model, run the <code>drop1</code> function and find out which variable improves the model the least.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>d1 <span class="ot">&lt;-</span> <span class="fu">drop1</span>(lm_1)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (d1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Single term deletions
+
+Model:
+Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9 + Septin11
+         Df  Sum of Sq        RSS    AIC
+&lt;none&gt;                 3.0354e-11 -23754
+Septin2   1 6.8565e-12 3.7210e-11 -23599
+Septin6   1 8.7200e-14 3.0441e-11 -23754
+Septin7   1 2.2900e-14 3.0376e-11 -23755
+Septin9   1 3.0800e-14 3.0384e-11 -23755
+Septin11  1 1.0000e-16 3.0354e-11 -23756</code></pre>
+</div>
+</div>
+<p>Septin 11 is the lowest.</p>
+<p><span class="blue-text">Remove this variable and fit another linear model.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>lm_2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Septin1 <span class="sc">~</span> Septin2 <span class="sc">+</span> Septin6 <span class="sc">+</span> Septin7 <span class="sc">+</span> Septin9 ,</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> septin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Continue until removing any remaining variable would increase the AIC.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">drop1</span>(lm_2)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (d2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Single term deletions
+
+Model:
+Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9
+        Df  Sum of Sq        RSS    AIC
+&lt;none&gt;                3.0354e-11 -23756
+Septin2  1 7.1306e-12 3.7484e-11 -23595
+Septin6  1 8.7100e-14 3.0441e-11 -23756
+Septin7  1 2.3700e-14 3.0377e-11 -23757
+Septin9  1 6.9900e-14 3.0424e-11 -23756</code></pre>
+</div>
+</div>
+<p>Septin 7 is the lowest.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>lm_3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Septin1 <span class="sc">~</span> Septin2 <span class="sc">+</span> Septin6 <span class="sc">+</span> Septin9 ,</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> septin)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>d3 <span class="ot">&lt;-</span> <span class="fu">drop1</span>(lm_3)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (d3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Single term deletions
+
+Model:
+Septin1 ~ Septin2 + Septin6 + Septin9
+        Df  Sum of Sq        RSS    AIC
+&lt;none&gt;                3.0377e-11 -23757
+Septin2  1 7.3364e-12 3.7714e-11 -23592
+Septin6  1 2.3390e-13 3.0611e-11 -23753
+Septin9  1 8.4300e-14 3.0462e-11 -23757</code></pre>
+</div>
+</div>
+<p>None of these improve the AIC, so we can stop here.</p>
+<p><span class="blue-text">What is your minimal model?</span> <code>Septin1 ~ Septin2 + Septin6 + Septin9</code></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-automate_bss" class="level2 fold extension">
+<h2 class="fold extension anchored" data-anchor-id="sec-automate_bss">Automating backwards stepwise selection</h2>
+<p><span class="extension-text"><strong>Extension</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>The process we have just carried out — starting with a full model and sequentially removing variables — is known as backwards stepwise selection.</p>
+<p>R can automate this process using the <code>step()</code> function with the argument <code>direction = "backward"</code>. By default, <code>step()</code> uses AIC to decide whether removing a variable improves the model.</p>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 5 - Automating backwards stepwise elimination
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-step_function" class="callout-exercise extension">
+<p><span class="extension-text"><strong>Extension</strong></span></p>
+<p>In your <code>septin.qmd</code> Quarto file, run <code>step()</code> on your first linear model (with all five explanatory variables) with the argument <code>direction = "backward"</code></p>
+<p>Compare the final model selected by <code>step()</code> with the model you obtained manually. Are they the same?</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex-step_function_ans" class="callout-answer" data-collapse="true">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>step_func <span class="ot">&lt;-</span> <span class="fu">step</span>(lm_1, <span class="at">direction =</span> <span class="st">"backward"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Start:  AIC=-23753.66
+Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9 + Septin11
+
+           Df  Sum of Sq        RSS    AIC
+- Septin11  1 1.0000e-16 3.0354e-11 -23756
+- Septin7   1 2.2900e-14 3.0376e-11 -23755
+- Septin9   1 3.0800e-14 3.0384e-11 -23755
+&lt;none&gt;                   3.0354e-11 -23754
+- Septin6   1 8.7200e-14 3.0441e-11 -23754
+- Septin2   1 6.8565e-12 3.7210e-11 -23599
+
+Step:  AIC=-23755.66
+Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9
+
+          Df  Sum of Sq        RSS    AIC
+- Septin7  1 2.3700e-14 3.0377e-11 -23757
+- Septin9  1 6.9900e-14 3.0424e-11 -23756
+&lt;none&gt;                  3.0354e-11 -23756
+- Septin6  1 8.7100e-14 3.0441e-11 -23756
+- Septin2  1 7.1306e-12 3.7484e-11 -23595
+
+Step:  AIC=-23757.06
+Septin1 ~ Septin2 + Septin6 + Septin9
+
+          Df  Sum of Sq        RSS    AIC
+&lt;none&gt;                  3.0377e-11 -23757
+- Septin9  1 8.4300e-14 3.0462e-11 -23757
+- Septin6  1 2.3390e-13 3.0611e-11 -23753
+- Septin2  1 7.3364e-12 3.7714e-11 -23592</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (step_func)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Septin1 ~ Septin2 + Septin6 + Septin9, data = septin)
+
+Coefficients:
+(Intercept)      Septin2      Septin6      Septin9  
+  3.659e-07    6.213e-01   -6.871e-02   -2.413e-02  </code></pre>
+</div>
+</div>
+<p>This is the same as the result we obtained manually.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-summary_0606" class="level2">
+<h2 class="anchored" data-anchor-id="sec-summary_0606">Review</h2>
+<p><a href="#">↑ top</a></p>
+<div id="note-summary_0606" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Summary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>A <strong>minimal model</strong> is the simplest model that adequately describes the data.</li>
+<li>Models are <strong>nested</strong> when a simpler model can be obtained by removing terms from a more complex model.</li>
+<li>Removing explanatory variables generally reduces model fit, so we can compare nested models to determine whether the reduction in fit is sufficiently large to justify retaining a variable.</li>
+<li>For GLMs, differences in <strong>deviance</strong> between nested models can be tested using a <strong>likelihood-ratio test</strong>.</li>
+<li>For linear models, nested models can instead be compared using an <strong>F-test</strong> based on their residual sums of squares.</li>
+<li><strong>Backwards stepwise elimination</strong> starts with a more complex model and sequentially removes explanatory variables to identify a simpler model that adequately describes the data.</li>
+</ul>
+<section id="programming" class="level4">
+<h4 class="anchored" data-anchor-id="programming">Programming</h4>
+<ul>
+<li>Components of fitted models, such as residual deviance and residual degrees of freedom, can be accessed using <code>$</code>.</li>
+<li><code>logLik()</code> returns the log-likelihood of a fitted model.</li>
+<li><code>pchisq()</code> can be used to calculate a p-value from a likelihood-ratio test statistic.</li>
+<li><code>lead()</code> can be used to compare each value in a data-frame column with the following value.</li>
+</ul>
+</section>
+<section id="extension" class="level4">
+<h4 class="anchored" data-anchor-id="extension">Extension</h4>
+<ul>
+<li><strong>AIC</strong> balances model fit against model complexity and provides another approach to model selection.</li>
+<li><code>drop1()</code> can be used to examine how removing individual terms would affect the AIC of a model.</li>
+<li><code>step()</code> can automate backwards stepwise model selection using AIC.</li>
+</ul>
+</section>
+</div>
+</div>
+<p>For this part of the practical, the main files you have created are:</p>
+<p>These are the files you should select when making your Git commit.</p>
+<p>Remember to save and commit your work before moving on to Part 7.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Commit your changes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember to save your progress regularly by committing your changes with Git.</p>
+<ol type="1">
+<li>Save your changes to the files above in RStudio with the <code>Save</code> button.</li>
+<li>Render any Quarto documents with the <code>Render</code> button.</li>
+<li>Open the <code>Git</code> tab in RStudio.</li>
+<li>Tick the files listed above, don’t worry about any others.</li>
+<li>Click <code>Commit</code> and write a short message in the <code>Commit message</code> describing your changes, something like e.g.&nbsp;“Practical 1 part 1” is sufficient, then click <code>Commit</code>. Close the <code>Commit</code> popup.</li>
+</ol>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  /* ========================================================================
+     COLLAPSIBLE SECTIONS
+     ======================================================================== */
+
+  document
+    .querySelectorAll("h2.fold, h3.fold, h4.fold")
+    .forEach(function (heading) {
+
+      const section = heading.closest("section");
+      if (!section) return;
+
+      const details = document.createElement("details");
+      details.classList.add("collapse-section");
+
+      /* Copy content-level class from heading to details */
+      ["core", "rec", "extension", "bonus", "ref"].forEach(function (cls) {
+        if (heading.classList.contains(cls)) {
+          details.classList.add(cls);
+        }
+      });
+
+      /* Create clickable summary */
+      const summary = document.createElement("summary");
+      summary.textContent = heading.textContent.trim();
+      details.appendChild(summary);
+
+      /*
+       * Move everything after this heading that belongs to
+       * this Quarto section into the details element.
+       */
+      let node = heading.nextSibling;
+
+      while (node) {
+        const nextNode = node.nextSibling;
+        details.appendChild(node);
+        node = nextNode;
+      }
+
+      /* Insert the details element and hide the duplicate heading */
+      heading.insertAdjacentElement("afterend", details);
+      heading.style.display = "none";
+    });
+
+
+  /*
+   * Folded sections are collapsed by default.
+   * Open one automatically if it is reached through a
+   * sidebar link or cross-reference.
+   */
+  function openLinkedSection() {
+    if (!window.location.hash) return;
+
+    const target = document.querySelector(window.location.hash);
+    if (!target) return;
+
+    const section = target.closest("section");
+    if (!section) return;
+
+    const details = section.querySelector(
+      ":scope > details.collapse-section"
+    );
+
+    if (details) {
+      details.open = true;
+    }
+  }
+
+  openLinkedSection();
+  window.addEventListener("hashchange", openLinkedSection);
+
+
+  /* ========================================================================
+     ACCESSIBILITY FIXES FOR QUARTO-GENERATED ELEMENTS
+     ======================================================================== */
+
+  /*
+   * Give an element button behaviour when using the keyboard.
+   * This is needed for Quarto controls that are clickable
+   * but are not native <button> elements.
+   */
+  function makeKeyboardButton(element) {
+    element.setAttribute("role", "button");
+    element.setAttribute("tabindex", "0");
+
+    element.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        element.click();
+      }
+    });
+  }
+
+
+  /* Collapsible callout headers */
+  document
+    .querySelectorAll(".callout-header[data-bs-toggle='collapse']")
+    .forEach(makeKeyboardButton);
+
+  /* Sidebar section toggles */
+  document
+    .querySelectorAll(
+      "#quarto-sidebar [data-bs-toggle='collapse'][role='navigation']"
+    )
+    .forEach(makeKeyboardButton);
+
+
+  /* Give the navbar logo link an accessible name */
+  document
+    .querySelectorAll(".navbar-brand-logo")
+    .forEach(function (link) {
+      if (!link.getAttribute("aria-label")) {
+        link.setAttribute("aria-label", "Home");
+      }
+    });
+
+
+  /* Give navigation landmarks unique accessible names */
+  document
+    .querySelectorAll("nav.navbar")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "Main navigation");
+    });
+  document
+    .querySelectorAll("#TOC")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "On this page");
+    });
+  document
+    .querySelectorAll("#quarto-sidebar")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "Sidebar navigation");
+    });
+/* ========================================================================
+   EXERCISE TITLES
+   Remove Quarto's automatic exercise numbers
+   ======================================================================== */
+
+  document
+    .querySelectorAll(
+      ".callout-exercise > .callout-header .callout-title-container"
+    )
+    .forEach(function (title) {
+  
+      title.childNodes.forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.textContent = node.textContent.replace(
+            /^\s*Exercise\s+\d+\s*[-–—:]\s*/,
+            "Exercise - "
+          );
+        }
+      });
+    });
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../materials/Practical_6_Further_Statistics/06-05_glms_pois.html" class="pagination-link" aria-label="Part 5: Generalised Linear Models - Poisson">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 5: Generalised Linear Models - Poisson</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../materials/Practical_6_Further_Statistics/06-07_power_analysis.html" class="pagination-link" aria-label="Part 7: Power Analysis">
+        <span class="nav-page-text"><span class="chapter-title">Part 7: Power Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> <img src="https://creativecommons.org/images/deed/cc_icon_black_x2.png" class="img-fluid" alt="" width="25"></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>
