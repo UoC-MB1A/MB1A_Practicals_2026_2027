@@ -1,3 +1,4 @@
+install.packages("ape")
 install.packages("Biostrings")
 install.packages("cowsay")
 install.packages("DescTools")

@@ -50,6 +50,43 @@ Now we can start to test some hypotheses based on this dataset.
 For now, let's concentrate on a single species, the "bronze furrow bee" *Halictus tumulorum*. This is a relatively common bee species in the UK. It is a species of sweat bee, named because they are often attracted to sweat (although the UK ones usually aren't). 
 
 ![*Halictus tumulorum*](images/bee.jpg){#fig-bee width="50%" fig-alt="A photo of H. tumulorum"}
+We can built hypotheses about the relationship between different variables and the presence or absence of *H. tumulorum* at each site. To do this, we need a data frame with a column which shows if *H. tumulorum* is present or absent at each site.
+
+We can create an extra column in a data frame using the function `mutate()`. 
+
+For example, if I wanted to create a column named `Is_England` in the `site_metadata` data frame showing if a site was in England or not, I could do the following:
+
+```{r mutate}
+site_metadata_exp <- site_metadata |>
+  mutate(Is_England = country == "England")
+gt(head(site_metadata_exp))
+```
+
+Here, `country == "England"` is evaluated for each row, so `Is_England` contains `TRUE` for sites in England and `FALSE` for other sites.
+
+We can use any kind of **comparison operator** with mutate (see @sec-comparisons). 
+
+We can also add an existing vector as a new column, or set every row of a new column to the same value.
+
+```{r mutate_2}
+# Using a vector
+new_vals <- seq_len(nrow(site_metadata_exp))
+
+site_metadata_exp <- site_metadata_exp |>
+  mutate(new_col = new_vals)
+
+gt(head(site_metadata_exp))
+```
+
+```{r mutate_3}
+# Fixed value
+
+site_metadata_exp <- site_metadata_exp |>
+  mutate(new_col_2 = "hello")
+
+gt(head(site_metadata_exp))
+```
+
 
 ::: {.callout-exercise #ex-filter_ht .core}
 
