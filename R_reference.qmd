@@ -5,152 +5,143 @@ doc-id: "Glossary"
 page-layout: full
 ---
 
+# R Reference {#sec-glossary}
 
-```{r libraries_funcs, include=FALSE, message=FALSE}
-library(gt)
+```{r table_func, include=FALSE, message=FALSE}
+library(DT)
 library(tidyverse)
 
-format_gt_df <- function(df) {
+make_glossary_table <- function(df) {
 
-  gt(df) |>
-    text_transform(
-      locations = cells_body(
-        columns = c(Name, Usage)
+  df <- df |>
+    mutate(
+      Function = paste0("<code>", Function, "</code>"),
+      Example = paste0("<code>", Example, "</code>"),
+
+      Practical = sub(
+        "\\[([^]]+)\\]\\(([^)]+)\\)",
+        '<a href="\\2">\\1</a>',
+        Practical
       ),
-      fn = function(x) paste0("<code>", x, "</code>")
-    ) |>
-    fmt_url(
-      columns = Help,
-      label = "Help"
-    ) |>
-    fmt_url(
-      columns = Section,
-      label = "Section"
-    ) |>
-    cols_width(
-      Name ~ pct(15),
-      Package ~ pct(7),
-      Section ~ pct(8),
-      Description ~ pct(31),
-      Usage ~ pct(15),
-      Help ~ pct(6)
-    ) |>
-    tab_options(
-      table.width = pct(100),
-      container.width = pct(100),
-      data_row.padding = px(4),
-      column_labels.padding = px(5),
-      table.font.size = px(15)
-    ) |>
-    opt_css(
-      "
-      .gt_table {
-        width: 100% !important;
-        table-layout: fixed !important;
-      }
 
-      .gt_table td {
-        vertical-align: top;
-        line-height: 1.2;
-        white-space: normal;
-        overflow-wrap: break-word;
-        word-break: normal;
-      }
-
-      .gt_table code {
-        white-space: normal;
-        overflow-wrap: break-word;
-        word-break: normal;
-        line-height: 1.1;
-      }
-      "
+      Help = sub(
+        "\\[([^]]+)\\]\\(([^)]+)\\)",
+        '<a href="\\2" target="_blank">\\1</a>',
+        Help
+      )
     )
+
+  DT::datatable(
+    df,
+    escape = FALSE,
+    rownames = FALSE,
+    options = list(
+      paging = FALSE,
+      searching = FALSE,
+      info = FALSE
+    )
+  )
 }
 ```
 
-# R Reference {#sec-glossary}
 
 ```{r read_function_csv, include=FALSE, message=FALSE}
-funcs <- read_csv("R_glossary.csv")
+funcs <- read_tsv("R_glossary.tsv")
+funcs <- funcs |>
+  arrange(Function) |>
+  mutate(
+    Practical = sub("\\.qmd#", ".html#", Practical)
+  )
 ```
 
-## Language and Syntax {#sec-language_syntax_glos}
-
-```{r language_syntax_glos, echo=FALSE}
-subsec <- funcs |>
-  filter(Subset == 'Language and syntax') |>
-  select(!Subset)
-format_gt_df(subsec)
-```
 
 ## Basic R functions {#sec-basic_functions_glos}
 
 ```{r basic_functions_glos, echo=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Basic R functions') |>
-  select(!Subset)
-format_gt_df(subsec)
+  filter(Type == 'Basic') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
 ```
 
-## Mathematical and summary functions {#sec-mathematical_glos}
+## Mathematical functions {#sec-mathematical_glos}
 
 ```{r mathematical_glos, echo=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Mathematical and summary functions') |>
-  select(!Subset)
-format_gt_df(subsec)
-```
-
-## Importing and exporting data  {#sec-import_export_glos}
-
-```{r import_export_glos, echo=FALSE}
-subsec <- funcs |>
-  filter(Subset == 'Import and export') |>
-  select(!Subset)
-format_gt_df(subsec)
+  filter(Type == 'Mathematics') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
 ```
 
 ## Data frames  {#sec-data_frames_glos}
 
 ```{r data_frames_glos, echo=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Data manipulation') |>
-  select(!Subset)
-format_gt_df(subsec)
+  filter(Type == 'Data Frames') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
 ```
 
 ## Plotting  {#sec-plotting_glos}
 
 ```{r plotting_glos, echo=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Plotting') |>
-  select(!Subset)
-format_gt_df(subsec)
+  filter(Type == 'Plotting') |>
+  select(!Type) |>
+  arrange()
+subsec |>
+  make_glossary_table()
 ```
 
-## Probability and Simulation  {#sec-prob_sim_glos}
+## Probability {#sec-prob_sim_glos}
 
 ```{r prob_distributions_glos, echo=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Probability and Simulation') |>
-  select(!Subset)
-format_gt_df(subsec)
+  filter(Type == 'Probability') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
+```
+
+## Statistics {#sec-stats_glos}
+
+```{r stats_glos, echo=FALSE}
+subsec <- funcs |>
+  filter(Type == 'Statistics') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
 ```
 
 ## Bioinformatics  {#sec-bioinformatics_glos}
 
-```{r bioinformatics_glos, echo=FALSE}
+```{r bioinformatics_glos, echo=FALSE, message=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Bioinformatics') |>
-  select(!Subset)
-format_gt_df(subsec)
+  filter(Type == 'Bioinformatics') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
+```
+
+## API {#sec-api_glos}
+
+```{r api_glos, echo=FALSE}
+subsec <- funcs |>
+  filter(Type == 'API') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
 ```
 
 ## Miscellaneous {#sec-misc_glos}
 
 ```{r misc_glos, echo=FALSE}
 subsec <- funcs |>
-  filter(Subset == 'Miscellaneous') |>
-  select(!Subset)
-format_gt_df(subsec)
+  filter(Type == 'Misc') |>
+  select(!Type)
+subsec |>
+  make_glossary_table()
 ```
