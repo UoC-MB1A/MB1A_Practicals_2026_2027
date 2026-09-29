@@ -454,9 +454,9 @@ However, even if neither of these are true, you are still most likely the first 
 
 ::: {.callout-note #note-summary_0503}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - **BLASTp** can be used to compare protein query sequences against a set of protein subject sequences to identify similar sequences.
 - When choosing the best BLAST matches, several measures can be considered together, including **E value**, **query coverage**, **percentage identity** and **bit score**.
@@ -465,7 +465,7 @@ However, even if neither of these are true, you are still most likely the first 
 - Data can be **grouped and ranked within groups** to select the best result separately for each group.
 - Values extracted from a data frame can be used to **subset a sequence set**, allowing selected sequences to be saved to a new FASTA file.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -475,7 +475,7 @@ However, even if neither of these are true, you are still most likely the first 
 | `slice_max()` | Selects rows containing the largest values of a variable, including separately within groups. | Core |
 | `ungroup()` | Removes grouping from a grouped data frame. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited or created are:
 

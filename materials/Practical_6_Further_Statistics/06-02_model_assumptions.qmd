@@ -124,7 +124,7 @@ ggplot(ht_df, aes(
 )) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  theme_bw() +
+  theme_minimal() +
   geom_hline(aes(yintercept = overall_mean), color = "red")
 ```
 
@@ -240,7 +240,7 @@ ggplot(
   aes(x = residual)
 ) +
   geom_histogram(bins = 15) +
-  theme_bw()
+  theme_minimal()
 ```
 
 These look reasonably close to a normal distribution. However, there is more we can do to check this assumption.
@@ -258,7 +258,7 @@ To plot the Q-Q plot, we can use the functions `stat_qq()` and `stat_qq_line()`.
 ggplot(ht_diagnostics, aes(sample = residual)) +
   stat_qq() +
   stat_qq_line() +
-  theme_bw()
+  theme_minimal()
 ```
 
 If the points lie approximately along a straight line, the data are reasonably consistent with a normal distribution. Small deviations are expected, particularly at the ends of the plot. Clear systematic patterns, such as strong curvature or points far from the line, suggest that the normality assumption may not be appropriate.
@@ -310,7 +310,7 @@ diag_normal <- function(data_points) {
     aes(x = observations)
   ) +
     geom_histogram(bins = 25) +
-    theme_bw()
+    theme_minimal()
   # Plot the Q-Q plot
   qq <- ggplot(
     df_points,
@@ -318,7 +318,7 @@ diag_normal <- function(data_points) {
   ) +
     stat_qq() +
     stat_qq_line() +
-    theme_bw()
+    theme_minimal()
   return(histo + qq)
 }
 ```
@@ -545,7 +545,7 @@ ggplot(
 ) +
   geom_histogram(bins = 15) +
   facet_wrap(~detected) +
-  theme_bw()
+  theme_minimal()
 ```
 
 These look reasonably similar, especially given the number of observations in each group.
@@ -627,7 +627,7 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
-  theme_bw()
+  theme_minimal()
 ```
 :::
 :::
@@ -655,7 +655,7 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Again, this looks like the equal variance assumption has been met.
@@ -714,7 +714,7 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
-  theme_bw()
+  theme_minimal()
 ```
 
 [Plot fitted against scaled residual values.]{.blue-text}
@@ -726,7 +726,7 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
-  theme_bw()
+  theme_minimal()
 ```
 :::
 :::
@@ -752,7 +752,7 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Here, the smoothed line shows some curvature rather than remaining completely horizontal around zero. This suggests that the relationship may not be perfectly linear, although the deviations are relatively modest and are particularly pronounced towards the ends of the range where there are fewer observations.
@@ -766,7 +766,7 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Here, although the variance is not constant, there is no obvious systematic curvature in the residuals. The linearity assumption therefore appears reasonable.
@@ -790,7 +790,7 @@ curved_diagnostics <- get_diagnostic_stats(curved_model)
 ggplot(curved_diagnostics, aes(x = fitted, y = residual)) +
   geom_point() +
   geom_smooth(se = FALSE) +
-  theme_bw()
+  theme_minimal()
 ```
 
 The smoothed line here is clearly a curve, suggesting that the relationship is not linear. A simple linear model may therefore not fully describe the relationship between these variables.
@@ -834,7 +834,7 @@ ggplot(
   )
 ) +
   geom_point(aes(size = cooks_distance)) +
-  theme_bw()
+  theme_minimal()
 ```
 
 The largest points have the greatest Cook's distances and therefore have the greatest influence on the fitted model. There are several observations with relatively high leverage or relatively large residuals, but no single observation appears to have an exceptionally large influence on the model.

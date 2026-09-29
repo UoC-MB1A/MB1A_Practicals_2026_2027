@@ -67,8 +67,10 @@ ggplot() +
     },
     xlim = c(0, 40)
   ) +
-  xlab("Distance from Left Edge") +
-  ylab("Density")
+  ggtitle("Distribution of Cat Locations on Keyboards - Theoretical") +
+  xlab("Distance from left edge (cm)") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 As expected, cats like to sit in the middle where they can obscure the most keys and, ideally, block the view of the screen.
@@ -122,7 +124,11 @@ ggplot(cat_df, aes(x = Position)) +
     fun = function(x) {
       3 * x * (40 - x) / 32000
     }
-  )
+  ) +
+  ggtitle("Distribution of Cat Locations on Keyboards - Simulated and Theoretical") +
+  xlab("Distance from left edge (cm)") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 Finally, let's estimate the probability that a cat will sit within the central 10 cm of the keyboard. The middle 10 cm lies between 15 cm and 25 cm from the left edge.
@@ -197,8 +203,10 @@ ggplot() +
     },
     xlim = c(0, 1000)
   ) +
-  xlab("Weight of objects") +
-  ylab("Density")
+  ggtitle("Distribution of Cat Tolerance - Theoretical") +
+  xlab("Total weight of objects (g)") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 [Check it is a valid PDF.]{.blue-text}
@@ -264,15 +272,15 @@ If a cat has tolerated the addition of 500g of objects, there is an estimated `r
 
 ::: {.callout-note #note-summary_0306}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - A **user-defined probability density function (PDF)** can be used when a suitable named probability distribution is not available in R. ([Bonus]{.bonus-text})
 - For a function to be a valid PDF, it must be non-negative over its range and the total area under the curve must equal 1. ([Bonus]{.bonus-text})
 - A **random number generator** can be created from a user-defined continuous probability distribution and used to simulate observations from that distribution. ([Bonus]{.bonus-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -281,7 +289,7 @@ If a cat has tolerated the addition of 500g of objects, there is an estimated `r
 | `ur()` | Generates random values using a random number generator created by `Runuran`. | Bonus |
 | `cos()` | Calculates the cosine of a value. | Bonus |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

@@ -89,7 +89,10 @@ ggplot(
   )
 ) +
   geom_boxplot() +
-  theme_bw()
+  ggtitle("Mean insect mass at sites dominated by different insect families - Observed") +
+  xlab("Insect Family") +
+  ylab("Mean insect mass (g)") +
+  theme_minimal()
 ```
 :::
 :::
@@ -227,7 +230,11 @@ ggplot(
   aes(x = simulated)
 ) +
   geom_density() +
-  geom_vline(xintercept = fstat, color = "red")
+  geom_vline(xintercept = fstat, color = "red") +
+  ggtitle("Density of F-distribution - Simulated and Observed") +
+  xlab("F") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 [Calculate an approximate p-value using your simulated data — the proportion of simulated F-values which are greater than or equal to the F-statistic calculated from our data (`r round(anova_mass_domfam["dominant_family", "F value"], 2)`).]{.blue-text}
@@ -284,6 +291,8 @@ A box plot is again a typical visualisation to use here, this time using `facet_
 
 The function `facet_wrap()` splits the data from a single data frame into multiple plots, based on the values in a categorical column. The first argument should be the variable you would like to facet by, preceded by a `~` symbol. The argument `scales = "free_x"` means that each plot can have a different scale on the x axis - by default they are the same.
 
+The function `coord_flip()` swaps the x- and y-axes of a ggplot, turning a vertical plot into a horizontal one (or vice versa). We do this here just because the category names are long and so they fit better on the page horizontally.
+
 ```{r plot_domfam_habitat, fig.width = 6}
 #| fig-alt: "Faceted box plots comparing insect mass among dominant insect families and broad habitat types. Mean insect mass differs visibly among dominant insect families, with Apidae having the highest median and Andrenidae the lowest, as above. There are five habitats - heathland, arable, grassland/herbaceous, woodland and wetland. Amongst habitats, healthland has the highest median and arable the lowest, heathland also has a much larger IQR than the other four."
 
@@ -309,8 +318,11 @@ ggplot(
 ) +
   geom_boxplot() +
   facet_wrap(~variable, scales = "free_x") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) # rotate x labels so they fit
+  coord_flip() +
+  ggtitle("Insect mass by dominant family or broad habitat type - Observed") +
+  xlab("Category") +
+  ylab("Mean insect mass (g)") +
+  theme_minimal()
 ```
 
 ::: {.callout-exercise #ex-anova_twoway .core}
@@ -757,24 +769,25 @@ There is also no evidence of an interaction between dominant insect family and d
 
 ::: {.callout-note #note-summary_0403}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - A linear model with a categorical explanatory variable containing more than two levels uses one level as the **reference level**, with coefficients describing differences relative to that reference.
 - Multiple explanatory variables can be included in an R formula using `+`, for example `response ~ explanatory1 + explanatory2`.
 - In R's default ANOVA, explanatory variables are tested sequentially: each variable is tested after accounting for variables that appear before it in the model.
 - An interaction can be included in an R formula using `*`, for example `response ~ explanatory1 * explanatory2`. ([Recommended]{.rec-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
 | `facet_wrap()` | Splits a ggplot into multiple panels according to the values of a variable. | Core |
+| `coord_flip()` | Swaps the x- and y-axes of a ggplot, turning a vertical plot into a horizontal one (or vice versa). | Core |
 | `rf()` | Generates random values from an F-distribution. | Extension |
 | `pf()` | Calculates cumulative probabilities from an F-distribution. | Extension |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

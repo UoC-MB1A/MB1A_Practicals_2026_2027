@@ -73,7 +73,11 @@ ggplot(
   )
 ) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  ggtitle("Annual mean temperature vs annual total precipitation - Observed") +
+  xlab("Annual mean temperature (°C)") +
+  ylab("Annual total precipitation (mm)") +
+  theme_minimal()
 ```
 
 :::{.callout-exercise #ex_temp_prec .core}
@@ -206,7 +210,11 @@ ggplot(
 ) +
   geom_point() +
   facet_wrap(~variable, scales = "free_x") +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  ggtitle("Annual mean temperature or elevation vs annual total precipitation - Observed") +
+  xlab("Measurement") +
+  ylab("Annual total precipitation (mm)") +
+  theme_minimal()
 ```
 
 **Statistical test**
@@ -283,6 +291,11 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(method = "lm")
+ +
+  ggtitle("Annual mean temperature vs elevation - Observed") +
+  xlab("Annual mean temperature (°C)") +
+  ylab("Elevation (m)") +
+  theme_minimal()
 ```
 
 These two variables are clearly highly correlated ($r$ = `r round(correlation, 2)`), so multicollinearity is a plausible explanation for the much higher p-value for temperature when elevation is included in the model.
@@ -435,7 +448,10 @@ ggplot(hog_results_long, aes(x = rsq, y = value, color = predictor)) +
   geom_point() +
   geom_line() +
   facet_wrap(~statistic, scale = "free_y") +
-  theme_bw()
+  ggtitle("Impact of correlation on linear model parameters - Simulated") +
+  xlab("R-squared") +
+  ylab("Parameter") +
+  theme_minimal()
 ```
 
 It is very clear from these plots that at high values of $R^2$, the coefficient estimates become less stable and their standard errors increase. The p-values also become less stable and tend to increase, making it more difficult to distinguish the individual associations of food and water intake with hedgehog weight.
@@ -447,7 +463,10 @@ This doesn't mean the model is useless, and we can see this if we plot the model
 ggplot(hog_results, aes(x = rsq, y = model_rsq)) +
   geom_point() +
   geom_line() +
-  theme_bw()
+  ggtitle("Relationship Between Explanatory Variable Correlation and Model R-squared - Simulated") +
+  xlab("R-squared between variables") +
+  ylab("R-squared of model") +
+  theme_minimal()
 ```
 
 Even when the explanatory variables are highly correlated, the model as a whole can still explain a large proportion of the variation in hedgehog weight. Multicollinearity mainly makes it difficult to estimate and interpret the individual coefficients reliably.
@@ -491,7 +510,11 @@ ggplot(
   country_habitat_counts,
   aes(x = country, y = n, fill = land_cover)
 ) +
-  geom_col()
+  geom_col() +
+  ggtitle("Land cover by country - Observed") +
+  xlab("Country") +
+  ylab("Number of sites") +
+  theme_minimal()
 ```
 
 **Contingency table**
@@ -543,15 +566,15 @@ The chi-squared test works best when expected counts are not too small; R will w
 
 ::: {.callout-note #note-summary_0404}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - When a model contains an interaction between continuous explanatory variables, the coefficient for each explanatory variable describes its association with the response when the other interacting variable is zero. ([Recommended]{.rec-text})
 - **Centring** a continuous variable by subtracting its mean makes zero correspond to the mean value, which can make coefficients in models containing interactions easier to interpret. ([Recommended]{.rec-text})
 - A **contingency table** contains the observed counts for each combination of categorical variables.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -560,7 +583,7 @@ The chi-squared test works best when expected counts are not too small; R will w
 | `chisq.test()` | Performs a chi-squared test of association. | Core |
 | `cor()` | Calculates the correlation between two variables. | Extension |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

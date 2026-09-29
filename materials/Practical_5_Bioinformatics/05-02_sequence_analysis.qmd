@@ -269,9 +269,9 @@ On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta
 
 ::: {.callout-note #note-summary_0502}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 - Open reading frames (ORFs) can be automatically identified in nucleotide sequences using the `getORFs()` function.
 - An **`IRanges` object** can represent the positions and lengths of features, such as ORFs, within a sequence.
 - Individual elements of an object can be accessed using **indexing**; `[[1]]` extracts the first element rather than retaining it inside its original container.
@@ -279,7 +279,7 @@ On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta
 - Nucleotide sequences can be translated with the `translate()` function.
 - Biological sequences can be saved in **FASTA format** as well as read from FASTA files.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -289,7 +289,7 @@ On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta
 | `translate()` | Translates nucleotide sequences into amino acid sequences. | Core |
 | `writeXStringSet()` | Writes biological sequences to a file, such as a FASTA file. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited or created are:
 

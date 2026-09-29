@@ -321,9 +321,9 @@ gt(break_df)
 
 ::: {.callout-note #note-summary_0301}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - A **`for` loop** repeats a task for each item in a vector or other sequence.
 - Each pass through a loop is called an **iteration**.
@@ -331,8 +331,9 @@ gt(break_df)
 - Curly brackets (`{}`) define which code is repeated during each iteration of a loop.
 - Results generated during a loop can be stored by adding values to a vector or rows to a data frame.
 - The `^` operator is used to raise a number to a power.
+- Data manipulation and plotting workflows can be adapted to datasets with different structures by identifying the equivalent variables and processing steps.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -343,7 +344,7 @@ gt(break_df)
 | `cat()` | Outputs text without a line break, allowing multiple outputs to be displayed on the same line. | Core |
 | `bind_rows()` | Combines data frames by adding their rows together. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

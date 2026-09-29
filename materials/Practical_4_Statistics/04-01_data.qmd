@@ -182,13 +182,13 @@ The most commonly observed species was `r pull(insect_totals, species)[1]`, whic
 
 ::: {.callout-note #note-summary_0401}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - Data frames can be **sorted** according to the values in a column, in either ascending or descending order, using `arrange()` and `desc()`. ([Recommended]{.rec-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -196,7 +196,7 @@ The most commonly observed species was `r pull(insect_totals, species)[1]`, whic
 | `desc()` | Reverses the sorting order within `arrange()`, for example from largest to smallest. | Recommended |
 | `nrow()` | Returns the number of rows in a data frame. | Recommended |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have created are:
 

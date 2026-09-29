@@ -33,6 +33,7 @@ By the end of this part of the practical you will be able to:
 * Add points to a scatter plot.
 * Set appropriate axis limits.
 * Map categorical variables to the colour and shape of points.
+* Add titles and informative axis labels to a plot.
 * Connect related observations using paths.
 
 :::
@@ -287,6 +288,21 @@ ggplot(
 :::
 :::
 
+Now we have changed the axis limits, the points look a little small. We can make them bigger by adding the argument `size = 3` (for example) to the `geom_point()` function.
+
+```{r points_bigger}
+ggplot(
+  spring_data,
+  aes(x = Longitude, y = Latitude)
+) +
+  geom_point(size=3) +
+  annotation_borders(linewidth = 0.2) +
+  coord_quickmap(
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  )
+```
+
 ## Grouping points {#sec-group_points .core}
 
 [**Core**]{.core-text}
@@ -310,7 +326,7 @@ ggplot(
   spring_data,
   aes(x = Longitude, y = Latitude, color = Site)
 ) +
-  geom_point() +
+  geom_point(size=3) +
   annotation_borders(linewidth = 0.2) +
   coord_quickmap(
     xlim = c(min_lon - 2, max_lon + 2),
@@ -334,7 +350,7 @@ ggplot(
   spring_data,
   aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
 ) +
-  geom_point() +
+  geom_point(size = 3) +
   annotation_borders(linewidth = 0.2) +
   coord_quickmap(
     xlim = c(min_lon - 2, max_lon + 2),
@@ -344,6 +360,29 @@ ggplot(
 :::
 :::
 
+### Adding labels
+
+It is good practice to always give your plots a title (`ggtitle()`) and axis labels (`xlab()` and `ylab()`). Where appropriate, axis labels should also include the units of measurement.
+
+I will also always use `theme_minimal()` to apply the ggplot [minimal theme](https://ggplot2-book.org/themes#sec-themes) to my plots, this changes the default plot appearance and is just personal preference - you can use any theme you wish.
+
+
+```{r ggtitle_birds}
+ggplot(
+  spring_data,
+  aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
+) +
+  geom_point(size  = 3) +
+  annotation_borders(linewidth = 0.2) +
+  coord_quickmap(
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 2, max_lat + 2)
+  ) +
+  ggtitle("Pied Flycatcher Spring Migration Routes") +
+  xlab("Longitude (°)") +
+  ylab("Latitude (°)") +
+  theme_minimal()
+```
 
 ## Adding paths {#sec-add_paths .rec}
 
@@ -360,13 +399,17 @@ ggplot(
   spring_data,
   aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
 ) +
-  geom_point() +
+  geom_point(size = 3) +
   annotation_borders(linewidth = 0.2) +
   coord_quickmap(
     xlim = c(min_lon - 2, max_lon + 2),
     ylim = c(min_lat - 2, max_lat + 2)
   ) +
-  geom_path(aes(group = Site))
+  geom_path(aes(group = Site)) +
+  ggtitle("Pied Flycatcher Spring Migration Routes") +
+  xlab("Longitude (°)") +
+  ylab("Latitude (°)") +
+  theme_minimal()
 ```
 
 ::: {.callout-exercise #ex-add_paths .rec}
@@ -383,13 +426,17 @@ ggplot(
   spring_data,
   aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
 ) +
-  geom_point() +
+  geom_point(size = 3) +
   annotation_borders(linewidth = 0.2) +
   coord_quickmap(
     xlim = c(min_lon - 2, max_lon + 2),
     ylim = c(min_lat - 2, max_lat + 2)
   ) +
-  geom_path(aes(group = Site))
+  geom_path(aes(group = Site)) +
+  ggtitle("Pied Flycatcher Spring Migration Routes") +
+  xlab("Longitude (°)") +
+  ylab("Latitude (°)") +
+  theme_minimal()
 ```
 :::
 :::
@@ -404,11 +451,9 @@ There are various tweaks available if you want to change the appearance of your 
 
 For example:
 
-* To change the size of the points, add e.g. `size = 3` as an argument to the `geom_point()` function.
-* To change the width of the line, add e.g. `linewidth = 0.5` as an argument to the `geom_line()` function.
+* To change the width of the line, add e.g. `linewidth = 0.5` as an argument to the `geom_path()` function.
 * To change the colour theme of all the data points, add an additional layer with <code>scale_color_brewer(palette = "[PALETTE]{.orange-text}") </code>, changing [PALETTE]{.orange-text} to anything on the chart on [this page](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
 * You can change the overall theme of your plot using one of the theme options on [this page](https://ggplot2.tidyverse.org/reference/ggtheme.html)
-* You can add a title by adding a layer `ggtitle()`, with the title as the only argument.
 
 It's worthwhile to search online for other aesthetic changes you can make to your plot, many options are available.
 
@@ -421,16 +466,18 @@ ggplot(
   spring_data,
   aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
 ) +
-  geom_point(size = 4) +
+  geom_point(size = 3) +
   annotation_borders(linewidth = 0.2) +
   coord_quickmap(
     xlim = c(min_lon - 2, max_lon + 2),
     ylim = c(min_lat - 2, max_lat + 2)
   ) +
-  geom_path(aes(group = Site), size = 1) +
+  geom_path(aes(group = Site), linewidth = 0.5) +
   scale_color_brewer(palette = "Dark2") +
-  theme_bw() +
-  ggtitle("Spring Migration Routes")
+  ggtitle("Pied Flycatcher Spring Migration Routes") +
+  xlab("Longitude (°)") +
+  ylab("Latitude (°)") +
+  theme_minimal()
 ```
 
 
@@ -469,13 +516,17 @@ ggplot(
   autumn_data,
   aes(x = Longitude, y = Latitude, color = Site, shape = Location_Type)
 ) +
-  geom_point() +
+  geom_point(size = 3) +
   annotation_borders(linewidth = 0.2) +
   coord_quickmap(
     xlim = c(min_lon - 2, max_lon + 2),
     ylim = c(min_lat - 2, max_lat + 2)
   ) +
-  geom_path(aes(group = Site))
+  geom_path(aes(group = Site)) +
+  ggtitle("Pied Flycatcher Autumn Migration Routes") +
+  xlab("Longitude (°)") +
+  ylab("Latitude (°)") +
+  theme_minimal()
 ```
 
 :::
@@ -490,16 +541,17 @@ You have now successfully generated at least one publication-quality plot based 
 
 ::: {.callout-note #note-summary_0203}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
+
 - A ggplot is built by adding **layers** to a plot.
 - **Aesthetics** map variables in a data frame to visual properties of a plot. In addition to the *x* and *y* positions, variables can be mapped to properties such as **colour** and **shape**.
 - A **scatter plot** displays the relationship between two variables using points.
 - **Axis limits** control the range of values displayed on the axes.
 - Observations belonging to the same group can be connected using **paths**. [**Recommended**]{.rec-text}
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -509,10 +561,11 @@ You have now successfully generated at least one publication-quality plot based 
 | `coord_cartesian()` | Zooms in on part of a plot. | Core |
 | `annotation_borders()` | Adds geographical borders to a map plot. | Core |
 | `coord_quickmap()` | Sets up map coordinates while preserving an appropriate aspect ratio. | Core |
+| `theme_minimal()` | Applies a minimal black-and-white theme to a plot. | Core |
 | `scale_color_brewer()` | Applies a ColorBrewer colour palette to a plot. | Extension |
-| `theme_bw()` | Applies a black-and-white theme to a plot. | Extension |
 
-### Files
+
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

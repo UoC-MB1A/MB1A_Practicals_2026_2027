@@ -476,9 +476,9 @@ NULL represents the absence of a value or object. This is different from NA, whi
 
 ::: {.callout-note #note-summary_0103}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - **Functions** perform a task, usually taking one or more inputs called **arguments** and often returning an output.
 - **Arguments** provide information to a function or control how it behaves. Some arguments have **default values**, and arguments can be supplied by position or by name.
@@ -488,7 +488,7 @@ NULL represents the absence of a value or object. This is different from NA, whi
 - `NA` represents a missing or unknown value. [**Bonus**]{.bonus-text}
 - `NaN` represents a value that is not a valid number. [**Bonus**]{.bonus-text}
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -500,7 +500,7 @@ NULL represents the absence of a value or object. This is different from NA, whi
 | `is.na()` | Checks whether a value is missing (`NA`). | Bonus |
 | `is.nan()` | Checks whether a value is `NaN`. | Bonus |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have created are:
 

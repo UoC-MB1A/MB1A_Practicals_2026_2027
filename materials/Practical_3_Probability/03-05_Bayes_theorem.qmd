@@ -499,20 +499,20 @@ In this part of the practical, you have explored conditional probability using c
 
 ::: {.callout-note #note-summary_0305}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - **Conditional probability** can be explored using simulation in R.
 - The `&` operator represents **AND** and returns `TRUE` when both conditions are `TRUE`. ([Bonus]{.bonus-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
 | `mutate()` | Adds new columns or modifies existing columns in a data frame. | Recommended |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

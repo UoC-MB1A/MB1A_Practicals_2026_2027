@@ -88,10 +88,10 @@ Plot a bar chart of the data.
 #| fig-alt: "Stacked bar chart of Apidae/Syrphidae-dominated sites by country."
 gg <- ggplot(country_family_counts, aes(x = country, y = n, fill = dominant_family)) +
   geom_col() +
+  ggtitle("N sites dominated by Syrphidae or Apidae by country") +
   xlab("Site Country") +
   ylab("Number of Sites") +
-  ggtitle("N sites dominated by Syrphidae or Apidae by country")
-theme_bw()
+  theme_minimal()
 print(gg)
 ```
 Make a contingency table.
@@ -140,7 +140,10 @@ ggplot(biomass_tp, aes(
   geom_point() +
   geom_smooth(method = "lm") +
   facet_wrap(~variable, scales = "free_x") +
-  theme_bw()
+  ggtitle("Relationship between Insect Biomass and Temperature / Precipitation") +
+  xlab("Measurement") +
+  ylab("Total insect biomass (g)") +
+  theme_minimal()
 ```
 
 Perform a multiple linear regression.
@@ -195,7 +198,12 @@ ggplot(
   site_metadata,
   aes(x = elevation, y = temp_annual_range)
 ) +
-  geom_point()
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Relationship between Elevation and Annual Temperature Range") +
+  xlab("Elevation (m)") +
+  ylab("Annual temperature range (°C)") +
+  theme_minimal()
 ```
 
 Perform a linear regression.
@@ -253,7 +261,10 @@ ggplot(
   )
 ) +
   geom_boxplot() +
-  theme_bw()
+  ggtitle("Relationship between Presence/Absence of M. scalare and distance from coast") +
+  xlab("M. scalare Present") +
+  ylab("Distance from coast (km)") +
+  theme_minimal()
 ```
 
 Perform a t-test.
@@ -309,7 +320,10 @@ ggplot(
   )
 ) +
   geom_boxplot() +
-  theme_bw()
+  ggtitle("Relationship between presence or absence of B. terrestris\nand total insect biomass") +
+  xlab("B. terrestris present") +
+  ylab("Total insect biomass (g)") +
+  theme_minimal()
 ```
 
 Perform a t-test.
@@ -364,9 +378,15 @@ heath_counts <- heath_df |>
 Plot a bar chart of the data.
 
 ```{r pollinators_ht_ans6.2}
-ggplot(heath_counts, aes(x = bees_detected, y = n, fill = heather_detected)) +
+ggplot(heath_counts,
+       aes(x = bees_detected,
+           y = n,
+           fill = heather_detected)) +
   geom_col() +
-  theme_bw()
+  ggtitle("Relationship between presence or absence of B. jonellus\nand presence or absence of C. vulgaris") +
+  xlab("B. jonellus present") +
+  ylab("Number of sites") +
+  theme_minimal()
 ```
 
 Make a contingency table.
@@ -436,7 +456,10 @@ ggplot(biomass_biodiv_temp, aes(
   geom_point() +
   geom_smooth(method = "lm") +
   facet_wrap(~variable, scales = "free_x") +
-  theme_bw()
+  ggtitle("Relationship between mean insect mass and flower diversity / mean temperature") +
+  xlab("Measurement") +
+  ylab("Mean insect mass (g)") +
+  theme_minimal()
 ```
 
 Perform a multiple linear regression.
@@ -555,7 +578,10 @@ ggplot(
 ) +
   geom_boxplot() +
   facet_wrap(~variable, scales = "free_x") +
-  theme_bw()
+  ggtitle("Relationship between mean insect mass and bramble presence / dominant family") +
+  xlab("Category") +
+  ylab("Mean insect mass (g)") +
+  theme_minimal()
 ```
 
 Perform a two-way ANOVA.
@@ -619,9 +645,15 @@ rosales_counts <- rosales |>
 Plot a bar chart of the data.
 
 ```{r pollinators_ht_ans9.3}
-ggplot(rosales_counts, aes(x = rosales_dom, y = n, fill = dominant_family)) +
+ggplot(rosales_counts,
+       aes(x = rosales_dom,
+           y = n,
+           fill = dominant_family)) +
   geom_col() +
-  theme_bw()
+  ggtitle("Relationship between Rosales dominance and dominance of Syrphidae vs Apidae") +
+  xlab("Rosales dominant") +
+  ylab("Number of sites") +
+  theme_minimal()
 ```
 Make a contingency table.
 
@@ -654,7 +686,10 @@ ggplot(
   aes(x = broad_habitat, y = mean_insect_mass, fill = broad_habitat)
 ) +
   geom_boxplot() +
-  theme_bw()
+  ggtitle("Relationship between habitat type and mean insect mass") +
+  xlab("Habitat type") +
+  ylab("Mean insect mass (g)") +
+  theme_minimal()
 ```
 
 Perform a one-way ANOVA.
@@ -686,21 +721,21 @@ There is no evidence that mean insect mass differs among broad habitat types ($F
 
 ::: {.callout-note #note-summary_0405}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - The appropriate **statistical test or model** depends on the types of the response and explanatory variables.
 - The appropriate **visualisation** also depends on the types of variables being compared.
 - A biological hypothesis can require several data-manipulation steps to prepare the data before an appropriate statistical test can be applied. ([Recommended]{.rec-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
 | `as.character()` | Converts values to character (text) data. | Recommended |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

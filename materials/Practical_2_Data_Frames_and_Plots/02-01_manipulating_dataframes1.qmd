@@ -636,16 +636,16 @@ gt(head(bird_migration_exc))
 
 ::: {.callout-note #note-summary_0201}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - The **pipe operator** (`|>`) passes the result of one step to the next, allowing us to link multiple steps in an analysis.
 - We can **select** particular columns (`select()`) from a data frame, remove duplicate rows and rename columns.
 - **Comparison operators** compare values and return `TRUE` or `FALSE`. These include `==`, `!=`, `>`, `>=`, `<` and `<=`.
 - We can **filter** (`filter()`) a data frame to keep only rows that meet particular conditions.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -657,7 +657,7 @@ gt(head(bird_migration_exc))
 | `rename()` | Renames columns in a data frame. | Core |
 | `filter()` | Selects rows of a data frame that meet specified conditions. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have created are:
 

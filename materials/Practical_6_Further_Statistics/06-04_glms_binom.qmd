@@ -254,7 +254,7 @@ ggplot(
     method = "glm",
     method.args = list(family = binomial)
   ) +
-  theme_bw()
+  theme_minimal()
 ```
 
 As you can see, the prediction is limited to probabilities between 0 and 1.

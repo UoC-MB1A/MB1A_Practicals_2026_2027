@@ -222,6 +222,10 @@ The [`geom_bar()`](../../R_reference.qmd#sec-plotting_glos) function in `ggplot`
 
 In your `squirrels.qmd` Quarto file, plot the distribution of the number of successful heists per squirrel, using the `geom_bar()` function.
 
+::: {.callout-note #note-fig_labels}
+Don't forget to give your plot a title (`ggtitle()`) and axis labels (`xlab()` and `ylab()`).
+:::
+
 ::: {.callout-answer collapse="true" #ex_plot-squirrels_ans}
 
 ```{r plot_squirrels_ans}
@@ -231,7 +235,11 @@ ggplot(
     x = N_Successful_Heists
   )
 ) +
-  geom_bar()
+  geom_bar() +
+  ggtitle("Number of Successful Heists per Squirrel - Simulated") +
+  xlab("Number of successful heists") +
+  ylab("Number of squirrels") +
+  theme_minimal()
 ```
 
 ```{r plot_squirrels_store, include=FALSE}
@@ -241,7 +249,11 @@ squirrels <- ggplot(
     x = N_Successful_Heists
   )
 ) +
-  geom_bar()
+  geom_bar() +
+  ggtitle("Number of Successful Heists per Squirrel - Simulated") +
+  xlab("Number of successful heists") +
+  ylab("Number of squirrels") +
+  theme_minimal()
 ```
 :::
 :::
@@ -307,7 +319,7 @@ print(prob_X_equals_k)
 
 We would expect this result around `r round(prob_X_equals_k * 100, 0)`% of the time.
 
-Let's compare this with the observed result from our simulation. Using the `sum()` function, we can count how many squirrels succeeded 48 times.
+Let's compare this with the result from our simulation. Using the `sum()` function, we can count how many squirrels succeeded 48 times.
 
 ```{r observed_squirrels}
 n_successes <- pull(df_squirrels, N_Successful_Heists)
@@ -377,7 +389,11 @@ ggplot(
     y = Probability
   )
 ) +
-  geom_col()
+  geom_col() +
+  ggtitle("Binomial Distribution of Successful Heists - Theoretical") +
+  xlab("Number of successful heists") +
+  ylab("Probability") +
+  theme_minimal()
 ```
 
 ```{r store_pmf_bar_plot, include=FALSE}
@@ -388,7 +404,11 @@ squirrels_pmf <- ggplot(
     y = Probability
   )
 ) +
-  geom_col()
+  geom_col() +
+  ggtitle("Binomial Distribution of Successful Heists - Theoretical") +
+  xlab("Number of successful heists") +
+  ylab("Probability") +
+  theme_minimal()
 ```
 
 This plot shows how the data would be distributed under a perfect, theoretical binomial distribution.
@@ -425,8 +445,14 @@ This gives us our counts per squirrel, just like we calculated above, and we can
 
 ```{r plot_rbinom}
 rb_df <- tibble(N_Successful_Heists = count_squirrels)
-ggplot(rb_df, aes(x = N_Successful_Heists)) +
-  geom_bar()
+
+ggplot(rb_df,
+       aes(x = N_Successful_Heists)) +
+  geom_bar() +
+  ggtitle("Number of Successful Heists per Squirrel - Simulated") +
+  xlab("Number of successful heists") +
+  ylab("Number of squirrels") +
+  theme_minimal()
 ```
 
 We have already used the function [`dbinom()`](../../R_reference.qmd#sec-prob_sim_glos), which gives us the probability of a specific number of successes, given specified values of k, n and p.
@@ -601,9 +627,9 @@ She needs to pick `r pull(prop_df_filt, npicked)[1]` flowers.
 
 ::: {.callout-note #note-summary_0302}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - **Simulation** can be used to approximate stochastic processes by generating random data.
 - Random events can be simulated with **equal or unequal probabilities**.
@@ -611,7 +637,7 @@ She needs to pick `r pull(prop_df_filt, npicked)[1]` flowers.
 - Increasing the number of simulations generally reduces random variation in an estimate, allowing the empirical distribution to more closely approximate the theoretical distribution.
 - R provides functions both for calculating probabilities from theoretical distributions and for **generating random values** from them.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -622,7 +648,7 @@ She needs to pick `r pull(prop_df_filt, npicked)[1]` flowers.
 | `length()` | Returns the number of elements in an object. | Core |
 | `geom_col()` | Creates a bar chart using the values specified in the data to determine the heights of the bars. | Extension |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

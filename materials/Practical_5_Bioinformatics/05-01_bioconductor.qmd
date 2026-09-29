@@ -250,16 +250,16 @@ print(current_erv)
 
 ::: {.callout-note #note-summary_0501}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - **Bioconductor** is a collection of R packages, datasets and workflows designed for the analysis of biological data.
 - **FASTA** is a text-based format for storing biological sequences. Each sequence has an identifier beginning with `>`, followed by the sequence itself.
 - DNA sequences imported using the `Biostrings` package can be stored in a **`DNAStringSet`**, a data structure designed for working with collections of DNA sequences.
 - Individual sequences in a `DNAStringSet` can be accessed with their sequence identifier.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -267,7 +267,7 @@ print(current_erv)
 | `names()` | Returns the sequence identifiers from a `DNAStringSet`. | Core |
 | `width()` | Returns the lengths of sequences in a `DNAStringSet`. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have created are:
 

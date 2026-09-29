@@ -139,14 +139,14 @@ Include the following code to read the data into an R data frame
 ```{r read_location_data, eval=FALSE}
 locations <- read_csv("data/movebank_data.csv") |>
   clean_names() |>
-  mutate(Date = as_date(timestamp))
+  mutate(date = as_date(timestamp))
 ```
 :::
 
 ```{r read_location_data_hidden, include=FALSE}
 locations <- read_csv("data/movebank_data.csv") |>
   clean_names() |>
-  mutate(Date = as_date(timestamp))
+  mutate(date = as_date(timestamp))
 ```
 
 ## Process data frame {#sec-process_df_ve .fold .extension}
@@ -157,8 +157,8 @@ locations <- read_csv("data/movebank_data.csv") |>
 
 - Look at the data frame and check that the data looks as expected.
 - Identify the columns containing the longitude and latitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
-- Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.
-- Group the data by `Date` and `individual_local_identifier`. You can group by multiple factors by adding additional arguments to the `group_by()` function.
+- Select only the relevant columns - these are `date`, `individual_local_identifier` and the longitude and latitude columns.
+- Group the data by `date` and `individual_local_identifier`. You can group by multiple factors by adding additional arguments to the `group_by()` function.
 - Using the `summarise` function, calculate the median latitude and median longitude for each individual on each date.
 
 ### Example solution
@@ -175,11 +175,11 @@ gt(head(locations))
   - latitude - location_lat
   - longitude - location_long
 
-[Select only the relevant columns - these are `Date`, `individual_local_identifier` and the longitude and latitude columns.]{.blue-text}
+[Select only the relevant columns - these are `date`, `individual_local_identifier` and the longitude and latitude columns.]{.blue-text}
 
 ```{r process_df_ans2}
 loc_selected <- locations |> select(
-  Date,
+  date,
   individual_local_identifier,
   location_long, location_lat
 )
@@ -187,11 +187,11 @@ loc_selected <- locations |> select(
 gt(head(loc_selected))
 ```
 
-[Group the data by `Date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.]{.blue-text}
+[Group the data by `date` and `individual_local_identifier` You can group by multiple factors by adding additional arguments to the `group_by()` function.]{.blue-text}
 
 ```{r process_df_ans3}
 loc_grouped <- loc_selected |>
-  group_by(Date, individual_local_identifier)
+  group_by(date, individual_local_identifier)
 ```
 
 [Using the `summarise` function, calculate the median latitude and median longitude for each individual on each date.]{.blue-text}
@@ -224,6 +224,7 @@ Some of the geographic areas are very small so you might not actually see many b
 :::
 
 - Colour the points by individual by adding `color = individual_local_identifier` as an argument to the `aes()` function.
+- Add a plot title with `ggtitle()`, axis labels with `xlab()` and `ylab()` and, if you wish, a theme with e.g. `theme_minimal()`.
 - If you wish, change the appearance of your plot to your taste.
 
 ### Example solution
@@ -316,6 +317,31 @@ ggplot(
   )
 ```
 
+[Add a plot title with `ggtitle()`, axis labels with `xlab()` and `ylab()` and, if you wish, a theme with e.g. `theme_minimal()`.]{.blue-text}
+
+```{r plot_data_ans4.5}
+ggplot(
+  loc_sum,
+  aes(
+    x = Longitude,
+    y = Latitude,
+    color = individual_local_identifier
+  )
+) +
+  geom_point() +
+  annotation_borders(
+    linewidth = 0.2
+  ) +
+  coord_quickmap(
+    xlim = c(min_lon - 2, max_lon + 2),
+    ylim = c(min_lat - 0.2, max_lat + 0.2)
+  ) +
+  ggtitle("Locations of individual Phoca vitulina") +
+  xlab("Longitude (°)") +
+  ylab("Latitude (°)") +
+  theme_minimal()
+```
+
 [If you wish, change the appearance of your plot to your taste.]{.blue-text}
 
 ```{r plot_data_ans5}
@@ -336,7 +362,10 @@ ggplot(
     ylim = c(min_lat - 0.2, max_lat + 0.2)
   ) +
   scale_color_brewer(palette = "Set1") +
-  theme_bw()
+  ggtitle("Locations of individual Phoca vitulina") +
+  xlab("Longitude (°)") +
+  ylab("Latitude (°)") +
+  theme_minimal()
 ```
 :::
 
@@ -386,13 +415,13 @@ In this exercise you have:
 ::: {#note-summary_0204 .callout-note}
 ### Summary
 
-### Concepts
+#### Concepts
 
 - New columns can be created from existing data using `mutate()`.
 - Data can be **grouped by multiple variables** (`group_by()`), allowing summary statistics to be calculated for each combination of groups.
 - **Dates** can be stored using a specific date data type in R, allowing them to be used in analyses.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -400,7 +429,7 @@ In this exercise you have:
 | `mutate()` | Adds new columns or modifies existing columns in a data frame. | Extension |
 | `as_date()` | Converts date information into R's date format. | Extension |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited or created are:
 

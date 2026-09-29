@@ -21,7 +21,7 @@ lasio_map <- ggplot(current) +
   )) +
   annotation_borders(regions = "UK", linewidth = 0.2) +
   coord_quickmap() +
-  theme_bw()
+  theme_minimal()
 
 lasio_map
 ```
@@ -40,7 +40,7 @@ lasio_map <- ggplot(site_metadata) +
   )) +
   annotation_borders(regions = "UK", linewidth = 0.2) +
   coord_quickmap() +
-  theme_bw()
+  theme_minimal()
 
 lasio_map
 ```
@@ -172,7 +172,7 @@ ggplot(spp_presence, aes(x = min_temp_coldest_month, fill = detected)) +
   geom_histogram(bins = 10) +
   ggtitle("Temperature") +
   facet_wrap(~detected, scales = "free") +
-  theme_bw()
+  theme_minimal()
 ```
 :::
 :::

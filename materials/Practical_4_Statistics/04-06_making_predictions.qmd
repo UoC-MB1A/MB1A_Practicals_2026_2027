@@ -91,7 +91,10 @@ ggplot(
   aes(x = data)
 ) +
   geom_histogram(bins = 30) +
-  theme_bw()
+  ggtitle("Predicted minimum temperature at sites with H. tumulorum present - Simulated") +
+  xlab("Minimum temperature of coldest month (°C)") +
+  ylab("Number of simulations") +
+  theme_minimal()
 ```
 
 The model therefore gives us more than a single predicted value. For each value of the explanatory variable, it estimates the mean of a probability distribution for the response variable. For a linear model, observations are assumed to be normally distributed around this mean, with the residual standard deviation estimated by `sigma()`.
@@ -139,22 +142,22 @@ The predicted mean total annual precipitation is `r round(pred_lm[1, "fit"])` mm
 
 ::: {.callout-note #note-summary_0406}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - When using a fitted model to make a prediction, values of the response variable are predicted based on supplied values of the explanatory variable.
 - A confidence interval from `predict()` describes uncertainty around the predicted mean.
 
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
 | `predict()` | Uses a fitted statistical model to predict the expected value of the response variable for specified values of the explanatory variable(s). | Core |
 | `sigma()` | Extracts the estimated residual standard deviation from a fitted linear model. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

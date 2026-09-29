@@ -143,7 +143,7 @@ compare_vectors <- function(vector1, vector2) {
   distri <- ggplot(comp_df, aes(x = residuals)) +
     geom_histogram(bins = 15) +
     facet_wrap(~group) +
-    theme_bw()
+    theme_minimal()
 
   # Put the results into a list
   results <- list(
@@ -212,7 +212,7 @@ p_df <- tibble(pval = ps)
 
 ggplot(p_df, aes(x = pval)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 When the alternative hypothesis is true, we expect more small p-values. The stronger the evidence the test is able to detect, the more strongly the distribution will be concentrated towards zero.
@@ -232,7 +232,7 @@ p_df <- tibble(pval = ps)
 
 ggplot(p_df, aes(x = pval)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Therefore, if we are running many tests we can use p-value distributions to investigate whether a statistical test is behaving as expected, rather than judging it from the result of a single test.
@@ -430,7 +430,7 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Dogs:
@@ -439,7 +439,7 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 #### 6
@@ -655,7 +655,7 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Dogs:
@@ -664,7 +664,7 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 #### 6
@@ -841,7 +841,7 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Dogs:
@@ -850,7 +850,7 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 #### 6
@@ -1026,7 +1026,7 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Dogs:
@@ -1035,7 +1035,7 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 #### 6
@@ -1214,7 +1214,7 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Dogs:
@@ -1223,7 +1223,7 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
-  theme_bw()
+  theme_minimal()
 ```
 
 #### 6

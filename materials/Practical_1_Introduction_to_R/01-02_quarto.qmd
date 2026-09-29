@@ -325,9 +325,9 @@ Look through the [tidyverse style guide](https://style.tidyverse.org/syntax.html
 
 ::: {.callout-note #note-summary_0102}
 
-## Summary
+### Summary
 
-## Concepts
+#### Concepts
 
 - **Quarto documents** combine text, code and output in a single reproducible document.
 - R code can be written and run inside **code chunks**.
@@ -337,7 +337,7 @@ Look through the [tidyverse style guide](https://style.tidyverse.org/syntax.html
 - Consistent **code formatting** makes code easier to read, understand and check.
 - **Informative variable names** make it easier to understand what values represent.
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have created are:
 

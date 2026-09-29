@@ -59,7 +59,7 @@ Imagine that you are a researcher and you notice that this neuron seems to fire 
 In your `distributions.qmd` Quarto file:
 
 * Read the CSV file containing the data.
-* Plot a **histogram** with an appropriate number of bins showing how the data is distributed.
+* Plot a **histogram** with an appropriate number of bins showing how the waiting times are distributed.
 * Based on the shape of the histogram and the biological process being measured, decide which probability distribution might provide an appropriate model for the waiting times.
 * Find the longest wait time in the observed data.
 * Using the appropriate function from the table in @sec-other_distributions, generate 1000 random datasets with the same number of measurements from the distribution you have selected, generating parameters from your data as needed. Record the longest wait time.
@@ -83,7 +83,11 @@ ggplot(
   neuron_df,
   aes(x = Inter_Spike_Interval)
 ) +
-  geom_histogram(bins = 50)
+  geom_histogram(bins = 50) +
+  ggtitle("Distribution of waiting times for single neurons - Observed") +
+  xlab("Waiting time (s)") +
+  ylab("Number of observations") +
+  theme_minimal()
 ```
 
 [Based on the shape of the histogram and the biological process being measured, decide which probability distribution might provide an appropriate model for the waiting times.]{.blue-text}
@@ -139,7 +143,11 @@ ggplot(
   aes(x = Maximum_Wait_Time)
 ) +
   geom_histogram(bins = 50) +
-  geom_vline(xintercept = max_observed, color = "red")
+  geom_vline(xintercept = max_observed, color = "red") +
+  ggtitle("Distribution of maximum waiting times for single neurons - Simulated and Observed") +
+  xlab("Maximum waiting time (s)") +
+  ylab("Number of simulations") +
+  theme_minimal()
 ```
 
 The observed maximum waiting time is towards the lower end of the simulated maxima, but still falls within the range expected under the fitted exponential model.
@@ -230,7 +238,11 @@ ggplot(islet_diams_df, aes(x = Islet_Diameter)) +
       shape = 1.5,
       scale = 105
     )
-  )
+  ) +
+  ggtitle("Distribution of diameter of islets - Simulated and Theoretical") +
+  xlab("Diameter (μm)") +
+  ylab("Density") +
+  theme_minimal()
 ```
 [During manual assessment, only islets with a diameter of **at least 50 μm** are included in the standard counting procedure. Given that an islet is included in the count, estimate the probability that its diameter is **between 100 and 150 μm**.]{.blue-text}
 
@@ -263,12 +275,12 @@ print(prop_counted_islets_100_150)
 
 ::: {.callout-note #note-summary_0304}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 - Simulation can be used to investigate whether an **extreme observed value**, such as a maximum, is consistent with a proposed probability distribution. ([Extension]{.extension-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -279,7 +291,7 @@ print(prop_counted_islets_100_150)
 | `pweibull()` | Calculates cumulative probabilities from a Weibull distribution. | Bonus |
 | `qweibull()` | Calculates quantiles of a Weibull distribution. | Bonus |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

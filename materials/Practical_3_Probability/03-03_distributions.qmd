@@ -171,10 +171,12 @@ In your `drosophila.qmd` Quarto file, plot a bar chart of the number of populati
 ::: {.callout-answer collapse="true" #ex-bar_drosophila_ans}
 
 ```{r bar_drosophila}
-## fill="skyblue", and theme_bw are not essential, just aesthetic
 ggplot(dcounts, aes(x = Novel_Mutation_Count)) +
-  geom_bar(fill = "skyblue") +
-  theme_bw()
+  geom_bar() +
+  ggtitle("Number of Populations with Each Mutation Count - Observed") +
+  xlab("Novel mutation count") +
+  ylab("Number of populations") +
+  theme_minimal()
 ```
 :::
 :::
@@ -302,15 +304,21 @@ We can now add the theoretical points to our plot using `geom_point()`. We can g
 Include this code in your `drosophila.qmd` Quarto file.
 
 ```{r bar_theor_drosophila}
-## fill='skyblue', size=3, and theme_bw are not essential, just aesthetic
 ggplot(data = dcounts, mapping = aes(x = Novel_Mutation_Count)) +
   geom_bar(fill = "skyblue") +
   geom_point(data = theor_df, mapping = aes(
     x = k,
     y = Theoretical_Mutation_Count
   ), size = 3) +
-  theme_bw()
+  ggtitle("Number of Populations with Each Mutation Count -\nObserved and Theoretical") +
+  xlab("Novel mutation count") +
+  ylab("Number of populations") +
+  theme_minimal()
 ```
+
+::: {.callout-note #note-line_breaks}
+If you want to include a line break e.g. in a plot title, you can insert `\n` at the point where the break should be.
+:::
 
 Again, the data looks *kind of* Poisson distributed, but it is not particularly definitive.
 
@@ -466,7 +474,11 @@ You can change the number of bins in the histogram using the argument `bins = n`
 
 ```{r plot_sim_drosophila_ans1}
 ggplot(df_sim, aes(x = diff)) +
-  geom_histogram(bins = 50)
+  geom_histogram(bins = 50) +
+  ggtitle("Difference between mean and variance across samples - Simulated") +
+  xlab("Difference between mean and variance") +
+  ylab("Number of simulations") +
+  theme_minimal()
 ```
 
 The difference between the mean and variance seen in the study is consistent with what we could observe in a sample of 17 populations drawn from a Poisson distribution.
@@ -487,7 +499,11 @@ You can add a vertical line to the plot using the function `geom_vline()` with t
 ```{r adding_lines_drosophila}
 ggplot(df_sim, aes(x = diff)) +
   geom_histogram(bins = 50) +
-  geom_vline(xintercept = sample_diff, color = "red")
+  geom_vline(xintercept = sample_diff, color = "red") +
+  ggtitle("Difference between Mean and Variance across Samples -\nSimulated and Observed") +
+  xlab("Difference between mean and variance") +
+  ylab("Number of simulations") +
+  theme_minimal()
 ```
 
 
@@ -537,7 +553,11 @@ geo <- fish |> filter(genus == "Geotria")
 
 # Plot a histogram
 ggplot(geo, aes(x = total_length_cm)) +
-  geom_histogram()
+  geom_histogram() +
+  ggtitle("Distribution of total length in Geotria fish - Observed") +
+  xlab("Total length (cm)") +
+  ylab("Number of fish") +
+  theme_minimal()
 ```
 
 The data looks basically normally distributed.
@@ -556,7 +576,11 @@ ggplot(geo, aes(
 )) +
   geom_histogram(aes(y = after_stat(density)),
     bins = 30
-  )
+  ) +
+  ggtitle("Distribution of total length in Geotria fish  - Observed") +
+  xlab("Total length (cm)") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 ### Adding a theoretical normal distribution {#sec-theoretical_normal .core}
@@ -598,7 +622,11 @@ ggplot(geo, aes(
   stat_function(
     fun = dnorm,
     args = list(mean = mean_obs, sd = sd_obs)
-  )
+  ) +
+  ggtitle("Distribution of total length in Geotria fish  -\nObserved and Theoretical") +
+  xlab("Total length (cm)") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 ### Comparing skewness between our observed data and a theoretical distribution {#sec-skewness .fold .extension}
@@ -693,16 +721,16 @@ The observed skewness is therefore consistent with what we might expect from a s
 
 ::: {.callout-note #note-summary_0303}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - R uses a consistent naming convention for functions associated with probability distributions: `r...()` generates random values, `d...()` gives probabilities or densities, `p...()` gives cumulative probabilities and `q...()` gives quantiles.
 - Observed data can be compared with a **theoretical probability distribution** to investigate whether the proposed distribution is appropriate.
 - **Simulation** can be used to investigate whether properties of an observed sample are consistent with samples drawn from a particular theoretical distribution.
 - **Skewness** (`skewness()`) measures the asymmetry of a distribution. ([Extension]{.extension-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -721,7 +749,7 @@ The observed skewness is therefore consistent with what we might expect from a s
 | `skewness()` | Calculates the skewness of a set of values. | Extension |
 | `rnorm()` | Generates random values from a normal distribution. | Extension |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

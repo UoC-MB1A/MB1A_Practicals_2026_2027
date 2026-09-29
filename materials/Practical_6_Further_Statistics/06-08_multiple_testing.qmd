@@ -375,7 +375,7 @@ ggplot(df_probs, aes(x = pvalue, fill = true_effect)) +
     position = position_stack(reverse = TRUE)
   ) +
   facet_wrap(~scenario) +
-  theme_bw()
+  theme_minimal()
 ```
 
 Here, for the bar between 0 and 0.05, the blue part of the bar represents true positives: tests where there really is a difference between the populations and we have correctly rejected the null hypothesis. The red part represents false positives: tests where there is no real difference, but we have nevertheless obtained a p-value below 0.05.

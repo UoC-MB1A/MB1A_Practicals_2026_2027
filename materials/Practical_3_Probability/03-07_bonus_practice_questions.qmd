@@ -781,8 +781,13 @@ simu_df <- tibble(simulated_data = simu)
 
 # Plot a histogram
 ggplot(simu_df, aes(x = simulated_data)) +
-  geom_histogram(bins = 50)
+  geom_histogram(bins = 50) +
+  ggtitle("Distribution of x - Simulated") +
+  xlab("x") +
+  ylab("Number of simulations") +
+  theme_minimal()
 ```
+
 The peak is apparent on this plot at about 1.7.
 
 ### Question 6

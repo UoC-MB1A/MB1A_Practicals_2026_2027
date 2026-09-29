@@ -645,14 +645,14 @@ ggplot(weather, aes(
 
 ### Adding extra features {#sec-adding_features_gg .core}
 
-We can add some additional features here to make the plot look nicer. For example, here I will change the colour of the line to red, add *x* and *y* axis labels and add a title.
+We can add some additional features here to make the plot look nicer. For example, here I will change the colour of the line to red (with `colour = "red"` as an argument to `geom_line()`), add *x* (`xlab()`) and *y* (`ylab()`) axis labels and add a title (`ggtitle()`).
 
 ```{r colour_line_plot}
 ggplot(weather, aes(
   x = observation_time,
   y = temperature_c
 )) +
-  geom_line(color = "red") +
+  geom_line(colour = "red") +
   xlab("Date") +
   ylab("Temp (C)") +
   ggtitle("Temperature by Date")
@@ -747,9 +747,9 @@ Still looking for a challenge? Extend your UKHSA analysis in any way you like. F
 
 ::: {.callout-note #note-summary_0104}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - **Packages** contain additional functions and other resources. Packages need to be installed once and loaded using the `library()` function in each new R session in which they are used.
 - A **vector** (`c()`) stores multiple values of the same type.
@@ -761,7 +761,7 @@ Still looking for a challenge? Extend your UKHSA analysis in any way you like. F
 - An **API** allows data to be accessed programmatically. [(Bonus)]{.bonus-text}
 
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -791,7 +791,7 @@ Still looking for a challenge? Extend your UKHSA analysis in any way you like. F
 | `filter()` | Selects rows of a data frame that meet a condition. | Bonus |
 
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have created are:
 

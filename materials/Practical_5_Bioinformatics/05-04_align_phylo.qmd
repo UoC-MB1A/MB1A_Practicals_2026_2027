@@ -306,9 +306,9 @@ Do your ERV sequences appear most closely related to the same retroviruses in al
 
 ::: {.callout-note #note-summary_0504}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - Amino acid sequences can be stored as an `AAStringSet`; individual sequences can be selected from it and multiple `AAStringSet` objects can be combined.
 - To build a multiple sequence alignment in R, combine the sequence of interest with its reference sequences, align them using (for example) `msa()`, and save the aligned sequences as a FASTA file.
@@ -317,7 +317,7 @@ Do your ERV sequences appear most closely related to the same retroviruses in al
 - Phylogenetic trees can be visualised using `ggtree`, with tip labels, highlighting and an evolutionary distance scale added to the plot.
 - Phylogenetic tree plots can be saved in the same way as other `ggplot`-based figures.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -333,7 +333,7 @@ Do your ERV sequences appear most closely related to the same retroviruses in al
 | `geom_treescale()` | Adds an evolutionary distance scale bar to a phylogenetic tree. | Core |
 | `ggsave()` | Saves a plot to a file. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited or created are:
 

@@ -260,9 +260,9 @@ print(paste("My name is", my_name, "and I am", my_age, "years old"))
 
 ::: {#note-summary_0101 .callout-note}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - The **console** allows us to run R commands interactively and see the results immediately.
 - A **variable** associates a name with a value.
@@ -270,7 +270,7 @@ print(paste("My name is", my_name, "and I am", my_age, "years old"))
 - **Running** or **executing** code tells R to carry out the instructions we have written.
 - An **R script** is a file containing R code. Unlike commands entered directly into the console, a script provides a reproducible record of our code and allows us to set up multiple commands to run sequentially.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -278,7 +278,7 @@ print(paste("My name is", my_name, "and I am", my_age, "years old"))
 | `paste()` | Combines values together into a single piece of text. | Core |
 | `sum()` | Adds together values. | Core |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have created are:
 

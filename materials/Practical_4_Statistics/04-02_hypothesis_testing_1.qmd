@@ -102,7 +102,7 @@ In your `pollinators.qmd` Quarto document:
 * Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.
 * Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.
 * Store the resulting data frame as a variable named `ht_df`.
-* Write the data frame to the file `output/ht_df.tsv`.
+* Write the data frame to the file `output/ht_df.csv`.
 
 ::: {.callout-answer collapse="true" #ex_filter_ht_ans}
 [Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.]{.blue-text}
@@ -186,7 +186,10 @@ ggplot(
   aes(x = detected, y = min_temp_coldest_month, fill = detected)
 ) +
   geom_boxplot() +
-  theme_bw()
+  ggtitle("Minimum Temperature with and without H. tumulorum - Observed") +
+  xlab("Presence of H. tumulorum") +
+  ylab("Minimum temperature (°C)") +
+  theme_minimal()
 ```
 :::
 :::
@@ -347,7 +350,17 @@ ggplot(
   aes(x = simulated)
 ) +
   geom_density() +
-  geom_vline(xintercept = c(ttest_ht_temp$statistic, -ttest_ht_temp$statistic), color = "red")
+  geom_vline(
+    xintercept = c(
+      ttest_ht_temp$statistic,
+      -ttest_ht_temp$statistic
+    ),
+    color = "red"
+  ) +
+  ggtitle("Density of t-distribution - Simulated and Observed") +
+  xlab("t") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 [Calculate an approximated p-value using your simulated data - the proportion of observations which are at least `r round(abs(ttest_ht_temp$statistic), 3)` from zero **in either direction**. You can extract the test statistic from the t-test as `ttest_ht_temp$statistic`.]{.blue-text}
@@ -600,7 +613,10 @@ ggplot(
   t_dist,
   aes(x = simulated)
 ) +
-  geom_density()
+  geom_density() +
+  ggtitle("Density of t-distribution - Simulated") +
+  xlab("t") +
+  ylab("Density")
 ```
 
 To calculate our confidence interval, we want the middle 95% of values from this distribution. 
@@ -625,7 +641,11 @@ ggplot(
   aes(x = simulated)
 ) +
   geom_density() +
-  geom_vline(xintercept = c(pull(quantile_df, lower), pull(quantile_df, upper)), color = "blue")
+  geom_vline(xintercept = c(pull(quantile_df, lower), pull(quantile_df, upper)), color = "blue") +
+  ggtitle("Density of t-distribution -\nSimulated with simulated quantiles") +
+  xlab("t") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 We can also calculate the exact values using the function `qt()`.
@@ -647,7 +667,11 @@ ggplot(
   aes(x = simulated)
 ) +
   geom_density() +
-  geom_vline(xintercept = c(lower_exact, upper_exact), color = "orange")
+  geom_vline(xintercept = c(lower_exact, upper_exact), color = "orange") +
+  ggtitle("Density of t-distribution -\nSimulated with theoretical quantiles") +
+  xlab("t") +
+  ylab("Density") +
+  theme_minimal()
 ```
 
 Because the t-distribution is symmetric, the two exact quantiles have the same absolute value. This value is called the critical t-value, often written $t*$. These values are measured on the t-distribution. To calculate a confidence interval for our estimated difference between means, we need to convert $t*$ into the units of our response variable.
@@ -881,8 +905,11 @@ ggplot(ht_temp_df, aes(
 )) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  theme_bw() +
-  geom_hline(aes(yintercept = overall_mean), color = "red")
+  geom_hline(aes(yintercept = overall_mean), color = "red") +
+  ggtitle("Minimum temperature vs H. tumulorum detection - Observed and Fitted") +
+  xlab("H. tumulorum detected") +
+  ylab("Minimum temperature (°C)") +
+  theme_minimal()
 ```
 
 ## ANOVA {#sec-anova_cat .core}
@@ -985,9 +1012,9 @@ The advantage of ANOVA is that, unlike a t-test, we can use it when our categori
 
 ::: {.callout-note #note-summary_0402}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - A **statistical formula** in R uses `~` to describe the relationship between variables, with the response variable on the left and the explanatory variable on the right.
 - The output of a statistical test can be stored as an R object, allowing values such as the test statistic, confidence interval and p-value to be accessed.
@@ -998,7 +1025,7 @@ The advantage of ANOVA is that, unlike a t-test, we can use it when our categori
 - Simulation can be used to demonstrate the repeated-sampling interpretation of a **confidence interval**. ([Extension]{.extension-text})
 
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -1020,7 +1047,7 @@ The advantage of ANOVA is that, unlike a t-test, we can use it when our categori
 | `geom_smooth()` | Adds a smoothed or fitted relationship to a ggplot. | Extension |
 | `geom_hline()` | Adds a horizontal line to a ggplot. | Extension |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 

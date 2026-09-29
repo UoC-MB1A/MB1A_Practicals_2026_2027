@@ -147,7 +147,7 @@ ggplot(
     method = "glm",
     method.args = list(family = poisson)
   ) +
-  theme_bw()
+  theme_minimal()
 ```
 
 ## Prediction {#sec-prediction_pois_glm .core}
@@ -411,7 +411,7 @@ dispersion_long <- dispersion_df |>
 ggplot(dispersion_long, aes(x = data, y = difference, fill = data)) +
   geom_boxplot() +
   geom_hline(yintercept = 0) +
-  theme_bw()
+  theme_minimal()
 ```
 Clearly, our data are more dispersed than the model predicts.
 

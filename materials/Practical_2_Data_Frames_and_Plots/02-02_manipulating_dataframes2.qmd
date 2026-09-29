@@ -486,9 +486,9 @@ write_csv(autumn_data, "output/birds_autumn.csv")
 
 ::: {.callout-note #note-summary_0202}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - **Grouping** (`group_by()`) a data frame allows us to perform calculations separately for different groups of observations.
 - **Summary statistics** (`summarise()`) can be calculated for each group or the whole data frame to produce a new summary data frame.
@@ -497,7 +497,7 @@ write_csv(autumn_data, "output/birds_autumn.csv")
 - Data can be stored in **wide format**, with multiple measurements in different columns, or **long format**, with measurements spread across multiple rows.
 - The `%in%` operator tests whether values occur within a set of values, which is useful when filtering on several categories.
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -516,7 +516,7 @@ write_csv(autumn_data, "output/birds_autumn.csv")
 | `across()` | Applies the same operation to multiple columns. | Extension |
 | `pivot_wider()` | Reshapes a data frame from long to wide format. | Extension |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited or created are:
 

@@ -292,7 +292,10 @@ The function `geom_vline()` adds a vertical line at a specific point, specified 
 ggplot(estimator_long, aes(x = estimate)) +
   geom_histogram(bins = 50) +
   facet_wrap(~estimator, scales = "free") +
-  geom_vline(xintercept = n_unique_species, color = "red")
+  geom_vline(xintercept = n_unique_species, color = "red") +
+  ggtitle("Distribution of estimator values for species richness - Simulated and Observed") +
+  xlab("Estimated species richness") +
+  ylab("Number of simulations")
 ```
 Here it is clear again that none of these are great estimators, but that Chao1 is probably the best. 
 
@@ -399,7 +402,11 @@ estimator_long_50 <- estimator_df_50 |>
 ggplot(estimator_long_50, aes(x = estimate)) +
   geom_histogram(bins = 50) +
   geom_vline(xintercept = n_unique_species, color = "red") +
-  facet_wrap(~estimator, scales = "free")
+  facet_wrap(~estimator, scales = "free") +
+  ggtitle("Distribution of estimator values for species richness - Simulated and Observed") +
+  xlab("Estimated species richness") +
+  ylab("Number of simulations") +
+  theme_minimal()
 ```
 
 Chao1 actually looks pretty good here - it is generating an approximately unbiased estimate of the pseudo-population, although it has a higher variance, and therefore lower efficiency, than either other estimator. 
@@ -469,7 +476,10 @@ ggplot(
   aes(x = FE)
 ) +
   geom_histogram(bins = 15) +
-  theme_bw()
+  ggtitle("Distribution of iron concentration - Observed") +
+  xlab("Iron concentration (mg / 100 g)") +
+  ylab("Number of organisms") +
+  theme_minimal()
 ```
 
 [Calculate the median iron concentration in the sample.]{.blue-text}
@@ -505,7 +515,10 @@ ggplot(
   aes(x = median)
 ) +
   geom_histogram(bins = 15) +
-  theme_bw()
+  ggtitle("Bootstrap distribution of median iron concentration - Simulated") +
+  xlab("Median iron concentration (mg / 100 g)") +
+  ylab("Number of bootstrap samples") +
+  theme_minimal()
 ```
 
 [Calculate a 95% confidence interval for the median.]{.blue-text}
@@ -624,16 +637,16 @@ The bootstrapped confidence interval for the estimator contains the population v
 
 ::: {.callout-note #note-summary_0407}
 
-## Summary
+### Summary
 
-### Concepts
+#### Concepts
 
 - Simulation can be used to investigate how an estimator behaves across repeated samples from a known or simulated population. ([Extension]{.extension-text})
 - **Bootstrapping** estimates uncertainty by repeatedly sampling the observed data **with replacement** and recalculating the statistic of interest. ([Extension]{.extension-text})
 - Bootstrap samples contain the same number of observations as the original sample, but individual observations may occur more than once or not at all. ([Extension]{.extension-text})
 - A **percentile bootstrap confidence interval** can be calculated from the central 95% of the bootstrap distribution. ([Extension]{.extension-text})
 
-### Functions
+#### Functions
 
 | Function | What it does | Level |
 |---|---|---|
@@ -642,7 +655,7 @@ The bootstrapped confidence interval for the estimator contains the population v
 | `qgamma()` | Calculates quantiles of a gamma distribution. | Bonus |
 | `rgamma()` | Generates random values from a gamma distribution. | Bonus |
 
-### Files
+#### Files
 
 For this part of the practical, the main files you have edited are:
 
