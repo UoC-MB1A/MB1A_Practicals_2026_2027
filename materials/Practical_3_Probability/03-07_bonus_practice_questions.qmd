@@ -4,7 +4,7 @@ practical: Practical_3_Probability
 doc-id: "0307"
 toc-depth: 4
 ---
-# Probability Problem Sheets
+# Probability Problem Sheets {#sec-p7_prob_problem_sheets}
 
 These are the solutions to the Probability problem sheets you completed earlier in the course, solved using simulation alone.
 
@@ -159,6 +159,10 @@ R2_correct <- rbinom(n = n_sim, size = 1, prob = 0.97)
 #### a
 
 The probability that R1 reports that the transmitted signal is “0”
+
+::: {.callout-note #note-or}
+The | operator means OR and returns TRUE when either condition is TRUE.
+:::
 
 ```{r q2a}
 # R1 reports 0 when either the signal is 0

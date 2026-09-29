@@ -114,7 +114,7 @@ In your `septin.qmd` Quarto file:
 
 Continue to do this until you have no remaining variables, then fit the NULL model - `Is_Old ~ 1`. Keep all of your models in different variables named `model_1` to `model_7`.
 
-Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (`model$deviance`) for each model. 
+Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (assessed using the function `deviance()` on the fitted model) for each model. 
 
 Plot the resulting values, with `degrees_of_freedom` on the x axis and `deviance` on the y axis.
 
@@ -186,7 +186,7 @@ model_7 <- glm(Is_Old ~ 1, septin, family = binomial)
 summary(model_7)
 ```
 
-[Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (`model$deviance`) for each model.]{.blue-text}
+[Once you've run all 7, create a data frame with the columns `degrees_of_freedom` and `deviance` containing the residual degrees of freedom (`model$df.residual`) and the residual deviance (`deviance(model)`) for each model.]{.blue-text}
 
 ```{r septin_model_df}
 df_septin <- tibble(
@@ -272,7 +272,7 @@ In your `septin.qmd` Quarto file:
 log_lik_model_1 <- logLik(model_1)
 log_lik_model_2 <- logLik(model_2)
 test_statistic <- 2 * (log_lik_model_1 - log_lik_model_2)
-print (test_statistic)
+print(test_statistic)
 ```
 [Find the degrees of freedom for this likelihood ratio test.]{.blue-text}
 
@@ -280,13 +280,13 @@ print (test_statistic)
 df1 <- model_1$df.residual
 df2 <- model_2$df.residual
 df_diff <- df2 - df1
-print (df_diff)
+print(df_diff)
 ```
 [Using the cumulative probability function for the chi-squared distribution, `pchisq()` with the argument `lower.tail = FALSE` calculate the probability that a variable with a chi-squared distribution with these degrees of freedom would be **greater than or equal to** than your calculated value of the test statistic.]{.blue-text}
 
 ```{r calc_log_lik_septin3}
 prob <- pchisq(test_statistic, df = df_diff, lower.tail = FALSE)
-print (prob)
+print(prob)
 ```
 :::
 :::
@@ -296,7 +296,7 @@ You should see a non-significant p-value - so removing Septin 11 has not made th
 The test statistic for a likelihood ratio test comparing two models is identical to the difference in deviance between those two models (for a GLM). 
 
 ```{r calc_diff_deviance_septin}
-print (model_2$deviance - model_1$deviance)
+print(model_2$deviance - model_1$deviance)
 ```
 
 Therefore, we can calculate the change in deviance between each pair of successive models.
@@ -321,8 +321,10 @@ Now our data frame contains everything we need to calculate the p-value of the L
 
 ```{r calc_p_septin_df}
 df_septin <- df_septin |>
-  mutate(pvalue = pchisq(test_statistic, df_diff, lower.tail = FALSE),
-         sig = pvalue <= 0.05)
+  mutate(
+    pvalue = pchisq(test_statistic, df_diff, lower.tail = FALSE),
+    sig = pvalue <= 0.05
+  )
 gt(df_septin)
 ```
 
@@ -336,12 +338,14 @@ ggplot(
   aes(x = degrees_of_freedom, y = deviance)
 ) +
   geom_line() +
-  geom_point(aes(color=sig), size=6) +
+  geom_point(aes(color = sig), size = 6) +
   scale_x_continuous(
     sec.axis = dup_axis(
       breaks = df_septin$degrees_of_freedom,
       name = "Model",
-      labels = paste0("Model ", seq(1, 7))))
+      labels = paste0("Model ", seq(1, 7))
+    )
+  )
 ```
 
 :::{.callout-exercise #ex-minimal_model_septin .core}
@@ -402,13 +406,13 @@ We can calculate the AIC of a model directly:
 
 ```{r calculate_aic_septin}
 aic_septin_m1 <- AIC(model_1)
-print (aic_septin_m1)
+print(aic_septin_m1)
 ```
 This just tells us the AIC of the model, not the contribution of each variable. If we want to know how the AIC would change if we removed each variable in turn, we can use the function `drop1()`.
 
 ```{r drop1_septin}
 aic_drop1 <- drop1(model_1)
-print (aic_drop1)
+print(aic_drop1)
 ```
 This shows us what the AIC would be for the model if we removed each variable. Low values of AIC mean the model is better - so we want to remove the variable which would give us the lowest AIC - Septin 11.
 
@@ -441,37 +445,40 @@ What is your minimal model?
 
 ```{r septin_lm_ans1}
 lm_1 <- lm(Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9 + Septin11,
-                data = septin)
-print (summary(lm_1))
+  data = septin
+)
+print(summary(lm_1))
 ```
 [Once you have the fitted model, run the `drop1` function and find out which variable improves the model the least.]{.blue-text}
 
 ```{r septin_lm_ans2}
 d1 <- drop1(lm_1)
-print (d1)
+print(d1)
 ```
 Septin 11 is the lowest.
 
 [Remove this variable and fit another linear model.]{.blue-text}
 ```{r septin_lm_ans3}
-lm_2 <- lm(Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9 ,
-                data = septin)
+lm_2 <- lm(Septin1 ~ Septin2 + Septin6 + Septin7 + Septin9,
+  data = septin
+)
 ```
 
 [Continue until removing any remaining variable would increase the AIC.]{.blue-text}
 
 ```{r septin_lm_ans4}
 d2 <- drop1(lm_2)
-print (d2)
+print(d2)
 ```
 
 Septin 7 is the lowest.
 
 ```{r septin_lm_ans5}
-lm_3 <- lm(Septin1 ~ Septin2 + Septin6 + Septin9 ,
-                data = septin)
+lm_3 <- lm(Septin1 ~ Septin2 + Septin6 + Septin9,
+  data = septin
+)
 d3 <- drop1(lm_3)
-print (d3)
+print(d3)
 ```
 None of these improve the AIC, so we can stop here.
 
@@ -504,7 +511,7 @@ Compare the final model selected by `step()` with the model you obtained manuall
 
 ```{r step_function_ans}
 step_func <- step(lm_1, direction = "backward")
-print (step_func)
+print(step_func)
 ```
 
 This is the same as the result we obtained manually.
@@ -520,32 +527,39 @@ This is the same as the result we obtained manually.
 
 ### Summary
 
-* A **minimal model** is the simplest model that adequately describes the data.
-* Models are **nested** when a simpler model can be obtained by removing terms from a more complex model.
-* Removing explanatory variables generally reduces model fit, so we can compare nested models to determine whether the reduction in fit is sufficiently large to justify retaining a variable.
-* For GLMs, differences in **deviance** between nested models can be tested using a **likelihood-ratio test**.
-* For linear models, nested models can instead be compared using an **F-test** based on their residual sums of squares.
-* **Backwards stepwise elimination** starts with a more complex model and sequentially removes explanatory variables to identify a simpler model that adequately describes the data.
+#### Concepts
 
-#### Programming
+- A complex model can be simplified by fitting a series of **nested models**, each with one or more terms removed.
+- For fitted GLMs, **residual deviance** can be extracted and compared between models to see how model fit changes as terms are removed.
+- Two nested GLMs can be compared using a **likelihood-ratio test** to test whether removing a term significantly worsens model fit.
+- For nested GLMs, the likelihood-ratio test statistic can be calculated either from the models' **log-likelihoods** or from the difference in their residual deviances.
+- For linear models, nested models can be compared in a similar way using their residual sums of squares and an **F-test**.
+- **AIC** can also be used to compare models; `drop1()` can be used to examine how removing each individual term would change the AIC. ([Extension]{.extension-text})
+- **Backwards stepwise selection** can be automated in R using `step()` with `direction = "backward"`. ([Extension]{.extension-text})
 
-* Components of fitted models, such as residual deviance and residual degrees of freedom, can be accessed using `$`.
-* `logLik()` returns the log-likelihood of a fitted model.
-* `pchisq()` can be used to calculate a p-value from a likelihood-ratio test statistic.
-* `lead()` can be used to compare each value in a data-frame column with the following value.
+#### Functions
 
-#### Extension
+| Function | What it does | Level |
+|---|---|---|
+| `deviance()` | Extracts the residual deviance from a fitted model. | Core |
+| `logLik()` | Extracts the log-likelihood from a fitted model. | Core |
+| `pchisq()` | Calculates cumulative probabilities from a chi-squared distribution. | Core |
+| `lead()` | Returns the following value for each value in a vector or data frame column. | Core |
+| `pf()` | Calculates cumulative probabilities from an F-distribution. | Core |
+| `AIC()` | Calculates the Akaike Information Criterion for a fitted model. | Extension |
+| `drop1()` | Shows the effect of removing individual terms from a fitted model. | Extension |
+| `step()` | Performs automated stepwise model selection. | Extension |
 
-* **AIC** balances model fit against model complexity and provides another approach to model selection.
-* `drop1()` can be used to examine how removing individual terms would affect the AIC of a model.
-* `step()` can automate backwards stepwise model selection using AIC.
+
+#### Files
+
+For this part of the practical, the main file you have created is:
+
+* `septin.qmd`
+
+This is the file you should select when making your Git commit.
 
 :::
-
-For this part of the practical, the main files you have created are:
-
-These are the files you should select when making your Git commit.
-
 
 Remember to save and commit your work before moving on to Part 7.
 

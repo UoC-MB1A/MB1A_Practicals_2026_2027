@@ -490,15 +490,29 @@ You have now successfully generated at least one publication-quality plot based 
 
 ::: {.callout-note #note-summary_0203}
 
-### Summary
+## Summary
 
-- The function `ggplot()` is used to create a new plot.
-- The `aes()` function controls how variables in the data are mapped to visual properties of the plot.
-- `geom_point()` is used to add points.
-- `geom_path()` is used to connect related observations.
-- Colour and shape can be used to display categorical variables.
+### Concepts
+- A ggplot is built by adding **layers** to a plot.
+- **Aesthetics** map variables in a data frame to visual properties of a plot. In addition to the *x* and *y* positions, variables can be mapped to properties such as **colour** and **shape**.
+- A **scatter plot** displays the relationship between two variables using points.
+- **Axis limits** control the range of values displayed on the axes.
+- Observations belonging to the same group can be connected using **paths**. [**Recommended**]{.rec-text}
 
-:::
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `pull()` | Extracts a single column from a data frame. | Core |
+| `geom_point()` | Adds points to a ggplot. | Core |
+| `geom_path()` | Connects points in a ggplot using lines. | Recommended |
+| `coord_cartesian()` | Zooms in on part of a plot. | Core |
+| `annotation_borders()` | Adds geographical borders to a map plot. | Core |
+| `coord_quickmap()` | Sets up map coordinates while preserving an appropriate aspect ratio. | Core |
+| `scale_color_brewer()` | Applies a ColorBrewer colour palette to a plot. | Extension |
+| `theme_bw()` | Applies a black-and-white theme to a plot. | Extension |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
@@ -506,6 +520,7 @@ For this part of the practical, the main files you have edited are:
 
 These are the files you should select when making your Git commit.
 
+:::
 
 Remember to save and commit your work before moving on to Part 4.
 

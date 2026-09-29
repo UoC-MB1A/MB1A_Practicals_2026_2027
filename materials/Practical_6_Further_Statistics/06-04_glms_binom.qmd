@@ -464,9 +464,10 @@ ggplot(seagulls, aes(x = chips_stolen, y = distance_from_sea, fill = chips_stole
 
 ```{r glm_seagulls}
 seagull_glm <- glm(chips_stolen ~ distance_from_sea,
-                    data = seagulls,
-                    family = binomial)
-print (summary(seagull_glm))
+  data = seagulls,
+  family = binomial
+)
+print(summary(seagull_glm))
 ```
 
 ```{r glm_seagulls_get_parameters, include=FALSE}
@@ -522,38 +523,48 @@ b0 <- coef(seagull_glm)["(Intercept)"]
 for (beta in possible_beta1s) {
   # Calculate log-odds using this possible coefficient
   log_odds <- b0 + beta * pull(seagulls, distance_from_sea)
-  
+
   # Convert log-odds to probability
   probs <- exp(log_odds) / (1 + exp(log_odds))
-  
+
   # Filter the data frame to only rows where chips
   # were stolen and add a row with the probability
   # of this happening under the model
   chips_stolen <- seagulls |>
-    mutate(probs = probs,
-           log_probs = log(probs)) |>
+    mutate(
+      probs = probs,
+      log_probs = log(probs)
+    ) |>
     filter(chips_stolen == TRUE)
 
   # Filter the data frame to only rows where chips
   # were not stolen and add a row with the probability
   # of this happening under the model
   chips_not_stolen <- seagulls |>
-    mutate(probs = (1 - probs),
-           log_probs = log(probs)) |>
+    mutate(
+      probs = (1 - probs),
+      log_probs = log(probs)
+    ) |>
     filter(chips_stolen == FALSE)
 
   # Calculate the log likelihood of the observed data
-  tot_stolen <- chips_stolen |> pull(log_probs) |> sum()
-  tot_not <- chips_not_stolen |> pull(log_probs) |> sum()
+  tot_stolen <- chips_stolen |>
+    pull(log_probs) |>
+    sum()
+  tot_not <- chips_not_stolen |>
+    pull(log_probs) |>
+    sum()
   log_likelihood <- tot_stolen + tot_not
-  
+
   # Add this to our vector of log likelihoods
   log_likelihoods <- c(log_likelihoods, log_likelihood)
 }
 
 # Put the results into a data frame
-df_likelihood <- tibble(beta = possible_beta1s,
-                        log_likelihood = log_likelihoods)
+df_likelihood <- tibble(
+  beta = possible_beta1s,
+  log_likelihood = log_likelihoods
+)
 gt(head(df_likelihood))
 ```
 
@@ -568,8 +579,10 @@ gt(head(max_likelihood))
 We can also plot our estimates.
 
 ```{r plot_ml_seagulls}
-ggplot(df_likelihood,
-       aes(x = beta, y = log_likelihood)) +
+ggplot(
+  df_likelihood,
+  aes(x = beta, y = log_likelihood)
+) +
   geom_point() +
   geom_vline(xintercept = -0.52)
 ```
@@ -589,7 +602,6 @@ In your `prac6_exercises.qmd` Quarto file, adapt the code above to use the produ
 ::: {.callout-answer collapse="true" #ex_not_log_likelihood_ans}
 
 ```{r run_ml_seagulls_nolog}
-
 possible_beta1s <- seq(-1, 1, by = 0.01)
 likelihoods <- c()
 b0 <- coef(seagull_glm)["(Intercept)"]
@@ -597,10 +609,10 @@ b0 <- coef(seagull_glm)["(Intercept)"]
 for (beta in possible_beta1s) {
   # Calculate log-odds using this possible coefficient
   log_odds <- b0 + beta * pull(seagulls, distance_from_sea)
-  
+
   # Convert log-odds to probability
   probs <- exp(log_odds) / (1 + exp(log_odds))
-  
+
   # Filter the data frame to only rows where chips
   # were stolen and add a row with the probability
   # of this happening under the model
@@ -617,16 +629,22 @@ for (beta in possible_beta1s) {
     filter(chips_stolen == FALSE)
 
   # Calculate the likelihood of the observed data
-  tot_stolen <- chips_stolen |> pull(probs) |> prod()
-  tot_not <- chips_not_stolen |> pull(probs) |> prod()
-  
+  tot_stolen <- chips_stolen |>
+    pull(probs) |>
+    prod()
+  tot_not <- chips_not_stolen |>
+    pull(probs) |>
+    prod()
+
   likelihood <- tot_stolen * tot_not
 
   likelihoods <- c(likelihoods, likelihood)
 }
 
-df_likelihood_nolog <- tibble(beta = possible_beta1s,
-                              likelihood = likelihoods)
+df_likelihood_nolog <- tibble(
+  beta = possible_beta1s,
+  likelihood = likelihoods
+)
 gt(head(df_likelihood_nolog))
 ```
 
@@ -636,8 +654,10 @@ max_likelihood <- df_likelihood_nolog |>
 gt(head(max_likelihood))
 ```
 ```{r plot_ml_seagulls_nolog}
-ggplot(df_likelihood_nolog,
-       aes(x = beta, y = likelihood)) +
+ggplot(
+  df_likelihood_nolog,
+  aes(x = beta, y = likelihood)
+) +
   geom_point() +
   geom_vline(xintercept = -0.52)
 ```
@@ -680,35 +700,26 @@ For binomial GLMs we additionally assume that the response is compatible with a 
 
 ### Summary
 
-#### Statistics
+#### Concepts
 
-* **Generalised linear models (GLMs)** extend linear models to response variables that are not continuous and normally distributed.
-* A **binomial GLM** can be used when the response variable is binary, such as presence or absence.
-* A standard linear model is unsuitable for a binary response because it can predict values outside the possible range of probabilities from 0 to 1.
-* In a binomial GLM, the **logit link function** transforms probabilities into log-odds, which can take any value from $-\infty$ to $\infty$.
-* The coefficients of a binomial GLM describe changes in **log-odds**. Exponentiating a coefficient gives an **odds ratio**.
-* Predictions from a binomial GLM can be converted back to probabilities between 0 and 1.
-* Predictions made outside the range of the observed data are **extrapolations** and may be unreliable, even though the predicted probabilities remain between 0 and 1.
-* Binomial GLMs can contain multiple explanatory variables and interactions in the same way as standard linear models.
-* GLMs assume independence of observations and linearity on the link scale. A binomial GLM additionally requires a response compatible with a binomial distribution.
+- A binomial GLM can be fitted in R using `glm()` with `family = binomial`.
+- The response variable for a binomial GLM can be represented as `0` and `1`, for example absence and presence.
+- The coefficients returned by a binomial GLM are on the **log-odds scale**; exponentiating a coefficient gives an **odds ratio**.
+- A fitted binomial GLM can be plotted using `geom_smooth()` with `method = "glm"` and `method.args = list(family = binomial)`.
+- By default, `predict()` returns predictions from a binomial GLM on the **log-odds scale**; `type = "response"` returns predicted probabilities.
+- Predictions from a binomial GLM will remain between 0 and 1, but predictions made outside the observed range of the explanatory variables are **extrapolations** and may still be unreliable.
+- Multiple explanatory variables and interactions can be included in a binomial GLM using the same formula syntax as a linear model. ([Recommended]{.rec-text})
+- `glm()` estimates model coefficients using **maximum likelihood**. ([Extension]{.extension-text})
+- **Maximum likelihood estimation** finds the model parameter values under which the observed data are most likely. ([Extension]{.extension-text})
+- GLMs use maximum likelihood to estimate their coefficients. ([Extension]{.extension-text})
+- **Log-likelihood** is generally more convenient than likelihood because products of many small probabilities become sums of their logarithms. ([Extension]{.extension-text})
+- With multiple model parameters, estimation involves finding the combination of parameter values that maximises the likelihood across a multidimensional **parameter space**. ([Extension]{.extension-text})
 
-#### Programming
+#### Functions
 
-* We can fit a generalised linear model using `glm()`, specifying the response distribution using the `family` argument.
-* We can fit a binomial GLM using `family = binomial`.
-* We can examine a fitted GLM using `summary()` and access its estimated coefficients using `coef()`.
-* We can use `predict()` to make predictions from a fitted GLM, and `type = "response"` to return predictions on the response scale.
-* We can plot a fitted binomial GLM using `geom_smooth(method = "glm", method.args = list(family = binomial))`.
+| Function | What it does |
+|---|---|
+| `glm()` | Fits a generalised linear model. |
+
 
 :::
-
-For this part of the practical, the main files you have created are:
-
-* `prac6_exercises.qmd`
-* `glms.qmd`
-
-These are the files you should select when making your Git commit.
-
-Remember to save and commit your work before moving on to Part 5.
-
-{{< include ../includes/git_commit.qmd >}}

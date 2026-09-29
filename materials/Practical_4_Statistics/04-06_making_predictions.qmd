@@ -114,10 +114,8 @@ Predict the mean total annual precipitation and its 95% confidence interval when
 
 ```{r predict_lm_ans1}
 lm_temp_prec <- lm(annual_total_prec ~ annual_mean_temp,
-                   data = site_metadata)
-
-
-
+  data = site_metadata
+)
 ```
 
 [Predict the mean total annual precipitation and its 95% confidence interval when annual mean temperature is 10°C.]{.blue-text}
@@ -126,8 +124,9 @@ lm_temp_prec <- lm(annual_total_prec ~ annual_mean_temp,
 df_unknown <- tibble(annual_mean_temp = 10)
 
 pred_lm <- predict(lm_temp_prec,
-                   newdata = df_unknown,
-                   interval = "confidence")
+  newdata = df_unknown,
+  interval = "confidence"
+)
 
 print(pred_lm)
 ```
@@ -138,23 +137,31 @@ The predicted mean total annual precipitation is `r round(pred_lm[1, "fit"])` mm
 
 [↑ top](#)
 
-In this part of the practical, you used fitted linear models to make predictions for new values of explanatory variables. You also considered how a linear model describes not just an expected response, but a distribution of possible observations around that expectation.
-
 ::: {.callout-note #note-summary_0406}
 
-### Programming Summary
+## Summary
 
-| Function | What it does |
-|---|---|
-| `predict()` | Uses a fitted statistical model to predict the expected value of the response variable for specified values of the explanatory variable(s). |
-| `sigma()` | Extracts the estimated residual standard deviation from a fitted linear model. |
+### Concepts
 
-:::
+- When using a fitted model to make a prediction, values of the response variable are predicted based on supplied values of the explanatory variable.
+- A confidence interval from `predict()` describes uncertainty around the predicted mean.
+
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `predict()` | Uses a fitted statistical model to predict the expected value of the response variable for specified values of the explanatory variable(s). | Core |
+| `sigma()` | Extracts the estimated residual standard deviation from a fitted linear model. | Core |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
-* `pollinators.qmd`
+- `pollinators.qmd`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}

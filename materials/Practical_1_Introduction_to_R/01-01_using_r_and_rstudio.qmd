@@ -88,7 +88,7 @@ When you first open your RStudio project, your screen will look like this.
 
 We will look at other parts of the screen shortly, but for now let's focus on the **Console**.
 
-In the console, R commands can be typed and executed immediately by the computer. When you type a line of code and press {{< kbd Enter >}}, it is transferred to the R **interpreter**. Results are shown straight after the command is executed. Results are shown straight after the command is executed. However, unlike code saved in a script or Quarto document, you do not have a clear, reproducible record of your analysis.
+In the console, R commands can be typed and executed immediately by the computer. When you type a line of code and press {{< kbd Enter >}}, it is transferred to the R **interpreter**. Results are shown straight after the command is executed. However, unlike code saved in a script or Quarto document, you do not have a clear, reproducible record of your analysis.
 
 Try typing the following text (everything in the grey box), into the console, then press {{< kbd Enter >}}.
 
@@ -212,7 +212,7 @@ Here, we can save our code as a script. This is a list of commands which can be 
 | no record                   | records actions         |
 | difficult to trace progress | transparent workflow    |
 
-### Creating a script {.core}
+### Creating a script {#sec-create_script .core}
 
 To create a script, we put a list of commands for R to run into the `Source` panel.
 
@@ -259,18 +259,33 @@ print(paste("My name is", my_name, "and I am", my_age, "years old"))
 [↑ top](#)
 
 ::: {#note-summary_0101 .callout-note}
+
 ## Summary
 
-- **R** is a programming language commonly used by biologists for data analysis, statistics and visualisation.
-- **RStudio** is an interactive development environment (IDE) with various features to make coding in R easier.
-- We can code interactively in the **console** but it is not easy to track or document.
-- **Scripts** contain simple lists of commands for R to carry out.
-:::
+### Concepts
+
+- The **console** allows us to run R commands interactively and see the results immediately.
+- A **variable** associates a name with a value.
+- The assignment operator `<-` assigns a value to a variable.
+- **Running** or **executing** code tells R to carry out the instructions we have written.
+- An **R script** is a file containing R code. Unlike commands entered directly into the console, a script provides a reproducible record of our code and allows us to set up multiple commands to run sequentially.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `print()` | Displays a value on the screen. | Core |
+| `paste()` | Combines values together into a single piece of text. | Core |
+| `sum()` | Adds together values. | Core |
+
+### Files
 
 For this part of the practical, the main files you have created are:
 
 - `my_first_script.R`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}

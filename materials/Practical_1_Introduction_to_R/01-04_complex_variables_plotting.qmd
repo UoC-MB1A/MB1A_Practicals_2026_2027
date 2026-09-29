@@ -54,6 +54,7 @@ Let's install the package `fortunes`, to demonstrate.
 ```{r install_fortunes}
 install.packages("fortunes")
 ```
+
 We can then load the package into R using the function `library()`:
 
 ```{r load_fortunes}
@@ -748,15 +749,49 @@ Still looking for a challenge? Extend your UKHSA analysis in any way you like. F
 
 ## Summary
 
-* Additional functions are available in **packages**, which must be installed and loaded before they can be used.
-* Multiple values of the same type can be combined into a **vector** using the function `c()`.
-* Individual elements of a vector can be accessed using their **index** in square brackets (`[]`).
-* Tabular data can be represented using a **data frame**; we can create data frames using `tibble()`.
-* Data is commonly made available in **comma-separated values (CSV)** format.
-* `read_csv()` reads data from a CSV file into an R data frame.
-* We can create plots using **ggplot2**, mapping variables to features of the plot using `aes()`.
+### Concepts
 
-:::
+- **Packages** contain additional functions and other resources. Packages need to be installed once and loaded using the `library()` function in each new R session in which they are used.
+- A **vector** (`c()`) stores multiple values of the same type.
+- **Indexing** with square brackets (`[]`) allows us to access individual elements of a vector by position in the vector.
+- A **data frame** (`tibble()`) stores tabular data in rows and columns.
+- **CSV** (comma-separated values) is a plain-text format commonly used to store tabular data.
+- **ggplot2** builds plots in layers. Variables are mapped to features of the plot using **aesthetics**.
+- **Vectorisation** allows an operation or function to be applied to all elements of a vector at once. [(Extension)]{.extension-text}
+- An **API** allows data to be accessed programmatically. [(Bonus)]{.bonus-text}
+
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `install.packages()` | Installs an R package. | Core |
+| `library()` | Loads an installed R package. | Core |
+| `fortune()` | Displays a random quote about R. | Core |
+| `c()` | Combines values into a vector. | Core |
+| `tibble()` | Creates a data frame. | Core |
+| `gt()` | Displays a data frame as a formatted table. | Core |
+| `read_csv()` | Reads data from a CSV file into a data frame. | Core |
+| `head()` | Returns the first n rows of an object. | Core |
+| `ggplot()` | Creates a ggplot and specifies the data frame to use for the plot. | Core |
+| `aes()` | Maps variables in the data to visual features of a plot. | Core |
+| `geom_line()` | Adds a line layer to a ggplot. | Core |
+| `xlab()` | Adds a label to the *x* axis of a plot. | Core |
+| `ylab()` | Adds a label to the *y* axis of a plot. | Core |
+| `ggtitle()` | Adds a title to a plot. | Core |
+| `abs()` | Calculates the absolute value of a number. | Extension |
+| `paste0()` | Combines values into a single piece of text without adding spaces. | Bonus |
+| `request()` | Creates a request for data from a URL. | Bonus |
+| `req_perform()` | Sends a request and returns the response. | Bonus |
+| `resp_body_json()` | Reads JSON data from a response into an R object. | Bonus |
+| `str()` | Displays the structure of an R object. | Bonus |
+| `bind_rows()` | Combines data frames row-wise. | Bonus |
+| `unique()` | Returns the unique values in an object. | Bonus |
+| `pull()` | Extracts a column from a data frame. | Bonus |
+| `filter()` | Selects rows of a data frame that meet a condition. | Bonus |
+
+
+### Files
 
 For this part of the practical, the main files you have created are:
 
@@ -765,6 +800,8 @@ For this part of the practical, the main files you have created are:
 - the UKHSA CSV file you downloaded into the `data` folder
 
 These are the files you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}
 

@@ -124,14 +124,14 @@ First, let's read the data frame and filter to include only Lung_Adenocarcinoma 
 ```{r ttest_power_read_data, message = FALSE}
 by_indiv <- read_csv("data/by_individual.csv")
 lungs <- by_indiv |>
-  filter(Cancer_Type %in% c('Lung_Adenocarcinoma', 'Lung_Squamous_Cell_Carcinoma'))
+  filter(Cancer_Type %in% c("Lung_Adenocarcinoma", "Lung_Squamous_Cell_Carcinoma"))
 ```
 
 
 Before using these data to estimate a plausible effect size for our new study, we should first establish whether they provide evidence of a difference in age between the two cancer types.
 
 ```{r ttest}
-ttest_lungs <- t.test(Age ~ Cancer_Type, lungs, var.equal=TRUE)
+ttest_lungs <- t.test(Age ~ Cancer_Type, lungs, var.equal = TRUE)
 print(ttest_lungs)
 ```
 The difference is highly significant, with a p-value of `r formatC(ttest_lungs$p.value, digits=2, format="e")`.
@@ -144,7 +144,7 @@ cd <- cohens_d(
   data = lungs,
   pooled_sd = TRUE
 )
-print (cd)
+print(cd)
 ```
 Our estimated standardised effect size is `r round(cd$Cohens_d, 2)`.
 
@@ -160,7 +160,7 @@ power_test <- pwr.t.test(
   power = 0.8,
   type = "two.sample"
 )
-print (power_test)
+print(power_test)
 ```
 
 To have 80% power to detect an effect of this size at a significance level of 0.05, we would need at least `r ceiling(power_test$n)` individuals in each group.
@@ -211,26 +211,30 @@ dig <- by_indiv |>
 ```{r anova_power_ans_2}
 lm_ct_age <- lm(Age ~ Cancer_Type, data = dig)
 anova_ct_age <- anova(lm_ct_age)
-print (anova_ct_age)
+print(anova_ct_age)
 ```
 
 [Calculate Cohen's f for the ANOVA.]{.blue-text}
 
 ```{r anova_power_ans_3}
 cf <- cohens_f(anova_ct_age)
-print (cf)
+print(cf)
 ```
 
 [Calculate the number of individuals required per cancer type for a new study to have 80% power to detect an effect of this size at a significance level of 0.05.]{.blue-text}
 
 ```{r anova_power_ans_4}
-k <- dig |> distinct(Cancer_Type) |> nrow()
+k <- dig |>
+  distinct(Cancer_Type) |>
+  nrow()
 cf_abs <- abs(cf$Cohens_f)
-power_ct_age <- pwr.anova.test(f = cf_abs,
-               sig.level = 0.05,
-               power = 0.8,
-               k = k)
-print (power_ct_age)
+power_ct_age <- pwr.anova.test(
+  f = cf_abs,
+  sig.level = 0.05,
+  power = 0.8,
+  k = k
+)
+print(power_ct_age)
 ```
 
 We would need `r ceiling(power_ct_age$n)` individuals per group.
@@ -284,26 +288,31 @@ Let's simulate group sizes of between 5 and 300, with an interval of 20.
 perc_vec <- c()
 
 # Try each group size from 5 to 300 with interval 20
-for (group_size in seq(5, 300, 20)){
+for (group_size in seq(5, 300, 20)) {
   # Vector to store the results for this group size
   sig_vec <- c()
   # Simulate 1000 times
-  for (j in seq_len(1000)){
+  for (j in seq_len(1000)) {
     # Lucky with 0.4 BSD probability
     lucky <- rbinom(group_size, 1, prob = 0.4)
     # Unlucky with 0.6 BSD probability
-    unlucky <- rbinom(group_size, 1, prob=0.6)
+    unlucky <- rbinom(group_size, 1, prob = 0.6)
     # Put each into a data frame
-    df_lucky <- tibble(luck = 1,
-                       toast_bsd = lucky)
-    df_unlucky <- tibble(luck = 0,
-                         toast_bsd = unlucky)
+    df_lucky <- tibble(
+      luck = 1,
+      toast_bsd = lucky
+    )
+    df_unlucky <- tibble(
+      luck = 0,
+      toast_bsd = unlucky
+    )
     # Combine the data frames
     df_comb <- bind_rows(df_lucky, df_unlucky)
     # Fit the GLM
     model <- glm(toast_bsd ~ luck,
-                 family = binomial,
-                 data = df_comb)
+      family = binomial,
+      data = df_comb
+    )
     # Extract the p-value
     pval <- summary(model)$coefficients[2, 4]
     # Check if it is significant
@@ -333,14 +342,19 @@ The minimum group size is approximately `r power_df |> filter(power >= 0.8) |> s
 
 Let's also plot group size against power.
 
+`slice_head(n)` shows just the first `n` rows of a data frame. 
+
 ```{r toast_plot}
-min_group_size <- power_df |> filter(power >= 0.8) |> slice_head(n = 1) |> pull(group_size)
+min_group_size <- power_df |>
+  filter(power >= 0.8) |>
+  slice_head(n = 1) |>
+  pull(group_size)
 
 ggplot(power_df, aes(x = group_size, y = power)) +
   geom_line() +
   geom_point() +
-  geom_vline(xintercept = min_group_size, color="red") +
-  geom_hline(yintercept = 0.8, color="red")
+  geom_vline(xintercept = min_group_size, color = "red") +
+  geom_hline(yintercept = 0.8, color = "red")
 ```
 We can see that our power increases dramatically with sample size, but eventually approaches 100%. Once power is already very high, further increasing the sample size provides little additional statistical benefit, despite potentially increasing the time and cost of the experiment.
 
@@ -392,26 +406,31 @@ probs <- seq(0.4, 0.8, 0.02)
 perc_vec_fixed_sample <- c()
 
 # Try each probability for unlucky from 0.4 to 0.8
-for (prob in probs){
+for (prob in probs) {
   # Vector to store the results for this probability
   sig_vec <- c()
   # Simulate 1000 times
-  for (j in seq_len(1000)){
+  for (j in seq_len(1000)) {
     # Lucky with 0.4 BSD probability
     lucky <- rbinom(100, 1, prob = 0.4)
     # Unlucky with prob BSD probability
-    unlucky <- rbinom(100, 1, prob=prob)
+    unlucky <- rbinom(100, 1, prob = prob)
     # Put each into a data frame
-    df_lucky <- tibble(luck = 1,
-                       toast_bsd = lucky)
-    df_unlucky <- tibble(luck = 0,
-                         toast_bsd = unlucky)
+    df_lucky <- tibble(
+      luck = 1,
+      toast_bsd = lucky
+    )
+    df_unlucky <- tibble(
+      luck = 0,
+      toast_bsd = unlucky
+    )
     # Combine the data frames
     df_comb <- bind_rows(df_lucky, df_unlucky)
     # Fit the GLM
     model <- glm(toast_bsd ~ luck,
-                 family = binomial,
-                 data = df_comb)
+      family = binomial,
+      data = df_comb
+    )
     # Extract the p-value
     pval <- summary(model)$coefficients[2, 4]
     # Check if it is significant
@@ -435,7 +454,8 @@ for (prob in probs){
 df_toast_fixed <- tibble(
   prob_unlucky = probs,
   prob_diff = probs - 0.4,
-  power = perc_vec_fixed_sample)
+  power = perc_vec_fixed_sample
+)
 gt(df_toast_fixed)
 ```
 
@@ -446,14 +466,16 @@ The minimum difference we can detect with this group size is approximately `r df
 [Plot the estimated power against the difference in probability between the two groups.]{.blue-text}
 
 ```{r toast_power_ans4}
-min_diff <- df_toast_fixed |> filter(power >= 0.8) |> slice_head(n = 1) |> pull(prob_diff)
+min_diff <- df_toast_fixed |>
+  filter(power >= 0.8) |>
+  slice_head(n = 1) |>
+  pull(prob_diff)
 
 ggplot(df_toast_fixed, aes(x = prob_diff, y = power)) +
   geom_line() +
   geom_point() +
-  geom_hline(yintercept = 0.8, color="red") +
-  geom_vline(xintercept = min_diff, color="red") +
-  scale_y_continuous(limits = c(0, 1))
+  geom_hline(yintercept = 0.8, color = "red") +
+  geom_vline(xintercept = min_diff, color = "red")
 ```
 [What happens when there is **no difference** between the two groups? Why is the proportion of significant results close to 0.05?]{.blue-text}
 
@@ -470,24 +492,35 @@ When there is no real difference between the groups, the null hypothesis is true
 
 ### Summary
 
-* **Statistical power** is the probability that a hypothesis test will correctly reject the null hypothesis when an effect of a specified size exists.
-* Power depends on the **effect size**, **sample size**, variation in the data and significance level.
-* **Effect sizes** describe the magnitude of an effect independently of sample size. Different statistical tests use different standardised measures of effect size.
-* Power analysis can be used before collecting data to estimate the sample size required to detect an effect of interest with a specified level of power.
-* If sample size is constrained, power analysis can instead be used to determine how large an effect the proposed experiment could reliably detect.
-* Analytical power calculations are available for many standard statistical tests.
-* For more complicated models, power can be estimated by repeatedly **simulating** the proposed experiment and calculating the proportion of simulations in which the effect is detected.
-* Power analysis depends on assumptions about the expected effect and data, so its results are only as appropriate as those assumptions.
+#### Concepts
 
-#### Programming
+- Power analysis can be carried out in R by specifying an **effect size**, desired **power** and **significance level** to calculate the required sample size. ([Extension]{.extension-text})
+- Effect sizes can be estimated from existing or pilot data in R (or otherwise) and then used as inputs to a power calculation. ([Extension]{.extension-text})
+- Different statistical tests use different effect-size measures and corresponding power-analysis functions. ([Extension]{.extension-text})
+- For more complicated models, power can be estimated by **simulation**: repeatedly simulate the proposed experiment, fit the planned model, and calculate the proportion of simulations in which the effect is detected. ([Extension]{.extension-text})
+- Repeating a simulation-based power analysis across different sample sizes allows the required sample size for a specified power to be estimated. ([Extension]{.extension-text})
+- If sample size is fixed, the simulation can instead be repeated across different effect sizes to estimate the smallest effect that can be reliably detected. ([Bonus]{.bonus-text})
 
-* The `pwr` package provides functions for analytical power calculations, including `pwr.t.test()` and `pwr.anova.test()`.
+#### Functions
 
-:::
+| Function | What it does | Level |
+|---|---|---|
+| `cohens_d()` | Calculates Cohen's d, a standardised effect size for a difference between two groups. | Extension |
+| `pwr.t.test()` | Performs a power calculation for a t-test. | Extension |
+| `cohens_f()` | Calculates Cohen's f, an effect size for ANOVA. | Extension |
+| `pwr.anova.test()` | Performs a power calculation for an ANOVA. | Extension |
+| `pwr.f2.test()` | Performs a power calculation for a linear model. | Extension |
+| `pwr.chisq.test()` | Performs a power calculation for a chi-squared test. | Extension |
+| `slice_head()` | Selects the first rows of a data frame. | Extension |
 
+#### Files
 
 For this part of the practical, the main file you have edited is:
 
 * `power.qmd`
 
 This is the file you should select when making your Git commit.
+
+:::
+
+{{< include ../includes/git_commit.qmd >}}

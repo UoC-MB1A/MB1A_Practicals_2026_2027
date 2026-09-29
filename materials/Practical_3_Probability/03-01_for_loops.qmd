@@ -321,20 +321,36 @@ gt(break_df)
 
 ::: {.callout-note #note-summary_0301}
 
-### Programming summary
+## Summary
 
-* A `for` loop repeats a task a fixed number of times.
-* Each cycle through a loop is called an **iteration**.
-* You usually use a vector to determine the iterations of the loop.
-* You can store the results of your loop by adding to a vector in each iteration.
-* You can also store the results by adding a new row to a data frame in each iteration using `bind_rows()`.
-:::
+### Concepts
+
+- A **`for` loop** repeats a task for each item in a vector or other sequence.
+- Each pass through a loop is called an **iteration**.
+- A variable can take a different value on each iteration and be used (or not) within the code inside the loop.
+- Curly brackets (`{}`) define which code is repeated during each iteration of a loop.
+- Results generated during a loop can be stored by adding values to a vector or rows to a data frame.
+- The `^` operator is used to raise a number to a power.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `seq_len()` | Generates a sequence of integers from 1 to the specified number. | Core |
+| `sample()` | Randomly selects values from a vector. | Core |
+| `say()` | Displays text as ASCII art using the `cowsay` package. | Core |
+| `startsWith()` | Tests whether text begins with specified characters. | Core |
+| `cat()` | Outputs text without a line break, allowing multiple outputs to be displayed on the same line. | Core |
+| `bind_rows()` | Combines data frames by adding their rows together. | Core |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
-* `prac3_exercises.qmd`
+- `prac3_exercises.qmd`
 
 These are the files you should select when making your Git commit.
 
-{{< include ../includes/git_commit.qmd >}}
+:::
 
+{{< include ../includes/git_commit.qmd >}}

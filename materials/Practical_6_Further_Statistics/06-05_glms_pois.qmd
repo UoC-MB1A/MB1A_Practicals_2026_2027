@@ -128,7 +128,7 @@ The estimated coefficient for the number of non-Apidae species is `r round(coef(
 The Poisson GLM uses a **log link**, so the coefficients represent changes in the log of the expected count. We can exponentiate the coefficient to make it easier to interpret:
 
 ```{r exponentiate_pois_glm_apidae}
-print (exp(coef(glm_apidae)["n_non_apidae"]))
+print(exp(coef(glm_apidae)["n_non_apidae"]))
 ```
 
 For each additional non-Apidae species, the expected number of Apidae species is therefore multiplied by `r round(exp(coef(glm_apidae)["n_non_apidae"]), 3)`, corresponding to an increase of approximately `r round((exp(coef(glm_apidae)["n_non_apidae"]) - 1) * 100, 1)`%.
@@ -138,8 +138,10 @@ The p-value associated with this coefficient is `r format.pval(coef(summary(glm_
 Let's plot the data and our model, as usual. `geom_smooth()` transforms the fitted values back from the log scale to the response scale, so the fitted line shows the expected number of Apidae species.
 
 ```{r plot_glm_apidae}
-ggplot(site_metadata,
-       aes(x = n_non_apidae, y = n_apidae)) +
+ggplot(
+  site_metadata,
+  aes(x = n_non_apidae, y = n_apidae)
+) +
   geom_point() +
   geom_smooth(
     method = "glm",
@@ -174,7 +176,7 @@ pred <- predict(
   newdata = tibble(n_non_apidae = 8),
   type = "response"
 )
-print (pred)
+print(pred)
 ```
 The model predicts an expected count of `r round(pred, 2)` Apidae species at a site with 8 non-Apidae species.
 
@@ -226,15 +228,15 @@ In your `glms.qmd` Quarto file, write a function named `pearson_dispersion` to c
 
 ::: {.callout-answer #ex_pearson_dispersion_ans}
 ```{r pearson_dispersion_ans}
-pearson_dispersion <- function(fitted_glm){
+pearson_dispersion <- function(fitted_glm) {
   resid <- residuals(fitted_glm, type = "pearson")
-  ss <- sum(resid ^ 2)
+  ss <- sum(resid^2)
   df <- fitted_glm$df.residual
   disp <- ss / df
-  return (disp)
+  return(disp)
 }
 p_disp_apidae <- pearson_dispersion(glm_apidae)
-print (p_disp_apidae)
+print(p_disp_apidae)
 ```
 :::
 :::
@@ -269,14 +271,14 @@ In your `glms.qmd` Quarto file, write a function named `deviance_dispersion` to 
 
 ::: {.callout-answer #ex_dev_dispersion_ans}
 ```{r deviance_dispersion_ans}
-deviance_dispersion <- function(fitted_glm){
+deviance_dispersion <- function(fitted_glm) {
   devi <- fitted_glm$deviance
   df <- fitted_glm$df.residual
   disp <- devi / df
-  return (disp)
+  return(disp)
 }
 d_disp_apidae <- deviance_dispersion(glm_apidae)
-print (d_disp_apidae)
+print(d_disp_apidae)
 ```
 :::
 :::
@@ -387,7 +389,7 @@ dispersion_df <- tibble(
 [Calculate the difference between the fitted count and the simulated count and add this as a column, `simulated_difference`.]{.blue-text}
 
 ```{r visualise_overdispersion_ans4}
-dispersion_df <-  dispersion_df |>
+dispersion_df <- dispersion_df |>
   mutate(
     observed_difference = observed - fitted,
     simulated_difference = simulated - fitted
@@ -477,23 +479,18 @@ This does not change our conclusion, but accounting for the overdispersion gives
 
 ### Summary
 
-* A **Poisson GLM** can be used to model count data when a Poisson distribution is appropriate.
-* A Poisson GLM models how the expected count, $\lambda$, changes with one or more explanatory variables.
-* By default, a Poisson GLM uses a **log link function**, ensuring that predicted expected counts are always positive.
-* Poisson GLM coefficients represent changes in the log of the expected count. Exponentiating a coefficient gives the factor by which the expected count is multiplied for a one-unit increase in the explanatory variable.
-* We can use a fitted Poisson GLM to predict expected counts for new values of the explanatory variables.
-* A Poisson model assumes that the conditional variance of the response is equal to its conditional mean.
-* **Pearson dispersion** and **deviance dispersion** can be used to assess whether the variation in the data is consistent with that expected under a Poisson model.
-* Dispersion substantially greater than 1 indicates **overdispersion**, while dispersion substantially less than 1 indicates **underdispersion**.
+#### Concepts
 
-#### Programming
+- A Poisson GLM can be fitted in R using `glm()` with `family = poisson`.
+- Poisson GLM coefficients are on the **log scale**; exponentiating a coefficient gives the factor by which the expected count changes for a one-unit increase in the explanatory variable.
+- `predict()` with `type = "response"` can be used to obtain predicted expected counts on the original count scale.
+- **Pearson dispersion** can be calculated from the Pearson residuals and residual degrees of freedom of a fitted GLM.
+- **Deviance dispersion** can be calculated from the residual deviance and residual degrees of freedom of a fitted GLM.
+- Dispersion values can be used to assess whether the observed variation is consistent with that expected under a fitted Poisson model.
+- Expected counts can be extracted from a fitted Poisson GLM and used to **simulate new Poisson-distributed observations**, allowing the observed variation to be compared with variation expected under the model. ([Extension]{.extension-text})
+- If the data are overdispersed, a **quasi-Poisson GLM** can be fitted using `family = quasipoisson`. ([Extension]{.extension-text})
 
-* We can fit a Poisson GLM using `glm()` with `family = poisson`.
-* We can use `predict()` with `type = "response"` to obtain predicted expected counts on the response scale.
-* We can extract Pearson residuals from a fitted GLM using `residuals()` with `type = "pearson"`.
-* Components of a fitted model, such as its residual degrees of freedom and deviance, can be accessed using `$`.
-
-:::
+#### Files
 
 For this part of the practical, the main file you have edited is:
 
@@ -501,6 +498,7 @@ For this part of the practical, the main file you have edited is:
 
 This is the file you should select when making your Git commit.
 
+:::
 
 Remember to save and commit your work before moving on to Part 6.
 

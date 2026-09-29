@@ -250,17 +250,34 @@ print(current_erv)
 
 ::: {.callout-note #note-summary_0501}
 
-### Summary
+## Summary
 
-* Endogenous retroviruses provide information about viral evolution.
-* Bioconductor provides tools for analysing biological data in R.
-* DNA sequences are often stored in FASTA files.
-* We can import DNA sequences into R using `readDNAStringSet()`.
-* Sequences are then stored as a `DNAStringSet`.
-* We can select individual sequences using their unique identifiers.
+### Concepts
+
+- **Bioconductor** is a collection of R packages, datasets and workflows designed for the analysis of biological data.
+- **FASTA** is a text-based format for storing biological sequences. Each sequence has an identifier beginning with `>`, followed by the sequence itself.
+- DNA sequences imported using the `Biostrings` package can be stored in a **`DNAStringSet`**, a data structure designed for working with collections of DNA sequences.
+- Individual sequences in a `DNAStringSet` can be accessed with their sequence identifier.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `readDNAStringSet()` | Reads DNA sequences from a FASTA file into a `DNAStringSet`. | Core |
+| `names()` | Returns the sequence identifiers from a `DNAStringSet`. | Core |
+| `width()` | Returns the lengths of sequences in a `DNAStringSet`. | Core |
+
+### Files
+
+For this part of the practical, the main files you have created are:
+
+- `beaver_ervs.qmd`
+- `prac5_exercises.qmd`
+
+These are the files you should select when making your Git commit.
 
 :::
 
-Remember to save your work before moving on to Part 2.
+Remember to save and commit your work before moving on to Part 2.
 
 {{< include ../includes/git_commit.qmd >}}

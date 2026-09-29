@@ -584,26 +584,32 @@ gt(r_false_neg)
 
 ### Summary
 
-* When the null hypothesis is true and the assumptions of a statistical test are met, p-values are expected to be uniformly distributed between 0 and 1.
-* When many hypotheses are tested, some small p-values are expected to occur by chance even when all null hypotheses are true.
-* The **family-wise error rate (FWER)** is the probability of making at least one Type I error across a family of tests.
-* The **Bonferroni correction** controls FWER by using a more stringent significance criterion as the number of tests increases.
-* Reducing false positives comes at the cost of increasing false negatives, so very conservative corrections can reduce statistical power.
-* The **false discovery proportion (FDP)** is the proportion of significant results in a particular analysis that are false positives. The **false discovery rate (FDR)** is the expected FDP across repeated analyses.
-* The **Benjamini–Hochberg procedure** controls FDR rather than FWER and is generally less conservative than Bonferroni when many tests are performed.
+#### Concepts
 
-#### Programming
+- The distribution of p-values expected under the null hypothesis can be investigated in R by simulating data and calculating cumulative probabilities.
+- The **family-wise error rate** can be calculated from the significance threshold and the number of tests being performed. ([Extension]{.extension-text})
+- A **Bonferroni correction** can be applied by dividing the desired significance threshold by the number of tests. ([Extension]{.extension-text})
+- The numbers of false-positive and false-negative results produced by different significance thresholds can be calculated when the true status of simulated effects is known. ([Extension]{.extension-text})
+- The **Benjamini–Hochberg procedure** can be implemented by ranking p-values and calculating a different threshold for each rank. ([Extension]{.extension-text})
+- Multiple-testing corrections can be applied automatically to a set of p-values in R using `p.adjust()`. ([Extension]{.extension-text})
 
-* `pnorm()` can be used to calculate cumulative probabilities from a normal distribution.
-* `p.adjust()` can be used to adjust a set of p-values for multiple testing, including using the Benjamini–Hochberg method with `method = "BH"`.
 
-:::
+#### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `pnorm()` | Calculates cumulative probabilities from a normal distribution. | Extension |
+| `p.adjust()` | Adjusts a set of p-values to account for multiple testing. | Extension |
+
+#### Files
 
 For this part of the practical, the main file you have edited is:
 
 * `multiple_testing.qmd`
 
 This is the file you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}
 

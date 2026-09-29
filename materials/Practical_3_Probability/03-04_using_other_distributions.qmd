@@ -261,13 +261,32 @@ print(prop_counted_islets_100_150)
 
 [↑ top](#)
 
-In this part of the practical, you have applied the simulation techniques introduced earlier to less familiar probability distributions and biological datasets. The same general approach can be used with many different probability distributions available in R.
+::: {.callout-note #note-summary_0304}
+
+## Summary
+
+### Concepts
+- Simulation can be used to investigate whether an **extreme observed value**, such as a maximum, is consistent with a proposed probability distribution. ([Extension]{.extension-text})
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `rexp()` | Generates random values from an exponential distribution. | Extension |
+| `pexp()` | Calculates cumulative probabilities from an exponential distribution. | Extension |
+| `rweibull()` | Generates random values from a Weibull distribution. | Bonus |
+| `dweibull()` | Calculates probability densities from a Weibull distribution. | Bonus |
+| `pweibull()` | Calculates cumulative probabilities from a Weibull distribution. | Bonus |
+| `qweibull()` | Calculates quantiles of a Weibull distribution. | Bonus |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
-* `distributions.qmd`
+- `distributions.qmd`
 
 These are the files you should select when making your Git commit.
 
-{{< include ../includes/git_commit.qmd >}}
+:::
 
+{{< include ../includes/git_commit.qmd >}}

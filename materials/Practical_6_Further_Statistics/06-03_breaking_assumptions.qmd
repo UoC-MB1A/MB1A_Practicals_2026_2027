@@ -105,10 +105,14 @@ In your `break_t.qmd` Quarto file:
 ```{r func_fit_model_plot}
 compare_vectors <- function(vector1, vector2) {
   # Create the data frame
-  v1_df <- tibble(group = "group_1",
-                  measurement = vector1)
-  v2_df <- tibble(group = "group_2",
-                  measurement = vector2)
+  v1_df <- tibble(
+    group = "group_1",
+    measurement = vector1
+  )
+  v2_df <- tibble(
+    group = "group_2",
+    measurement = vector2
+  )
   comp_df <- bind_rows(v1_df, v2_df)
 
   # Create a summary data frame
@@ -137,7 +141,7 @@ compare_vectors <- function(vector1, vector2) {
   # Plot a histogram showing the distribution of the
   # residuals in each group.
   distri <- ggplot(comp_df, aes(x = residuals)) +
-    geom_histogram(bins=15) +
+    geom_histogram(bins = 15) +
     facet_wrap(~group) +
     theme_bw()
 
@@ -163,10 +167,14 @@ We can use a shortened version of this function in this case.
 ```{r func_fit_model_plot_short}
 compare_vectors_short <- function(vector1, vector2) {
   # Create the data frame
-  v1_df <- tibble(group = "group_1",
-                  measurement = vector1)
-  v2_df <- tibble(group = "group_2",
-                  measurement = vector2)
+  v1_df <- tibble(
+    group = "group_1",
+    measurement = vector1
+  )
+  v2_df <- tibble(
+    group = "group_2",
+    measurement = vector2
+  )
   comp_df <- bind_rows(v1_df, v2_df)
 
   # Do the t-test
@@ -193,7 +201,7 @@ For example, here is a very clean scenario of two fairly big, normally distribut
 
 ```{r uniform_p}
 ps <- c()
-for (i in seq_len(10000)){
+for (i in seq_len(10000)) {
   group_1 <- rnorm(100, mean = 10, sd = 5)
   group_2 <- rnorm(100, mean = 10, sd = 5)
 
@@ -213,7 +221,7 @@ For example, here is a very clean scenario of two fairly big, normally distribut
 
 ```{r real_diff_p}
 ps <- c()
-for (i in seq_len(10000)){
+for (i in seq_len(10000)) {
   group_1 <- rnorm(100, mean = 10, sd = 5)
   group_2 <- rnorm(100, mean = 13, sd = 5)
 
@@ -1295,23 +1303,28 @@ If you do manage to break it, submit your sample distributions [here](https://fo
 
 ### Summary
 
-* Statistical tests can still produce **Type I** and **Type II errors** even when all of their assumptions are met.
-* When the null hypothesis is true and a statistical test is behaving as expected, p-values should be approximately uniformly distributed between 0 and 1.
-* When the alternative hypothesis is true, the distribution of p-values depends on the **power** of the test, with greater power producing more small p-values.
-* Repeated simulation allows us to investigate the behaviour of a statistical test and estimate its Type I and Type II error rates.
-* The t-test can be robust to some violations of its assumptions, but this depends on the particular data and combination of violations.
-* Unequal sample sizes are not themselves a violation of the assumptions of a t-test, but unequal sample sizes combined with unequal variances can cause problems for a standard equal-variance t-test.
-* Diagnostic plots are useful for identifying potential violations of assumptions, but should not be treated as simple pass/fail tests.
+#### Concepts
+
+- **Repeated simulation** can be used to investigate how a statistical test behaves under known conditions. ([Extension]{.extension-text})
+- When the **null hypothesis is true** and a statistical test is behaving as expected, p-values should be approximately uniformly distributed between 0 and 1. ([Extension]{.extension-text})
+- The proportion of significant simulated results when the null hypothesis is true can be used to estimate the **Type I error rate**. ([Extension]{.extension-text})
+- The proportion of non-significant simulated results when the alternative hypothesis is true can be used to estimate the **Type II error rate**. ([Extension]{.extension-text})
+- **Statistical power** is the probability of correctly rejecting the null hypothesis when the alternative hypothesis is true. The Type II error rate is therefore \(1 - \text{power}\). ([Extension]{.extension-text})
+- A statistical test is **robust** to a violation of an assumption if it continues to behave reasonably well when that assumption is not met. ([Extension]{.extension-text})
+- The t-test can be robust to some violations of normality or equal variance, but its behaviour depends on the particular data and combination of violations. ([Extension]{.extension-text})
+- Unequal sample sizes are not themselves a violation of the assumptions of a t-test, but unequal sample sizes combined with unequal variances can cause problems for a standard equal-variance t-test. ([Extension]{.extension-text})
+- Diagnostic plots can help identify violations of model assumptions, but should not be treated as simple pass/fail tests. ([Extension]{.extension-text})
 
 
-:::
+#### Files
 
 For this part of the practical, the main file you have created is:
 
-* `break_t.qmd`
+- `break_t.qmd`
 
 This is the file you should select when making your Git commit.
 
+:::
 
 Remember to save and commit your work before moving on to Part 4.
 

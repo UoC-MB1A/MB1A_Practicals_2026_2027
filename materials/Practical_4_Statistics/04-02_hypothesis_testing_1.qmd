@@ -68,6 +68,8 @@ We can use any kind of **comparison operator** with mutate (see @sec-comparisons
 
 We can also add an existing vector as a new column, or set every row of a new column to the same value.
 
+The function `nrow()` returns the number of rows in a data frame, so `seq_len(nrow(dataframe))` returns a sequence of numbers from 1 to the number of rows.
+
 ```{r mutate_2}
 # Using a vector
 new_vals <- seq_len(nrow(site_metadata_exp))
@@ -306,7 +308,7 @@ This doesn't mean that our alternative hypothesis is definitely true for the pop
 
 The p-value for a t-test is the probability of a test statistic at least as far from zero as the value calculated from our data, if we drew values from a t-distribution with the specified number of degrees of freedom.
 
-The t-distribution is just a probability distribution, so we can simulate and visualise it in R using the same methods we learned for other probability distributions (@sec-using_other_distributions).
+The t-distribution is just a probability distribution, so we can simulate and visualise it in R using the same methods we learned for other probability distributions (@sec-p4_using_other_distributions).
 
 ::: {.callout-exercise #ex-t_dist .extension}
 
@@ -426,6 +428,8 @@ There is evidence that mean minimum temperature is higher at sites where *H. tum
 Let's check using simulation. If we simulate samples from populations with known means, we know the "true" difference between means of the source populations.
 
 To simplify this process, let's first calculate the mean, standard deviation and sample size for sites with and without *H. tumulorum*. This is straightforward using the `group_by()` and `summarise()` functions.
+
+The function `n()` returns the number of observations in each group in a data frame (or the total number of observations in an ungrouped data frame).
 
 ::: {.callout-note .copycode #copy-select}
 
@@ -979,43 +983,53 @@ The advantage of ANOVA is that, unlike a t-test, we can use it when our categori
 
 [↑ top](#)
 
-
-In this part of the practical, you used hypothesis tests to investigate associations between variables in the pollinator data and learned how to interpret test statistics and p-values. The key idea is that t-tests, linear models and ANOVA are not completely separate statistical techniques. In this simple two-group example, they provide different ways of describing and testing the same model of the data.
-
 ::: {.callout-note #note-summary_0402}
 
-### Programming summary
+## Summary
 
-In this part of the practical, you have used the following R functions:
+### Concepts
 
-| Function         | What it does                                                                                                      |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `t.test()`       | Performs a t-test to compare the means of two groups.                                                             |
-| `lm()`           | Fits a linear model describing the relationship between a response and one or more explanatory variables.         |
-| `summary()`      | Displays a summary of a fitted statistical model, including coefficient estimates, test statistics and p-values.  |
-| `confint()`      | Calculates confidence intervals for the coefficients of a fitted model.                                           |
-| `anova()`        | Produces an ANOVA table for a fitted model, partitioning variation into explained and residual components.        |
-| `as.numeric()`   | Converts values to numbers; for logical values, `FALSE` becomes 0 and `TRUE` becomes 1.                           |
-
-**Extension material also introduced:**
-
-| Function     | What it does                                                                |
-| ------------ | --------------------------------------------------------------------------- |
-| `rt()`       | Generates random values from a t-distribution.                              |
-| `pt()`       | Calculates cumulative probabilities from a t-distribution.                  |
-| `qt()`       | Finds a specified quantile of a t-distribution.                             |
-| `quantile()` | Finds values corresponding to specified quantiles of a set of observations. |
-| `between()`  | Tests whether a value lies between a lower and upper value.                 |
+- A **statistical formula** in R uses `~` to describe the relationship between variables, with the response variable on the left and the explanatory variable on the right.
+- The output of a statistical test can be stored as an R object, allowing values such as the test statistic, confidence interval and p-value to be accessed.
+- A **linear model** (`lm()`) can be fitted with a categorical explanatory variable. With two groups, the intercept represents the mean of the reference group and the coefficient represents the difference between the two group means.
+- With two groups, an equal-variance **two-sample t-test**, a linear model with a categorical explanatory variable and a classical one-way **ANOVA** test the same underlying difference between group means.
+- A fitted linear model can be summarised (`summary()`) to obtain quantities including coefficients, test statistics, p-values and the proportion of variation explained.
+- Test statistic distributions can be simulated and used to calculate probabilities associated with the statistic. ([Extension]{.extension-text})
+- Simulation can be used to demonstrate the repeated-sampling interpretation of a **confidence interval**. ([Extension]{.extension-text})
 
 
-:::
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `mutate()` | Adds new columns or modifies existing columns in a data frame. | Core |
+| `t.test()` | Performs a t-test to compare the means of two groups. | Core |
+| `lm()` | Fits a linear model describing the relationship between a response and one or more explanatory variables. | Core |
+| `summary()` | Produces a summary of an R object; for a fitted linear model this includes coefficient estimates, test statistics and p-values. | Core |
+| `anova()` | Produces an ANOVA table for a fitted model. | Core |
+| `geom_boxplot()` | Adds a box plot to a ggplot. | Recommended |
+| `confint()` | Calculates confidence intervals for the coefficients of a fitted model. | Recommended |
+| `rt()` | Generates random values from a t-distribution. | Extension |
+| `geom_density()` | Adds a density plot to a ggplot. | Extension |
+| `pt()` | Calculates cumulative probabilities from a t-distribution. | Extension |
+| `n()` | Returns the number of observations in a group or data frame. | Extension |
+| `between()` | Tests whether a value lies between specified lower and upper values. | Extension |
+| `quantile()` | Calculates specified quantiles of a set of observations. | Extension |
+| `qt()` | Calculates quantiles of a t-distribution. | Extension |
+| `as.numeric()` | Converts values to numeric values. | Extension |
+| `geom_smooth()` | Adds a smoothed or fitted relationship to a ggplot. | Extension |
+| `geom_hline()` | Adds a horizontal line to a ggplot. | Extension |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
 - `pollinators.qmd`
+- `output/ht_df.csv`
 
 These are the files you should select when making your Git commit.
 
+:::
 
 Remember to save and commit your work before moving on to Part 3.
 

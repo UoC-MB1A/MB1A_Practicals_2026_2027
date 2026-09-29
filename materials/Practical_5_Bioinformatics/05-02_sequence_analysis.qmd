@@ -269,18 +269,37 @@ On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta
 
 ::: {.callout-note #note-summary_0502}
 
-### Summary
+## Summary
 
-* In cells, DNA is transcribed into RNA, and RNA is translated into protein. In R, we can translate directly from a DNA sequence because R can infer the corresponding RNA sequence.
-* A sequence can be read in different **reading frames**.
-* Potential **open reading frames (ORFs)** can be identified in a DNA sequence using `findORFs()`.
-* `IRanges` objects can represent the positions of features within a sequence.
-* Sequences at these positions can be extracted using `extractAt()`.
-* DNA sequences can be translated into amino acid sequences using `translate()`.
-* Biological sequences can be saved in FASTA format using `writeXStringSet()`.
+### Concepts
+- Open reading frames (ORFs) can be automatically identified in nucleotide sequences using the `getORFs()` function.
+- An **`IRanges` object** can represent the positions and lengths of features, such as ORFs, within a sequence.
+- Individual elements of an object can be accessed using **indexing**; `[[1]]` extracts the first element rather than retaining it inside its original container.
+- Biological sequences can be given unique **sequence identifiers**, which are retained when the sequences are subsequently manipulated.
+- Nucleotide sequences can be translated with the `translate()` function.
+- Biological sequences can be saved in **FASTA format** as well as read from FASTA files.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `findORFs()` | Identifies open reading frames in nucleotide sequences. | Core |
+| `paste0()` | Combines values into text without adding spaces between them. | Core |
+| `extractAt()` | Extracts sequences at specified positions. | Core |
+| `translate()` | Translates nucleotide sequences into amino acid sequences. | Core |
+| `writeXStringSet()` | Writes biological sequences to a file, such as a FASTA file. | Core |
+
+### Files
+
+For this part of the practical, the main files you have edited or created are:
+
+- `beaver_ervs.qmd`
+- `output/orf_aa_seqs.fasta`
+
+These are the files you should select when making your Git commit.
 
 :::
 
-Remember to save your work before moving on to Part 3.
+Remember to save and commit your work before moving on to Part 3.
 
 {{< include ../includes/git_commit.qmd >}}

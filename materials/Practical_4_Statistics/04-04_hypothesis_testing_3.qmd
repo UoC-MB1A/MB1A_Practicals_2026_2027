@@ -65,9 +65,13 @@ A scatter plot is the most common plot to compare two continuous variables. We c
 
 ```{r plot_temp_prec}
 #| fig-alt: "Scatter plot with annual mean temperature on the x-axis and annual total precipitation on the y-axis. There is considerable scatter, with a downward-sloping regression line indicating that annual total precipitation tends to decrease as annual mean temperature increases."
-ggplot(site_metadata,
-       aes(x = annual_mean_temp,
-           y = annual_total_prec)) +
+ggplot(
+  site_metadata,
+  aes(
+    x = annual_mean_temp,
+    y = annual_total_prec
+  )
+) +
   geom_point() +
   geom_smooth(method = "lm")
 ```
@@ -179,8 +183,10 @@ A scatter plot is again a good visualisation here, and we can use the function `
 
 # Extract relevant columns and convert to long format
 elev_temp_long <- site_metadata |>
-  select(x1km_square, annual_total_prec,
-         annual_mean_temp, elevation) |>
+  select(
+    x1km_square, annual_total_prec,
+    annual_mean_temp, elevation
+  ) |>
   pivot_longer(
     c(
       annual_mean_temp,
@@ -191,13 +197,16 @@ elev_temp_long <- site_metadata |>
   )
 
 # Plot
-ggplot(elev_temp_long,
-       aes(x = value,
-           y = annual_total_prec)) +
+ggplot(
+  elev_temp_long,
+  aes(
+    x = value,
+    y = annual_total_prec
+  )
+) +
   geom_point() +
-  facet_wrap(~variable, scales='free_x') +
+  facet_wrap(~variable, scales = "free_x") +
   geom_smooth(method = "lm")
-
 ```
 
 **Statistical test**
@@ -268,8 +277,10 @@ We can also visualise this:
 
 ```{r plot_corr_mcl}
 #| fig-alt: "Scatter plot with annual mean temperature on the x-axis and elevation on the y-axis. There is a strong negative association, with elevation generally decreasing as annual mean temperature increases, as indicated by the downward-sloping regression line."
-ggplot(site_metadata, 
-       aes(x = annual_mean_temp, y = elevation)) +
+ggplot(
+  site_metadata,
+  aes(x = annual_mean_temp, y = elevation)
+) +
   geom_point() +
   geom_smooth(method = "lm")
 ```
@@ -476,8 +487,10 @@ A useful visualisation is a stacked bar chart, where the y-axis is count, and ea
 
 ```{r bar_chart_country_habitat}
 #| fig-alt: "Bar plot with number of sites on the y-axis and country - England, Scotland or Wales on the x-axis. Bars are divided by land cover into agricultural and semi-natural. England has the most sites, 36, and a large majority are agricultural. Scotland has 23, a large majority of which are semi-natural. Wales has 17, around half of which have each type of land cover."
-ggplot(country_habitat_counts,
-       aes(x = country, y = n, fill=land_cover)) +
+ggplot(
+  country_habitat_counts,
+  aes(x = country, y = n, fill = land_cover)
+) +
   geom_col()
 ```
 
@@ -528,23 +541,34 @@ The chi-squared test works best when expected counts are not too small; R will w
 
 [↑ top](#)
 
-In this part of the practical, you used simple and multiple linear regression to investigate associations between continuous variables, including interactions between explanatory variables. You also used a chi-squared test to test for an association between two categorical variables.
-
 ::: {.callout-note #note-summary_0404}
 
-### Programming Summary
+## Summary
 
-| Function | What it does |
-|---|---|
-| `xtabs()` | Creates a contingency table from categorical variables. |
-| `chisq.test()` | Performs a chi-squared test of association. |
-:::
+### Concepts
 
-For this part of the practical, the main files you have created are:
+- When a model contains an interaction between continuous explanatory variables, the coefficient for each explanatory variable describes its association with the response when the other interacting variable is zero. ([Recommended]{.rec-text})
+- **Centring** a continuous variable by subtracting its mean makes zero correspond to the mean value, which can make coefficients in models containing interactions easier to interpret. ([Recommended]{.rec-text})
+- A **contingency table** contains the observed counts for each combination of categorical variables.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `count()` | Counts the number of observations for each combination of values in a data frame. | Core |
+| `xtabs()` | Creates a contingency table from categorical variables. | Core |
+| `chisq.test()` | Performs a chi-squared test of association. | Core |
+| `cor()` | Calculates the correlation between two variables. | Extension |
+
+### Files
+
+For this part of the practical, the main files you have edited are:
 
 - `pollinators.qmd`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 Remember to save and commit your work before moving on to Part 5.
 

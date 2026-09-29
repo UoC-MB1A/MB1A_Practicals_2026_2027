@@ -69,7 +69,8 @@ We can use a for loop to toss multiple coins.
 ```{r toss_five_coins}
 for (i in seq_len(5)) {
   coin_toss <- sample(c("Heads", "Tails"),
-                      size=1)
+    size = 1
+  )
   print(coin_toss)
 }
 ```
@@ -78,8 +79,9 @@ We can also do this directly with the sample function by changing `size`. We nee
 
 ```{r toss_five_coins_sample}
 coin_tosses <- sample(c("Heads", "Tails"),
-                      size=5,
-                      replace = TRUE)
+  size = 5,
+  replace = TRUE
+)
 print(coin_tosses)
 ```
 
@@ -226,16 +228,18 @@ In your `squirrels.qmd` Quarto file, plot the distribution of the number of succ
 ggplot(
   df_squirrels,
   aes(
-    x = N_Successful_Heists)
+    x = N_Successful_Heists
+  )
 ) +
   geom_bar()
 ```
 
 ```{r plot_squirrels_store, include=FALSE}
-squirrels = ggplot(
+squirrels <- ggplot(
   df_squirrels,
   aes(
-    x = N_Successful_Heists)
+    x = N_Successful_Heists
+  )
 ) +
   geom_bar()
 ```
@@ -308,7 +312,7 @@ Let's compare this with the observed result from our simulation. Using the `sum(
 ```{r observed_squirrels}
 n_successes <- pull(df_squirrels, N_Successful_Heists)
 n_48 <- sum(n_successes == 48)
-print (n_48)
+print(n_48)
 ```
 
 In my version of the simulation, `r n_48` out of 1000 squirrels succeeded 48/150 times, your results might vary.
@@ -441,6 +445,8 @@ print(prob_up_to_48)
 ```
 
 We can verify this with our `count_squirrels` vector generated with `rbinom`.
+
+The function `length()` returns the number of elements in a vector.
 
 ```{r check_pbinom}
 print(sum(count_squirrels <= 48) / length(count_squirrels))
@@ -593,28 +599,38 @@ She needs to pick `r pull(prop_df_filt, npicked)[1]` flowers.
 
 [↑ top](#)
 
-In this part of the practical, you have used simulation to investigate stochastic processes and generate empirical probability distributions. You have compared simulated results with probabilities calculated from the theoretical binomial distribution, and used R's built-in functions to generate binomially distributed data directly.
-
-Repeating a simulation many times produces an empirical distribution, which can be compared with a theoretical probability distribution.
-
 ::: {.callout-note #note-summary_0302}
 
-### Programming summary
+## Summary
 
-* `sample()` generates random samples with equal or unequal probabilities.
-* `for` loops can be used to repeat a simulation many times.
-* `dbinom()` calculates probabilities from a binomial distribution.
-* `pbinom()` calculates cumulative probabilities from a binomial distribution.
-* `rbinom()` generates random values from a binomial distribution
+### Concepts
 
-:::
+- **Simulation** can be used to approximate stochastic processes by generating random data.
+- Random events can be simulated with **equal or unequal probabilities**.
+- Repeating a simulation many times produces an **empirical distribution** of its possible outcomes.
+- Increasing the number of simulations generally reduces random variation in an estimate, allowing the empirical distribution to more closely approximate the theoretical distribution.
+- R provides functions both for calculating probabilities from theoretical distributions and for **generating random values** from them.
 
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `geom_bar()` | Creates a bar chart by counting the number of observations with each value and using this to calculate the height of the bars. | Core |
+| `dbinom()` | Calculates the probability of a specified number of successes from a binomial distribution. | Core |
+| `rbinom()` | Generates random values from a binomial distribution. | Core |
+| `pbinom()` | Calculates the cumulative probability of a binomial distribution up to a specified number of successes. | Core |
+| `length()` | Returns the number of elements in an object. | Core |
+| `geom_col()` | Creates a bar chart using the values specified in the data to determine the heights of the bars. | Extension |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
-* `squirrels.qmd`
-* `prac3_exercises.qmd`
+- `squirrels.qmd`
+- `prac3_exercises.qmd`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}

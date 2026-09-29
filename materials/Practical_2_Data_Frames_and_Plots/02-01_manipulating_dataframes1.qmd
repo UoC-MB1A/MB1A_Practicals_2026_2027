@@ -469,15 +469,17 @@ Store the result in a variable named `bird_migration_selected`.
 
 ```{r select_migration_ans}
 bird_migration_selected <- bird_migration_sites |>
-  select(Site,
-         winterLongitude,
-         winterLatitude,
-         pslon,
-         pslat,
-         iblon,
-         iblat,
-         awestlon,
-         awestlat) |>
+  select(
+    Site,
+    winterLongitude,
+    winterLatitude,
+    pslon,
+    pslat,
+    iblon,
+    iblat,
+    awestlon,
+    awestlat
+  ) |>
   distinct() |>
   rename(
     Winter_Longitude = winterLongitude,
@@ -634,17 +636,28 @@ gt(head(bird_migration_exc))
 
 ::: {.callout-note #note-summary_0201}
 
-### Summary
+## Summary
 
-So far, we have loaded our two data frames and selected the relevant columns.
+### Concepts
 
-* The **pipe operator** (`|>`) allows us to pass data through a series of analysis steps.
-* `select()` allows us to choose specific columns from a data frame.
-* `distinct()` removes duplicate rows.
-* `rename()` allows us to rename columns.
-* **Comparison operators** such as `==`, `!=`, `<` and `>` compare values.
-* `filter()` allows us to select rows based on specific criteria.
-:::
+- The **pipe operator** (`|>`) passes the result of one step to the next, allowing us to link multiple steps in an analysis.
+- We can **select** particular columns (`select()`) from a data frame, remove duplicate rows and rename columns.
+- **Comparison operators** compare values and return `TRUE` or `FALSE`. These include `==`, `!=`, `>`, `>=`, `<` and `<=`.
+- We can **filter** (`filter()`) a data frame to keep only rows that meet particular conditions.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `colnames()` | Returns the names of the columns in a data frame. | Core |
+| `glimpse()` | Displays a summary of the structure and contents of a data frame. | Core |
+| `mean()` | Calculates the arithmetic mean of a set of values. | Core |
+| `select()` | Selects particular columns from a data frame. | Core |
+| `distinct()` | Removes duplicate rows from a data frame. | Core |
+| `rename()` | Renames columns in a data frame. | Core |
+| `filter()` | Selects rows of a data frame that meet specified conditions. | Core |
+
+### Files
 
 For this part of the practical, the main files you have created are:
 
@@ -653,6 +666,7 @@ For this part of the practical, the main files you have created are:
 
 These are the files you should select when making your Git commit.
 
+:::
 
 Remember to save and commit your work before moving on to Part 2.
 

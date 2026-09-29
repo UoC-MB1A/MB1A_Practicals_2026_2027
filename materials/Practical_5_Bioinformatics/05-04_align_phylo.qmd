@@ -138,7 +138,8 @@ First, I will read the relevant FASTA file. We use `readAAStringSet()` rather th
 
 ```{r read_fasta_aabin}
 fasta_current <- readAAStringSet(
-  "output/gag_Ccan_ERV_1_ORF_4.fasta")
+  "output/gag_Ccan_ERV_1_ORF_4.fasta"
+)
 ```
 
 Next, we make a distance matrix based on our aligned sequences, using the function `DistanceMatrix()`, with one argument, our new `fasta_current` variable.
@@ -261,7 +262,7 @@ tree_plot <- ggtree(current_newick) +
 
 ggsave(
   "output/gag_Ccan_ERV_1_ORF_4.pdf",
-  plot=tree_plot,
+  plot = tree_plot,
   width = 10,
   height = 10
 )
@@ -305,19 +306,44 @@ Do your ERV sequences appear most closely related to the same retroviruses in al
 
 ::: {.callout-note #note-summary_0504}
 
-### Summary
+## Summary
 
-You have now completed the first ever phylogenetic analysis for your ORFs!
+### Concepts
 
-* Multiple sequence alignments arrange related sequences so that homologous positions are aligned.
-* The `msa()` function can be used to generate multiple sequence alignments from sets of biological sequences.
-* We can create a distance matrix for our sequences using `DistanceMatrix()`.
-* The `nj()` function can be used to construct a neighbour-joining phylogenetic tree from a distance matrix.
-* Phylogenetic trees can be saved in Newick format using `write.tree()`.
-* `ggtree` can be used to visualise and annotate phylogenetic trees.
+- Amino acid sequences can be stored as an `AAStringSet`; individual sequences can be selected from it and multiple `AAStringSet` objects can be combined.
+- To build a multiple sequence alignment in R, combine the sequence of interest with its reference sequences, align them using (for example) `msa()`, and save the aligned sequences as a FASTA file.
+- To build a neighbour-joining phylogeny in R, you can calculate a distance matrix from the aligned sequences and use this to construct the tree.
+- Phylogenetic trees can be saved in **Newick format** and subsequently read back into R.
+- Phylogenetic trees can be visualised using `ggtree`, with tip labels, highlighting and an evolutionary distance scale added to the plot.
+- Phylogenetic tree plots can be saved in the same way as other `ggplot`-based figures.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `readAAStringSet()` | Reads amino acid sequences from a FASTA file into an `AAStringSet`. | Core |
+| `msa()` | Generates a multiple sequence alignment from a set of biological sequences. | Core |
+| `as()` | Converts an object from one data type or class to another. | Core |
+| `DistanceMatrix()` | Calculates a matrix of evolutionary distances between aligned sequences. | Core |
+| `nj()` | Constructs a neighbour-joining phylogenetic tree from a distance matrix. | Core |
+| `write.tree()` | Saves a phylogenetic tree, here in Newick format. | Core |
+| `read.newick()` | Reads a phylogenetic tree stored in Newick format. | Core |
+| `ggtree()` | Creates a visualisation of a phylogenetic tree. | Core |
+| `geom_tiplab()` | Adds labels to the tips of a phylogenetic tree. | Core |
+| `geom_treescale()` | Adds an evolutionary distance scale bar to a phylogenetic tree. | Core |
+| `ggsave()` | Saves a plot to a file. | Core |
+
+### Files
+
+For this part of the practical, the main files you have edited or created are:
+
+- `beaver_ervs.qmd`
+- `output/[gene]_Ccan_[ERV_ID]_ORF_[i].fasta`
+- `output/[gene]_Ccan_[ERV_ID]_ORF_[i].nwk`
+- `output/[gene]_Ccan_[ERV_ID]_ORF_[i].pdf`
+
+These are the files you should select when making your Git commit.
 
 :::
-
-Remember to save your work before moving on to Part 5. As we're now finished with our main analysis, you can push your changes to GitHub.
 
 {{< include ../includes/git_push.qmd >}}

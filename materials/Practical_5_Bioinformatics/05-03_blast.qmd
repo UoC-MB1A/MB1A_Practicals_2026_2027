@@ -172,21 +172,21 @@ The CSV file we outputted from BLAST doesn't have a header row, but we can add i
 Here are all of the column names for the data frame, as a vector.
 
 ```{r col_names_blast}
-col_names = c(
-    "query",
-    "subject",
-    "percent_identity",
-    "alignment_length",
-    "mismatches",
-    "gap_opens",
-    "query_start",
-    "query_end",
-    "subject_start",
-    "subject_end",
-    "e_value",
-    "bit_score",
-    "query_cover"
-  )
+col_names <- c(
+  "query",
+  "subject",
+  "percent_identity",
+  "alignment_length",
+  "mismatches",
+  "gap_opens",
+  "query_start",
+  "query_end",
+  "subject_start",
+  "subject_end",
+  "e_value",
+  "bit_score",
+  "query_cover"
+)
 ```
 
 In your `beaver_ervs.qmd` Quarto file, read the CSV file you saved containing the BLAST output into a variable, adding the `col_names = ` argument and this vector of column names.
@@ -195,7 +195,8 @@ In your `beaver_ervs.qmd` Quarto file, read the CSV file you saved containing th
 
 ```{r read_blast_csv, message=FALSE}
 blast_res <- read_csv("output/Ccan_ERV_1_alignment_table.csv",
-                      col_names = col_names)
+  col_names = col_names
+)
 gt(head(blast_res))
 ```
 
@@ -233,7 +234,7 @@ gt(head(blast_expanded))
 
 You already have the details of your ORFs from @sec-orfs, with the variable name `orfs`.
 
-This is an `IRanges()` object, in which ORF names are accessible using the function `names()`, start positions with the function `start()`, end positions with the function `end()` and lengths with the function `width()`.
+This is an `IRanges` object, in which ORF names are accessible using the function `names()`, start positions with the function `start()`, end positions with the function `end()` and lengths with the function `width()`.
 
 e.g.
 ```{r get_info_iranges}
@@ -340,8 +341,10 @@ identified_orf_df <- best_hit_df |>
   ungroup()
 
 # Save the resulting data
-write_csv(identified_orf_df,
-          "output/identified_orfs.csv")
+write_csv(
+  identified_orf_df,
+  "output/identified_orfs.csv"
+)
 
 gt(identified_orf_df)
 ```
@@ -419,8 +422,10 @@ Save this new set of your identified ERV ORF sequences for each gene to a FASTA 
 ::: {.callout-answer collapse="true" #ex-save_long_orfs_ans}
 
 ```{r save_long_orfs_ans}
-writeXStringSet(identified_orf_seqs,
-                "output/identified_orf_aa_seqs.fasta")
+writeXStringSet(
+  identified_orf_seqs,
+  "output/identified_orf_aa_seqs.fasta"
+)
 ```
 
 :::
@@ -449,17 +454,41 @@ However, even if neither of these are true, you are still most likely the first 
 
 ::: {.callout-note #note-summary_0503}
 
-### Summary
+## Summary
 
-* BLAST uses local alignment to identify database sequences that are similar to a query sequence.
-* BLAST matches can be evaluated using measures including **E value**, **query coverage**, **percentage identity** and **alignment score**.
-* Columns containing structured information can be split using `separate_wider_delim()`.
-* Information from different data frames can be combined using `inner_join()`.
-* `group_by()` and `slice_max()` can be used to select rows with the largest value within each group.
-* Bioinformatics results can be organised into standardised tables and sequence files so that results from multiple analyses can be combined.
+### Concepts
+
+- **BLASTp** can be used to compare protein query sequences against a set of protein subject sequences to identify similar sequences.
+- When choosing the best BLAST matches, several measures can be considered together, including **E value**, **query coverage**, **percentage identity** and **bit score**.
+- BLAST results can be downloaded as a CSV file and read into R for further analysis.
+- Information contained within a single column can be **split into multiple columns** using a delimiter.
+- Data can be **grouped and ranked within groups** to select the best result separately for each group.
+- Values extracted from a data frame can be used to **subset a sequence set**, allowing selected sequences to be saved to a new FASTA file.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `separate_wider_delim()` | Splits a column into multiple columns using a specified delimiter. | Core |
+| `start()` | Returns the start positions of ranges in an `IRanges` object. | Core |
+| `end()` | Returns the end positions of ranges in an `IRanges` object. | Core |
+| `slice_max()` | Selects rows containing the largest values of a variable, including separately within groups. | Core |
+| `ungroup()` | Removes grouping from a grouped data frame. | Core |
+
+### Files
+
+For this part of the practical, the main files you have edited or created are:
+
+- `beaver_ervs.qmd`
+- `output/Ccan_[ERV_ID]_alignment_table.csv`
+- `output/Ccan_[ERV_ID]_ORF_[i]_refs.fasta`
+- `output/identified_orfs.csv`
+- `output/identified_orf_aa_seqs.fasta`
+
+These are the files you should select when making your Git commit.
 
 :::
 
-Remember to save your work before moving on to Part 4.
+Remember to save and commit your work before moving on to Part 4.
 
 {{< include ../includes/git_commit.qmd >}}

@@ -183,6 +183,8 @@ In your `pollinators_assumptions.qmd` Quarto file, write a function named `get_d
 
 You can create a data frame and directly populate the columns with values obtained by running a function. For example, if I wanted to create a data frame containing the exponentials and logs of the values in my vector `x_vec`, I could do the following:
 
+The functions `exp()` and `log()` calculate the exponential and natural logarithm of a value, respectively.
+
 ```{r create_df_reminder}
 x_vec <- c(12, 10, 32, 4)
 
@@ -859,28 +861,38 @@ The information in these plots is very similar to the plots we have produced man
 
 ### Summary
 
-::: {.callout-note #note-summary_0602}
+#### Concepts
 
-### Summary
+- Diagnostic information, including **fitted values**, **residuals** and **standardised residuals**, can be extracted directly from a fitted linear model in R.
+- A **Q–Q plot** can be used to assess whether residuals are approximately normally distributed; systematic departures from the reference line can indicate departures from normality.
+- A **Residuals vs Fitted plot** can be used to assess both constant variance and whether a continuous relationship is appropriately described as linear.
+- A **Scale–Location plot** can also be used to assess constant variance. ([Recommended]{.rec-text})
+- **Leverage** and **Cook's distance** can be extracted from a fitted model to help identify potentially influential observations. ([Recommended]{.rec-text})
+- R can automatically produce the standard diagnostic plots for a fitted linear model using `plot()`.
 
-* T-tests, ANOVA and linear regression are all based on the general linear-model framework and therefore share several assumptions.
-* Observations should be **independent**, and the response variable should be **continuous**.
-* **Residuals** are the differences between the observed values and the values predicted by a fitted model.
-* Residuals should be approximately **normally distributed**. We can assess this using a histogram and a Q–Q plot.
-* The variance of the residuals should be approximately **constant** across the fitted values. We can assess this using Residuals vs Fitted and Scale–Location plots.
-* For linear regression, the relationship between the response and continuous explanatory variables should be appropriately described as **linear**. Systematic patterns in a Residuals vs Fitted plot can indicate that this assumption is not met.
-* **Leverage** measures how unusual an observation is with respect to its explanatory variables, while **Cook's distance** measures how strongly an observation influences the fitted model.
-* We can generate standard diagnostic plots for a fitted linear model using `plot()`.
+#### Functions
 
-:::
-:::
+| Function | What it does | Level |
+|---|---|---|
+| `residuals()` | Extracts the residuals from a fitted model. | Core |
+| `fitted()` | Extracts the fitted values from a fitted model. | Core |
+| `stat_qq()` | Adds a Q–Q plot to a ggplot. | Core |
+| `stat_qq_line()` | Adds the reference line to a Q–Q plot. | Core |
+| `plot()` | Produces standard diagnostic plots when applied to a fitted linear model. | Core |
+| `rstandard()` | Extracts standardised residuals from a fitted model. | Recommended |
+| `hatvalues()` | Extracts the leverage of each observation from a fitted model. | Recommended |
+| `cooks.distance()` | Calculates Cook's distance for each observation in a fitted model. | Recommended |
+
+#### Files
 
 For this part of the practical, the main files you have edited are:
 
-* `prac6_exercises.qmd`
-* `pollinators_assumptions.qmd`
+- `prac6_exercises.qmd`
+- `pollinators_assumptions.qmd`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 Remember to save and commit your work before moving on to Part 3.
 

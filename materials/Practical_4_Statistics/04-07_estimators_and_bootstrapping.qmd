@@ -227,12 +227,13 @@ for (i in seq_len(10000)) {
 estimator_df <- tibble(
   Observed = obs_rich_vec,
   Scaled_Observed = scaled_obs_rich_vec,
-  Chao1 = chao_vec)
+  Chao1 = chao_vec
+)
 ```
 
 ```{r read_sim, include=FALSE, message=FALSE}
 # Read the data instead of generating it above - saves time when rendering
-estimator_df = read_csv("data/estimator_df.csv")
+estimator_df <- read_csv("data/estimator_df.csv")
 ```
 
 [For each estimator:]{.blue-text}
@@ -253,7 +254,7 @@ estimator_summary <- estimator_df |>
     Eff_Scaled_Observed = var(Scaled_Observed),
     Eff_Chao1 = var(Chao1),
     MSE_Observed = mean((Observed - n_unique_species)^2),
-    MSE_Scaled_Observed =mean((Scaled_Observed - n_unique_species)^2),
+    MSE_Scaled_Observed = mean((Scaled_Observed - n_unique_species)^2),
     MSE_Chao1 = mean((Chao1 - n_unique_species)^2)
   )
 gt(estimator_summary)
@@ -285,15 +286,13 @@ gt(head(estimator_long))
 
 Now, let's plot the values of each estimator as histograms. 
 
-The function `facet_wrap()` splits the data from a single data frame into multiple plots, based on the values in a categorical column. The first argument should be the variable you would like to facet by, preceded by a `~` symbol. The argument `scales = "free"` means that each plot can have a different scale on each axis - by default they are all the same.
-
 The function `geom_vline()` adds a vertical line at a specific point, specified by the argument `xintercept`. In this case, the line is at our pseudo-population total species richness.
 
 ```{r plot_simulated_estimators}
 ggplot(estimator_long, aes(x = estimate)) +
-  geom_histogram(bins=50) +
-  facet_wrap(~ estimator, scales = "free") +
-  geom_vline(xintercept = n_unique_species, color='red')
+  geom_histogram(bins = 50) +
+  facet_wrap(~estimator, scales = "free") +
+  geom_vline(xintercept = n_unique_species, color = "red")
 ```
 Here it is clear again that none of these are great estimators, but that Chao1 is probably the best. 
 
@@ -304,10 +303,11 @@ Here it is clear again that none of these are great estimators, but that Chao1 i
 
 Sometimes an estimator is bad because the sample size is too small, sometimes it's just bad. Let's try taking 50 sites per sample, instead of 20.
 
+The `slice_sample()` function selects a random sample of rows from a data frame; the `n` argument specifies how many rows to select.
+
 The code below is identical to the above except for samples of 50 sites.
 
 ```{r simulate_estimators_sample_50, eval=FALSE}
-
 obs_rich_vec_50 <- c()
 scaled_obs_rich_vec_50 <- c()
 chao_vec_50 <- c()
@@ -359,12 +359,13 @@ for (i in seq_len(10000)) {
 estimator_df_50 <- tibble(
   Observed = obs_rich_vec_50,
   Scaled_Observed = scaled_obs_rich_vec_50,
-  Chao1 = chao_vec_50)
+  Chao1 = chao_vec_50
+)
 ```
 
 ```{r read_sim_50, include=FALSE, message=FALSE}
 # Read the data instead of generating it above - saves time when rendering
-estimator_df_50 = read_csv("data/estimator_df_50.csv")
+estimator_df_50 <- read_csv("data/estimator_df_50.csv")
 ```
 
 Now we can look at the results.
@@ -379,7 +380,7 @@ estimator_summary_50 <- estimator_df_50 |>
     Eff_Scaled_Observed = var(Scaled_Observed),
     Eff_Chao1 = var(Chao1),
     MSE_Observed = mean((Observed - n_unique_species)^2),
-    MSE_Scaled_Observed =mean((Scaled_Observed - n_unique_species)^2),
+    MSE_Scaled_Observed = mean((Scaled_Observed - n_unique_species)^2),
     MSE_Chao1 = mean((Chao1 - n_unique_species)^2)
   )
 gt(estimator_summary_50)
@@ -396,9 +397,9 @@ estimator_long_50 <- estimator_df_50 |>
   )
 
 ggplot(estimator_long_50, aes(x = estimate)) +
-  geom_histogram(bins=50) +
-  geom_vline(xintercept = n_unique_species, color='red') +
-  facet_wrap(~ estimator, scales = "free")
+  geom_histogram(bins = 50) +
+  geom_vline(xintercept = n_unique_species, color = "red") +
+  facet_wrap(~estimator, scales = "free")
 ```
 
 Chao1 actually looks pretty good here - it is generating an approximately unbiased estimate of the pseudo-population, although it has a higher variance, and therefore lower efficiency, than either other estimator. 
@@ -463,9 +464,11 @@ inverts <- read_csv("data/marine_invertebrates.csv")
 
 [Plot the distribution of the iron concentration (the FE column) as a histogram.]{.blue-text}
 ```{r bootstrap_invert_ans2}
-ggplot(inverts,
-       aes(x = FE)) +
-  geom_histogram(bins=15) +
+ggplot(
+  inverts,
+  aes(x = FE)
+) +
+  geom_histogram(bins = 15) +
   theme_bw()
 ```
 
@@ -473,7 +476,7 @@ ggplot(inverts,
 
 ```{r bootstrap_invert_ans3}
 medi <- median(pull(inverts, FE))
-print (medi)
+print(medi)
 ```
 The sample median is `r medi`.
 
@@ -481,8 +484,8 @@ The sample median is `r medi`.
 
 ```{r bootstrap_invert_ans4}
 meds <- c()
-for (i in seq_len(1000)){
-  samp <- slice_sample(inverts, n = 85, replace=TRUE)
+for (i in seq_len(1000)) {
+  samp <- slice_sample(inverts, n = 85, replace = TRUE)
   samp_median <- median(pull(samp, FE))
   meds <- c(meds, samp_median)
 }
@@ -497,8 +500,10 @@ df_meds <- tibble(median = meds)
 [Plot the bootstrap distribution of the median.]{.blue-text}
 
 ```{r bootstrap_invert_ans6}
-ggplot(df_meds,
-       aes(x = median)) +
+ggplot(
+  df_meds,
+  aes(x = median)
+) +
   geom_histogram(bins = 15) +
   theme_bw()
 ```
@@ -507,7 +512,7 @@ ggplot(df_meds,
 
 ```{r bootstrap_invert_ans7}
 quans <- quantile(meds, probs = c(0.025, 0.975))
-print (quans)
+print(quans)
 ```
 :::
 :::
@@ -540,7 +545,7 @@ iron_full <- read_csv("data/inverts_iron.csv")
 
 ```{r }
 med_iron <- median(pull(iron_full, FE))
-print (med_iron)
+print(med_iron)
 ```
 [Is this value within your confidence interval?]{.blue-text}
 
@@ -582,7 +587,7 @@ pop <- qgamma(0.75, shape = 2, scale = 10)
 # Make a vector to store the results
 results <- c()
 # Repeat 100 times
-for (i in seq_len(100)){
+for (i in seq_len(100)) {
   # Sample 200 individuals
   samp <- rgamma(200, shape = 2, scale = 10)
   # Put the results into a data frame
@@ -590,7 +595,7 @@ for (i in seq_len(100)){
   # Make a vector to store the quantiles
   quans <- c()
   # Repeat 100 times
-  for (j in seq_len(100)){
+  for (j in seq_len(100)) {
     # Sample 200 individuals with replacement
     bootstrap <- slice_sample(samp_df, n = 200, replace = TRUE)
     # Calculate the 0.75 quantile
@@ -607,7 +612,7 @@ for (i in seq_len(100)){
 }
 # Calculate the percentage
 perc <- sum(results) / 100
-print (perc)
+print(perc)
 ```
 The bootstrapped confidence interval for the estimator contains the population value `r round(perc * 100, 2)`% of the time.
 
@@ -615,22 +620,29 @@ The bootstrapped confidence interval for the estimator contains the population v
 :::
 ## Review {#sec-summary_0407}
 
-In this part of the practical, you explored how different estimators behave across repeated samples, comparing their bias, variance and mean square error. You also used bootstrapping to approximate the sampling distribution of an estimator from a single observed sample and used this distribution to construct a confidence interval.
-
 [↑ top](#)
 
 ::: {.callout-note #note-summary_0407}
 
-### Summary
-### Programming Summary
+## Summary
 
-| Function | What it does |
-|---|---|
-| `slice_sample()` | Takes a random sample of rows from a data frame; `replace = TRUE` allows the same row to be sampled more than once when bootstrapping. |
-| `quantile()` | Calculates specified quantiles of a set of values, used here to calculate percentile bootstrap confidence intervals. |
-| `everything()` | Selects all columns, used here when converting the estimator results from wide to long format. |
+### Concepts
 
-:::
+- Simulation can be used to investigate how an estimator behaves across repeated samples from a known or simulated population. ([Extension]{.extension-text})
+- **Bootstrapping** estimates uncertainty by repeatedly sampling the observed data **with replacement** and recalculating the statistic of interest. ([Extension]{.extension-text})
+- Bootstrap samples contain the same number of observations as the original sample, but individual observations may occur more than once or not at all. ([Extension]{.extension-text})
+- A **percentile bootstrap confidence interval** can be calculated from the central 95% of the bootstrap distribution. ([Extension]{.extension-text})
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `slice_sample()` | Takes a random sample of rows from a data frame. | Extension |
+| `everything()` | Selects all columns in a data frame. | Extension |
+| `qgamma()` | Calculates quantiles of a gamma distribution. | Bonus |
+| `rgamma()` | Generates random values from a gamma distribution. | Bonus |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
@@ -639,7 +651,8 @@ For this part of the practical, the main files you have edited are:
 
 These are the files you should select when making your Git commit.
 
+:::
+
 {{< include ../includes/git_commit.qmd >}}
 
 {{< include ../includes/git_push.qmd >}}
-

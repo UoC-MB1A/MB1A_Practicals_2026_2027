@@ -218,6 +218,8 @@ print(prob)
 
 The probability is around `r round(prob, 2)`. We can multiply this by the number of populations, `r nrow(dcounts)`, to get the expected number of populations which will have 4 mutations.
 
+The function `nrow()` returns the number of rows in a data frame.
+
 ```{r dpois_one_mult}
 n_populations <- nrow(dcounts)
 expected_count <- prob * n_populations
@@ -579,6 +581,8 @@ Where `mean_obs` is the mean observed total fish length from our data and sd_obs
 
 We can add this directly to the plot using the same plotting code as before, but with this function as an extra layer.
 
+The function `sd()` calculates the standard deviation of a vector or column.
+
 ```{r plot_theor_norm}
 # Calculate the observed mean and standard deviation
 mean_obs <- mean(pull(geo, total_length_cm))
@@ -614,7 +618,7 @@ The only argument to this function is a  vector. For example, for our observed d
 ```{r get_body_length}
 # Calculate the skewness
 skew <- skewness(pull(geo, total_length_cm))
-print (skew)
+print(skew)
 ```
 
 Our observed value is `r round (skew, 2)` — reasonably close to 0. But how close should we expect it to be for a sample of this size? Let's simulate normally distributed data for comparison.
@@ -645,7 +649,7 @@ sd_obs <- sd(pull(geo, total_length_cm))
 
 skews <- c()
 
-for (i in seq_len(10000)){
+for (i in seq_len(10000)) {
   points <- rnorm(nrow_obs, mean = mean_obs, sd = sd_obs)
   skew <- skewness(points)
   skews <- c(skews, skew)
@@ -668,12 +672,12 @@ abs_skew_obs <- abs(skew_obs)
 abs_skew_sim <- abs(skews)
 
 # Count how many times this is more than our observed skewness
-more_than_obs <-sum(abs_skew_sim > abs_skew_obs)
+more_than_obs <- sum(abs_skew_sim > abs_skew_obs)
 
 # Count the proportion of times this is more than our observed skewness
 skew_prop_more_than_obs <- more_than_obs / 10000
 
-print (skew_prop_more_than_obs)
+print(skew_prop_more_than_obs)
 ```
 
 `r round(skew_prop_more_than_obs, 4)*100`% of our simulated normal distributions are more skewed than our observed data.
@@ -687,35 +691,45 @@ The observed skewness is therefore consistent with what we might expect from a s
 
 [↑ top](#)
 
-In this part of the practical, you have used simulation to investigate whether properties of observed biological data are consistent with those expected from theoretical probability distributions.
-
-* Discrete probability distributions describe probabilities associated with discrete outcomes.
-* Continuous distributions use probability densities.
-* Simulation can be used to investigate whether features of an observed dataset are consistent with those expected under a theoretical probability distribution.
-
 ::: {.callout-note #note-summary_0303}
 
-### Programming summary
+## Summary
 
-* R uses a consistent set of functions for working with probability distributions:
-  * `r...()` generates random values from a distribution.
-  * `d...()` calculates probabilities for discrete distributions or probability densities for continuous distributions.
-  * `p...()` calculates cumulative probabilities.
-  * `q...()` calculates quantiles.
-* `rpois()` generates random values from a Poisson distribution.
-* `rnorm()` generates random values from a normal distribution.
-* `geom_bar()` can be used to plot the distribution of discrete observations.
-* `geom_histogram()` can be used to plot the distribution of continuous observations.
-* `after_stat(density)` rescales a histogram to show probability density rather than counts.
-* `stat_function()` can be used to add a theoretical probability density function to a plot.
+### Concepts
 
-:::
+- R uses a consistent naming convention for functions associated with probability distributions: `r...()` generates random values, `d...()` gives probabilities or densities, `p...()` gives cumulative probabilities and `q...()` gives quantiles.
+- Observed data can be compared with a **theoretical probability distribution** to investigate whether the proposed distribution is appropriate.
+- **Simulation** can be used to investigate whether properties of an observed sample are consistent with samples drawn from a particular theoretical distribution.
+- **Skewness** (`skewness()`) measures the asymmetry of a distribution. ([Extension]{.extension-text})
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `qbinom()` | Calculates quantiles of a binomial distribution. | Core |
+| `var()` | Calculates the variance of a set of values. | Core |
+| `rpois()` | Generates random values from a Poisson distribution. | Core |
+| `geom_histogram()` | Adds a histogram to a ggplot, calculating the bar heights from the data provided. | Core |
+| `geom_vline()` | Adds a vertical line to a ggplot. | Core |
+| `clean_names()` | Converts column names into a consistent format that is easier to use in R. | Core |
+| `after_stat()` | Maps a value calculated by a ggplot statistical transformation, such as density. | Core |
+| `stat_function()` | Adds a curve calculated from a function to a ggplot. | Core |
+| `dnorm()` | Calculates probability densities from a normal distribution. | Core |
+| `sd()` | Calculates the standard deviation of a set of values. | Core |
+| `dpois()` | Calculates probabilities from a Poisson distribution. | Extension |
+| `nrow()` | Returns the number of rows in a data frame. | Extension |
+| `skewness()` | Calculates the skewness of a set of values. | Extension |
+| `rnorm()` | Generates random values from a normal distribution. | Extension |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
-* `drosophila.qmd`
-* `distributions.qmd`
+- `drosophila.qmd`
+- `distributions.qmd`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}

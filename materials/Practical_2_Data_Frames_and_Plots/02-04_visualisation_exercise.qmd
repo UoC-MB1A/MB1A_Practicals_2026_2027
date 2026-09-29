@@ -107,7 +107,29 @@ This data has a couple of features you've not come across yet, so we'll provide 
 
 - The column names are not in a format that R can easily use, as they contain hyphens (`-`). We can use an additional function, `clean_names()` to rename the columns. `clean_names()` converts column names into a consistent format by replacing spaces and punctuation with underscores and converting everything to lower case.
 
-- One of the columns contains date information which needs to be reformatted - we do this using the `mutate()` function and the `as_date()` function. We'll learn more about the `mutate()` function in a later practical.
+- One of the columns contains date information which needs to be reformatted - we do this using the `mutate()` function and the `as_date()` function. The `as_date()` function converts values containing date information into R's date format.
+
+We can create an extra column in a data frame using the function `mutate()`. 
+
+For example, let's say I have the following data frame:
+
+```{r df_example_mutate1}
+df <- tibble(
+  x = c(1, 2, 1, 3),
+  y = c(3, 4, 1, 6)
+)
+gt(df)
+```
+
+If I wanted to add a new column named `x_plus_y` with the value of x plus the value of y, I could use `mutate()` as follows:
+
+```{r df_example_mutate2}
+df <- df |>
+  mutate(x_plus_y = x + y)
+
+gt(df)
+```
+
 
 ::: {.callout-note .copycode}
 ### Include this code
@@ -350,9 +372,6 @@ There is no single correct answer and no example solution.
 
 [↑ top](#)
 
-::: {#note-summary_0204 .callout-note}
-### Summary
-
 In this exercise you have:
 
 - Downloaded a real animal tracking dataset from Movebank.
@@ -363,14 +382,34 @@ In this exercise you have:
 - Added map borders and appropriate axis limits.
 - Used colour to distinguish individual animals.
 - Applied the data manipulation and plotting techniques introduced throughout Practical 2.
-:::
 
-For this part of the practical, the main files you have edited are:
+::: {#note-summary_0204 .callout-note}
+### Summary
+
+### Concepts
+
+- New columns can be created from existing data using `mutate()`.
+- Data can be **grouped by multiple variables** (`group_by()`), allowing summary statistics to be calculated for each combination of groups.
+- **Dates** can be stored using a specific date data type in R, allowing them to be used in analyses.
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `clean_names()` | Converts column names into a consistent format that is easier to use in R. | Extension |
+| `mutate()` | Adds new columns or modifies existing columns in a data frame. | Extension |
+| `as_date()` | Converts date information into R's date format. | Extension |
+
+### Files
+
+For this part of the practical, the main files you have edited or created are:
 
 - `visualisation_exercise.qmd`
 - `data/movebank_data.csv`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}
 

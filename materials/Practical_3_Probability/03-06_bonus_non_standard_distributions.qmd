@@ -262,12 +262,33 @@ If a cat has tolerated the addition of 500g of objects, there is an estimated `r
 
 [↑ top](#)
 
-In this part of the practical, you have seen that simulation is not limited to the named probability distributions built into R. A probability density function can be defined directly, checked to ensure that it is valid, and used to generate simulated observations.
+::: {.callout-note #note-summary_0306}
+
+## Summary
+
+### Concepts
+
+- A **user-defined probability density function (PDF)** can be used when a suitable named probability distribution is not available in R. ([Bonus]{.bonus-text})
+- For a function to be a valid PDF, it must be non-negative over its range and the total area under the curve must equal 1. ([Bonus]{.bonus-text})
+- A **random number generator** can be created from a user-defined continuous probability distribution and used to simulate observations from that distribution. ([Bonus]{.bonus-text})
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `integrate()` | Calculates the integral of a function over a specified range. | Bonus |
+| `pinv.new()` | Creates a random number generator for a user-defined continuous probability distribution. | Bonus |
+| `ur()` | Generates random values using a random number generator created by `Runuran`. | Bonus |
+| `cos()` | Calculates the cosine of a value. | Bonus |
+
+### Files
 
 For this part of the practical, the main files you have edited are:
 
-* `distributions.qmd`
+- `distributions.qmd`
 
 These are the files you should select when making your Git commit.
+
+:::
 
 {{< include ../includes/git_commit.qmd >}}

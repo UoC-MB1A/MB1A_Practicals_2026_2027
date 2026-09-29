@@ -168,10 +168,12 @@ bird_migration_summary <- bird_migration_exc |>
   group_by(Site) |>
   summarise(
     across(
-      c(Stopover_Longitude, Stopover_Latitude,
+      c(
+        Stopover_Longitude, Stopover_Latitude,
         Iberian_Longitude, Iberian_Latitude,
         Westmost_Longitude, Westmost_Latitude,
-        Winter_Longitude, Winter_Latitude),
+        Winter_Longitude, Winter_Latitude
+      ),
       ~ median(.x, na.rm = TRUE)
     )
   )
@@ -448,7 +450,6 @@ In your `worked_example.qmd` Quarto document, generate two subsets of your `comb
 
 ::: {.callout-answer #ex-divide_ans}
 ```{r divide_ans}
-
 spring_vals <- c("Breeding", "Stopover", "Winter")
 autumn_vals <- c("Breeding", "Iberian", "Westmost", "Winter")
 
@@ -457,7 +458,6 @@ spring_data <- combined_bird_piv |>
 
 autumn_data <- combined_bird_piv |>
   filter(Location_Type %in% autumn_vals)
-
 ```
 
 :::
@@ -486,16 +486,39 @@ write_csv(autumn_data, "output/birds_autumn.csv")
 
 ::: {.callout-note #note-summary_0202}
 
-### Summary
+## Summary
 
-* `group_by()` and `summarise()` allow us to calculate statistics for groups of observations.
-* **Joins** combine information from multiple data frames using shared columns.
-* `pivot_longer()` converts data from **wide** to **long** format.
-* `%in%` allows us to test whether values occur within a set of values, which is useful when filtering on several categories.
+### Concepts
 
-:::
+- **Grouping** (`group_by()`) a data frame allows us to perform calculations separately for different groups of observations.
+- **Summary statistics** (`summarise()`) can be calculated for each group or the whole data frame to produce a new summary data frame.
+- **Joins** combine information from multiple data frames based on one or more shared columns.
+- Different types of join determine which rows are retained when values are not present in both data frames.
+- Data can be stored in **wide format**, with multiple measurements in different columns, or **long format**, with measurements spread across multiple rows.
+- The `%in%` operator tests whether values occur within a set of values, which is useful when filtering on several categories.
 
-For this part of the practical, the main files you have edited are:
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `group_by()` | Groups rows of a data frame according to the values in one or more columns. | Core |
+| `summarise()` | Calculates summary values, either for a whole data frame or for groups in a grouped data frame. | Core |
+| `max()` | Returns the largest value from a set of values. | Core |
+| `min()` | Returns the smallest value from a set of values. | Core |
+| `median()` | Calculates the median of a set of values. | Core |
+| `full_join()` | Joins two data frames while retaining all rows from both. | Core |
+| `inner_join()` | Joins two data frames while retaining only rows shared by both. | Core |
+| `left_join()` | Joins two data frames while retaining all rows from the first data frame. | Core |
+| `right_join()` | Joins two data frames while retaining all rows from the second data frame. | Core |
+| `write_csv()` | Saves a data frame to a CSV file. | Core |
+| `pivot_longer()` | Reshapes a data frame from wide to long format. | Recommended |
+| `ends_with()` | Selects columns whose names end with specified text. | Recommended |
+| `across()` | Applies the same operation to multiple columns. | Extension |
+| `pivot_wider()` | Reshapes a data frame from long to wide format. | Extension |
+
+### Files
+
+For this part of the practical, the main files you have edited or created are:
 
 - `worked_example.qmd`
 - `output/birds_spring.csv`
@@ -503,6 +526,7 @@ For this part of the practical, the main files you have edited are:
 
 These are the files you should select when making your Git commit.
 
+:::
 
 Remember to save and commit your work before moving on to Part 3.
 

@@ -475,19 +475,40 @@ NULL represents the absence of a value or object. This is different from NA, whi
 [↑ top](#)
 
 ::: {.callout-note #note-summary_0103}
+
 ## Summary
-- A **function** performs a specific task, usually taking one or more inputs (called **arguments**) and often returning an output.
-- **Arguments** provide information to a function and control how it behaves. Some arguments are optional and have default values.
-- A **variable** stores a value under a name so that it can be used again later in your code.
-- Choose **descriptive variable names** and avoid spaces, punctuation (except `_`), names beginning with numbers, and names that already have a meaning in R.
-- Common variable types include **numeric** (numbers), **character** (text) and **logical** (`TRUE` or `FALSE`).
-- The `class()` function tells you what type of data a variable contains.
-:::
+
+### Concepts
+
+- **Functions** perform a task, usually taking one or more inputs called **arguments** and often returning an output.
+- **Arguments** provide information to a function or control how it behaves. Some arguments have **default values**, and arguments can be supplied by position or by name.
+- **Variables** associate a name with a value. The assignment operator `<-` is used to assign values to variables.
+- Variables can contain different **types of data**, including numeric, character and logical values.
+- `TRUE` and `FALSE` are **logical values**.
+- `NA` represents a missing or unknown value. [**Bonus**]{.bonus-text}
+- `NaN` represents a value that is not a valid number. [**Bonus**]{.bonus-text}
+
+### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `sqrt()` | Calculates the square root of a value. | Core |
+| `round()` | Rounds a number to a specified number of decimal places. | Core |
+| `seq()` | Generates a sequence of numbers. | Core |
+| `rep()` | Repeats a value a specified number of times. | Core |
+| `class()` | Returns the type of data stored in an object. | Core |
+| `is.na()` | Checks whether a value is missing (`NA`). | Bonus |
+| `is.nan()` | Checks whether a value is `NaN`. | Bonus |
+
+### Files
 
 For this part of the practical, the main files you have created are:
 
 - `prac1_exercises.qmd`
 
 These are the files you should select when making your Git commit.
+:::
+
+
 
 {{< include ../includes/git_commit.qmd >}}

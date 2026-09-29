@@ -322,21 +322,34 @@ Here, mean contains a single number, centred_values contains a vector, and summa
 
 ### Summary
 
-* A **function** is a reusable set of instructions that can be applied to different inputs.
-* We can define our own functions in R using `function()`.
-* Values supplied to a function are called **arguments**.
-* The code inside `{}` defines the operations performed by the function.
-* `return()` specifies the output returned by a function.
-* Defining a function does not run it: we use a **function call** to run it.
-* Variables created inside a function normally only exist within that function.
-* Functions allow us to repeat the same analysis with different inputs without duplicating code.
+#### Concepts
 
-:::
+- A **function** is a reusable set of instructions that can be applied to different inputs.
+- Values supplied to a function are called **arguments**.
+- The code inside `{}` defines the operations performed by a function.
+- **Defining** a function does not run it; a **function call** runs the function with specified arguments.
+- Variables created inside a function normally only exist **within that function**.
+- Functions can be applied to individual values, vectors or columns in a data frame.
+- A **list** can contain multiple objects, including objects of different types. ([Extension]{.extension-text})
+- Named elements of a list can be accessed using the `$` operator. ([Extension]{.extension-text})
+
+#### Functions
+
+| Function | What it does | Level |
+|---|---|---|
+| `function()` | Defines a new function and specifies its arguments. | Core |
+| `return()` | Specifies the output of a function. | Core |
+| `list()` | Creates a list containing multiple objects. | Extension |
+
+#### Files
 
 For this part of the practical, the main files you have created are:
 
+- `prac6_exercises.qmd`
+
 These are the files you should select when making your Git commit.
 
+:::
 
 Remember to save and commit your work before moving on to Part 2.
 
