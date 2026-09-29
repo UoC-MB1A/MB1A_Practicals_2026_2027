@@ -54,7 +54,8 @@ Some of the material does overlap with or build upon material from the lectures,
 
 ## Acknowledgements
 
-Many of these materials use content from the Cambridge Centre for Research Informatics Training, in particular
+Many of these materials use content from the Cambridge Centre for Research Informatics Training, in particular:
+
 * [Data Analysis in R and Python](https://cambiotraining.github.io/data-analysis-in-r-and-python/) by Hugo Tavares and Martin van Rongen
 * [Core Statistics](https://cambiotraining.github.io/corestats/) by Martin van Rongen, Matt Castle, Emer Jones, Rob Nicholls, Holly Pavey and Vicki Hodgson
 * [Generalised linear models](https://cambiotraining.github.io/stats-glm/) by Vicki Hodgson, Matt Castle, Rob Nicholls and Martin van Rongen.

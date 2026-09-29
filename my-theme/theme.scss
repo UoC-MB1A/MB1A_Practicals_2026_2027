@@ -725,3 +725,20 @@ section:has(> h2.hide-heading) > h2.hide-heading {
 .collapse-heading-hidden {
   display: none;
 }
+/* Function callouts */
+
+
+.callout.callout-note.fc {
+  border-left: 4px solid #5A5E70 !important;
+  border-right: 4px solid #5A5E70 !important;
+}
+
+.callout.fc .callout-header {
+  background-color: #C1C8D9 !important;
+}
+
+
+.callout.fc .callout-title-container {
+  font-family: monospace;
+  font-weight: 600;
+}

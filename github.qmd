@@ -9,31 +9,19 @@ author: "Katy Brown"
 
 ::: {.callout-note .partmenu #parts-0101}
 ## Sections
-- @sec-git_github
+- @sec-install_git
+- @sec-setup_github
+- @sec-forking
 - @sec-token
 - @sec-setup_rstudio
 - @sec-summary_gh
 :::
 
-:::{.callout-tip .objectives #objectives-0101}
-#### Learning objectives
-By the end of this part of the practical you should be able to:
-
-- Explain what Git and GitHub are
-- Create a GitHub account and fork a repository
-- Set up a personal access token
-- Clone your repository into RStudio
-:::
-
-## Setting up Git and GitHub {#sec-git_github}
-
-[↑ top](#)
-
 Before we start running code, we should make sure our RStudio session is set up correctly.
 
 In this course, we will use **Git** and **GitHub** to track changes to our code and store the code online. We can use these tools directly in RStudio.
 
-### Git
+### Git {#sec-git}
 
 ![Git logo](materials/images/git_logo.png){#fig-gitlogo .screenshot width="50%"}
 
@@ -42,13 +30,91 @@ In this course, we will use **Git** and **GitHub** to track changes to our code 
 
 Usually, Git is used to track all the changes within a folder, called a **Git Repository**.
 
-### GitHub
+### GitHub {#sec-github}
 
 ![GitHub logo](materials/images/github_logo.png){#fig-githublogo .screenshot width="50%"}
 
 [GitHub](https://github.com/) is an **online platform for storing Git repositories**. It lets you back up your work in the cloud, share your code with others, and collaborate on projects. GitHub uses Git to track changes, but also provides additional features.
 
-### Setting up your GitHub account
+## Installing Git {#sec-install_git}
+
+[↑ top](#)
+
+Follow the instructions below for your operating system.
+
+::: {.panel-tabset group="os"}
+
+#### Windows
+
+1. Go to the [Git for Windows website](https://git-scm.com/downloads/win).
+2. Download the installer for your computer.
+3. Run the installer.
+4. You will be offered lots of installation options. **You can leave these at their default settings.**
+
+::: {.callout-note}
+During installation, you may be asked to choose the default editor used by Git. You can leave this at its default setting, as we will normally interact with Git through RStudio.
+:::
+
+#### macOS
+
+Git may already be installed on your computer.
+
+Open **Terminal** (Applications → Utilities → Terminal) and enter:
+
+`git --version`
+
+If Git is installed, you should see something similar to:
+
+`git version 2.51.0`
+
+If macOS asks whether you would like to install the **Command Line Developer Tools**, agree to the installation. These include Git.
+
+Alternatively, you can download Git from the [Git website](https://git-scm.com/downloads/mac).
+
+
+#### Linux
+
+Git may already be installed on your computer.
+
+Open a terminal and enter:
+
+`git --version`
+
+If Git is installed, you should see something similar to:
+
+`git version 2.51.0`
+
+If Git is not installed, follow the appropriate instructions for your Linux distribution.
+
+For **Ubuntu or Debian**, enter:
+
+`sudo apt update`
+
+followed by:
+
+`sudo apt install git`
+
+For **Fedora**, enter:
+
+`sudo dnf install git`
+
+:::
+
+### Check that RStudio can find Git
+
+Open RStudio and go to:
+
+**Tools → Global Options → Git/SVN**
+
+You should see a file path next to **Git executable**.
+
+
+::: {.callout-tip}
+If you have just installed Git, make sure you **close and reopen RStudio** before checking whether RStudio can find it.
+:::
+
+
+## Setting up your GitHub account {#sec-setup_github}
 
 Throughout this course, you'll use **Git** to record the history of your code and **GitHub** to store a copy of your work online.
 
@@ -67,7 +133,9 @@ When you have set up your account, please send us your CRSID and GitHub username
 :::
 
 
-### Forking the {{< meta course-title >}} Students account
+## Forking the {{< meta course-title >}} Students account {#sec-forking}
+
+[↑ top](#)
 
 Once you have an account, log in and then visit the following page:
 
@@ -168,7 +236,7 @@ Click on `More` then `Show Folder in a New Window`
 Inside this folder there should be a file called `{{< meta course-title >}}_Students_{{< meta intake >}}.Rproj`.
 
 
-At the start of each practical session, you should follow the instructions below (we will remind you!). You don't need to today, as everything should already be set up.
+At the start of each practical session, you should follow the instructions below (we will remind you!).
 
 {{< include materials/includes/git_pull.qmd >}}
 

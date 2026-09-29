@@ -3,7 +3,9 @@ title: "Installing R and RStudio"
 date: today
 number-sections: false
 ---
-# Installing R and RStudio {#sec-install}
+# Installation {#sec-install}
+
+## Installing R and RStudio {#sec-install_r}
 
 Prior to the practicals, you need to install two pieces of software on your computer - 
 R, a programming language, and RStudio, which acts as a graphical interface for R.
@@ -85,3 +87,4 @@ Alternatively, you can manually download and install these programs using defaul
 - Go to the [R installation](https://cran.r-project.org/bin/linux/) folder and look at the instructions for your distribution.
 - Download the [RStudio](https://www.rstudio.com/products/rstudio/download/#download) installer for your distribution and install it using your package manager.
 :::
+
