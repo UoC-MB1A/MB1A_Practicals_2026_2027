@@ -19,6 +19,7 @@ format:
     theme: [default, my-theme/theme.scss]
     include-after-body:
       - my-theme/extra_js_collapse_accessibility.html
+      - answer-code.html
     toc: true
     number-sections: false
     number-depth: 3
