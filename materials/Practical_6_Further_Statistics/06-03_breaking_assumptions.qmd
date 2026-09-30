@@ -143,6 +143,9 @@ compare_vectors <- function(vector1, vector2) {
   distri <- ggplot(comp_df, aes(x = residuals)) +
     geom_histogram(bins = 15) +
     facet_wrap(~group) +
+    ggtitle("Distribution of residuals") +
+    xlab("Residual") +
+    ylab("Number of observations") +
     theme_minimal()
 
   # Put the results into a list
@@ -212,6 +215,9 @@ p_df <- tibble(pval = ps)
 
 ggplot(p_df, aes(x = pval)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values when the null hypothesis is true - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -232,6 +238,9 @@ p_df <- tibble(pval = ps)
 
 ggplot(p_df, aes(x = pval)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values when the alternative hypothesis is true - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -430,6 +439,9 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for cat simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -439,6 +451,9 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for dog simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -655,6 +670,9 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for cat simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -664,6 +682,9 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for dog simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -841,6 +862,9 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for cat simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -850,6 +874,9 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for dog simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -1026,6 +1053,9 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for cat simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -1035,6 +1065,9 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for dog simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -1214,6 +1247,9 @@ Cats:
 df_cat_ps <- tibble(pvalues = cat_ps)
 ggplot(df_cat_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for cat simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 
@@ -1223,6 +1259,9 @@ Dogs:
 df_dog_ps <- tibble(pvalues = dog_ps)
 ggplot(df_dog_ps, aes(x = pvalues)) +
   geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for dog simulations - Simulated") +
+  xlab("p-value") +
+  ylab("Number of simulations") +
   theme_minimal()
 ```
 

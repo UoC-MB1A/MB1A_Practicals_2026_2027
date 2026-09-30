@@ -204,7 +204,7 @@ print(my_variable)
 
 [**Core**]{.core-text}
 
-What would be the value of `whatsmynumber` after running all of the code below?
+Without trying it in R, what do you think the value of `whatsmynumber` would be after running all of the code in the box below?
 
 ```{r varorder}
 whatsmynumber <- 1
@@ -387,7 +387,7 @@ n_after_2 <- 7543
 
 If you have programmed before, some of R's behaviour may be different from languages you have previously used.
 
-Predict the outcome of the following expressions, then test them in R. Are they as you expected?
+Predict the outcome of the following expressions, then test them in R in your `prac1_exercises.qmd` Quarto file. Are they as you expected?
 
 ```{r weird_r1, eval=FALSE}
 print(TRUE + TRUE)

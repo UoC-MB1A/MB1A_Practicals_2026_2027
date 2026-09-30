@@ -293,7 +293,7 @@ Also, where you need to give something a name in R, it is helpful to use a name 
 
 [**Recommended**]{.rec-text}
 
-Format the code in the HPA data Quarto document you created earlier using the `Style active file` feature. It may not change at all, or it may change a lot. Change any variable names to be informative, if they are not already.
+Format the code in the HPA data Quarto document (`hpa_quarto.qmd`) you created earlier using the `Style active file` feature. It may not change at all, or it may change a lot. Change any variable names to be informative, if they are not already.
 
 Save the document and render it again.
 

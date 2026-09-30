@@ -66,7 +66,7 @@ We can reproduce this in R.
 
 * Generate a simulated set of 1000 values which are normally distributed with mean 0 and standard deviation 1.
 * For each value, use `pnorm()` to calculate its cumulative probability — the proportion of a standard normal distribution that lies below that value.
-* Plot these probabilities as a histrogram using `geom_histogram()` with the arguments `boundary = 0, binwidth = 0.05`.
+* Plot these probabilities as a histogram using `geom_histogram()` with the arguments `boundary = 0, binwidth = 0.05`.
 
 ::: {.callout-answer collapse="true" #ex-p_uniform_ans}
 ```{r}
@@ -82,7 +82,11 @@ histo <- tibble(
 )
 
 ggplot(histo, aes(x = props)) +
-  geom_histogram(boundary = 0, binwidth = 0.05)
+  geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of cumulative probabilities - Simulated") +
+  xlab("Cumulative probability") +
+  ylab("Number of simulations") +
+  theme_minimal()
 ```
 :::
 :::
@@ -195,7 +199,11 @@ df_vibes <- tibble(
 )
 
 ggplot(df_vibes, aes(x = pval)) +
-  geom_histogram(boundary = 0, binwidth = 0.05)
+  geom_histogram(boundary = 0, binwidth = 0.05) +
+  ggtitle("Distribution of p-values for pollinator species - Simulated") +
+  xlab("p-value") +
+  ylab("Number of species") +
+  theme_minimal()
 ```
 
 You are likely to end up with an untidy but uniform-ish distribution.
@@ -375,6 +383,9 @@ ggplot(df_probs, aes(x = pvalue, fill = true_effect)) +
     position = position_stack(reverse = TRUE)
   ) +
   facet_wrap(~scenario) +
+  ggtitle("Distribution of p-values with different proportions of true effects - Simulated") +
+  xlab("p-value") +
+  ylab("Number of tests") +
   theme_minimal()
 ```
 

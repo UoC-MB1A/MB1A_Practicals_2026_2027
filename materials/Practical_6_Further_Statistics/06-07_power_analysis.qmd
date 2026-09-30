@@ -354,7 +354,10 @@ ggplot(power_df, aes(x = group_size, y = power)) +
   geom_line() +
   geom_point() +
   geom_vline(xintercept = min_group_size, color = "red") +
-  geom_hline(yintercept = 0.8, color = "red")
+  geom_hline(yintercept = 0.8, color = "red") +
+  ggtitle("Statistical power at different sample sizes - Simulated") +
+  xlab("Number of participants per group") +
+  ylab("Statistical power")
 ```
 We can see that our power increases dramatically with sample size, but eventually approaches 100%. Once power is already very high, further increasing the sample size provides little additional statistical benefit, despite potentially increasing the time and cost of the experiment.
 
@@ -475,7 +478,10 @@ ggplot(df_toast_fixed, aes(x = prob_diff, y = power)) +
   geom_line() +
   geom_point() +
   geom_hline(yintercept = 0.8, color = "red") +
-  geom_vline(xintercept = min_diff, color = "red")
+  geom_vline(xintercept = min_diff, color = "red") +
+  ggtitle("Statistical power at different effect sizes - Simulated") +
+  xlab("Difference in probability of landing butter-side-down") +
+  ylab("Statistical power")
 ```
 [What happens when there is **no difference** between the two groups? Why is the proportion of significant results close to 0.05?]{.blue-text}
 

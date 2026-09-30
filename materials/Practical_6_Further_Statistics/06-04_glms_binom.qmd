@@ -133,7 +133,10 @@ ggplot(
   aes(x = min_temp_coldest_month, y = detected_01)
 ) +
   geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("H. tumulorum detection and minimum temperature\n- Observed and Fitted") +
+  xlab("Minimum temperature of coldest month (°C)") +
+  ylab("H. tumulorum detected")
 ```
 
 A linear model can predict any numerical value, whereas a probability must always lie between 0 and 1 (0–100%). We therefore need a model that retains the useful linear relationship with our explanatory variable, but converts its predictions onto a scale appropriate for a probability.
@@ -254,6 +257,9 @@ ggplot(
     method = "glm",
     method.args = list(family = binomial)
   ) +
+  ggtitle("H. tumulorum detection and minimum temperature - Observed and Fitted") +
+  xlab("Minimum temperature of coldest month (°C)") +
+  ylab("Probability of detection") +
   theme_minimal()
 ```
 
@@ -325,7 +331,7 @@ pred_df <- tibble(
 gt(pred_df)
 ```
 
-These values, essentially 0 at -10°C and 1 at 20°C may still be incorrect, but they are at least valid probabilites. Our model describes the relationship supported by the observed data, which has a minimum temperature of `r round(min(pull(ht_df, min_temp_coldest_month)), 2)`°C and a maximum temperature of `r round(max(pull(ht_df, min_temp_coldest_month)), 2)`°C. There is no guarantee that the same relationship continues beyond this range. Making predictions outside the observed range is called **extrapolation**, and these predictions can be highly unreliable.
+These values, essentially 0 at -10°C and 1 at 20°C may still be incorrect, but they are at least valid probabilities. Our model describes the relationship supported by the observed data, which has a minimum temperature of `r round(min(pull(ht_df, min_temp_coldest_month)), 2)`°C and a maximum temperature of `r round(max(pull(ht_df, min_temp_coldest_month)), 2)`°C. There is no guarantee that the same relationship continues beyond this range. Making predictions outside the observed range is called **extrapolation**, and these predictions can be highly unreliable.
 
 For example, let's predict the probability of finding *H. tumulorum* at 1000°C.
 
@@ -428,7 +434,7 @@ Let's fit a two-parameter model to some simple data. Seagulls like to steal chip
 
 ![A seagull stealing a chip](images/seagull.jpg){#fig-gull width="50%"}
 
-You've been provided with a dataset in `data/seagulls.csv`.
+You've been provided with a (imaginary) dataset in `data/seagulls.csv` showing the distance from the sea of an individual eating chips in metres, and whether or not their chips were stolen.
 
 ::: {.callout-exercise #ex-seagulls .extension}
 
@@ -454,8 +460,15 @@ seagulls <- read_csv("data/seagulls.csv")
 [Plot a box plot with `chips_stolen` on the x axis and `distance_from_sea` on the y axis.]{.blue-text}
 
 ```{r seagulls_ans2}
-ggplot(seagulls, aes(x = chips_stolen, y = distance_from_sea, fill = chips_stolen)) +
-  geom_boxplot()
+ggplot(seagulls, aes(
+  x = chips_stolen,
+  y = distance_from_sea,
+  fill = chips_stolen
+)) +
+  geom_boxplot() +
+  ggtitle("Distance from the sea and chip theft - Observed") +
+  xlab("Chips stolen") +
+  ylab("Distance from sea (m)")
 ```
 
 [Fit a binomial GLM with `chips_stolen` as the response variable.]{.blue-text}
@@ -584,7 +597,10 @@ ggplot(
   aes(x = beta, y = log_likelihood)
 ) +
   geom_point() +
-  geom_vline(xintercept = -0.52)
+  geom_vline(xintercept = -0.52) +
+  ggtitle("Log-likelihood for possible coefficient values") +
+  xlab("Coefficient (β₁)") +
+  ylab("Log-likelihood")
 ```
 
 Our maximum likelihood estimate of $\beta_1$ is `r pull(max_likelihood, beta)[1]`, very similar to the estimate in the model of `r b1`.
@@ -659,7 +675,10 @@ ggplot(
   aes(x = beta, y = likelihood)
 ) +
   geom_point() +
-  geom_vline(xintercept = -0.52)
+  geom_vline(xintercept = -0.52) +
+  ggtitle("Likelihood for possible coefficient values") +
+  xlab("Coefficient (β₁)") +
+  ylab("Likelihood")
 ```
 :::
 :::

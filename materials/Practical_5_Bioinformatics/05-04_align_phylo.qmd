@@ -246,6 +246,20 @@ ggtree(current_newick) +
   coord_cartesian(xlim = c(0, 20)) +
   geom_treescale(x = 0, y = 0, fontsize = 3)
 ```
+We can add a title with `ggtitle()` just like with `ggplot2`.
+
+```{r ggtree_title, fig.width=10, fig.height=10}
+ggtree(current_newick) +
+  geom_tiplab(aes(subset = label != "Ccan_ERV_1_ORF_4"),
+    color = "black", size = 2
+  ) +
+  geom_tiplab(aes(subset = label == "Ccan_ERV_1_ORF_4"),
+    color = "red", size = 3
+  ) +
+  coord_cartesian(xlim = c(0, 20)) +
+  geom_treescale(x = 0, y = 0, fontsize = 3) +
+  ggtitle("Ccan ERV 1 Phylogeny")
+```
 
 You can save your tree as a PDF using `ggsave()`, again you may need to adjust the width and height to fit it nicely on the page, you can do this with the `width` and `height` arguments.
 

@@ -290,8 +290,7 @@ ggplot(
   aes(x = annual_mean_temp, y = elevation)
 ) +
   geom_point() +
-  geom_smooth(method = "lm")
- +
+  geom_smooth(method = "lm") +
   ggtitle("Annual mean temperature vs elevation - Observed") +
   xlab("Annual mean temperature (°C)") +
   ylab("Elevation (m)") +

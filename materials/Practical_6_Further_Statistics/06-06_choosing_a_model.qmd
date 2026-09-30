@@ -221,7 +221,11 @@ ggplot(
   aes(x = degrees_of_freedom, y = deviance)
 ) +
   geom_point() +
-  geom_line()
+  geom_line() +
+  ggtitle("Residual deviance of nested Septin models") +
+  xlab("Residual degrees of freedom") +
+  ylab("Residual deviance") +
+  theme_minimal()
 ```
 
 :::
@@ -345,7 +349,11 @@ ggplot(
       name = "Model",
       labels = paste0("Model ", seq(1, 7))
     )
-  )
+  ) +
+  ggtitle("Residual deviance of nested Septin models") +
+  xlab("Residual degrees of freedom") +
+  ylab("Residual deviance") +
+  theme_minimal()
 ```
 
 :::{.callout-exercise #ex-minimal_model_septin .core}

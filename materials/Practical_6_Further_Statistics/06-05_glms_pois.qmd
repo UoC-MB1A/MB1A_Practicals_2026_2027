@@ -147,6 +147,9 @@ ggplot(
     method = "glm",
     method.args = list(family = poisson)
   ) +
+  ggtitle("Apidae and non-Apidae species richness - Observed and Fitted") +
+  xlab("Number of non-Apidae species") +
+  ylab("Number of Apidae species") +
   theme_minimal()
 ```
 
@@ -411,6 +414,9 @@ dispersion_long <- dispersion_df |>
 ggplot(dispersion_long, aes(x = data, y = difference, fill = data)) +
   geom_boxplot() +
   geom_hline(yintercept = 0) +
+  ggtitle("Variation around fitted insect species richness") +
+  xlab("Data") +
+  ylab("Difference from fitted count") +
   theme_minimal()
 ```
 Clearly, our data are more dispersed than the model predicts.

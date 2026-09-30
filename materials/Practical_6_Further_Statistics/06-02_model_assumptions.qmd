@@ -124,8 +124,11 @@ ggplot(ht_df, aes(
 )) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  theme_minimal() +
-  geom_hline(aes(yintercept = overall_mean), color = "red")
+  geom_hline(aes(yintercept = overall_mean), color = "red") +
+  ggtitle("Distribution of Minimum Temperature by Presence / Absence of H. tumulorum") +
+  xlab("H. tumulorum present") +
+  ylab("Minimum temperature (°C)") +
+  theme_minimal()
 ```
 
 The residuals are the differences between the observed values and the values predicted by the linear model.
@@ -240,6 +243,9 @@ ggplot(
   aes(x = residual)
 ) +
   geom_histogram(bins = 15) +
+  ggtitle("Distribution of Residuals -\nMinimum Temperature vs Presence / Absence of H. tumulorum") +
+  xlab("Residual (°C)") +
+  ylab("Number of sites") +
   theme_minimal()
 ```
 
@@ -258,6 +264,9 @@ To plot the Q-Q plot, we can use the functions `stat_qq()` and `stat_qq_line()`.
 ggplot(ht_diagnostics, aes(sample = residual)) +
   stat_qq() +
   stat_qq_line() +
+  ggtitle("Q-Q plot - \nMinimum Temperature vs Presence / Absence of H. tumulorum") +
+  xlab("Theoretical residuals under normal distribution") +
+  ylab("Observed residuals") +
   theme_minimal()
 ```
 
@@ -310,6 +319,9 @@ diag_normal <- function(data_points) {
     aes(x = observations)
   ) +
     geom_histogram(bins = 25) +
+    ggtitle("Distribution of points") +
+    xlab("Measurement") +
+    ylab("Frequency") +
     theme_minimal()
   # Plot the Q-Q plot
   qq <- ggplot(
@@ -318,6 +330,9 @@ diag_normal <- function(data_points) {
   ) +
     stat_qq() +
     stat_qq_line() +
+    ggtitle("Q-Q plot") +
+    xlab("Theoretical quantiles") +
+    ylab("Observed quantiles") +
     theme_minimal()
   return(histo + qq)
 }
@@ -545,6 +560,9 @@ ggplot(
 ) +
   geom_histogram(bins = 15) +
   facet_wrap(~detected) +
+  ggtitle("Distribution of residuals between groups\nMinimum Temperature vs Presence / Absence of H. tumulorum") +
+  xlab("Residual (°C)") +
+  ylab("Frequency") +
   theme_minimal()
 ```
 
@@ -592,7 +610,11 @@ ggplot(
   )
 ) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  ggtitle("Annual Mean Temperature vs Total Annual Precipitation") +
+  xlab("Annual mean temperature (°C)") +
+  ylab("Total annual precipitation (mm)") +
+  theme_minimal()
 ```
 
 As for the categorical data, we can extract our fitted and residual values from the model. In this case the fitted values are the values which would be on the line and the residuals are the distances between the black dots and the line.
@@ -627,6 +649,9 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
+  ggtitle("Residuals vs Fitted - \nAnnual Mean Temperature vs Total Annual Precipitation") +
+  xlab("Fitted precipitation (mm)") +
+  ylab("Residual (mm)") +
   theme_minimal()
 ```
 :::
@@ -655,6 +680,9 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
+  ggtitle("Scale - Location - \nAnnual Mean Temperature vs Total Annual Precipitation") +
+  xlab("Fitted precipitation (mm)") +
+  ylab("√|Standardised residual|") +
   theme_minimal()
 ```
 
@@ -666,7 +694,7 @@ Again, this looks like the equal variance assumption has been met.
 
 If the assumption of equal variance is not met, the plot will look a bit different.
 
-For example, let's simulate a dataset where plant biomass is the response variable and age is the explanatory variable, and increase the standard deviation with increasing age. It is common in biological systems for the magnitude of the variability in a measurement to naturally increase as the expected value increases.
+For example, let's simulate a dataset where plant biomass in grams is the response variable and age is the explanatory variable, and increase the standard deviation with increasing age. It is common in biological systems for the magnitude of the variability in a measurement to naturally increase as the expected value increases.
 
 ```{r simulate_plant_biomass}
 plant_data <- tibble(
@@ -714,6 +742,9 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
+  ggtitle("Residuals vs Fitted - \nAge vs Plant biomass") +
+  xlab("Fitted biomass (g)") +
+  ylab("Residual (g)") +
   theme_minimal()
 ```
 
@@ -726,6 +757,9 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
+  ggtitle("Scaled residuals vs Fitted - \nAge vs Plant biomass") +
+  xlab("Fitted biomass (g)") +
+  ylab("√|Standardised residual|") +
   theme_minimal()
 ```
 :::
@@ -752,6 +786,9 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
+  ggtitle("Residuals vs Fitted - \nAnnual Mean Temperature vs Total Annual Precipitation") +
+  xlab("Fitted precipitation (mm)") +
+  ylab("Residual (mm)") +
   theme_minimal()
 ```
 
@@ -766,6 +803,9 @@ ggplot(
 ) +
   geom_point() +
   geom_smooth(se = FALSE) +
+  ggtitle("Residuals vs Fitted - \nAge vs Plant biomass") +
+  xlab("Fitted biomass (g)") +
+  ylab("Residual (g)") +
   theme_minimal()
 ```
 
@@ -790,6 +830,9 @@ curved_diagnostics <- get_diagnostic_stats(curved_model)
 ggplot(curved_diagnostics, aes(x = fitted, y = residual)) +
   geom_point() +
   geom_smooth(se = FALSE) +
+  ggtitle("Residuals vs Fitted - \nSimulated curved data") +
+  xlab("Fitted") +
+  ylab("Residuals") +
   theme_minimal()
 ```
 
@@ -834,6 +877,9 @@ ggplot(
   )
 ) +
   geom_point(aes(size = cooks_distance)) +
+  ggtitle("Leverage against standardised residuals - \nAnnual Mean Temperature vs Total Annual Precipitation") +
+  xlab("Leverage") +
+  ylab("Standardised residual") +
   theme_minimal()
 ```
 
