@@ -742,3 +742,8 @@ section:has(> h2.hide-heading) > h2.hide-heading {
   font-family: monospace;
   font-weight: 600;
 }
+.expected-output-label {
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}

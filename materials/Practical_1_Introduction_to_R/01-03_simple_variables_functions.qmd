@@ -35,6 +35,15 @@ By the end of this part of the practical you should be able to:
 
 For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, ``{{< meta practical >}}/prac1_exercises.qmd`. You can describe the code if you wish, or just label it with the exercise name. For the data analysis exercises in Part 4: exercises 5 and 6, please create a second Quarto document `{{< meta practical >}}/ukhsa_data_analysis.qmd` and briefly describe your analysis.
 
+::: {.callout-note #note-copy_code}
+
+### Copying code
+
+From here onwards, if you need to include code in your Quarto document for future exercises to work, it will be highlighted with "Include this code".
+
+Other code (outside of exercises) is to read and understand but you don't need to run it yourself (although you can if you want to).
+:::
+
 ## Functions {#sec-functions .core}
 
 [**Core**]{.core-text}

@@ -69,9 +69,11 @@ fortune()
 
 You have already installed all the packages you will need for this practical by following the instructions in @sec-install.
 
-However, we will sometimes need to load a package, for example, for this practical we will use some functions from the [`tidyverse`](https://tidyverse.org/) package collection for data science and from the [`gt`](https://gt.rstudio.com/) package for visualising data frames.
+However, we will often need to load a package.
 
-Therefore, you need to include the following code at the beginning of your Quarto document.
+For example, for this practical we will use some functions from the [`tidyverse`](https://tidyverse.org/) package collection for data science and from the [`gt`](https://gt.rstudio.com/) package for visualising data frames.
+
+Therefore, you need to include the following code at the beginning of your `prac_1_exercises.qmd` Quarto document.
 
 ::: {.callout-note .copycode #copycode-load_tidyverse}
 
@@ -84,12 +86,6 @@ library(gt)
 
 :::
 
-::: {.callout-note #note-copy_code}
-
-### Copying code
-
-From here onwards, if you need to include code in your Quarto document for future exercises to work, it will be highlighted with "Include this code" as above.
-:::
 
 ## Vectors  {#sec-vectors .core}
 
@@ -418,7 +414,22 @@ Have a look through the datasets with measurements taken over time which are ava
 If you have difficulty downloading a dataset, use the example rhinovirus dataset provided in the data folder as `data/ukhsa-chart-download-rhinovirus.csv`.
 :::
 
-In a new Quarto report, `{{< meta practical >}}/ukhsa_data_analysis.qmd`, load this table into R and then view the resulting table with `gt()`. These tables are mostly long, so we can use the `head()` function together with `gt()` to just visualise the first ten lines:
+Start a new Quarto report named `{{< meta practical >}}/ukhsa_data_analysis.qmd`.
+
+You will need this section at the top of your Quarto document to load the required packages.
+
+::: {.callout-note .copycode #copy-load_tv_gt}
+
+### Include this code
+
+```{r load_tidyverse2}
+library(tidyverse)
+library(gt)
+```
+
+:::
+
+Load the table you have download into R and then view the resulting table with `gt()`. These tables are mostly long, so we can use the `head()` function together with `gt()` to just visualise the first ten lines:
 
 For example:
 
@@ -430,16 +441,7 @@ gt(head(rhinovirus))
 
 Don't forget to write a line or two describing what you did - for example, which dataset you have selected.
 
-You will need this section at the top of your Quarto document:
 
-::: {.callout-note .copycode #copy-load_tv_gt}
-
-```{r load_tidyverse2}
-library(tidyverse)
-library(gt)
-```
-
-:::
 :::
 
 ### Downloading data via an API {#sec-api .fold .bonus}
