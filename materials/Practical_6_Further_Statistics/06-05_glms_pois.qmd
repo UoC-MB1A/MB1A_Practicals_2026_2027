@@ -167,7 +167,7 @@ We can make predictions with our Poisson GLMs using the `predict()` function, ju
 
 [**Core**]{.core-text}
 
-Use `predict()` to estimate the expected number of Apidae species at a site with **8 non-Apidae species**.
+In your `glms.qmd` Quarto file, use `predict()` to estimate the expected number of Apidae species at a site with **8 non-Apidae species**.
 
 Remember to use `type = "response"` to return the prediction as an expected count rather than on the log scale.
 

@@ -107,7 +107,7 @@ Retroviruses, especially endogenous retroviruses, are very divergent, so the seq
 
 [**Core**]{.core-text}
 
-Repeat the steps above for each of the three ORF sequences in your `identified_orf_df` data frame, so that you have one multiple sequence alignment for each gene.
+In your `beaver_ervs.qmd` Quarto file, repeat the steps above for each of the three ORF sequences in your `identified_orf_df` data frame, so that you have one multiple sequence alignment for each gene.
 
 * Create an `AAStringSet` with the single ORF sequence.
 * Create a second `AAStringSet` based on the BLAST output for the same ORF sequence.
@@ -166,7 +166,7 @@ write.tree(tree, file = "output/gag_Ccan_ERV_1_ORF_4.nwk")
 
 [**Core**]{.core-text}
 
-Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one Newick file for each gene.
+In your `beaver_ervs.qmd` Quarto file, repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one Newick file for each gene.
 
 * Read the amino acid alignment.
 * Create a distance matrix.
@@ -288,7 +288,7 @@ ggsave(
 
 [**Core**]{.core-text}
 
-Repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one saved file for each gene.
+In your `beaver_ervs.qmd` Quarto file, repeat the steps above for each of the ORF sequences in your `identified_orf_df` data frame, so that you have one saved file for each gene.
 
 * Read the tree into R using `read.newick()`.
 * Plot the tree using `ggtree()`.

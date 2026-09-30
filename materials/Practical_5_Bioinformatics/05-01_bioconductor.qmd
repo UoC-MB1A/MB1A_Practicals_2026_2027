@@ -199,7 +199,7 @@ print(names(beaver_fasta))
 
 You can access the lengths of the sequences using the function `width()`, with your DNAStringSet variable as the argument.
 
-Using R functions, find out:
+In your `beaver_ervs.qmd` Quarto file, using R functions, find out:
 
 * How long is the longest sequence?
 * How long is the shortest sequence?

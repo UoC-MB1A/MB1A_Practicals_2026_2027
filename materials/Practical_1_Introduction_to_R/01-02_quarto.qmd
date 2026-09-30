@@ -305,7 +305,7 @@ Save the document and render it again.
 
 [**Extension**]{.extension-text}
 
-Look through the [tidyverse style guide](https://style.tidyverse.org/syntax.html) and format your code in the HPA data Quarto document manually. Save the document and render it again. Did you change anything that the Addin did not change?
+Look through the [tidyverse style guide](https://style.tidyverse.org/syntax.html) and format your code in the HPA data Quarto document (`hpa_quarto.qmd`) manually. Save the document and render it again. Did you change anything that the Addin did not change?
 
 :::
 

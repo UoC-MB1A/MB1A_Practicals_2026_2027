@@ -424,7 +424,7 @@ This means that, based on this sample, for example, 1.5% of people aged 20-29 wi
 
 [**Bonus**]{.bonus-text}
 
-Extend your simulation to calculate the probability that a 24 year old who is HPV positive and has a cervix would be diagnosed with cervical cancer on further testing (assuming prevalence is constant across the 20-29 age group).
+In your `hpv.qmd` Quarto file, extend your simulation to calculate the probability that a 24 year old who is HPV positive and has a cervix would be diagnosed with cervical cancer on further testing (assuming prevalence is constant across the 20-29 age group).
 
 ::: {.callout-note #note-and}
 The & operator means AND and returns TRUE only when both conditions are TRUE and might be useful here.

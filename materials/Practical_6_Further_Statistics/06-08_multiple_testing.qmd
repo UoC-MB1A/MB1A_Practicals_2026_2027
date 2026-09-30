@@ -64,6 +64,8 @@ We can reproduce this in R.
 
 [**Extension**]{.extension-text}
 
+In your `multiple_testing.qmd` Quarto file:
+
 * Generate a simulated set of 1000 values which are normally distributed with mean 0 and standard deviation 1.
 * For each value, use `pnorm()` to calculate its cumulative probability — the proportion of a standard normal distribution that lies below that value.
 * Plot these probabilities as a histogram using `geom_histogram()` with the arguments `boundary = 0, binwidth = 0.05`.
@@ -255,7 +257,7 @@ Where $\alpha$ is our p-value threshold and $n$ is the number of tests.
 
 [**Extension**]{.extension-text}
 
-In R, calculate FWER for our example above, where alpha is 0.05 and n is 86.
+In R, in your `multiple_testing.qmd` Quarto file, calculate FWER for our example above, where alpha is 0.05 and n is 86.
 
 ::: {.callout-answer collapse="true" #ex-fwer_ans}
 ```{r fwer_ans}

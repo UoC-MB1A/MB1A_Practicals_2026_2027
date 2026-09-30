@@ -159,7 +159,7 @@ In the exercise above, we calculated the median of each latitude and longitude c
 
 The `across()` function can be used with `summarise()` to apply the same function to several columns at once.
 
-Explore the documentation for [`across()`](https://dplyr.tidyverse.org/reference/across.html) and see if you can use it to recreate `bird_migration_summary` with less code.
+Explore the documentation for [`across()`](https://dplyr.tidyverse.org/reference/across.html) and, in your `worked_example.qmd` Quarto document, see if you can use it to recreate `bird_migration_summary` with less code.
 
 ::: {.callout-answer collapse="true" #ex-across_ans}
 
@@ -274,7 +274,7 @@ gt(combined_bird_data)
 
 Joins do not always produce the number of rows you might expect.
 
-Create these two data frames:
+In your `worked_example.qmd` Quarto file, create these two data frames:
 
 ```{r join_duplicates1}
 birds <- tibble(
@@ -378,7 +378,7 @@ We used `pivot_longer()` to convert our bird data from wide to long format.
 
 There is also a function called `pivot_wider()`.
 
-Without changing `combined_bird_data`, see if you can use `pivot_wider()` on `combined_bird_piv` to reconstruct the original wide-format data.
+Without changing `combined_bird_data`, in your `worked_example.qmd` Quarto file, see if you can use `pivot_wider()` on `combined_bird_piv` to reconstruct the original wide-format data.
 
 You may need to explore the documentation to work out which arguments you need.
 

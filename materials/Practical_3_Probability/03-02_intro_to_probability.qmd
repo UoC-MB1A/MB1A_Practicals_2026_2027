@@ -547,7 +547,7 @@ print(prob_125_or_over)
 
 [**Extension**]{.extension-text}
 
-Estimate the smallest number of flowers the botanist would need to collect to have at least a 95% probability of obtaining 125 pollinated flowers.
+In your `prac3_exercises.qmd` Quarto file, estimate the smallest number of flowers the botanist would need to collect to have at least a 95% probability of obtaining 125 pollinated flowers.
 
 ::: {.callout-answer collapse="true" #ex-binomial_ext_ans}
 Option 1: Using simulation
