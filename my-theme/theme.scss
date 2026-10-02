@@ -747,3 +747,13 @@ section:has(> h2.hide-heading) > h2.hide-heading {
   margin-top: 0.75rem;
   margin-bottom: 0.25rem;
 }
+
+/* Unreleased practicals */
+.sidebar-item:has([data-bs-target="#quarto-sidebar-section-2"]),
+.sidebar-item:has([data-bs-target="#quarto-sidebar-section-3"]),
+.sidebar-item:has([data-bs-target="#quarto-sidebar-section-4"]),
+.sidebar-item:has([data-bs-target="#quarto-sidebar-section-5"]),
+.sidebar-item:has([data-bs-target="#quarto-sidebar-section-6"]),
+.sidebar-item:has([data-bs-target="#quarto-sidebar-section-7"]) {
+  display: none;
+}
