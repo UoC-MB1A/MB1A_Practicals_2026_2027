@@ -23,7 +23,7 @@ In this course, we will use **Git** and **GitHub** to track changes to our code 
 
 ### Git {#sec-git}
 
-![Git logo](materials/images/git_logo.png){#fig-gitlogo .screenshot width="50%"}
+![Git logo. [Source](https://commons.wikimedia.org/wiki/File:Git-logo.svg)](materials/images/git_logo.png){#fig-gitlogo .screenshot width="50%"}
 
 
 [Git](https://git-scm.com/) is a **version control** system for code (and other files). It keeps track of changes you make to your files over time, allowing you to return to earlier versions if something goes wrong. It also makes it easier for multiple people to work on the same project.
@@ -32,7 +32,7 @@ Usually, Git is used to track all the changes within a folder, called a **Git Re
 
 ### GitHub {#sec-github}
 
-![GitHub logo](materials/images/github_logo.png){#fig-githublogo .screenshot width="50%"}
+![GitHub logo [Source](https://brand.github.com/foundations/logo)](materials/images/github_logo.png){#fig-githublogo .screenshot width="50%"}
 
 [GitHub](https://github.com/) is an **online platform for storing Git repositories**. It lets you back up your work in the cloud, share your code with others, and collaborate on projects. GitHub uses Git to track changes, but also provides additional features.
 

@@ -1,27 +1,49 @@
-install.packages("ape")
-install.packages("Biostrings")
-install.packages("cowsay")
-install.packages("DescTools")
-install.packages("effectsize")
-install.packages("fortunes")
-install.packages("GGally")
-install.packages("ggtree")
-install.packages("gt")
-install.packages("httr2")
-install.packages("janitor")
-install.packages("lubridate")
-install.packages("maps")
-install.packages("moments")
-install.packages("msa")
-install.packages("ORFik")
-install.packages("osbng")
-install.packages("patchwork")
-install.packages("pollimetry")
-install.packages("pwr")
-install.packages("rnaturalearth")
-install.packages("Runuran")
-install.packages("sf")
-install.packages("styler")
-install.packages("terra")
-install.packages("tidyverse")
-install.packages("treeio")
+cran_packages <- c(
+  "ape",
+  "cowsay",
+  "DescTools",
+  "effectsize",
+  "fortunes",
+  "GGally",
+  "gt",
+  "httr2",
+  "janitor",
+  "lubridate",
+  "maps",
+  "moments",
+  "osbng",
+  "patchwork",
+  "phytools",
+  "pollimetry",
+  "pwr",
+  "rnaturalearth",
+  "Runuran",
+  "sf",
+  "styler",
+  "terra",
+  "tidyverse"
+)
+
+not_installed <- cran_packages[
+  !cran_packages %in% installed.packages()[, "Package"]
+]
+
+install.packages(not_installed)
+
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+
+bioconductor_packages <- c(
+  "Biostrings",
+  "ggtree",
+  "msa",
+  "ORFik",
+  "treeio"
+)
+
+not_installed <- bioconductor_packages[
+  !bioconductor_packages %in% installed.packages()[, "Package"]
+]
+
+BiocManager::install(not_installed, ask = FALSE)

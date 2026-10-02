@@ -88,3 +88,27 @@ Alternatively, you can manually download and install these programs using defaul
 - Download the [RStudio](https://www.rstudio.com/products/rstudio/download/#download) installer for your distribution and install it using your package manager.
 :::
 
+## Installing Packages
+
+Now that you have RStudio installed, please download <a href="install_packages.R" download>this file</a> and open it in RStudio using `File` > `Open File...`.
+
+Run all of the code in the file by clicking the ![Source button](materials/images/source_button.png){.inline-icon} button.
+
+Lots of text will appear in the **Console** section at the bottom of your screen while the packages are being installed. Don't worry — this is normal!
+
+If you are asked:
+
+```text
+Update all/some/none? [a/s/n]:
+```
+press the `a` key and then **Enter**.
+
+Installation may take a while (potentially up to 30 minutes). Most of the GitHub setup in the following section can be carried out in the meantime, if you like (as far as **Cloning a repository with RStudio**).
+
+If a package cannot be installed, you may see a message such as:
+
+```text
+installation of package ‘x’ had non-zero exit status
+```
+
+There will usually be more information about the problem above this message in the Console. If you feel confident, you can search online for the error message and try to resolve the problem yourself. If this doesn't work, or you are unsure what to do, please bring your computer to the **Practical 0** session and we will help you.
