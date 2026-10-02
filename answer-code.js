@@ -1,21 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
   document
-    .querySelectorAll(".callout-answer:not(.show-code)")
+    .querySelectorAll(".callout-answer")
     .forEach(answer => {
+
+      if (answer.closest(".show-code")) return;
 
       answer.querySelectorAll(".cell").forEach(cell => {
 
-        // ----- Fold the source code -----
-        cell.querySelectorAll("div.sourceCode").forEach(source => {
-
-          // Don't process it twice
-          if (source.closest(".answer-code-details")) return;
+      answer.querySelectorAll("div.sourceCode").forEach(source => {
+      
+        // Leave code visible if marked .show-code
+        if (source.closest(".show-code")) return;
+      
+        // Don't process it twice
+        if (source.closest(".answer-code-details")) return;
 
           const details = document.createElement("details");
           details.className = "answer-code-details";
 
           const summary = document.createElement("summary");
-          summary.textContent = "Show code";
+          summary.textContent = "Show answer code";
 
           source.before(details);
           details.appendChild(summary);
@@ -33,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
           const label = document.createElement("div");
           label.className = "expected-output-label";
-          label.textContent = "Expected output";
+          label.textContent = "Output";
 
           output.before(label);
         }
