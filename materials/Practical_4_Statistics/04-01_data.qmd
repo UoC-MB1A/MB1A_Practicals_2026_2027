@@ -8,9 +8,6 @@ author: "Katy Brown"
 ```{r setup_0401, include=FALSE}
 library(tidyverse)
 library(gt)
-library(osbng)
-library(sf)
-library(maps)
 insect_metadata <- read_csv("data/insect_metadata.csv")
 ```
 
@@ -21,6 +18,7 @@ insect_metadata <- read_csv("data/insect_metadata.csv")
 ## Sections
 
 - @sec-dataset_pollinators
+- @sec-examining_data
 - @sec-summary_0401
 :::
 
@@ -63,7 +61,7 @@ The main dataset we will use in this practical is [pan-trap survey data](https:/
 
 [comment]: todo_katy link to the preprocessing.
 
-The data from the scheme is provided as data per trap, for this practical we have amalgamated the data across all dates and across each 1km square. The preprocessing of the data is described in XXXX. 
+The data from the scheme is provided as data per trap, for this practical we have amalgamated the data across all dates and across each 1km square. 
 
 You have been provided with three data files:
 
@@ -88,6 +86,20 @@ PoMS is indebted to the many volunteers who carry out surveys and contribute dat
 ### Revise data frame operations
 
 [**Recommended**]{.rec-text}
+
+If you haven't already, create a new Quarto file, `pollinators.qmd`.
+
+::: {.callout-note .copycode #copy-poll}
+
+### Include this code
+
+```{r start_poll, message = FALSE}
+library(tidyverse)
+library(gt)
+set.seed(42)
+```
+
+:::
 
 In your `pollinators.qmd` Quarto file:
 
@@ -175,6 +187,204 @@ The most commonly observed species was `r pull(insect_totals, species)[1]`, whic
 
 :::
 :::
+
+
+## Examining data {#sec-examining_data .core}
+
+[**Core**]{.core-text}
+
+For now, let's concentrate on a single species, the "bronze furrow bee" *Halictus tumulorum*. This is a relatively common bee species in the UK. It is a species of sweat bee, named because they are often attracted to sweat (although the UK ones usually aren't). 
+
+![*Halictus tumulorum* [Source](https://en.wikipedia.org/wiki/Halictus_tumulorum#/media/File:Halictus_tumulorum_female,_Bagillt,_North_Wales,_July_2016_3_-_Flickr_-_janetgraham84.jpg)](images/bee.jpg){#fig-bee width="50%" fig-alt="A photo of H. tumulorum"}
+
+We can built hypotheses about the relationship between different variables and the presence or absence of *H. tumulorum* at each site. To do this, we need a data frame with a column which shows if *H. tumulorum* is present or absent at each site.
+
+We can create an extra column in a data frame using the function `mutate()`. 
+
+For example, if I wanted to create a column named `Is_England` in the `site_metadata` data frame showing if a site was in England or not, I could do the following:
+
+```{r mutate}
+site_metadata_exp <- site_metadata |>
+  mutate(Is_England = country == "England")
+gt(head(site_metadata_exp))
+```
+
+Here, `country == "England"` is evaluated for each row, so `Is_England` contains `TRUE` for sites in England and `FALSE` for other sites.
+
+We can use any kind of **comparison operator** with mutate (see @sec-comparisons). 
+
+We can also add an existing vector as a new column, or set every row of a new column to the same value.
+
+```{r mutate_3}
+# Fixed value
+site_metadata_exp <- site_metadata_exp |>
+  mutate(new_col_2 = "hello")
+
+gt(head(site_metadata_exp))
+```
+
+
+::: {.callout-exercise #ex-filter_ht .core}
+
+### Build *H. tumulorum* data frame.
+
+[**Core**]{.core-text}
+
+If you haven't already, create a new Quarto file, `pollinators.qmd`.
+
+::: {.callout-note .copycode #copy-poll}
+
+### Include this code
+
+```{r start_poll2, message = FALSE}
+library(tidyverse)
+library(gt)
+set.seed(42)
+```
+
+:::
+
+
+In your `pollinators.qmd` Quarto document:
+
+* Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.
+* Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.
+* Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.
+* Store the resulting data frame as a variable named `ht_df`.
+* Write the data frame to the file `output/ht_df.csv`.
+
+::: {.callout-answer collapse="true" #ex_filter_ht_ans}
+[Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.]{.blue-text}
+
+```{r subset_ht}
+ht_counts <- insect_counts |>
+  filter(species == "Halictus tumulorum")
+gt(head(ht_counts))
+```
+
+[Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.]{.blue-text}
+
+```{r logical_ht}
+ht_df <- ht_counts |>
+  mutate(detected = n_observed > 0)
+```
+
+[Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.]{.blue-text}
+
+[Store the resulting data frame in as a variable named `ht_df`.]{.blue-text}
+
+```{r presence_absence_ht, message=FALSE}
+ht_df <- ht_df |>
+  inner_join(site_metadata)
+
+gt(head(ht_df))
+```
+
+[Write the data frame to the file `output/ht_df.csv`.]{.blue-text}
+
+```{r save_ht}
+write_csv(ht_df, "output/ht_df.csv")
+```
+
+:::
+:::
+
+*H. tumulorum* tend to be found [towards the south](https://bwars.com/bee/halictidae/halictus-tumulorum) of the UK. Let's use our data to explore the possibility that this is because they don't like very cold temperatures.
+
+We have a column in our site metadata data frame which can help us establish if this is true - the `min_temp_coldest_month` column. This is a BIOCLIM climate variable describing the lowest temperature in the coldest month in the map square and is the mean from 1970-2000. Technically, the lowest tempeature in the coldest month might not be the overall lowest temperature, however, for brevity from here forward we will refer to this just as **minimum temperature**.
+
+We can compare this minimum temperature for the sites where the bees are present and absent using a box plot.
+
+For clarity, let's select only the relevant columns in our data frame, using the `select()` function.
+
+::: {.callout-note .copycode #copy-select}
+
+### Include this code
+
+In `pollinators.qmd`:
+
+```{r select_ht}
+ht_temp_df <- ht_df |>
+  select(x1km_square, detected, min_temp_coldest_month)
+```
+
+:::
+
+```{r show_ht}
+gt(head(ht_temp_df))
+```
+
+For convenience later, we can calculate the mean, standard deviation and number of observations for sites with and without *H. tumulorum*, using the `group_by()` and `summarise()` functions we learned in @sec-summary_stats.
+
+To do this, use the following code, which you should include in your `pollinators.qmd` Quarto document.
+
+::: {.callout-note .copycode #copy-select}
+
+### Include this code
+
+```{r summary_ht}
+ht_temp_summ <- ht_temp_df |>
+  group_by(detected) |>
+  summarise(
+    mean = mean(min_temp_coldest_month),
+    sd = sd(min_temp_coldest_month),
+    count = n()
+  )
+
+# Separate present and absent sites
+present <- ht_temp_summ |>
+  filter(detected == TRUE)
+
+absent <- ht_temp_summ |>
+  filter(detected == FALSE)
+
+gt(ht_temp_summ)
+```
+
+Present only
+
+```{r show_pres}
+gt(present)
+```
+
+Absent only
+
+```{r show_abs}
+gt(absent)
+```
+
+:::
+
+
+:::{.callout-exercise #ex-boxplot_bees .rec}
+
+### Box plot
+
+[**Recommended**]{.rec-text}
+
+In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `min_temp_coldest_month` in your `ht_df` data frame for the regions with and without these bees (i.e. based on the `detected` column).
+
+* The R function `geom_boxplot()` draws a box plot.
+* The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the arguments `x = detected` and `y = min_temp_coldest_month`. 
+
+:::{.callout-answer collapse="true" #ex-boxplot_bees_ans}
+
+```{r boxplot_ht}
+#| fig-alt: "Box plot comparing minimum temperature at sites where H. tumulorum was detected and not detected. The detected group is shifted towards higher temperatures, although the two distributions overlap. The undetected box has a longer interquartile range and longer whiskers"
+ggplot(
+  ht_df,
+  aes(x = detected, y = min_temp_coldest_month, fill = detected)
+) +
+  geom_boxplot() +
+  ggtitle("Minimum Temperature with and without H. tumulorum - Observed") +
+  xlab("Presence of H. tumulorum") +
+  ylab("Minimum temperature (°C)") +
+  theme_minimal()
+```
+:::
+:::
+Looking at our box plot, it seems like perhaps these bees don't like the cold.
+
 
 ## Review {#sec-summary_0401}
 

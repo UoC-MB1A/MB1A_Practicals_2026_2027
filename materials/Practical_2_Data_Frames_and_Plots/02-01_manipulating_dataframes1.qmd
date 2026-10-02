@@ -62,7 +62,7 @@ In this practical, we will first work with a published dataset to learn how to p
 For the worked example, we will use data from [this Science paper](https://doi.org/10.1126/science.ads0532), published in June 2026.
 This study tracked the migration of a songbird species, the pied flycatcher (*Ficedula hypoleuca*).
 
-![Pied flycatcher](images/birdy.png){#fig-pied_flycatcher width="30%"}
+![Pied flycatcher. [Source](https://commons.wikimedia.org/wiki/File:Ficedula_hypoleuca_Nuevalos,_Spain.jpg)](images/birdy.png){#fig-pied_flycatcher width="30%"}
 
 One of the most surprising findings of this study was that these birds take **very different routes** depending on the time of year. The authors demonstrated that:
 
@@ -155,7 +155,9 @@ What is the longitude of the Moscow breeding site?
 
 ### Reading the breeding site CSV file {#sec-birds_read_csv .core}
 
-Now we will start to build our Quarto document examining this dataset, `{{< meta practical >}}/worked_example.qmd`
+Now we will start to build our Quarto document examining this dataset.
+
+If you haven't already, create a new Quarto document, `worked_example.qmd`.
 
 ::: {.callout-note .copycode #copy-libraries}
 
@@ -185,7 +187,7 @@ Reminder: The R function `read_csv()` reads a CSV file into R as a data frame. T
 :::
 
 ::: {.callout-answer collapse="true" #ex-read_csv_ans}
-```{r read_bird_data, eval=FALSE}
+```{r read_bird_data, message=FALSE}
 bird_breeding_sites <- read_csv("data/breeding_site_locations.csv")
 gt(bird_breeding_sites)
 ```
@@ -225,6 +227,20 @@ glimpse(bird_breeding_sites)
 At the top, we can see how many rows and columns the data frame has.
 
 There is then a summary of each column. The second column shows `<chr>` or `<dbl>` - `<chr>` columns contain **character** data and `<dbl>` columns contain **numeric** data (R calls some types of numeric data **double**)
+
+We can also use the function `nrow()` to see just the number of rows, `ncol()` to see just the number of columns, or `dim()` to see both (the dimensions).
+
+```{r nrow_birds}
+print(nrow(bird_breeding_sites))
+```
+
+```{r ncol_birds}
+print(ncol(bird_breeding_sites))
+```
+
+```{r dim_birds}
+print(dim(bird_breeding_sites))
+```
 
 
 ### Reading the migration site CSV file {#sec-read_csv .core}
@@ -284,7 +300,7 @@ character (`<chr>`)
 What is the data type for the column `Birth`?
 
 ::: {.callout-answer collapse="true" #ex-examine_csv_ans3}
-numeric / double (`<dbl>`)
+numeric / integer (`<dbl>`)
 :::
 :::
 
@@ -316,17 +332,7 @@ We are going to make copies of these data frames with only the columns we are in
 
 To do this, we first need to learn about the **pipe** symbol `|>`. This is an **operator** in R which is used to link multiple steps in an analysis.
 
-For example:
-
-```{r pipe_sym}
-my_numbers <- c(2, 4, 6, 8)
-
-my_numbers |> sum()
-```
-
-The pipe passes the value on its left into the function on its right. Here, we first make a **vector** of numbers, then we use this vector as the input to the function `sum()`.
-
-This produces the same result as:
+Here, we first make a **vector** of numbers, then we use this vector as the input to the function `sum()`.
 
 ```{r mean_no_pipe}
 my_numbers <- c(2, 4, 6, 8)
@@ -334,14 +340,25 @@ my_numbers <- c(2, 4, 6, 8)
 sum(my_numbers)
 ```
 
+Alternatively, we can use the pipe symbol. The pipe passes the value on its left into the function on its right. Here, we pass the value of `my_numbers` to `sum()`.
+
+```{r pipe_sym}
+my_numbers <- c(2, 4, 6, 8)
+
+my_numbers |> sum()
+```
+
+This produces the same result as above.
+
+
 Pipes make it easier to perform a series of steps on the same variable:
 
 ```{r pipe_longer}
 my_numbers <- c(2, 4, 6, 8)
 
-my_numbers |>
+print(my_numbers |>
   sum() |>
-  sqrt()
+  sqrt())
 ```
 
 You can keep adding additional steps to your pipe:
@@ -349,10 +366,10 @@ You can keep adding additional steps to your pipe:
 ```{r pipe_longerer}
 my_numbers <- c(2, 4, 6, 8)
 
-my_numbers |>
+print(my_numbers |>
   sum() |>
   sqrt() |>
-  round()
+  round())
 ```
 
 
@@ -389,6 +406,8 @@ result <- input_vec |>
   mean() |>
   abs() |>
   round()
+
+print(result)
 ```
 
 :::
@@ -519,7 +538,44 @@ For example:
 | `<` | is less than |
 | `<=` | is less than or equal to |
 
-We can use these with single values as well as with data frame columns:
+::: {.callout-note #note-equals_equals}
+
+### `==`
+
+The operator `==` means "is equal to?". It compares two values and returns either TRUE or FALSE.
+This is different from assigning a value.
+
+In these practicals, we use `<-` to assign values to variables:
+
+```{r equalsequals1}
+x <- 1
+```
+
+We also use a single equals sign (=) to specify the values of function arguments:
+
+```{r equalsequals2}
+round(3.123, digits = 1)
+```
+
+To compare two values, we therefore use two equals signs (==):
+
+```{r equalsequals3}
+x <- 1
+y <- 2
+print(x == y)
+```
+
+This returns FALSE, because x and y are not equal.
+
+A single equals sign cannot be used as a comparison operator:
+```{r equalsequals4}
+x <- 1
+y <- 2
+print(x = y)
+```
+:::
+
+We can use comparison operators with single values as well as with data frame columns:
 
 ```{r operators1}
 x <- 3
@@ -541,6 +597,8 @@ This shows `TRUE` because `x` is equal to `3`.
 
 [**Core**]{.core-text}
 
+If you haven't already, create a new Quarto file, `prac2_exercises.qmd`.
+
 In your **prac2_exercises.qmd** Quarto document, assign `y` a value of 12 and then use comparison operators to show if:
 
 * `y` is equal to 7
@@ -549,21 +607,32 @@ In your **prac2_exercises.qmd** Quarto document, assign `y` a value of 12 and th
 * `y` is less than or equal to 12
 
 :::{.callout-answer collapse="true" #ex-comparisons_ans}
+
+[Assign `y` a value of 12]{.blue-text}
+
 ```{r comparisons_ans1}
 y <- 12
 ```
+
+`y` is equal to 7
 
 ```{r comparisons_ans2}
 print(y == 7)
 ```
 
+`y` is less than 15
+
 ```{r comparisons_ans3}
 print(y < 15)
 ```
 
+`y` is greater than 20
+
 ```{r comparisons_ans4}
 print(y > 20)
 ```
+
+`y` is less than or equal to 12
 
 ```{r comparisons_ans5}
 print(y <= 12)
@@ -613,17 +682,20 @@ For our analysis we will exclude the measurements from the `Spain` site, as this
 In your **worked_example.qmd** Quarto document, filter both the breeding site and the migration site data frames to exclude `Spain` from the `Site` column. Store these in the variables `bird_breeding_exc` and `bird_migration_exc`, respectively.
 
 ::: {.callout-answer collapse="true" #ex-filter_breeding_ans}
+
+Breeding site
+
 ```{r filter_breeding_ans1}
 bird_breeding_exc <- bird_breeding_selected |>
   filter(Site != "Spain")
-
-bird_migration_exc <- bird_migration_selected |>
-  filter(Site != "Spain")
-
 gt(bird_breeding_exc)
 ```
 
+Migration site
 ```{r filter_breeding_ans2}
+bird_migration_exc <- bird_migration_selected |>
+  filter(Site != "Spain")
+
 gt(head(bird_migration_exc))
 ```
 

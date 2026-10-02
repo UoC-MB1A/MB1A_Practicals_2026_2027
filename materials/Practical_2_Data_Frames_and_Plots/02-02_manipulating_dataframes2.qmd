@@ -255,7 +255,7 @@ In this case, all of the sites are present in both data frames, so any of these 
 In your `worked_example.qmd` Quarto document, perform a full outer join on the `bird_breeding_exc` data frame and the `bird_migration_summary` data frame. Store the resulting data frame in a new variable, named `combined_bird_data`.
 
 ::: {.callout-answer #ex-join_ans}
-```{r join_birds}
+```{r join_birds, message=FALSE}
 combined_bird_data <- full_join(bird_breeding_exc, bird_migration_summary)
 
 gt(combined_bird_data)
@@ -319,9 +319,9 @@ We need to perform one more transformation before we can plot our data.
 
 Our data is currently in what is known as **wide** format - with a single row per site and multiple columns for each measurement for that site. So, all our measurements for each site are on a single row in the data frame.
 
-The plots we want to create will be simpler if we convert the data to **long** format, where, instead, each measurement has a row and there are multiple rows per site.
+The plots we want to create will be simpler if we convert the data to **long** format. Instead of having separate columns for the breeding, stopover, Iberian, westmost and winter locations, we will have a Location_Type column containing either Breeding, Stopover, Iberian, Westmost or Winter. Each bird will therefore have multiple rows: one for each type of location.
 
-![Long and wide format](images/long_and_wide.png){#fig-env_tab width="50%"}
+![Long and wide format. [Source](https://cambiotraining.github.io/data-analysis-in-r-and-python/materials/images/long_and_wide.png)](images/long_and_wide.png){#fig-env_tab width="50%"}
 
 We can convert our data frame to long format using the `pivot_longer()` function.
 
@@ -337,9 +337,9 @@ Single row example:
 
 Before:
 
-| Bird | Breeding_Longitude | Breeding_Latitude | Winter_Longitude | Winter_Latitude |
-|-|-|-|-|-|
-| A | 10 | 50 | 20 | 40 |
+| Bird | Breeding_Longitude | Breeding_Latitude | Winter_Longitude | Winter_Latitude | Iberian_Longitude | Iberian Latitude |
+|-|-|-|-|-|-|-|
+| A | 10 | 50 | 20 | 40 | 30 | 20 |
 
 After:
 
@@ -347,6 +347,9 @@ After:
 |-|-|-|-|
 | A | Breeding | 10 | 50 |
 | A | Winter | 20 | 40 |
+| A | Iberian | 30 | 20 |
+
+More generally, converting from wide to long format moves information that was represented by column names into the values of a column, usually resulting in fewer columns and more rows.
 
 ::: {.callout-note .copycode #copy-pivot}
 
@@ -448,7 +451,7 @@ gt(df_eng_maths)
 
 In your `worked_example.qmd` Quarto document, generate two subsets of your `combined_bird_piv` data frame, one with the **spring** data and one with the **autumn** data. Store these in two variables `spring_data` and `autumn_data`.
 
-::: {.callout-answer #ex-divide_ans}
+::: {.callout-answer .show-code #ex-divide_ans}
 ```{r divide_ans}
 spring_vals <- c("Breeding", "Stopover", "Winter")
 autumn_vals <- c("Breeding", "Iberian", "Westmost", "Winter")

@@ -53,7 +53,7 @@ f(x) =
 \end{cases}
 $$
 
-![Example data point](images/keyboard_cat.png){#fig-keyboard_cat width="50%"}
+![Example data point. Source: CT](images/keyboard_cat.png){#fig-keyboard_cat width="50%"}
 
 Let's plot just the function.
 
@@ -152,7 +152,7 @@ Based on our simulation, cats will sit in the middle 10 cm of the keyboard appro
 
 Some cat parents like to, for their own amusement, pile objects onto their sleeping cat, a game known as [cat buckaroo](https://knowyourmeme.com/memes/cat-buckaroo).
 
-![Example data point](images/jethro1.jpeg){#fig-cataroo1 width="50%"}
+![Example data point. Source: LPW](images/jethro1.jpeg){#fig-cataroo1 width="50%"}
 
 Cats will tolerate this to a certain extent but, at some point, will get up and shake the objects off. The weight of objects the cat will tolerate varies considerably between cats.
 
@@ -181,6 +181,18 @@ To calculate a cosine you can use the function `cos()` with one argument, the nu
 
 ::: {.callout-exercise #ex-cataroo .bonus}
 
+::: {.callout-note .copycode #copy-runuran}
+
+### Include this code
+
+Include this code at the start of your `distributions.qmd` file.
+
+```{r start_hpv, message = FALSE}
+library(Runuran)
+```
+
+:::
+
 In your `distributions.qmd` Quarto file:
 
 * Plot this function.
@@ -189,7 +201,7 @@ In your `distributions.qmd` Quarto file:
 * Simulate 10,000 values.
 * A cat has already tolerated 500 g of objects. Estimate the probability that it will tolerate the addition of a 75 g Yoda figurine without shaking everything off.
 
-![Example data point](images/jethro2.jpeg){#fig-cataroo2 width="50%"}
+![Example data point. Source: LPW](images/jethro2.jpeg){#fig-cataroo2 width="50%"}
 
 ::: {.callout-answer collapse="true" #ex-cats_ans}
 
@@ -259,11 +271,11 @@ prop <- nrow(over_575) / nrow(over_500)
 print(prop)
 ```
 
-![Example data point](images/jethro3.jpeg){#fig-cataroo3 width="50%"}
+![Example data point. Source: LPW](images/jethro3.jpeg){#fig-cataroo3 width="50%"}
 
 If a cat has tolerated the addition of 500g of objects, there is an estimated `r round(prop*100, 2)`% probability they will tolerate an additional 75g Yoda figurine.
 
-![Example data point](images/jethro4.jpeg){#fig-cataroo4 width="50%"}
+![Example data point. Source: LPW](images/jethro4.jpeg){#fig-cataroo4 width="50%"}
 :::
 :::
 ## Review {#sec-summary_0306}

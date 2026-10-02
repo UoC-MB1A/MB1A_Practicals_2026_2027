@@ -46,7 +46,7 @@ By the end of this part of the practical you should be able to:
 
 [↑ top](#)
 
-![The R Logo](images/Rlogo_small.png){#fig-rlogo fig-alt="The R logo - a big blue R in front of a grey oval"}
+![The R Logo. [Source](https://commons.wikimedia.org/wiki/File:R_logo.svg)](images/Rlogo_small.png){#fig-rlogo fig-alt="The R logo - a big blue R in front of a grey oval"}
 
 In this session, we will learn the basics of using the programming language **R**, which we will use for data analysis and visualisation throughout the {{< meta course-title >}} course.
 

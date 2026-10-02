@@ -84,6 +84,21 @@ We are going to perform the same steps lots of times, so we need a function.
 
 [**Extension**]{.extension-text}
 
+Create a new Quarto file, `break_t.qmd`.
+
+::: {.callout-note .copycode #copy-break_t}
+
+### Include this code
+
+Include this code at the top of your `break_t.qmd` Quarto file.
+
+```{r libraries_break_t}
+library(tidyverse)
+library(gt)
+library(patchwork)
+```
+:::
+
 In your `break_t.qmd` Quarto file:
 
 * Write a function named `compare_vectors` for which the input is two vectors of measurements. The function should:
@@ -100,7 +115,7 @@ In your `break_t.qmd` Quarto file:
     * `linear_model` - The fitted linear model
     * `distri` - the plotted distribution
 
-::: {.callout-answer collapse="true" #ex_function_ttest_ans}
+::: {.callout-answer collapse="true" .show-code #ex_function_ttest_ans}
 
 ```{r func_fit_model_plot}
 compare_vectors <- function(vector1, vector2) {

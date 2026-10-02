@@ -196,7 +196,7 @@ loc_grouped <- loc_selected |>
 
 [Using the `summarise` function, calculate the median latitude and median longitude for each individual on each date.]{.blue-text}
 
-```{r process_df_ans4}
+```{r process_df_ans4, message=FALSE}
 loc_sum <- loc_grouped |>
   summarise(
     Longitude = median(location_long),
@@ -258,7 +258,7 @@ ggplot(
   coord_quickmap()
 ```
 
-[Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude`. If `2` seems like too little or too much for your data, feel free to adjust.]{.blue-text}
+[Set axis limits by subtracting `2` from the minimum longitude and latitude and adding `2` to the maximum longitude and latitude. If `2` seems like too little or too much for your data, feel free to adjust.]{.blue-text}
 
 ```{r plot_data_ans3}
 min_lat <- loc_sum |>

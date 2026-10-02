@@ -120,6 +120,20 @@ We can use our variable `i` inside the loop but we don't have to, we can just us
 
 [**Core**]{.core-text}
 
+::: {.callout-note .copycode #copy-seed}
+
+If you haven't already, create a new Quarto file, `prac3_exercises.qmd`.
+
+### Include this code
+
+Include this code chunk at the top of your Quarto document. In this exercise, we will use the function `sample()`, which randomly selects values from a vector. This code sets the **random seed**, which allows us to make code involving random processes reproducible. Setting the same random seed means that the same sequence of random values will be generated each time the code is run.
+
+```{r set_seed}
+set.seed(42)
+```
+
+:::
+
 In your `prac3_exercises.qmd` quarto document, generate two for loops:
 
 1. A `for` loop which calculates and prints the **cube** of each number from 1 to 20.
@@ -258,6 +272,12 @@ for (spp in species) {
 gt(species_df)
 ```
 
+::: {.callout-note #note-rbind_cbind}
+
+There is another R function, `rbind()`, which works similarly to `bind_rows()` and which you may see elsewhere. We will use `bind_rows()` throughout these practicals.
+
+:::
+
 ::: {.callout-exercise #ex-loop_df .core}
 
 ### Build a 10-course breakfast
@@ -272,6 +292,7 @@ For example:
 breakfast <- c("eggs", "bacon", "sausages", "toast")
 print(sample(breakfast, size = 1))
 ```
+
 In your `prac3_exercises.qmd` Quarto document, using a `for` loop with 10 iterations, build a random 10-course breakfast. In each iteration:
 
 * Choosing a random breakfast food from the vector above (or a vector of your choice)
@@ -281,7 +302,8 @@ In your `prac3_exercises.qmd` Quarto document, using a `for` loop with 10 iterat
 
 After this is complete, display your data frame.
 
-::: {#copy-libraries .callout-note .copycode}
+::: {.callout-note #copy-libcode .copycode}
+
 ### Include this code
 
 You will need to include the following as an R code chunk at the start of the document.
@@ -289,6 +311,7 @@ You will need to include the following as an R code chunk at the start of the do
 ```{r libraries_visex, eval=FALSE}
 library(tidyverse)
 library(gt)
+set.seed(42)
 ```
 :::
 
@@ -311,6 +334,7 @@ for (i in seq_len(10)) {
 }
 gt(break_df)
 ```
+
 
 :::
 :::

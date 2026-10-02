@@ -8,8 +8,6 @@ author: "Katy Brown"
 ```{r setup_0406, include=FALSE}
 library(tidyverse)
 library(gt)
-library(maps)
-library(patchwork)
 insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
 flower_counts <- read_csv("data/flower_counts.csv")

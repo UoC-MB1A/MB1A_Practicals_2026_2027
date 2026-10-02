@@ -34,6 +34,7 @@ library(ggtree)
 library(ape)
 library(DECIPHER)
 library(treeio)
+library(phytools)
 identified_orf_df <- read_csv("output/identified_orfs.csv")
 identified_orf_seqs <- readAAStringSet("output/identified_orf_aa_seqs.fasta")
 ```
@@ -116,6 +117,8 @@ In your `beaver_ervs.qmd` Quarto file, repeat the steps above for each of the th
 * Convert back to `AAStringSet` format using `as()`.
 * Save using `writeXStringSet()`.
 
+You can do this manually or using a `for` loop.
+
 Save all of the alignments in your output directory in FASTA format as <code>[gene]{.orange-text}\_Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.green-text}.fasta</code>, replacing <code>[gene]{.orange-text}</code> with the gene you are currently analysing (**gag**, **pol** or **env**), <code>[ERV_j]{.red-text}</code> with your ERV ID and <code>[i]{.green-text}</code> with your ORF ID.
 
 :::
@@ -160,7 +163,7 @@ We can save it with the function `write.tree()`. The standard format for saving 
 write.tree(tree, file = "output/gag_Ccan_ERV_1_ORF_4.nwk")
 ```
 
-::: {.callout-exercise #ex-build_newick}
+::: {.callout-exercise #ex-build_newick .core}
 
 ### Build phylogenetic trees
 
@@ -172,6 +175,8 @@ In your `beaver_ervs.qmd` Quarto file, repeat the steps above for each of the OR
 * Create a distance matrix.
 * Build a neighbour-joining tree.
 * Save the tree.
+
+You can do this manually or using a `for` loop.
 
 Save all of the trees in Newick format with names formatted as <code>[gene]{.orange-text}\_Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.green-text}.nwk</code>, replacing <code>[gene]{.orange-text}</code> with the gene you are currently analysing (**gag**, **pol** or **env**), <code>[ERV_j]{.red-text}</code> with your ERV ID and <code>[i]{.green-text}</code> with your ORF ID.
 
@@ -218,15 +223,17 @@ ggtree(current_newick) +
 
 You should be able to find your ERV gene in the phylogeny. However, it would be helpful to make it clearer, for example by changing the colour.
 
-Here, we subset the tip labels to `label != "Ccan_ERV_1_ORF_4"` and `label == "Ccan_ERV_1_ORF_4"` and assign colours to each set. 
+Here, we fix the colour to depend on whether `label == "Ccan_ERV_1_ORF_4` is TRUE or FALSE. We then colour labels as red if this is `TRUE` and black if it is `FALSE.`
 
 ```{r ggtree_annotate, fig.width=10, fig.height=10, warning=FALSE}
 ggtree(current_newick) +
-  geom_tiplab(aes(subset = label != "Ccan_ERV_1_ORF_4"),
-    color = "black", size = 2
+  geom_tiplab(
+    aes(color = label == "Ccan_ERV_1_ORF_4"),
+    size = 2
   ) +
-  geom_tiplab(aes(subset = label == "Ccan_ERV_1_ORF_4"),
-    color = "red", size = 3
+  scale_color_manual(
+    values = c("TRUE" = "red", "FALSE" = "black"),
+    guide = "none"
   ) +
   coord_cartesian(xlim = c(0, 20))
 ```
@@ -237,11 +244,13 @@ Change the x and y co-ordinates to move it around so it's not displayed on top o
 
 ```{r ggtree_scale, fig.width=10, fig.height=10}
 ggtree(current_newick) +
-  geom_tiplab(aes(subset = label != "Ccan_ERV_1_ORF_4"),
-    color = "black", size = 2
+  geom_tiplab(
+    aes(color = label == "Ccan_ERV_1_ORF_4"),
+    size = 2
   ) +
-  geom_tiplab(aes(subset = label == "Ccan_ERV_1_ORF_4"),
-    color = "red", size = 3
+  scale_color_manual(
+    values = c("TRUE" = "red", "FALSE" = "black"),
+    guide = "none"
   ) +
   coord_cartesian(xlim = c(0, 20)) +
   geom_treescale(x = 0, y = 0, fontsize = 3)
@@ -265,11 +274,13 @@ You can save your tree as a PDF using `ggsave()`, again you may need to adjust t
 
 ```{r save_pdf_tree, fig.width=10, fig.height=10}
 tree_plot <- ggtree(current_newick) +
-  geom_tiplab(aes(subset = label != "Ccan_ERV_1_ORF_4"),
-    color = "black", size = 2
+  geom_tiplab(
+    aes(color = label == "Ccan_ERV_1_ORF_4"),
+    size = 2
   ) +
-  geom_tiplab(aes(subset = label == "Ccan_ERV_1_ORF_4"),
-    color = "red", size = 3
+  scale_color_manual(
+    values = c("TRUE" = "red", "FALSE" = "black"),
+    guide = "none"
   ) +
   coord_cartesian(xlim = c(0, 20)) +
   geom_treescale(x = 0, y = 0, fontsize = 3)
@@ -297,6 +308,8 @@ In your `beaver_ervs.qmd` Quarto file, repeat the steps above for each of the OR
 * Identify your new ORF in red.
 * Add a scale bar, move it so it doesn't overlap with the tree.
 * Save as PDF.
+
+You can do this manually or using a `for` loop.
 
 Save all of the trees as PDFs in your output directory as <code>[gene]{.orange-text}\_Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.green-text}.pdf</code>, replacing <code>[gene]{.orange-text}</code> with the gene you are currently analysing (**gag**, **pol** or **env**), <code>[ERV\_j]{.red-text}</code> with your ERV ID and <code>[i]{.green-text}</code> with your ORF ID.
 

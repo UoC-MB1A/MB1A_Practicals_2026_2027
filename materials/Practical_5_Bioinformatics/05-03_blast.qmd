@@ -152,6 +152,9 @@ Next, for each of your query sequences, select `Download` at the top of the hit 
 
 ![BLASTp Download](images/blast_save.png){#fig-blast_save}
 
+To switch between ORFs, click on the drop down in the table at the top of the page.
+
+![Switching ORFs](images/orf_menu.png){#fig-orf_menu}
 
 Each time, it will save a file on your computer named `seqdump.txt`. Move this file to your `output` folder for this practical and rename it as <code>Ccan\_[ERV\_j]{.red-text}\_ORF\_[i]{.orange-text}_refs.fasta</code>, replacing <code>[ERV_j]{.red-text}</code> with your ERV ID and <code>[i]{.orange-text}</code> with your ORF ID.
 
@@ -280,7 +283,7 @@ gt(head(orf_df))
 ```{r dataframe_orfs_ans2, message=FALSE}
 blast_combined <- inner_join(blast_expanded, orf_df)
 
-gt(blast_combined)
+gt(head(blast_combined))
 ```
 
 :::
@@ -419,7 +422,7 @@ identified_orf_seqs <- orf_aa_seqs[name_col]
 
 Save this new set of your identified ERV ORF sequences for each gene to a FASTA file in your output directory named `output/identified_orf_aa_seqs.fasta`, as we did for the full set of ORFs in @sec-save.
 
-::: {.callout-answer collapse="true" #ex-save_long_orfs_ans}
+::: {.callout-answer collapse="true" .show-code #ex-save_long_orfs_ans}
 
 ```{r save_long_orfs_ans}
 writeXStringSet(

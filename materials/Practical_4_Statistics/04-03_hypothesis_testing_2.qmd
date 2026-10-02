@@ -8,15 +8,12 @@ author: "Katy Brown"
 ```{r setup_0403, include=FALSE}
 library(tidyverse)
 library(gt)
-library(maps)
-library(patchwork)
-library(GGally)
 insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
 set.seed(42)
 ```
 
-# Part 3: ANOVA {#sec-p3_anova}
+# Part 3: ANOVA with multiple groups or explanatory variables {#sec-p3_anova}
 
 ::: {.callout-note .partmenu #parts-0403}
 ## Sections
@@ -39,7 +36,16 @@ By the end of this part of the practical you will be able to:
 
 :::
 
+
 In the previous section, we introduced one-way ANOVA using an explanatory variable with two levels. However, ANOVA can easily be expanded to look at multiple groups and multiple explanatory variables.
+
+| Response variable | Explanatory variable(s) | Statistical test/model | Visualisation example |
+|---|---|---|---|
+| Continuous | One categorical variable, 2 groups | Two-sample t-test or one-way ANOVA | Box plot |
+| Continuous | One categorical variable, 3+ groups | One-way ANOVA | Box plot |
+| Continuous | Multiple categorical variables | Multi-way ANOVA | Faceted box plot |
+
+<p>
 
 ## One-way ANOVA with more than two groups {#sec-one_way_anova .core}
 
@@ -74,6 +80,7 @@ A box plot is a typical way to visualise the type of data which is suitable for 
 In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `mean_insect_mass` in your `site_metadata` data frame for the regions with each value of `dominant_family`.
 
 Remember that:
+
 * The R function `geom_boxplot()` draws a box plot.
 * The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the arguments `x = dominant_family` and `y = mean_insect_mass`. 
 
@@ -287,9 +294,48 @@ Broad habitat type:
 
 **Plot**
 
-A box plot is again a typical visualisation to use here, this time using `facet_wrap()` to separate our different variables.
+A box plot is again a typical visualisation to use here, this time using `pivot_longer()` to convert our data frame into long format and `facet_wrap()` to separate our different variables.
+
+**`pivot_longer()`**
+
+Here we have two categorical variables, `dominant_family` and `broad_habitat`, stored in separate columns. We can use `pivot_longer()` to combine these into two new columns:
+
+- The `variable` column will contain the **names of the original columns** (`dominant_family` or `broad_habitat`).
+- The `value` column will contain the **values that were stored in those columns** (for example, `Apidae` or `Woodland`).
+
+We specify which columns we want to combine using the `cols` argument of `pivot_longer()`. We specify the name of the column we want to put the column **names** into with the `names_to` argument. We specify the column that we want to put the column **values** into with `values_to`.
+
+So, if we had the following small data frame as variable `data_wide`.
+
+**Before:**
+
+| x1km_square | dominant_family | broad_habitat | mean_insect_mass |
+|---|---|---|---:|
+| TL1234 | Apidae | Woodland | 0.12 |
+
+We could specify:
+
+```{r pivot_example, eval=FALSE}
+data_long <- data_wide |>
+  pivot_longer(cols = c(dominant_family, broad_habitat),
+               names_to = "variable",
+               values_to = "value")
+```
+
+**After:**
+
+| x1km_square | mean_insect_mass | variable | value |
+|---|---:|---|---|
+| TL1234 | 0.12 | dominant_family | Apidae |
+| TL1234 | 0.12 | broad_habitat | Woodland |
+
+**`facet_wrap()`**
 
 The function `facet_wrap()` splits the data from a single data frame into multiple plots, based on the values in a categorical column. The first argument should be the variable you would like to facet by, preceded by a `~` symbol. The argument `scales = "free_x"` means that each plot can have a different scale on the x axis - by default they are the same.
+
+To make a faceted plot of both explanatory variables, it will be useful to convert our data from **wide to long format**. We encountered this in @sec-long_wide, when we reshaped the bird migration data.
+
+**`coord_flip()`**
 
 The function `coord_flip()` swaps the x- and y-axes of a ggplot, turning a vertical plot into a horizontal one (or vice versa). We do this here just because the category names are long and so they fit better on the page horizontally.
 
@@ -405,6 +451,111 @@ For example, if we set up the model as `mean_insect_mass ~ dominant_family * dom
 
 This final question is the interaction: does the association between one explanatory variable and the response depend on the value of another explanatory variable?
 
+**Hypotheses**
+
+Dominant insect family:
+
+* **Null hypothesis**: There is no association between mean insect mass and dominant insect family.
+* **Alternative hypothesis**: Mean insect mass is associated with dominant insect family.
+
+Dominant flower order:
+
+* **Null hypothesis**: There is no association between mean insect mass and dominant flower order, once dominant insect family has been taken into account.
+* **Alternative hypothesis**: Mean insect mass is associated with dominant flower order, once dominant insect family has been taken into account.
+
+Interaction:
+
+* **Null hypothesis**: The association between dominant insect family and mean insect mass does not vary depending on dominant flower order.
+* **Alternative hypothesis**: The association between dominant insect family and mean insect mass varies depending on dominant flower order.
+
+::: {.callout-exercise #ex-anova_interaction .rec}
+
+### ANOVA with interaction
+
+[**Recommended**]{.rec-text}
+
+In your `pollinators.qmd` Quarto file:
+
+* Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.
+* Run an ANOVA on this model and view the results.
+* Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.
+
+::: {.callout-answer collapse="true" #ex_anova_interaction_ans}
+
+**Statistical test**
+
+[Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.]{.blue-text}
+
+[Run an ANOVA on this model and view the results.]{.blue-text}
+
+```{r mass_fam_flower_lm}
+# Fit the model
+mass_fam_flower_lm <- lm(mean_insect_mass ~ dominant_family * dominant_flower_order,
+  data = site_metadata
+)
+# Run the ANOVA
+mass_fam_flower_anova <- anova(mass_fam_flower_lm)
+
+print(mass_fam_flower_anova)
+```
+
+**Conclusion**
+
+```{r get_vars_mass_fam_flower, include=FALSE}
+# Dominant insect family
+family_df <- mass_fam_flower_anova["dominant_family", "Df"]
+family_f <- round(
+  mass_fam_flower_anova["dominant_family", "F value"],
+  2
+)
+family_p <- mass_fam_flower_anova[
+  "dominant_family", "Pr(>F)"
+]
+
+# Dominant flower order
+flower_df <- mass_fam_flower_anova["dominant_flower_order", "Df"]
+flower_f <- round(
+  mass_fam_flower_anova["dominant_flower_order", "F value"],
+  2
+)
+flower_p <- mass_fam_flower_anova[
+  "dominant_flower_order", "Pr(>F)"
+]
+
+# Interaction
+interaction_df <- mass_fam_flower_anova[
+  "dominant_family:dominant_flower_order", "Df"
+]
+interaction_f <- round(
+  mass_fam_flower_anova[
+    "dominant_family:dominant_flower_order", "F value"
+  ],
+  2
+)
+interaction_p <- mass_fam_flower_anova[
+  "dominant_family:dominant_flower_order", "Pr(>F)"
+]
+
+# Residual degrees of freedom
+resid_df <- mass_fam_flower_anova["Residuals", "Df"]
+```
+
+[Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.]{.blue-text}
+
+:::{.highlight-box}
+
+There is evidence that mean insect mass differs among dominant insect families ($F$(`r family_df`, `r resid_df`) = `r family_f`,
+$p$ = `r formatC(family_p, format = "e", digits = 2)`).
+
+After accounting for dominant insect family, there is no evidence that mean insect mass differs among dominant flower orders
+($F$(`r flower_df`, `r resid_df`) = `r flower_f`, $p$ = `r round(flower_p, 4)`).
+
+There is also no evidence of an interaction between dominant insect family and dominant flower order ($F$(`r interaction_df`, `r resid_df`) = `r interaction_f`, $p$ = `r round(interaction_p, 4)`). Therefore, there is no evidence that the difference in mean insect mass among dominant insect families depends on the dominant flower order.
+
+:::
+:::
+:::
+
 ### Using simulation to visualise interactions {#sec-simulating_interactions .fold .extension}
 
 [**Extension**]{.extension-text}
@@ -447,6 +598,20 @@ Interaction:
 ### Using simulation to visualise interactions
 
 [**Extension**]{.extension-text}
+
+If you haven't already, create a new Quarto file, `prac4_exercises.qmd`.
+
+::: {.callout-note .copycode #copy-poll}
+
+### Include this code
+
+```{r start_p4, message = FALSE}
+library(tidyverse)
+library(gt)
+set.seed(42)
+```
+
+:::
 
 In your `prac4_exercises.qmd` Quarto file:
 
@@ -654,114 +819,6 @@ However, there is no evidence of an interaction between utensil and food ($F$(`r
 :::
 :::
 :::
-
-**Hypotheses**
-
-Now, let's try this with our data. Here, our hypotheses are:
-
-Dominant insect family:
-
-* **Null hypothesis**: There is no association between mean insect mass and dominant insect family.
-* **Alternative hypothesis**: Mean insect mass is associated with dominant insect family.
-
-Dominant flower order:
-
-* **Null hypothesis**: There is no association between mean insect mass and dominant flower order, once dominant insect family has been taken into account.
-* **Alternative hypothesis**: Mean insect mass is associated with dominant flower order, once dominant insect family has been taken into account.
-
-Interaction:
-
-* **Null hypothesis**: The association between dominant insect family and mean insect mass does not vary depending on dominant flower order.
-* **Alternative hypothesis**: The association between dominant insect family and mean insect mass varies depending on dominant flower order.
-
-::: {.callout-exercise #ex-anova_interaction .rec}
-
-### ANOVA with interaction
-
-[**Recommended**]{.rec-text}
-
-In your `pollinators.qmd` Quarto file:
-
-* Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.
-* Run an ANOVA on this model and view the results.
-* Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.
-
-::: {.callout-answer collapse="true" #ex_anova_interaction_ans}
-
-**Statistical test**
-
-[Fit a linear model to test the association between dominant family, dominant flower order and mean insect mass, including the interaction between dominant family and dominant flower order.]{.blue-text}
-
-[Run an ANOVA on this model and view the results.]{.blue-text}
-
-```{r mass_fam_flower_lm}
-# Fit the model
-mass_fam_flower_lm <- lm(mean_insect_mass ~ dominant_family * dominant_flower_order,
-  data = site_metadata
-)
-# Run the ANOVA
-mass_fam_flower_anova <- anova(mass_fam_flower_lm)
-
-print(mass_fam_flower_anova)
-```
-
-**Conclusion**
-
-```{r get_vars_mass_fam_flower, include=FALSE}
-# Dominant insect family
-family_df <- mass_fam_flower_anova["dominant_family", "Df"]
-family_f <- round(
-  mass_fam_flower_anova["dominant_family", "F value"],
-  2
-)
-family_p <- mass_fam_flower_anova[
-  "dominant_family", "Pr(>F)"
-]
-
-# Dominant flower order
-flower_df <- mass_fam_flower_anova["dominant_flower_order", "Df"]
-flower_f <- round(
-  mass_fam_flower_anova["dominant_flower_order", "F value"],
-  2
-)
-flower_p <- mass_fam_flower_anova[
-  "dominant_flower_order", "Pr(>F)"
-]
-
-# Interaction
-interaction_df <- mass_fam_flower_anova[
-  "dominant_family:dominant_flower_order", "Df"
-]
-interaction_f <- round(
-  mass_fam_flower_anova[
-    "dominant_family:dominant_flower_order", "F value"
-  ],
-  2
-)
-interaction_p <- mass_fam_flower_anova[
-  "dominant_family:dominant_flower_order", "Pr(>F)"
-]
-
-# Residual degrees of freedom
-resid_df <- mass_fam_flower_anova["Residuals", "Df"]
-```
-
-[Draw a conclusion based on the results, including the appropriate statistical evidence to support your conclusion.]{.blue-text}
-
-:::{.highlight-box}
-
-There is evidence that mean insect mass differs among dominant insect families ($F$(`r family_df`, `r resid_df`) = `r family_f`,
-$p$ = `r formatC(family_p, format = "e", digits = 2)`).
-
-After accounting for dominant insect family, there is no evidence that mean insect mass differs among dominant flower orders
-($F$(`r flower_df`, `r resid_df`) = `r flower_f`, $p$ = `r round(flower_p, 4)`).
-
-There is also no evidence of an interaction between dominant insect family and dominant flower order ($F$(`r interaction_df`, `r resid_df`) = `r interaction_f`, $p$ = `r round(interaction_p, 4)`). Therefore, there is no evidence that the difference in mean insect mass among dominant insect families depends on the dominant flower order.
-
-:::
-:::
-:::
-
 
 
 ## Review {#sec-summary_0403}

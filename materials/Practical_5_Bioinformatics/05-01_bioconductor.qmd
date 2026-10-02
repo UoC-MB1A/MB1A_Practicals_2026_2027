@@ -57,7 +57,7 @@ Endogenous retroviruses are interesting partly because, after integration, they 
 Endogenous retroviruses in humans have been studied extensively, but ERVs in many other vertebrate species remain poorly characterised. For example, recent analyses have revealed that the genome of the North American beaver, *Castor canadensis*, contains a very large number of endogenous retroviruses, but nobody has looked at these in detail. 
 
 
-![Castor canadensis](images/beaver.jpg){#fig-beaver width="50%"}
+![Castor canadensis. [Source](https://commons.wikimedia.org/wiki/File:North_American_Beaver_(Castor_canadensis)_-_Algonquin_Provincial_Park,_Ontario_02.jpg)](images/beaver.jpg){#fig-beaver width="50%"}
 
 ## The Practical {#sec-aims .core}
 
@@ -94,7 +94,7 @@ At the end of the practical you can upload your results to a public database to 
 
 Bioconductor is a collection of R packages, datasets and workflows which are specific for analysing biological data.
 
-![Bioconductor logo](images/bioconductor.png){#fig-bioconductor width="50%"}
+![Bioconductor logo [Source](https://www.bioconductor.org/about/logo/)](images/bioconductor.png){#fig-bioconductor width="50%"}
 
 We are going to use several Bioconductor packages for biological sequence analysis:
 
@@ -103,7 +103,9 @@ We are going to use several Bioconductor packages for biological sequence analys
 * [msa](https://www.bioconductor.org/packages/release/bioc/html/msa.html)
 * [ggtree](https://www.bioconductor.org/packages/release/bioc/html/ggtree.html)
 
-Import these packages into your `beaver_ervs.qmd` Quarto document. We will also need the `gt` and `tidyverse` libraries.
+We also need the `phytools` package for phylogenetics, which is not part of Bioconductor.
+
+Create a new Quarto file, `beaver_ervs.qmd`.
 
 ::: {.callout-note .copycode #copy-libs_ervs}
 
@@ -118,7 +120,7 @@ library(msa)
 library(ggtree)
 library(ape)
 library(DECIPHER)
-
+library(phytools)
 library(gt)
 library(tidyverse)
 ```

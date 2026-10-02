@@ -118,7 +118,7 @@ The longest ORFs in the sequence are likely to represent the retroviral genes, s
 
 Store the result in a variable named `orfs`.
 
-::: {.callout-answer collapse="true" #ex-orfs_ans}
+::: {.callout-answer collapse="true" .show-code #ex-orfs_ans}
 ```{r orfs_ans}
 orfs <- findORFs(current_erv, minimumLength = 200)[[1]]
 ```
@@ -161,7 +161,7 @@ print(paste0("abc", seq_len(10)))
 
 In your `beaver_ervs.qmd` Quarto file, generate a vector to use as unique names for your ORFs using the `paste0` function. They should be named <code>Ccan\_[ERV_ID]{.orange-text}\_ORF\_[i]{.red-text}</code>, replacing <code>[ERV_ID]{.orange-text}</code> with your [ERV_ID]{.orange-text} and <code>[i]{.red-text}</code> with a unique number for each ORF. You can find out how many ORFs you have using the function `length(orfs)` and generate the sequence of numbers using `seq_len()`. Store the names as a variable `orf_names`.
 
-::: {.callout-answer collapse="true" #ex-orf_names_ans}
+::: {.callout-answer collapse="true" .show-code #ex-orf_names_ans}
 
 ```{r orf_names_ans}
 # Replace ERV_1 with the ID of your specific ERV region

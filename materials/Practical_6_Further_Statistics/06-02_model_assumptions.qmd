@@ -8,7 +8,6 @@ author: "Katy Brown"
 ```{r setup_0601, include=FALSE}
 library(tidyverse)
 library(gt)
-library(maps)
 library(patchwork)
 ```
 
@@ -161,11 +160,16 @@ This function takes the linear model fitted to the data as its input and returns
 [**Recommended**]{.rec-text}
 
 ::: {.callout-note .copycode #copy-libs_tcga}
+
+Create a new Quarto file, `pollinators_assumptions.qmd`.
+
+::: {.callout-note .copycode #copy-pollinators_assump}
+
 ### Include this code
 
 Include this code at the top of your `pollinators_assumptions.qmd` Quarto file.
 
-```{r libraries_tcga}
+```{r libraries_poll3}
 library(tidyverse)
 library(gt)
 library(patchwork)
@@ -173,10 +177,11 @@ library(patchwork)
 :::
 
 :::{.callout-note #note-rec_function}
-If you don't create this function independently, please also copy the code from the answer below into your `pollinators_assumptions.qmd` Quarto file in order to complete the subsequent exercises.
+If you don't create this function independently, please also copy this code and the code from the answer below into your `pollinators_assumptions.qmd` Quarto file in order to complete the subsequent exercises.
 :::
 
 In your `pollinators_assumptions.qmd` Quarto file, write a function named `get_diagnostic_stats()` which takes a **fitted linear model** as its input and **creates and returns** a data frame, using the function `tibble()`, with the following columns:
+
 * `fitted` - the predicted values based on the model, accessed by running `fitted()` on the fitted model.
 * `residual` - the residuals of the fitted model, accessed by running `residuals()` on the fitted model.
 * `standardised_residual` - the standardised residuals of the linear model, run `rstandard()` on the fitted model.
@@ -200,7 +205,7 @@ gt(x_df)
 ```
 :::
 
-::: {.callout-answer collapse="true" #ex-diagnostic_function_ans}
+::: {.callout-answer collapse="true" .show-code #ex-diagnostic_function_ans}
 
 ```{r diagnostics_func}
 get_diagnostic_stats <- function(linear_model) {
@@ -343,7 +348,7 @@ diag_normal <- function(data_points) {
 
 First, let's simulate a sample of 30 data points drawn from a normal distribution. Let's say these are moustache lengths from a sample of schnauzer dogs and they have a mean of 20 cm and a standard deviation of 5 cm.
 
-![A schnauzer](images/dog1.jpg){#fig-dog width="50%"}
+![A schnauzer. [Source](https://www.publicdomainpictures.net/en/view-image.php?image=33586&picture=schnauzer-dog)](images/dog1.jpg){#fig-dog width="50%"}
 
 ::: {.callout-exercise #ex-normality_norm .extension}
 
@@ -398,7 +403,7 @@ With only 30 data points, the shape of the sample may not look particularly norm
 
 Now, let's say some schnauzers have a gene mutation which causes excessive moustache growth - on average, their moustaches are 20cm longer than standard schnauzers. This mutation occurs in 10% of dogs.
 
-![A schnauzer with a long moustache](images/dog2.jpg){#fig-dog2 width="50%"}
+![A schnauzer with a long moustache. [Source](https://uk.pinterest.com/pin/59954238770469137/)](images/dog2.jpg){#fig-dog2 width="50%"}
 
 ::: {.callout-exercise #ex-normality_mixed .extension}
 
@@ -446,7 +451,7 @@ This time, you should be able to see the systematic deviation from normality tow
 
 Now, let's see what happens if our data is skewed. For example, most of our dogs have been to the hairdresser for a trim, with a few exceptions, so the data is skewed to the right (Note: A right skew means that the right-hand tail of the distribution is longer; most observations are therefore towards the left.)
 
-![A schnauzer with a neat trim](images/dog3.jpg){#fig-dog3 width="50%"}
+![A schnauzer with a neat trim. [Source](https://www.flickr.com/photos/dakiny/9440984550)](images/dog3.jpg){#fig-dog3 width="50%"}
 
 This data would not be an exponential distribution - these dogs' moustache lengths are not the waiting times between events in a Poisson distribution. However, an exponential distribution is a good shortcut to a right-skewed distribution.
 
@@ -625,7 +630,7 @@ As for the categorical data, we can extract our fitted and residual values from 
 
 [**Recommended**]{.rec-text}
 
-In your `pollinators.qmd` Quarto file:
+In your `pollinators_assumptions.qmd` Quarto file:
 
 * Create a diagnostic data frame for the `lm_temp_prec` fitted model using the function `get_diagnostic_stats()`.
 * Plot a scatter plot with fitted values on the x axis and residual values on the y axis.
@@ -696,6 +701,10 @@ If the assumption of equal variance is not met, the plot will look a bit differe
 
 For example, let's simulate a dataset where plant biomass in grams is the response variable and age is the explanatory variable, and increase the standard deviation with increasing age. It is common in biological systems for the magnitude of the variability in a measurement to naturally increase as the expected value increases.
 
+::: {.callout-note .copycode #copy-plant_data}
+
+### Include this code in your `prac6_exercises.qmd` Quarto file
+
 ```{r simulate_plant_biomass}
 plant_data <- tibble(
   age = runif(200, 1, 10),
@@ -703,6 +712,8 @@ plant_data <- tibble(
     rnorm(200, mean = 0, sd = age * 2)
 )
 ```
+
+:::
 
 ::: {.callout-exercise #ex_plant_biomass .extension}
 
@@ -777,24 +788,7 @@ For linear regression, we also assume that the relationship between the response
 
 The Residuals vs Fitted plot can be re-used to assess this assumption. If a linear model is appropriate, there should be no systematic pattern in the residuals, and the smoothed line should remain approximately horizontal around zero. A curved pattern suggests that the relationship has not been adequately described by a straight line.
 
-Let's revisit our temperature vs precipitation residuals vs fitted plot again.
-
-```{r temp_prec_diag_plot_redo}
-ggplot(
-  temp_prec_diagnostics,
-  aes(x = fitted, y = residual)
-) +
-  geom_point() +
-  geom_smooth(se = FALSE) +
-  ggtitle("Residuals vs Fitted - \nAnnual Mean Temperature vs Total Annual Precipitation") +
-  xlab("Fitted precipitation (mm)") +
-  ylab("Residual (mm)") +
-  theme_minimal()
-```
-
-Here, the smoothed line shows some curvature rather than remaining completely horizontal around zero. This suggests that the relationship may not be perfectly linear, although the deviations are relatively modest and are particularly pronounced towards the ends of the range where there are fewer observations.
-
-Let's also look at our plant biomass data again:
+Let's look at our plant biomass data again:
 
 ```{r plant_biomass_plot_redo}
 ggplot(
@@ -837,6 +831,33 @@ ggplot(curved_diagnostics, aes(x = fitted, y = residual)) +
 ```
 
 The smoothed line here is clearly a curve, suggesting that the relationship is not linear. A simple linear model may therefore not fully describe the relationship between these variables.
+
+
+:::{.callout-exercise #ex-linear_rel .rec}
+
+Let's revisit our temperature vs precipitation residuals vs fitted plot again.
+
+```{r temp_prec_diag_plot_redo}
+ggplot(
+  temp_prec_diagnostics,
+  aes(x = fitted, y = residual)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  ggtitle("Residuals vs Fitted - \nAnnual Mean Temperature vs Total Annual Precipitation") +
+  xlab("Fitted precipitation (mm)") +
+  ylab("Residual (mm)") +
+  theme_minimal()
+```
+
+Do you think there is a linear relationship between the explanatory variables?
+
+:::{.callout-answer collapse="true" #ex-linear_rel_ans}
+
+Here, the smoothed line shows some curvature rather than remaining completely horizontal around zero. This suggests that the relationship may not be perfectly linear, although the deviations are relatively modest and are particularly pronounced towards the ends of the range where there are fewer observations.
+
+:::
+:::
 
 ## Influential observations {#sec-influential .rec}
 

@@ -29,7 +29,6 @@ By the end of this section, you will have practised:
 ```{r setup_0304, include=FALSE}
 library(tidyverse)
 library(gt)
-library(patchwork)
 set.seed(42)
 ```
 

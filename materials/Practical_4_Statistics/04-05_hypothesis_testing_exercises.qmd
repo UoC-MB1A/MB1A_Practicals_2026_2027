@@ -7,8 +7,7 @@ author: "Katy Brown"
 ```{r setup_0405, include=FALSE}
 library(tidyverse)
 library(gt)
-library(maps)
-library(patchwork)
+
 insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
 flower_counts <- read_csv("data/flower_counts.csv")
@@ -18,7 +17,6 @@ flower_counts <- read_csv("data/flower_counts.csv")
 
 ::: {.callout-note .partmenu #parts-0405}
 ## Sections
-- @sec-stats_tests
 - @sec-hypothesis_testing_exercises
 - @sec-summary_0405
 :::
@@ -34,23 +32,6 @@ By the end of this part of the practical you will have practised:
 * Relating statistical results back to a biological hypothesis.
 :::
 
-## Statistical test recap {#sec-stats_tests .core}
-
-Here is a reminder of some statistical tests and the data types they are appropriate for.
-
-| Response variable | Explanatory variable(s) | Statistical test/model |
-|---|---|---|
-| Continuous | One categorical variable, 2 groups | Two-sample t-test or one-way ANOVA |
-| Continuous | One categorical variable, 3+ groups | One-way ANOVA |
-| Continuous | One continuous variable | Linear regression |
-| Continuous | Multiple categorical variables | Multi-way ANOVA |
-| Continuous | Multiple continuous variables | Multiple linear regression |
-| Continuous | Mixture of categorical and continuous variables | Multiple linear regression / linear model |
-| Categorical* | Categorical* | Chi-squared test of association |
-
-* For a chi-squared test, neither variable needs to be considered the explanatory or response variable.
-
-As long as there are many possible values (e.g. the values aren't limited to 1, 2 or 3), count data (such as number of insects) can be treated as continuous when used as an **explanatory** variable. For the tests in this table, **response** variables described as continuous should usually be genuinely continuous rather than counts.
 
 ## Hypothesis testing exercises {#sec-hypothesis_testing_exercises .rec}
 Now we are ready to test some hypotheses based on the POMS data.

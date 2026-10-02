@@ -33,9 +33,13 @@ By the end of this part of the practical you should be able to:
 
 :::
 
-For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, ``{{< meta practical >}}/prac1_exercises.qmd`. You can describe the code if you wish, or just label it with the exercise name. For the data analysis exercises in Part 4: exercises 5 and 6, please create a second Quarto document `{{< meta practical >}}/ukhsa_data_analysis.qmd` and briefly describe your analysis.
+For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, ``{{< meta practical >}}/prac1_exercises.qmd`. 
 
-::: {.callout-note #note-copy_code}
+You can describe the code if you wish, or just label it with the exercise name. It is recommended to **use a different code chunk for each exercise**.
+
+For the data analysis exercises in Part 4, we will create a second Quarto document `{{< meta practical >}}/ukhsa_data_analysis.qmd`. As you perform your analysis in this document, please very briefly describe it.
+
+::: {.callout-important #note-copy_code}
 
 ### Copying code
 
@@ -173,6 +177,12 @@ print(rep(5, 7))
 print(rep(times = 7, x = 5))
 ```
 :::
+:::
+:::{.callout-note #note-function_tab}
+
+When writing a function call in RStudio, press the **Tab** key after the opening bracket (`(`) to see a list of the arguments available for that function. You can then select an argument from the list rather than having to remember or type its name in full.
+This is particularly useful when you can't remember the exact name of an argument.
+
 :::
 
 ## Variables {#sec-variables .core}
@@ -331,7 +341,7 @@ print(class(x))
 
 In your `prac1_exercises.qmd` Quarto file, create character, numerical and logical variables, print them, then check their classes.
 
-::: {.callout-answer collapse="true" #ex-var_types_ans}
+::: {.callout-answer .show-code collapse="true" #ex-var_types_ans}
 ```{r var_types_ans}
 # for example
 my_favourite_number <- 11
@@ -368,7 +378,7 @@ gt(df)
 
 In your `prac1_exercises.qmd` Quarto document, create eight variables of appropriate types which together contain all of the information in the table.
 
-::: {.callout-answer collapse="true" #ex-celldata_ans}
+::: {.callout-answer collapse="true" .show-code #ex-celldata_ans}
 ```{r celldata_ans}
 # for example
 cell_id_1 <- "CX1"

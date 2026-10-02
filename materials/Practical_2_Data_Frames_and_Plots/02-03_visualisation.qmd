@@ -22,6 +22,7 @@ autumn_data <- read_csv("output/birds_autumn.csv")
 - @sec-group_points
 - @sec-add_paths
 - @sec-nice_plot [Extension]{.extension-text}
+- @sec-autumn [Extension]{.rec-text}
 - @sec-summary_0203
 :::
 
@@ -210,34 +211,44 @@ print(min_long)
 In your `worked_example.qmd` Quarto document, before your plotting code, calculate the minimum longitude, maximum longitude and the minimum and maximum latitude, and store these as variables `min_lon`, `max_lon`, `min_lat` and `max_lat`.
 
 ::: {.callout-answer collapse="true" #ex-calc_lims_ans}
+
+Minimum longitude
+
 ```{r calc_lims_ans1}
 min_lon <- spring_data |>
   pull(Longitude) |>
   min()
-max_lon <- spring_data |>
-  pull(Longitude) |>
-  max()
-min_lat <- spring_data |>
-  pull(Latitude) |>
-  min()
-max_lat <- spring_data |>
-  pull(Latitude) |>
-  max()
-```
 
-```{r calc_lims_ans2}
 print(min_lon)
 ```
 
+Maximum longitude
+
 ```{r calc_lims_ans3}
+max_lon <- spring_data |>
+  pull(Longitude) |>
+  max()
+
 print(max_lon)
 ```
 
+Minimum latitude
+
 ```{r calc_lims_ans4}
+min_lat <- spring_data |>
+  pull(Latitude) |>
+  min()
+
 print(min_lat)
 ```
 
+Maximum latitude
+
 ```{r calc_lims_ans5}
+max_lat <- spring_data |>
+  pull(Latitude) |>
+  max()
+
 print(max_lat)
 ```
 
@@ -480,14 +491,13 @@ ggplot(
   theme_minimal()
 ```
 
+## Autumn data {#sec-autumn .fold .extension}
 
-
-
-::: {.callout-exercise #ex-plot_winter .rec}
+::: {.callout-exercise #ex-plot_winter .extension}
 
 ### Repeat for autumn data
 
-[**Recommended**]{.rec-text}
+[**Extension**]{.extension-text}
 
 [↑ top](#)
 
@@ -531,7 +541,6 @@ ggplot(
 
 :::
 :::
-
 
 ## Review {#sec-summary_0203}
 

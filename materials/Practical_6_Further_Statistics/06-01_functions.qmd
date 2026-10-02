@@ -100,7 +100,7 @@ Let's use our function to calculate the age in dog years of some dogs.
 
 Monty is 6 in human years.
 
-![Monty](images/monty.jpg){#fig-monty width="25%"}
+![Monty [Source](https://wordpress.org/photos/photo/1006740a19/)](images/monty.jpg){#fig-monty width="25%"}
 
 ```{r dog_age_1}
 print(human_years_to_dog_years(6))
@@ -109,7 +109,7 @@ print(human_years_to_dog_years(6))
 
 Noodle is 2 in human years:
 
-![Noodle](images/noodle.jpg){#fig-noodle width="25%"}
+![Noodle [Source](https://pixabay.com/photos/black-dog-animal-cross-cute-2809509/)](images/noodle.jpg){#fig-noodle width="25%"}
 
 ```{r dog_age_2}
 print(human_years_to_dog_years(2))
@@ -210,6 +210,22 @@ print(paste("Age in human years:", age_in_dog_years))
 
 [**Core**]{.core-text}
 
+Create a new Quarto file, `prac6_exercises.qmd`.
+
+::: {.callout-note .copycode #copy-libs_ervs}
+
+### Include this code
+
+Include this code in your `prac6_exercises.qmd` Quarto file:
+
+```{r setup0601, output=FALSE}
+library(gt)
+library(tidyverse)
+set.seed(42)
+```
+
+:::
+
 In your `prac6_exercises.qmd` Quarto document, write a function to convert dog years to human years (the reverse of the above). Round the answer to the nearest whole number.
 
 Apply your function to the following:
@@ -217,6 +233,10 @@ Apply your function to the following:
 * Billy, a human aged 180 in dog years
 * Ahmed, a human aged 44 in dog years
 * The `Age_Dog_Years` column of the following data frame of four humans:
+
+::: {.callout-note .copycode #copy-human_dogs}
+
+### Include this code in your `prac6_exercises.qmd` Quarto file
 
 ```{r human_tibble}
 human_data <- tibble(
@@ -230,6 +250,8 @@ human_data <- tibble(
 )
 gt(human_data)
 ```
+:::
+
 
 ::: {.callout-note .copycode #copy-libs_tcga}
 ### Include this code
@@ -243,23 +265,37 @@ library(gt)
 :::
 
 ::: {.callout-answer collapse="true" #dog_function_ans}
+
+Function
+
 ```{r ex-dog_function_ans1}
 dog_years_to_human_years <- function(age_in_dog_years) {
   age_in_human_years <- ((age_in_dog_years - 21) / 4) + 2
   return(round(age_in_human_years))
 }
+```
 
+Billy
+
+```{r ex-dog_function_ans2}
 print(paste(
   "Billy is", dog_years_to_human_years(180),
   "human years old"
 ))
+```
+
+Ahmed
+
+```{r ex-dog_function_ans3}
 print(paste(
   "Ahmed is", dog_years_to_human_years(44),
   "human years old"
 ))
 ```
 
-```{r ex-dog_function_ans2}
+Data frame
+
+```{r ex-dog_function_ans4}
 human_data_updated <- human_data |>
   mutate(Age_Human_Years = dog_years_to_human_years(Age_Dog_Years))
 

@@ -101,6 +101,33 @@ There are various options to choose which element to remove, including:
 * Sequentially removing the element with the highest p-value - the element with the least significant effect on the model fit.
 * Removing the element whose removal results in the lowest AIC - a statistic which specifically balances how well the model fits with the complexity of the model.
 
+Let's fit a GLM to the Septin dataset with `Is_Old` as the binary response variable and all six septin levels as continuous explanatory variables. We will consider only additive effects at this stage, not interactions.
+
+Please create a new Quarto file, `septin.qmd`.
+
+::: {.callout-note .copycode #copy-septin}
+
+### Include this code
+
+Include this code at the top of your `septin.qmd` Quarto file.
+
+```{r libraries_septin}
+library(tidyverse)
+library(gt)
+
+# Read the file
+septin <- read_csv("data/septin.csv")
+
+# Fit the GLM
+model_1 <- glm(Is_Old ~ Septin1 + Septin2 + Septin6 + Septin7 + Septin9 + Septin11, septin, family = binomial)
+
+# Summarise
+summary(model_1)
+```
+
+:::
+
+
 ::: {.callout-exercise #ex_septin_pval .core}
 
 ### Removing elements by p-value
@@ -108,9 +135,7 @@ There are various options to choose which element to remove, including:
 [**Core**]{.core-text}
 
 In your `septin.qmd` Quarto file:
-* Read `data/septin.csv` into a data frame.
-* Fit a GLM to the Septin dataset with `Is_Old` as the binary response variable and all six septin levels as continuous explanatory variables. Consider only additive effects at this stage, not interactions.
-* Once you have the fitted model, look at the summary and find which of the explanatory variables has the least significant p-value. Remove this variable and fit another GLM.
+* Look at the summary of the GLM above and find which of the explanatory variables has the least significant p-value. Remove this variable and fit another GLM.
 
 Continue to do this until you have no remaining variables, then fit the NULL model - `Is_Old ~ 1`. Keep all of your models in different variables named `model_1` to `model_7`.
 

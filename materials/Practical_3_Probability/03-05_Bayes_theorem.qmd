@@ -66,11 +66,26 @@ The number of people with and without hrHPV and with and without abnormal cytolo
 
 [**Core**]{.core-text}
 
+If you haven't already, create a new Quarto file, `hpv.qmd`.
+
+::: {.callout-note .copycode #copy-seed}
+
+### Include this code
+
+```{r start_hpv, message = FALSE}
+library(tidyverse)
+library(gt)
+set.seed(42)
+```
+
+:::
+
 In your `hpv.qmd` Quarto file, read `data/cm_all_ages.csv` into a data frame and view the contents with `gt()`.
 
 For this first part of the exercise you do not need to use simulation, you can directly calculate the values from the data frame.
 
 Calculate:
+
 * The proportion of people with hrHPV who have abnormal cells. Store this as `prop_abnormal_given_hpv`
 * The proportion without hrHPV who have abnormal cells. Store this as `prop_abnormal_given_no_hpv`
 * The proportion of people with abnormal cells who have hrHPV - the sensitivity of hrHPV as a marker. Store this as `prop_hpv_given_abnormal`.
@@ -226,6 +241,8 @@ In your `hpv.qmd` Quarto file:
 
 * For each age range, count how many samples in the simulation have moderate/severe cytology and how many do not.
 
+You can answer this question with or without using a `for` loop - either is fine.
+
 ::: {.callout-answer collapse="true" #ex-simulation_by_age_ans1}
 
 [For each of these age groups, simulate a sample of 10,000 individuals with the appropriate prevalence of moderate/severe cytology. You can use a binomial distribution with the function `rbinom()` where `n_sim` is 10000, `size` is 1 and `prob` is the proportion of people with moderate/severe morphology from the table above.]{.blue-text}
@@ -245,6 +262,27 @@ n_mod_sev_30_49 <- sum(cyt_statuses_30_49)
 n_ok_30_49 <- 10000 - n_mod_sev_30_49
 n_mod_sev_50_64 <- sum(cyt_statuses_50_64)
 n_ok_50_64 <- 10000 - n_mod_sev_50_64
+```
+
+Or alternatively, using a `for` loop:
+
+```{r simulation_by_age_ans_for_loop}
+ages <- c("20-29", "30-49", "50-64")
+probs <- c(0.0508, 0.0181, 0.0047)
+
+results <- tibble()
+for (i in 1:length(ages)) {
+  simulation <- rbinom(10000, 1, prob = probs[i])
+  row <- tibble(
+    age = ages[i],
+    perc = probs[i],
+    nModerateSevere = sum(simulation == 1),
+    nNot = sum(simulation == 0)
+  )
+  results <- results |>
+    bind_rows(row)
+}
+gt(results)
 ```
 
 :::
@@ -276,17 +314,19 @@ prop_hpv_given_normal <- 1 - prop_no_hpv_given_normal
 
 In your `hpv.qmd` Quarto file:
 
-* For each age range, for the number of individuals in the simulation with moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals with moderate/severe cytology and `prob` as `prop_hpv_given_abnormal`.
+* For each age range, for the number of individuals in the simulation with moderate / severe cytology, calculate the number with HPV, again using `rbinom()` but this time with `size` as the number of individuals with moderate/severe cytology and `prob` as `prop_hpv_given_abnormal`.
 
-* For each age range, for the number of individuals in the simulation without moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals without moderate/severe cytology and `prob` as `prop_hpv_given_normal`.
+* For each age range, for the number of individuals in the simulation without moderate / severe cytology, calculate the number with HPV, again using `rbinom()` but this time with `size` as the number of individuals without moderate/severe cytology and `prob` as `prop_hpv_given_normal`.
 
 * For each age range, find the total number of people with HPV by adding together the number of people with HPV and moderate / severe cytology and the number of people with HPV and not moderate / severe cytology.
 
 * Store the number of people with HPV, the number of people with abnormal cells and the number of people with abnormal cells and HPV in a data frame, with one row for each age range. You may find it easiest to create a one-row data frame for each age range and combine them using `bind_rows()`.
 
+You can answer this question with or without using a `for` loop - either is fine.
+
 ::: {.callout-answer collapse="true" #ex-simulation_by_age2_ans}
 
-[For each age range, for the number of individuals in the simulation with moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals with moderate/severe cytology and `prob` as `prop_hpv_given_abnormal`.]{.blue-text}
+[For each age range, for the number of individuals in the simulation with moderate / severe cytology, calculate the number with HPV, again using `rbinom()` but this time with `size` as the number of individuals with moderate/severe cytology and `prob` as `prop_hpv_given_abnormal`.]{.blue-text}
 
 ```{r simulation_by_age_ans3}
 hpv_count_ab_20_29 <- sum(rbinom(n_mod_sev_20_29, size = 1, prob = prop_hpv_given_abnormal))
@@ -294,7 +334,7 @@ hpv_count_ab_30_49 <- sum(rbinom(n_mod_sev_30_49, size = 1, prob = prop_hpv_give
 hpv_count_ab_50_64 <- sum(rbinom(n_mod_sev_50_64, size = 1, prob = prop_hpv_given_abnormal))
 ```
 
-[For each age range, for the number of individuals in the simulation without moderate / severe cytology, calculate the expected number with HPV, again using `rbinom()` but this time with `size` as the number of individuals without moderate/severe cytology and `prob` as `prop_hpv_given_normal`.]{.blue-text}
+[For each age range, for the number of individuals in the simulation without moderate / severe cytology, calculate the number with HPV, again using `rbinom()` but this time with `size` as the number of individuals without moderate/severe cytology and `prob` as `prop_hpv_given_normal`.]{.blue-text}
 
 ```{r simulation_by_age_ans4}
 hpv_count_norm_20_29 <- sum(rbinom(n_ok_20_29, size = 1, prob = prop_hpv_given_normal))
@@ -338,10 +378,60 @@ results <- bind_rows(row_20_29, row_30_49, row_50_64)
 gt(results)
 ```
 
+Or alternatively, using a `for` loop:
+
+```{r simulation_by_age2_ans_for_loop}
+ages <- c("20-29", "30-49", "50-64")
+n_mod_sev <- c(n_mod_sev_20_29, n_mod_sev_30_49, n_mod_sev_50_64)
+n_ok <- c(n_ok_20_29, n_ok_30_49, n_ok_50_64)
+
+results <- tibble()
+
+for (i in 1:length(ages)) {
+
+  # Simulate the number of people with HPV among those
+  # with moderate / severe abnormal cytology
+  hpv_count_ab <- sum(
+    rbinom(
+      n_mod_sev[i],
+      size = 1,
+      prob = prop_hpv_given_abnormal
+    )
+  )
+
+  # Simulate the number of people with HPV among those
+  # without moderate / severe abnormal cytology
+  hpv_count_norm <- sum(
+    rbinom(
+      n_ok[i],
+      size = 1,
+      prob = prop_hpv_given_normal
+    )
+  )
+
+  # Calculate the total number of people with HPV
+  n_hpv <- hpv_count_ab + hpv_count_norm
+
+  # Create one row for this age group
+  row <- tibble(
+    age_range = ages[i],
+    n_hpv = n_hpv,
+    n_abnormal_cells = n_mod_sev[i],
+    n_hpv_and_abnormal_cells = hpv_count_ab
+  )
+
+  # Add the row to the results data frame
+  results <- results |>
+    bind_rows(row)
+}
+
+gt(results)
+```
+
 :::
 :::
 
-Now, based on these data, we can deduce the probability that someone with hrHPV will go on to be diagnosed with moderate/severe abnormal cytology for each age group. 
+Now, based on these data, we can deduce the probability that someone with hrHPV will have moderate/severe abnormal cytology for each age group. 
 
 ::: {.callout-exercise #ex-simulation_by_age3 .rec}
 

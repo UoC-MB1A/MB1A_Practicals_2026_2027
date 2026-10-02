@@ -10,8 +10,6 @@ author: "Katy Brown"
 library(tidyverse)
 library(gt)
 library(cowsay)
-library(DescTools)
-library(patchwork)
 set.seed(42)
 ```
 
@@ -136,6 +134,23 @@ print(my_sample)
 
 [**Core**]{.core-text}
 
+If you haven't already, create a new Quarto file, `squirrels.qmd`.
+
+::: {.callout-note .copycode #copy-squirrels}
+
+### Include this code
+
+Include the following as an R code chunk in your `squirrels.qmd` Quarto file.
+
+```{r for_loop_squirrels}
+library(tidyverse)
+library(gt)
+library(cowsay)
+set.seed(42)
+```
+
+:::
+
 A squirrel has a 30% success rate at stealing seeds from a bird feeder. She tries 150 times.
 
 In your `squirrels.qmd` Quarto file, using the `sample()` function, take 150 samples with a 30% probability of a successful heist. Calculate the total number of successful heists and store it as a variable named `n_successes`.
@@ -153,6 +168,8 @@ n_successes <- sum(is_success == "SUCCESS")
 
 say(paste("I was successful", n_successes, "times!"), by = "squirrel")
 ```
+(You might get a different number)
+
 :::
 :::
 
@@ -168,14 +185,13 @@ We can formalise this using a for loop, running the simulation a fixed number of
 
 Let's say we have 1000 squirrels, each making 150 attempts, with the same fixed probability of success of 30%.
 
-::: {#copy-libraries .callout-note .copycode}
+::: {.callout-note #copy-libraries  .copycode}
+
 ### Include this code
 
 Include the following as an R code chunk in your `squirrels.qmd` Quarto file.
 
 ```{r for_loop_squirrels}
-library(tidyverse)
-
 combined_successes <- c()
 for (i in seq_len(1000)) {
   is_success <- sample(c("SUCCESS", "FAILURE"),
@@ -197,7 +213,8 @@ Let's visualise how many squirrels have each number of successful heists - i.e. 
 
 First, we need to convert our vector into a data frame. We can do this by using the function `tibble()` and assigning the vector to a column.
 
-::: {#copy-libraries .callout-note .copycode}
+::: {.callout-note #copy-libraries2 .copycode}
+
 ### Include this code
 
 Include the following as an R code chunk in your `squirrels.qmd` Quarto file.

@@ -540,6 +540,20 @@ Normally, this would be our end point, but, in this case, we do have a better es
 
 [**Bonus**]{.bonus-text}
 
+If you haven't already, create a new Quarto file, `prac4_exercises.qmd`.
+
+::: {.callout-note .copycode #copy-poll}
+
+### Include this code
+
+```{r start_p4.2, message = FALSE}
+library(tidyverse)
+library(gt)
+set.seed(42)
+```
+
+:::
+
 In your `prac4_exercises.qmd` Quarto file:
 
 * Read the iron dataset `data/inverts_iron.csv`.
@@ -577,7 +591,7 @@ To illustrate, let's generate simulated data which represents the time interval 
 
 The true population value for the 75th percentile is `r round(qgamma(0.75, shape = 2, scale = 10), 2)`, calculated as `qgamma(0.75, shape = 2, scale = 10)`.
 
-![Procrastination (https://xkcd.com/1906)](images/xkcd.png){#fig-bob width="25%"}
+![Procrastination [Source](https://xkcd.com/1906)](images/xkcd.png){#fig-xkcd width="25%"}
 
 ::: {.callout-exercise #ex-bootstrap_ci .bonus}
 

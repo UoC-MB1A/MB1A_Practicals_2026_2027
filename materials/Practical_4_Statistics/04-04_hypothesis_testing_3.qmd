@@ -8,9 +8,6 @@ author: "Katy Brown"
 ```{r setup_0404, include=FALSE}
 library(tidyverse)
 library(gt)
-library(maps)
-library(patchwork)
-library(GGally)
 insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
 set.seed(42)
@@ -41,6 +38,12 @@ By the end of this part of the practical you will be able to:
 ## Linear Regression {#sec-linear_regression .core}
 
 [**Core**]{.core-text}
+
+| Response variable | Explanatory variable(s) | Statistical test/model | Visualisation example |
+|---|---|---|---|
+| Continuous | One continuous variable | Linear regression | Scatter plot |
+| Continuous | Multiple continuous variables | Multiple linear regression | Scatter plot showing response against each explanatory variable |
+| Continuous | Mixture of categorical and continuous variables | Multiple linear regression / linear model | Faceted scatter plot |
 
 We've now used all sorts of linear models, but how about a standard linear regression between two continuous variables? You already have the skills needed to do this - you can fit the model using `lm()` and then view the results using `summary()`, and you basically know how to interpret the results. 
 
@@ -157,6 +160,34 @@ site_metadata_cent <- site_metadata |>
     annual_mean_temp_cent = annual_mean_temp - mean(annual_mean_temp),
     elevation_cent = elevation - mean(elevation)
   )
+```
+
+The distribution of the data will still be the same:
+
+::: {.callout-note #note-everything}
+The function `everything()` here tells pivot_longer() to include all columns in the data frame.
+:::
+
+```{r show_centre_elev_temp}
+site_metadata_cent_long <- site_metadata_cent |>
+  select(annual_mean_temp_cent, annual_mean_temp,
+         elevation_cent, elevation) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "value"
+  )
+
+ggplot(
+  site_metadata_cent_long,
+  aes(x = value)
+) +
+  geom_histogram(bins = 20) +
+  facet_wrap(~variable, scales = "free_x") +
+  ggtitle("Annual Mean Temperature and Elevation -\bBefore and After Centering") +
+  xlab("Measurement") +
+  ylab("Number of sites") +
+  theme_minimal()
 ```
 
 **Hypotheses**
@@ -310,7 +341,7 @@ Since at this point in the practical I think we need a picture of a hedgehog, le
 1) How much water it drinks per day in millilitres.
 2) How much food it eats per day in grams. 
 
-![A hedgehog eating](images/hedgehog.jpg){#fig-hog width="50%" fig-alt="A photo of a hedgehog eating from a bowl."}
+![A hedgehog eating. [Source](https://libreshot.com/feeding-a-hedgehog/)](images/hedgehog.jpg){#fig-hog width="50%" fig-alt="A photo of a hedgehog eating from a bowl."}
 
 Let's say that:
 
@@ -474,6 +505,10 @@ Even when the explanatory variables are highly correlated, the model as a whole 
 ## Chi-squared {#sec-chi_squared .core}
 
 [**Core**]{.core-text}
+
+| Response variable | Explanatory variable(s) | Statistical test/model | Visualisation example |
+|---|---|---|---|
+| Categorical | Categorical | Chi-squared test of association | Bar chart |
 
 Chi-squared looks for an association between two categorical variables. Unlike all the other tests we've covered so far, it is not based on a linear model.
 

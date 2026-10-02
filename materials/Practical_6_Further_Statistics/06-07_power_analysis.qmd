@@ -103,7 +103,7 @@ Let's say that we are designing a study to determine if people diagnosed with lu
 
 We have identified data from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/ccg/research/genome-sequencing/tcga) to use as test data to help us design our new study. TCGA is a real **cancer genomics** research project which collected and analysed thousands of matched pairs of tumour and normal tissue samples from the same individuals, across 33 types of cancer. The samples were compared in terms of their genome, transcriptome, epigenome and proteome.
 
-![The Cancer Genome Atlas](images/TCGA.png){#fig-tcga}
+![The Cancer Genome Atlas [Source](https://portal.gdc.cancer.gov/)](images/TCGA.png){#fig-tcga}
 
 For the purpose of designing our study, we only want to look at data showing the age of participants diagnosed with lung adenocarcinoma and lung squamous cell carcinoma.
 
@@ -186,6 +186,22 @@ The differences are:
 [**Extension**]{.extension-text}
 
 [↑ top](#)
+
+If you haven't already, create a new Quarto file, `power.qmd`.
+
+::: {.callout-note .copycode #copy-power}
+
+### Include this code
+
+Include this code at the top of your `power.qmd` Quarto file.
+
+```{r libraries_power}
+library(tidyverse)
+library(gt)
+library(effectsize)
+library(pwr)
+```
+:::
 
 Using the same cancer data frame, imagine that we are planning a new study to investigate whether age differs between different types of digestive cancer. We want to know how many individuals to include in each group.
 
@@ -270,7 +286,7 @@ Simulation-based power analysis is particularly useful for more complicated mode
 
 Let's say we're planning an experiment to determine if toast will land butter-side-down when dropped. We have two groups of participants, those who consider themselves to be **lucky** and those who consider themselves to be **unlucky**. We would consider a difference of 20 percentage points in the probability of the toast landing butter-side-down between these groups to be an effect worth detecting.
 
-![A disaster](images/toast.jpg){#fig-toast width="50%"}
+![A disaster [Source](https://en.wikipedia.org/wiki/Buttered_toast_phenomenon)](images/toast.jpg){#fig-toast width="50%"}
 
 For our power analysis, we will assume that toast dropped by lucky participants has a 40% probability of landing butter-side-down, compared with 60% for unlucky participants.
 

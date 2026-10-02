@@ -8,18 +8,36 @@ author: "Katy Brown"
 ```{r setup_0402, include=FALSE}
 library(tidyverse)
 library(gt)
-library(maps)
-library(patchwork)
+
 insect_counts <- read_csv("data/insect_counts.csv")
 site_metadata <- read_csv("data/site_metadata.csv")
+ht_df <- read_csv("data/ht_df.csv")
+
+ht_temp_df <- ht_df |>
+  select(x1km_square, detected, min_temp_coldest_month)
+
+ht_temp_summ <- ht_temp_df |>
+  group_by(detected) |>
+  summarise(
+    mean = mean(min_temp_coldest_month),
+    sd = sd(min_temp_coldest_month),
+    count = n()
+  )
+
+
+
+present <- ht_temp_summ |>
+  filter(detected == TRUE)
+
+absent <- ht_temp_summ |>
+  filter(detected == FALSE)
 ```
 
 # Part 2: Hypothesis Testing {#sec-p2_hypothesis_testing_1}
 
 ::: {.callout-note .partmenu #parts-0402}
 ## Sections
-
-- @sec-examining_data
+- @sec-stats_tests
 - @sec-choose_test
 - @sec-run_test
 - @sec-t_dist [(Extension)]{.extension-text}
@@ -41,162 +59,27 @@ By the end of this part of the practical you will be able to:
 
 :::
 
-## Examining data {#sec-examining_data .core}
+## Statistical test recap {#sec-stats_tests .core}
 
-[**Core**]{.core-text}
+Here is a reminder of some statistical tests and the data types they are appropriate for, and an example of a good way to visualise them. We'll cover each of these as we progress through this practical.
 
-Now we can start to test some hypotheses based on this dataset.
+| Response variable | Explanatory variable(s) | Statistical test/model | Visualisation example |
+|---|---|---|---|
+| Continuous | One categorical variable, 2 groups | Two-sample t-test or one-way ANOVA | Box plot |
+| Continuous | One categorical variable, 3+ groups | One-way ANOVA | Box plot |
+| Continuous | One continuous variable | Linear regression | Scatter plot |
+| Continuous | Multiple categorical variables | Multi-way ANOVA | Faceted box plot |
+| Continuous | Multiple continuous variables | Multiple linear regression | Scatter plot showing response against each explanatory variable |
+| Continuous | Mixture of categorical and continuous variables | Multiple linear regression / linear model | Faceted scatter plot |
+| Categorical* | Categorical* | Chi-squared test of association | Bar chart |
 
-For now, let's concentrate on a single species, the "bronze furrow bee" *Halictus tumulorum*. This is a relatively common bee species in the UK. It is a species of sweat bee, named because they are often attracted to sweat (although the UK ones usually aren't). 
+* For a chi-squared test, neither variable needs to be considered the explanatory or response variable.
 
-![*Halictus tumulorum*](images/bee.jpg){#fig-bee width="50%" fig-alt="A photo of H. tumulorum"}
-We can built hypotheses about the relationship between different variables and the presence or absence of *H. tumulorum* at each site. To do this, we need a data frame with a column which shows if *H. tumulorum* is present or absent at each site.
-
-We can create an extra column in a data frame using the function `mutate()`. 
-
-For example, if I wanted to create a column named `Is_England` in the `site_metadata` data frame showing if a site was in England or not, I could do the following:
-
-```{r mutate}
-site_metadata_exp <- site_metadata |>
-  mutate(Is_England = country == "England")
-gt(head(site_metadata_exp))
-```
-
-Here, `country == "England"` is evaluated for each row, so `Is_England` contains `TRUE` for sites in England and `FALSE` for other sites.
-
-We can use any kind of **comparison operator** with mutate (see @sec-comparisons). 
-
-We can also add an existing vector as a new column, or set every row of a new column to the same value.
-
-The function `nrow()` returns the number of rows in a data frame, so `seq_len(nrow(dataframe))` returns a sequence of numbers from 1 to the number of rows.
-
-```{r mutate_2}
-# Using a vector
-new_vals <- seq_len(nrow(site_metadata_exp))
-
-site_metadata_exp <- site_metadata_exp |>
-  mutate(new_col = new_vals)
-
-gt(head(site_metadata_exp))
-```
-
-```{r mutate_3}
-# Fixed value
-
-site_metadata_exp <- site_metadata_exp |>
-  mutate(new_col_2 = "hello")
-
-gt(head(site_metadata_exp))
-```
-
-
-::: {.callout-exercise #ex-filter_ht .core}
-
-### Build *H. tumulorum* data frame.
-
-[**Core**]{.core-text}
-
-In your `pollinators.qmd` Quarto document:
-
-* Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.
-* Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.
-* Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.
-* Store the resulting data frame as a variable named `ht_df`.
-* Write the data frame to the file `output/ht_df.csv`.
-
-::: {.callout-answer collapse="true" #ex_filter_ht_ans}
-[Filter the `insect_counts` data frame to include only the counts for *H. tumulorum*.]{.blue-text}
-
-```{r subset_ht}
-ht_counts <- insect_counts |>
-  filter(species == "Halictus tumulorum")
-gt(head(ht_counts))
-```
-
-[Create a logical (see @sec-variable_types) column showing if *H. tumulorum* is detected or undetected at each site using `mutate()` based on the `n_observed` column - if `n_observed` is > 0, this species was detected.]{.blue-text}
-
-```{r logical_ht}
-ht_df <- ht_counts |>
-  mutate(detected = n_observed > 0)
-```
-
-[Join the resulting data frame with the `site_metadata` data frame using `inner_join()`, to add additional site data.]{.blue-text}
-
-[Store the resulting data frame in as a variable named `ht_df`.]{.blue-text}
-
-```{r presence_absence_ht, message=FALSE}
-ht_df <- ht_df |>
-  inner_join(site_metadata)
-
-gt(head(ht_df))
-```
-
-[Write the data frame to the file `output/ht_df.csv`.]{.blue-text}
-
-```{r save_ht}
-write_csv(ht_df, "output/ht_df.csv")
-```
-
-:::
-:::
-
-*H. tumulorum* tend to be found [towards the south](https://bwars.com/bee/halictidae/halictus-tumulorum) of the UK. Let's use our data to explore the possibility that this is because they don't like very cold temperatures.
-
-We have a column in our site metadata data frame which can help us establish if this is true - the `min_temp_coldest_month` column. This is a BIOCLIM climate variable describing the lowest temperature in the coldest month in the map square and is the mean from 1970-2000. Technically, the lowest tempeature in the coldest month might not be the overall lowest temperature, however, for brevity from here forward we will refer to this just as **minimum temperature**.
-
-We can compare this minimum temperature for the sites where the bees are present and absent using a box plot.
-
-For clarity, let's select only the relevant columns in our data frame, using the `select()` function.
-
-::: {.callout-note .copycode #copy-select}
-
-### Include this code
-
-In `pollinators.qmd`:
-
-```{r select_ht}
-ht_temp_df <- ht_df |>
-  select(x1km_square, detected, min_temp_coldest_month)
-```
-
-:::
-
-```{r show_ht}
-gt(head(ht_temp_df))
-```
-
-
-:::{.callout-exercise #ex-boxplot_bees .rec}
-
-### Box plot
-
-[**Recommended**]{.rec-text}
-
-In your `pollinators.qmd` Quarto document, plot a box plot showing the value of `min_temp_coldest_month` in your `ht_df` data frame for the regions with and without these bees (i.e. based on the `detected` column).
-
-* The R function `geom_boxplot()` draws a box plot.
-* The `aes` function for this type of plot requires a categorical x variable and a continuous y variable as arguments - so you would use the arguments `x = detected` and `y = min_temp_coldest_month`. 
-
-:::{.callout-answer collapse="true" #ex-boxplot_bees_ans}
-
-```{r boxplot_ht}
-#| fig-alt: "Box plot comparing minimum temperature at sites where H. tumulorum was detected and not detected. The detected group is shifted towards higher temperatures, although the two distributions overlap. The undetected box has a longer interquartile range and longer whiskers"
-ggplot(
-  ht_df,
-  aes(x = detected, y = min_temp_coldest_month, fill = detected)
-) +
-  geom_boxplot() +
-  ggtitle("Minimum Temperature with and without H. tumulorum - Observed") +
-  xlab("Presence of H. tumulorum") +
-  ylab("Minimum temperature (°C)") +
-  theme_minimal()
-```
-:::
-:::
-
-Based on this box plot, perhaps these bees don't like the cold.
+As long as there are many possible values (e.g. the values aren't limited to 1, 2 or 3), count data (such as number of insects) can be treated as continuous when used as an **explanatory** variable. For the tests in this table, **response** variables described as continuous should usually be genuinely continuous rather than counts.
 
 ## Choosing a test {#sec-choose_test .core}
+
+Looking at our box plot from the end of Part 1, it seems like perhaps these bees don't like the cold.
 
 [**Core**]{.core-text}
 
@@ -213,6 +96,10 @@ Ideally, we would now test our hypothesis using a new dataset. However, given th
 :::
 
 We have a **continuous response variable** and a **categorical explanatory variable** - maybe we can use a t-test.
+
+| Response variable | Explanatory variable(s) | Statistical test/model | Visualisation example |
+|---|---|---|---|
+| Continuous | One categorical variable, 2 groups | Two-sample t-test or one-way ANOVA | Box plot |
 
 There are various **assumptions** which underlie a t-test - we'll come back to these later in the practical. For the moment, assume these assumptions are met.
 
@@ -444,27 +331,7 @@ To simplify this process, let's first calculate the mean, standard deviation and
 
 The function `n()` returns the number of observations in each group in a data frame (or the total number of observations in an ungrouped data frame).
 
-::: {.callout-note .copycode #copy-select}
 
-### Include this code
-
-```{r summary_ht}
-ht_temp_summ <- ht_temp_df |>
-  group_by(detected) |>
-  summarise(
-    mean = mean(min_temp_coldest_month),
-    sd = sd(min_temp_coldest_month),
-    count = n()
-  )
-
-# Separate present and absent sites
-present <- ht_temp_summ |>
-  filter(detected == TRUE)
-
-absent <- ht_temp_summ |>
-  filter(detected == FALSE)
-```
-:::
 
 
 ```{r summary_ht_show}
@@ -531,6 +398,7 @@ ci_upper <- ttest_res$conf.int[2]
   
   * Store TRUE or FALSE in a vector depending on the result.
 * Calculate the percentage of the 1,000 confidence intervals that contain the true difference.
+* Write a conclusion
 
 :::{.callout-answer collapse="true" #ex-cis_ans}
 
@@ -591,7 +459,9 @@ perc <- (sum(res_vec) / length(res_vec)) * 100
 print(perc)
 ```
 
-In this simulation, the confidence interval included the true difference `r round(perc, 3)`% of the time - very similar to our expectation.
+[Write a conclusion.]{.blue-text}
+
+In this simulation, the 95% confidence interval contained the true difference between the population means `r round(perc, 1)`% of the time. This is close to the expected 95%, illustrating that when we repeatedly sample from a population and calculate a 95% confidence interval, approximately 95% of those intervals contain the true population value.
 
 :::
 :::
@@ -783,7 +653,7 @@ Let's see if this is correct by fitting a linear model to our data in R. We do t
 
 In your `pollinators.qmd` Quarto file, fit a linear model using the function `lm()` and the same formula as for the t-test above. As for the t-test, you'll need to add the argument `data = ht_temp_df` so R can see the data frame. Store the output in the variable `lm_ht`.
 
-::: {.callout-answer collapse="true" #ex-first_lm_ans}
+::: {.callout-answer collapse="true" .show-code #ex-first_lm_ans}
 ```{r lm_ht_spp}
 lm_ht <- lm(min_temp_coldest_month ~ detected,
   data = ht_temp_df

@@ -147,7 +147,7 @@ gt(df)
 
 In your existing `prac1_exercises.qmd` Quarto document, combine the variables you made earlier into four vectors, one for each column of the table.
 
-::: {.callout-answer collapse="true" #ex-vectors1_ans}
+::: {.callout-answer collapse="true" .show-code #ex-vectors1_ans}
 ```{r vectors1_ans}
 # You should already have this part
 cell_id_1 <- "CX1"
@@ -206,7 +206,7 @@ In your `prac1_exercises.qmd` Quarto file, isolate the fourth value in this vect
 all_my_pets <- c("dog", "horse", "guinea pig", "chicken", "cat")
 ```
 
-::: {.callout-answer collapse="true" #ex-index_ans}
+::: {.callout-answer collapse="true" .show-code #ex-index_ans}
 
 ```{r index_ans}
 # for example
@@ -294,6 +294,23 @@ my_data_frame <- tibble(
 print(my_data_frame)
 ```
 
+You can also use existing vectors to put data into the data frame columns.
+
+```{r make_tibble_vec}
+fruits <- c("apple", "pear", "banana")
+lengths <- c(22, 30, 55)
+weights <- c(150, 165, 170)
+
+my_data_frame <- tibble(
+  fruit = fruits,
+  length = lengths,
+  weight = weights
+)
+
+
+print(my_data_frame)
+```
+
 Although we can see our data frame using the `print()` function, it's not formatted particularly nicely. Instead, we can use the function `gt()` to display a nicely formatted version of our data frame in our Quarto document.
 
 ```{r gt}
@@ -305,6 +322,7 @@ my_data_frame <- tibble(
 
 gt(my_data_frame)
 ```
+
 
 ::: {.callout-exercise #ex-celldf .core}
 
@@ -325,9 +343,9 @@ df <- data.frame(
 gt(df)
 ```
 
-In your `prac1_exercises.qmd` Quarto file, using a data frame and the `tibble` function, reproduce this table, then visualise it using the `gt` function.
+In your `prac1_exercises.qmd` Quarto file, using a data frame and the `tibble` function, reproduce this table, then visualise it using the `gt` function. You can either input the data manually or use the vectors you created above.
 
-::: {.callout-answer collapse="true" #ex-celldf_ans}
+::: {.callout-answer collapse="true" .show-code #ex-celldf_ans}
 
 ```{r celldf_ans}
 # for example
@@ -338,6 +356,19 @@ df <- tibble(
   num_cells_after = c(1432, 7543)
 )
 
+gt(df)
+```
+
+or using our existing vectors:
+
+```{r celldf_ans2}
+# for example
+df <- tibble(
+  cell_ID = cell_id,
+  treated = treated,
+  num_cells_before = n_before,
+  num_cells_after = n_after
+)
 gt(df)
 ```
 :::
@@ -562,7 +593,8 @@ In your `ukhsa_data_analysis.qmd` Quarto file, download a metric of your choice 
 
 Check the `stratum`, `sex` and `age` columns. If any contain multiple values, use `filter()` to select a single data series.
 
-:::{.callout-answer collapse="true" #ex-api_ans}
+:::{.callout-answer collapse="true" .show-code #ex-api_ans}
+
 ```{r api_ans}
 # Assign URL
 url <- "https://api.ukhsa-dashboard.data.gov.uk/themes/infectious_disease/sub_themes/gastrointestinal/topics/C-difficile/geography_types/Nation/geographies/England/metrics/c-difficile_cases_countsByOnsetType"
@@ -670,7 +702,7 @@ Following on from the UKHSA public health data you downloaded above and loaded i
 
 * Plot a line graph, where the x axis is date (contained in the `date` column), and the *y* axis is the metric measured in the table (from the `metric_value`) column.
 
-::: {.callout-answer collapse="true" #ex_public_health_plot_ans}
+::: {.callout-answer collapse="true" .show-code #ex_public_health_plot_ans}
 
 For example:
 
@@ -694,7 +726,7 @@ In your `ukhsa_data_analysis.qmd` Quarto document, edit the code you wrote above
 
 * Change the colour of the line and add appropriate axis labels and a title - you can go back to the UKHSA data website to see exactly what is being measured.
 
-::: {.callout-answer collapse="true" #ex_public_health_plot_ans2}
+::: {.callout-answer collapse="true" .show-code #ex_public_health_plot_ans2}
 
 For example:
 

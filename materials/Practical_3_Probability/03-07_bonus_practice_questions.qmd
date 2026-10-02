@@ -35,6 +35,7 @@ c. a fox being sighted second after either a coyote or a wolf has been sighted a
 then removed from the habitat, so they can be fitted with a tracking device
 (Consider: what is the impact of the first sighting on what you see next?)
 
+::: {.callout-answer collapse="true" .show-code #ex-q1_ans}
 
 ```{r q1}
 # Make a population with 60 foxes, 30 coyotes and 10 wolves
@@ -127,7 +128,7 @@ print(ans)
 ```
 The probability of a fox being sighted second after either a coyote or a wolf has been sighted and
 then removed from the habitat `r round(ans, 4)` 
-
+:::
 
 ### Question 2
 A transmitter emits the signals “0” or “1” in the ratio 1:2. Two independent receivers,
@@ -139,6 +140,8 @@ b. the probability that R2 reports that the transmitted signal is “1”
 c. following an incoming signal there is some confusion, because R1 reports
 signal “0” and R2 reports signal “1”. Which of the two receivers is most likely
 to be correct?
+
+::: {.callout-answer collapse="true" .show-code #ex-q2_ans}
 
 ```{r q2}
 # Run the transmitter 10,000 times, with a 2/3 probability of success
@@ -231,6 +234,8 @@ print(paste("R2 = ", R2_correct_prop))
 
 Given that R1 has reported 0 and R2 has reported 1, R2 is more likely to be correct, with a probability of `r round(R2_correct_prop, 4)`, compared to `r round(R1_correct_prop, 4)` for R1.
 
+:::
+
 ### Question 3
 
 ::: {.callout-important #note-choose}
@@ -246,6 +251,8 @@ batch of 22 imported trees, consists of three healthy and two infested trees?
 
 d. What is the probability that a sample of five, chosen at random from the batch
 consists only of healthy trees?
+
+::: {.callout-answer collapse="true" .show-code #ex-q3_ans}
 
 #### b
 
@@ -291,6 +298,7 @@ prop <- total_five_healthy / n_sim
 print(prop)
 ```
 There is a probability of `r round(prop, 4)` that all 5 trees are healthy.
+:::
 
 ### Question 4
 
@@ -307,6 +315,8 @@ According to some historical data we know that:
 • 0.4% of non-spam emails have “check this out” in the subject line.
 Find the probability that an email is spam given that it has the phrase “check this
 out” in the subject
+
+::: {.callout-answer collapse="true" .show-code #ex-q4_ans}
 
 ```{r q4}
 # Simulate 100,000 emails with a 40% chance of being spam
@@ -338,6 +348,8 @@ The probability that an email is spam given that it has the phrase “check this
 
 Note that I used a higher number of simulations here because so few emails have "check this out" overall.
 
+:::
+
 ### Question 5
 
 The number of particles emitted from a radioactive substance follows a Poisson distribution with parameter λ=4 particles per minute. Find the probability that:
@@ -345,6 +357,8 @@ The number of particles emitted from a radioactive substance follows a Poisson d
 a. three particles are emitted in one minute
 b. at least one particle is emitted in a minute
 c. three particles are emitted in 2 minutes
+
+::: {.callout-answer collapse="true" .show-code #ex-q5_ans}
 
 ```{r q5}
 # Simulate a Poisson distributed data set with a lambda of 4
@@ -387,6 +401,8 @@ print(ans_c)
 
 The probability that 3 particles are emitted in 2 minutes is `r round(ans_c, 4)`.
 
+:::
+
 ### Question 6
 
 a. The survival rate of a specific disease is forty percent. In a certain day eight
@@ -401,6 +417,8 @@ of:
   ii. no doses successfully administered
   iii. at least one dose successfully administered
   iv. at most two doses successfully administered
+  
+::: {.callout-answer collapse="true" .show-code #ex-q6_ans}
 
 #### a
 The survival rate of a specific disease is forty percent. In a certain day eight patients are admitted into hospital with that disease. What are the chances that three will survive?
@@ -462,6 +480,8 @@ print(ans_iv)
 ```
 The probability that at most two doses were successfully administered is `r round(ans_iv, 4)`
 
+:::
+
 ### Question 7
 
 A scientist randomly selects dolphins until she finds one that has been tagged with a
@@ -473,6 +493,8 @@ she finds one with a tracking device?
 
 b. What is the probability that she must select more than 6 dolphins before she
 finds one with a tracking device?
+
+::: {.callout-answer collapse="true" .show-code #ex-q7_ans}
 
 ```{r q7}
 # Simulate a geometric distribution with 10,000 data points, with a
@@ -502,6 +524,8 @@ print(ans_b)
 
 There is a `r round(ans_b, 6)` probability that she will have to select more than 6 dolphins before finding one with a tracking device.
 
+:::
+
 ### Question 8
 
 The number of results we get per minute from a simple computational model is a Poisson random variable with mean 3.
@@ -509,6 +533,8 @@ The number of results we get per minute from a simple computational model is a P
 a. Find the probability that no results come in a given 1 minute period.
 
 b. Find the probability that at least two results will come in a given two minute period.
+
+::: {.callout-answer collapse="true" .show-code #ex-q8_ans}
 
 ```{r q8}
 # Simulate a Poisson distribution with lambda 3
@@ -536,6 +562,8 @@ print(ans_b)
 ```
 The probability at least two results will come in a given 2 minute period is `r round(ans_b, 4)`.
 
+:::
+
 ## Problem Sheet 2
 
 ### Question 1
@@ -545,6 +573,8 @@ part lasts is exponentially distributed.
 a) What is the probability that the spectrophotometer part lasts more than 7 years?
 b) On the average, how long would 5 of these parts last if they were used one after
 another?
+
+::: {.callout-answer collapse="true" .show-code #ex-qq1_ans}
 
 ```{r qq1}
 # Rate per year if it lasts 10 years on average
@@ -577,9 +607,13 @@ print(total_time)
 ```
 On average, 5 parts would last `r round(total_time, 4)` years.
 
+:::
+
 ### Question 2
 
 A drug is produced in a chamber with temperature X, where X is a random variable that follows a normal distribution with μ = 21°C and σ = 5°C. If X<25°C, the production cost per unit is £20, whereas if X≥25°C the production cost per unit is £30. Find the expected production cost per unit for this drug.
+
+::: {.callout-answer collapse="true" .show-code #ex-qq2_ans}
 
 ```{r qq2}
 # Simulate a normal distribution where μ = 21°C and σ = 5°C
@@ -607,6 +641,8 @@ print(ans_2)
 ```
 The expected production cost per unit for this drug is £`r round(ans_2, 2)` per unit.
 
+:::
+
 ### Question 3
 
 A box contains 3 green and 5 red balls. If we pick balls and then replace them, find:
@@ -614,6 +650,7 @@ a) The probability that the third time we pick a ball, we get a red ball for the
 b) The probability that the 4th time we pick a ball, a red ball appears for the first time
 c) The expected number of times we pick a ball until we get a red ball for the second time.
 
+::: {.callout-answer collapse="true" .show-code #ex-qq4_ans}
 
 #### a
 The probability that the third time we pick a ball, we get a red ball for the second time.
@@ -678,12 +715,14 @@ print(expected)
 ```
 The expected number of times we pick a ball until we get a red ball for the second time is `r round(expected, 4)`.
 
+:::
 
 ### Question 4
 For a group of 100 students, find:
 a) The expected number of days of the year that are birthdays of exactly 3 people.
 b) The expected number of distinct birthdays
 
+::: {.callout-answer collapse="true" .show-code #ex-qq4_ans}
 
 ```{r qq4}
 prob_bday <- 1 / 365
@@ -705,6 +744,7 @@ n_distinct <- 365 * prop_distinct
 
 print(n_distinct)
 ```
+:::
 
 ### Question 5
 
@@ -724,6 +764,7 @@ $$
 a. Verify that f(x) is a valid probability density function.
 b. Find (a) the mean of f(x), (b) the mode of f(x) and (c) the median of f(x)
 
+::: {.callout-answer collapse="true" .show-code #ex-qq5_ans}
 
 #### a
 
@@ -790,11 +831,15 @@ ggplot(simu_df, aes(x = simulated_data)) +
 
 The peak is apparent on this plot at about 1.7.
 
+:::
+
 ### Question 6
 
 ::: {.callout-note #note-non_standard_dist2}
 Answering this question using simulation depends on the bonus material in @sec-p6_non_standard.
 :::
+
+::: {.callout-answer collapse="true" .show-code #ex-qq6_ans}
 
 ### a
 Let X be a continuous random variable with probability density function:
@@ -900,6 +945,8 @@ The variance of Y is `r round(var_y, 4)`.
 
 The simulated estimate of the variance may differ noticeably from the exact answer of approximately 1.97, because values of X close to zero produce very large values of Y, making the sample variance relatively unstable.
 
+:::
+
 ### Question 7
 
 A polar bear is hunting for food. From its current position, there are three different
@@ -914,6 +961,8 @@ time it will take for the bear gets some food?
 This solution uses conditional statements **if** and **else**, along with a  **while** loop - a loop which runs over and over again until something becomes true. We have not covered these programming techniques in the practicals.
 
 :::
+
+::: {.callout-answer collapse="true" .show-code #ex-qq8_ans}
 
 ```{r qq8}
 # Length of each route
@@ -963,3 +1012,5 @@ mean_total <- mean(total_times)
 print(mean_total)
 ```
 The mean time for the polar bear to find food is `r round(mean_total, 4)`.
+
+:::

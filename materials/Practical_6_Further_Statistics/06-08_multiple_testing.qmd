@@ -64,6 +64,20 @@ We can reproduce this in R.
 
 [**Extension**]{.extension-text}
 
+If you haven't already, create a new Quarto file, `multiple_testing.qmd`.
+
+::: {.callout-note .copycode #copy-mt}
+
+### Include this code
+
+Include this code at the top of your `multiple_testing.qmd` Quarto file.
+
+```{r libraries_mt}
+library(tidyverse)
+library(gt)
+```
+:::
+
 In your `multiple_testing.qmd` Quarto file:
 
 * Generate a simulated set of 1000 values which are normally distributed with mean 0 and standard deviation 1.

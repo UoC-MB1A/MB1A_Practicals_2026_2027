@@ -108,6 +108,20 @@ Let's try some more extreme temperatures.
 
 [**Extension**]{.extension-text}
 
+If you haven't already, create a new Quarto file, `glms.qmd`.
+
+::: {.callout-note .copycode #copy-glms}
+
+### Include this code
+
+Include this code at the top of your `glms.qmd` Quarto file.
+
+```{r libraries_glm2}
+library(tidyverse)
+library(gt)
+```
+:::
+
 In your `glms.qmd` Quarto file, use `predict()` with this model to predict the probability of detecting *H. tumulorum* when the minimum temperature in the coldest month is:
 
 * -10°C
@@ -200,11 +214,23 @@ We can apply a GLM in R using the `glm()` function. We use the argument `family 
 
 [**Core**]{.core-text}
 
+If you haven't already, create a new Quarto file, `glms.qmd`.
+
+::: {.callout-note .copycode #copy-glms2}
+### Include this code
+
+Include this code at the top of your `glms.qmd` Quarto file.
+
+```{r libraries_glm}
+library(tidyverse)
+library(gt)
+```
+:::
 In your `glms.qmd` Quarto file, use `glm()` to test whether the probability of detecting *H. tumulorum* is associated with minimum temperature in the coldest month.
 
 Use:
 
-- `detected_01` as the response variable
+- `detected` as the response variable
 - `min_temp_coldest_month` as the explanatory variable
 - `family = binomial` to fit a binomial GLM
 
@@ -213,7 +239,7 @@ Save your model as `glm_ht` and examine it using `summary()`.
 ::: {.callout-answer collapse="true" #ex-fit_binomial_glm_ht_ans}
 
 ```{r fit_binomial_glm_ht_ans}
-glm_ht <- glm(detected_01 ~ min_temp_coldest_month,
+glm_ht <- glm(detected ~ min_temp_coldest_month,
   data = ht_df,
   family = binomial
 )
@@ -355,7 +381,7 @@ gt(pred_df)
 
 According to our model, we are guaranteed to find *H. tumulorum* at this temperature.
 
-![A fire bee](images/fire_bee.png){#fig-bee width="50%"}
+![A fire bee. [Source](https://theowlhouse.fandom.com/wiki/Fire_Bee)](images/fire_bee.png){#fig-bee width="50%"}
 
 Using the logit function forces the predicted probability to be between 0 and 1, however it doesn't guarantee it is correct.
 
@@ -432,7 +458,7 @@ R uses maximum likelihood to estimate the parameters for the model.
 
 Let's fit a two-parameter model to some simple data. Seagulls like to steal chips, and are more common near to the sea.  Let's see if there is an association between being nearer to the sea and having your chips stolen.
 
-![A seagull stealing a chip](images/seagull.jpg){#fig-gull width="50%"}
+![A seagull stealing a chip [Source](https://www.bbc.co.uk/news/uk-wales-south-west-wales-43727683)](images/seagull.jpg){#fig-gull width="50%"}
 
 You've been provided with a (imaginary) dataset in `data/seagulls.csv` showing the distance from the sea of an individual eating chips in metres, and whether or not their chips were stolen.
 
