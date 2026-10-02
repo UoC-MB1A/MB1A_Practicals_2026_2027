@@ -650,7 +650,7 @@ a) The probability that the third time we pick a ball, we get a red ball for the
 b) The probability that the 4th time we pick a ball, a red ball appears for the first time
 c) The expected number of times we pick a ball until we get a red ball for the second time.
 
-::: {.callout-answer collapse="true" .show-code #ex-qq4_ans}
+::: {.callout-answer collapse="true" .show-code #ex-qq3_ans}
 
 #### a
 The probability that the third time we pick a ball, we get a red ball for the second time.
@@ -839,8 +839,6 @@ The peak is apparent on this plot at about 1.7.
 Answering this question using simulation depends on the bonus material in @sec-p6_non_standard.
 :::
 
-::: {.callout-answer collapse="true" .show-code #ex-qq6_ans}
-
 ### a
 Let X be a continuous random variable with probability density function:
 
@@ -857,6 +855,8 @@ Find
 $$
 P\left(X \leq \frac{2}{3} \mid X > \frac{1}{3}\right).
 $$
+::: {.callout-answer collapse="true" .show-code #ex-qq6_ans}
+
 ```{r qq6a}
 # Create a random number generator for this distribution
 rand_gen <- pinv.new(
@@ -962,9 +962,9 @@ This solution uses conditional statements **if** and **else**, along with a  **w
 
 :::
 
-::: {.callout-answer collapse="true" .show-code #ex-qq8_ans}
+::: {.callout-answer collapse="true" .show-code #ex-qq7_ans}
 
-```{r qq8}
+```{r qq7}
 # Length of each route
 route1 <- 1
 route2 <- 6

@@ -33,7 +33,7 @@ By the end of this part of the practical you should be able to:
 
 :::
 
-For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, ``{{< meta practical >}}/prac1_exercises.qmd`. 
+For parts 3 and 4 of the practical, we recommend that you keep track of your progress in a new Quarto document, `{{< meta practical >}}/prac1_exercises.qmd`. 
 
 You can describe the code if you wish, or just label it with the exercise name. It is recommended to **use a different code chunk for each exercise**.
 

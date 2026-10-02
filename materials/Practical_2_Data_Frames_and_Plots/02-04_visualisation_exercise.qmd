@@ -84,7 +84,7 @@ To find your dataset:
 
 - On the MoveBank Site, click on `Data` and then `View and Manage Studies`.
 - Select `Studies where I can download any data`.
-- Choose a study from the list. Search for an animal which interests you. Initially, choose a study containing approximately **5–15** tracked individuals (shown in the "Number of Animals" field on the website). This will give enough data to produce an interesting plot without making it difficult to interpret.
+- Choose a study from the list. Search for an animal which interests you. Initially, choose a study containing approximately **5–10** tracked individuals (shown in the "Number of Animals" field on the website). This will give enough data to produce an interesting plot without making it difficult to interpret.
 - Select `Download` \> `Download Data`.
 - Agree with the terms and conditions
 - Download the data in CSV format
@@ -159,7 +159,7 @@ locations <- read_csv("data/movebank_data.csv") |>
 - Identify the columns containing the longitude and latitude data. There is a unique identifier for each animal in the column `individual_local_identifier`.
 - Select only the relevant columns - these are `date`, `individual_local_identifier` and the longitude and latitude columns.
 - Group the data by `date` and `individual_local_identifier`. You can group by multiple factors by adding additional arguments to the `group_by()` function.
-- Using the `summarise` function, calculate the median latitude and median longitude for each individual on each date.
+- Using the `summarise` function, calculate the median latitude and median longitude for each individual on each date. Add the argument `na.rm = TRUE` to allow NA values to be ignored.
 
 ### Example solution
 
@@ -194,13 +194,13 @@ loc_grouped <- loc_selected |>
   group_by(date, individual_local_identifier)
 ```
 
-[Using the `summarise` function, calculate the median latitude and median longitude for each individual on each date.]{.blue-text}
+[Using the `summarise` function, calculate the median latitude and median longitude for each individual on each date. Add the argument `na.rm = TRUE` to allow NA values to be ignored.]{.blue-text}
 
 ```{r process_df_ans4, message=FALSE}
 loc_sum <- loc_grouped |>
   summarise(
-    Longitude = median(location_long),
-    Latitude = median(location_lat)
+    Longitude = median(location_long, na.rm = TRUE),
+    Latitude = median(location_lat, na.rm = TRUE)
   )
 
 gt(head(loc_sum))

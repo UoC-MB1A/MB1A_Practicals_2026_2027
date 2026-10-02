@@ -142,7 +142,7 @@ If you haven't already, create a new Quarto file, `squirrels.qmd`.
 
 Include the following as an R code chunk in your `squirrels.qmd` Quarto file.
 
-```{r for_loop_squirrels}
+```{r for_loop_squirrels_inc}
 library(tidyverse)
 library(gt)
 library(cowsay)

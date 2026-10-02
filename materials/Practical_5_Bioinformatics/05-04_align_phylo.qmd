@@ -223,7 +223,7 @@ ggtree(current_newick) +
 
 You should be able to find your ERV gene in the phylogeny. However, it would be helpful to make it clearer, for example by changing the colour.
 
-Here, we fix the colour to depend on whether `label == "Ccan_ERV_1_ORF_4` is TRUE or FALSE. We then colour labels as red if this is `TRUE` and black if it is `FALSE.`
+Here, we fix the colour to depend on whether `label == "Ccan_ERV_1_ORF_4"` is `TRUE` or `FALSE`. We then colour labels as red if this is `TRUE` and black if it is `FALSE`.
 
 ```{r ggtree_annotate, fig.width=10, fig.height=10, warning=FALSE}
 ggtree(current_newick) +

@@ -159,8 +159,6 @@ This function takes the linear model fitted to the data as its input and returns
 
 [**Recommended**]{.rec-text}
 
-::: {.callout-note .copycode #copy-libs_tcga}
-
 Create a new Quarto file, `pollinators_assumptions.qmd`.
 
 ::: {.callout-note .copycode #copy-pollinators_assump}

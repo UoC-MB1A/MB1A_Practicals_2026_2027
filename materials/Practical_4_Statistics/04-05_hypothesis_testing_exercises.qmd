@@ -13,7 +13,7 @@ site_metadata <- read_csv("data/site_metadata.csv")
 flower_counts <- read_csv("data/flower_counts.csv")
 ```
 
-# Part 5: Hypothesis Testing Exercises {#sec-h_t_exercises}
+# Part 5: Hypothesis Testing Exercises {#sec-p5_h_t_exercises}
 
 ::: {.callout-note .partmenu #parts-0405}
 ## Sections

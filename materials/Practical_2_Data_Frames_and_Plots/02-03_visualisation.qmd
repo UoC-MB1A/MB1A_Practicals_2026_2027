@@ -157,7 +157,7 @@ Now, we can add some additional information to make the plot more informative.
 
 ### Adding map features {#sec-add_map .core}
 
-The `maps` package has a convenient function `annotation_borders()` to add geographical country borders to a scatter plot representing a map. We're also going to add a second function used with map data, `coord_quickmap()` - this keeps the shape of the plot consistent so the map isn't skewed.
+There is a convenient function, `annotation_borders()`, to add geographical country borders to a scatter plot representing a map. We're also going to add a second function used with map data, `coord_quickmap()` - this keeps the shape of the plot consistent so the map isn't skewed.
 
 We can add this layer to our scatter plot as follows. The argument `linewidth` sets the width of the lines in the map borders.
 

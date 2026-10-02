@@ -30,7 +30,7 @@ By the end of this part of the practical you will:
 
 #### Sections
 
-- @sec-examining_data
+- @sec-stats_tests
 - @sec-choose_test
 - @sec-run_test
 - @sec-t_dist [(Extension)]{.extension-text}

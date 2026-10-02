@@ -25,8 +25,6 @@ bird_migration_exc <- read_csv("output/bird_migration_exc.csv")
 :::
 
 :::{.callout-tip .objectives #objectives-0202}
-#### Learning objectives
-By the end of this part of the practical you will be able to:
 
 #### Learning objectives
 

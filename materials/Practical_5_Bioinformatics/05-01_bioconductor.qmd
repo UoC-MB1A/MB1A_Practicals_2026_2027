@@ -131,7 +131,7 @@ library(tidyverse)
 
 [↑ top](#)
 
-You have been provided with sequence data from the beaver genome in FASTA format as `data/C_canadensis_erv_regions.fasta`. This file contains the DNA sequence of 365 regions of the beaver genome which have previously been identified as potentially containing ERVs. 
+You have been provided with sequence data from the beaver genome in FASTA format as `data/C_canadensis_ervs.fasta`. This file contains the DNA sequence of 365 regions of the beaver genome which have previously been identified as potentially containing ERVs. 
 
 FASTA is a simple text-based format commonly used for storing biological sequences, such as DNA, RNA or protein sequences.
 
@@ -230,10 +230,10 @@ print(mean(width(beaver_fasta)))
 :::
 :::
 
-In the spreadsheet [here](xxx) there is a list of the beaver ERV regions - the same ones that are in your FASTA file. As a group, we want to try to analyse as many of these as possible. Each student will characterise one ERV region, and together the class will build a larger collection of annotated ERVs.
+In the spreadsheet [here](https://universityofcambridgecloud-my.sharepoint.com/:x:/r/personal/kab84_cam_ac_uk/Documents/Book%2012.xlsx?d=w88cbdaa4f95e4584a9c5b4240633e776&csf=1&web=1&e=P9z1Aw&nav=MTVfezAwMDAwMDAwLTAwMDEtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMH0) there is a list of the beaver ERV regions - the same ones that are in your FASTA file. As a group, we want to try to analyse as many of these as possible. Each is assigned to a specific CRSID. Each student will characterise one ERV region, and together the class will build a larger collection of annotated ERVs.
 
 ::: {.callout-important #note-choose_erv}
-Please choose any available region and put your CRSID next to it on the spreadsheet, so others know that it is taken. Each sequence has a unique ID. Please note the ID for your sequence. Wherever you are asked later for your [**ERV_ID**]{.orange-text}, this is the number you need.
+Please search for your CRSID in this file. Each sequence has a unique ID. Please note the ID for your sequence. Wherever you are asked later for your [**ERV_ID**]{.orange-text}, this is the number you need.
 :::
 
 Access your specific sequence using this unique ID as an index - `beaver_fasta["ERV_ID"]`, replacing `ERV_ID` with the ID of the region you just selected.

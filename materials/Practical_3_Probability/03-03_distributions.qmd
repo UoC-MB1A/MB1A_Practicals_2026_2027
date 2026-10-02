@@ -563,7 +563,7 @@ If you haven't already, create a new Quarto file, `distributions.qmd`.
 
 ### Include this code
 
-```{r start_drosophila}
+```{r start_drosophila2}
 library(tidyverse)
 library(gt)
 library(janitor)

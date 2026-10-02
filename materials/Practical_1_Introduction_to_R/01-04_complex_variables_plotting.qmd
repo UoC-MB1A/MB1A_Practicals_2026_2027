@@ -73,7 +73,7 @@ However, we will often need to load a package.
 
 For example, for this practical we will use some functions from the [`tidyverse`](https://tidyverse.org/) package collection for data science and from the [`gt`](https://gt.rstudio.com/) package for visualising data frames.
 
-Therefore, you need to include the following code at the beginning of your `prac_1_exercises.qmd` Quarto document.
+Therefore, you need to include the following code at the beginning of your `prac1_exercises.qmd` Quarto document.
 
 ::: {.callout-note .copycode #copycode-load_tidyverse}
 
@@ -460,7 +460,7 @@ library(gt)
 
 :::
 
-Load the table you have download into R and then view the resulting table with `gt()`. These tables are mostly long, so we can use the `head()` function together with `gt()` to just visualise the first ten lines:
+Load the table you have downloaded into R and then view the resulting table with `gt()`. These tables are mostly long, so we can use the `head()` function together with `gt()` to just visualise the first ten lines:
 
 For example:
 

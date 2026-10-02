@@ -272,7 +272,7 @@ On your computer, check that this FASTA file exists in `output/orf_aa_seqs.fasta
 ### Summary
 
 #### Concepts
-- Open reading frames (ORFs) can be automatically identified in nucleotide sequences using the `getORFs()` function.
+- Open reading frames (ORFs) can be automatically identified in nucleotide sequences using the `findORFs()` function.
 - An **`IRanges` object** can represent the positions and lengths of features, such as ORFs, within a sequence.
 - Individual elements of an object can be accessed using **indexing**; `[[1]]` extracts the first element rather than retaining it inside its original container.
 - Biological sequences can be given unique **sequence identifiers**, which are retained when the sequences are subsequently manipulated.

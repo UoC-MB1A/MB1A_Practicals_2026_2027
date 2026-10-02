@@ -111,7 +111,7 @@ Please create a new Quarto file, `septin.qmd`.
 
 Include this code at the top of your `septin.qmd` Quarto file.
 
-```{r libraries_septin}
+```{r libraries_septin, message=FALSE}
 library(tidyverse)
 library(gt)
 

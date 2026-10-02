@@ -256,7 +256,7 @@ where $D$ is the residual **deviance**, $n$ is the number of observations and $p
 
 ![Deviance [Source](https://en.wikipedia.org/wiki/Sideshow_Bob#/media/File:C-bob.png)](images/bob.png){#fig-bob width="25%"}
 
-The residual deviance is a measure of how much mismatch remains between the observed data and the fitted GLM. The deviance dispersion isthe residual deviance divided by the residual degrees of freedom.
+The residual deviance is a measure of how much mismatch remains between the observed data and the fitted GLM. The deviance dispersion is the residual deviance divided by the residual degrees of freedom.
 
 It's based on likelihood, comparing the fitted model with a hypothetical saturated model — a model with enough parameters to fit the observations perfectly. We will come back to this later when we compare models.
 
@@ -440,7 +440,7 @@ $$
 
 When $\phi > 1$, this allows the variance to be greater than the mean.
 
-![Quasi-modo [Source](https://disney.fandom.com/wiki/Quasimodo)](images/quasi.png){#fig-bob width="25%"}
+![Quasi-modo [Source](https://disney.fandom.com/wiki/Quasimodo)](images/quasi.png){#fig-quasi width="25%"}
 
 
 In R, we can fit this model by replacing `family = poisson` with `family = quasipoisson`.
