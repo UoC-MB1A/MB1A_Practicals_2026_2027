@@ -64,7 +64,34 @@ First, make sure to install Xcode as instructed in the previous section. Then, i
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Test your `brew` installation by installing the `wget` utility, which is used to download files from the web:
+Then run type the following command:
+
+``` bash
+uname -m
+```
+Your screen should either say `arm64` or `x86_64`.
+
+If it says `arm64`, run the following two commands:
+
+``` bash
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+```
+
+``` bash
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+If it says `x86_64`, run the following two commands instead:
+
+``` bash
+echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
+```
+
+``` bash
+eval "$(/usr/local/bin/brew shellenv)"
+```
+
+Test your `brew` installation by installing the `wget` utility, which is used to download files from the internet:
 
 ``` bash
 brew install wget

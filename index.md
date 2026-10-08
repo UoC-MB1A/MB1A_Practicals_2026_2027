@@ -35,7 +35,9 @@ Materials and exercises are labelled as follows:
 | [{{< fa solid magnifying-glass >}}]{.extension-text}  | [**Extension**]{.extension-text} | Provides either extra depth on a topic or additional skills which are not essential for other practicals. Exercises will have a little less guidance than the core and recommended exercises. |
 | [{{< fa solid rocket >}}]{.bonus-text}  | [**Bonus**]{.bonus-text} | Extra challenges just for fun, for people who are working quickly or are very comfortable with the topic. Exercises will have much less guidance than the other levels. |
 
+## Reference
 
+There is a table in @sec-glossary listing all the functions you will use in this series of practicals.
 
 ## Exams and assessment
 

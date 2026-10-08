@@ -14,7 +14,6 @@ cran_packages <- c(
   "osbng",
   "patchwork",
   "phytools",
-  "pollimetry",
   "pwr",
   "rnaturalearth",
   "Runuran",

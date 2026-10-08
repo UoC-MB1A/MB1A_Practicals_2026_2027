@@ -211,7 +211,7 @@ Select `Git - Clone a project from a Git repository`.
 
 ![New Project Git](materials/images/new_rstudio_fromgit.png){#fig-new_rstudio_fromgit width="70%"}
 
-Copy and paste the URL of your forked repository into the `Repository URL` box.
+Copy and paste the URL of your forked repository into the `Repository URL` box. It should be something similar to <code>https://github.com/[githubid]{.orange-text}/MB1A_Students_2026_2027</code>, but with your GitHub ID instead of <code>[githubid]{.orange-text}</code>.
 
 ::: {.callout-important #note-check_fork_url}
 Make sure you are using the URL for your forked repository, not the original! Your username should be in the URL. If you're not sure, please talk to a demonstrator.
