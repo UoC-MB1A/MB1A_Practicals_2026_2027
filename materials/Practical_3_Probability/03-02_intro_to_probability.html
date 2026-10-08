@@ -1,0 +1,3787 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Katy Brown">
+
+<title>Part 2: Using simulation to understand probability</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../materials/Practical_3_Probability/03-03_distributions.html" rel="next">
+<link href="../../materials/Practical_3_Probability/03-01_for_loops.html" rel="prev">
+<link href="../../my-theme/university-of-cambridge-favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/quarto-axe/axe.min.js"></script>
+<script src="../../site_libs/quarto-axe/axe-check.js" type="module"></script>
+<script id="quarto-axe-checker-options" type="text/plain">dHJ1ZQ==</script>
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-28c0f568e849e862245738fef60e6e51.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../my-theme/university_crest_reversed.png" alt="" class="navbar-logo light-content">
+    <img src="../../my-theme/university_crest_reversed.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">MB1A Practicals 2026-2027</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+      </div> <!-- /container-fluid -->
+    
+    <style>
+    #version-dropdown {
+      list-style: none;
+    }
+    </style>
+    
+
+  <li id="version-dropdown" class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-versions" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="menu-text">Version:</span> <span class="version-badge" aria-hidden="true">Latest</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-versions">
+      <li>
+        <a class="dropdown-item" href="/MB1A_Practicals_2026_2027/index.html">
+          <span class="dropdown-text">Latest</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+</nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span id="sec-p2_simulation" class="quarto-section-identifier"><span class="chapter-title">Part 2: Using simulation to understand probability</span></span></h1>
+        </a>     
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Welcome</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Installing R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Setting up Git, GitHub and RStudio</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 1 - Basics of R and RStudio</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-01_using_r_and_rstudio.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Using R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-02_quarto.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Reproducible Analysis with Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-03_simple_variables_functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Functions and Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_1_Introduction_to_R/01-04_complex_variables_plotting.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Vectors, data frames and plots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 2 - Data Frames and Visualisation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-01_manipulating_dataframes1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Basic Data Frame Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-02_manipulating_dataframes2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Complex Data Frame Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-03_visualisation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Visualisation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_2_Data_Frames_and_Plots/02-04_visualisation_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Visualisation Exercise</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Practical 3 - Probability and Simulation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-01_for_loops.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Loops</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-02_intro_to_probability.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 2: Using simulation to understand probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-03_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Using simulation to understand data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-04_using_other_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Simulation exercises</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-05_Bayes_theorem.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Conditional Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-06_bonus_non_standard_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6 - Sampling from a user-defined probability distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_3_Probability/03-07_bonus_practice_questions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability Problem Sheets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 4 - Statistics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-01_data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: UK Pollinator Monitoring Scheme Dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-02_hypothesis_testing_1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-03_hypothesis_testing_2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: ANOVA with multiple groups or explanatory variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-04_hypothesis_testing_3.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Linear regression and Chi-Squared</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-05_hypothesis_testing_exercises.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Hypothesis Testing Exercises</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-06_making_predictions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Using models to make predictions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_4_Statistics/04-07_estimators_and_bootstrapping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Estimators and Bootstrapping</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 5 - Bioinformatics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-01_bioconductor.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Introduction to Bioconductor and Sequence Analysis in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-02_sequence_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Finding Open Reading Frames</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-03_blast.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Identifying Sequences with BLAST</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-04_align_phylo.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Multiple Sequence Alignment and Phylogeny</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_5_Bioinformatics/05-05_share_data.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Share your results</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Practical 6 - Further Statistics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-00_learning_obj.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Plan and Learning Objectives</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-01_functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-02_model_assumptions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Testing Assumptions of Linear Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-03_breaking_assumptions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Can we break a t-test?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-04_glms_binom.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: Generalised Linear Models - Binomial</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-05_glms_pois.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Generalised Linear Models - Poisson</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-06_choosing_a_model.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Choosing a model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-07_power_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Power Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../materials/Practical_6_Further_Statistics/06-08_multiple_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: P-values and Multiple testing</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">R Reference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../R_reference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">R Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-simulation" id="toc-sec-simulation" class="nav-link active" data-scroll-target="#sec-simulation">Introduction to simulation</a></li>
+  <li><a href="#sec-how_simulation" id="toc-sec-how_simulation" class="nav-link" data-scroll-target="#sec-how_simulation">How to simulate data</a></li>
+  <li><a href="#sec-unequal_probabilities" id="toc-sec-unequal_probabilities" class="nav-link" data-scroll-target="#sec-unequal_probabilities">Unequal probabilities</a></li>
+  <li><a href="#sec-repeating_simulations" id="toc-sec-repeating_simulations" class="nav-link" data-scroll-target="#sec-repeating_simulations">Repeating simulations</a></li>
+  <li><a href="#sec-binomial" id="toc-sec-binomial" class="nav-link" data-scroll-target="#sec-binomial">The binomial distribution</a></li>
+  <li><a href="#sec-using_prob_functions" id="toc-sec-using_prob_functions" class="nav-link" data-scroll-target="#sec-using_prob_functions">Using probability functions in R</a>
+  <ul class="collapse">
+  <li><a href="#sec-plotting_theoretical_binom" id="toc-sec-plotting_theoretical_binom" class="nav-link" data-scroll-target="#sec-plotting_theoretical_binom">Plotting the theoretical distribution</a></li>
+  </ul></li>
+  <li><a href="#sec-inbuilt_functions" id="toc-sec-inbuilt_functions" class="nav-link" data-scroll-target="#sec-inbuilt_functions">Inbuilt functions</a></li>
+  <li><a href="#sec-summary_0302" id="toc-sec-summary_0302" class="nav-link" data-scroll-target="#sec-summary_0302">Review</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span id="sec-p2_simulation" class="quarto-section-identifier"><span class="chapter-title">Part 2: Using simulation to understand probability</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Katy Brown </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="parts-0302" class="partmenu callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Sections
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><a href="#sec-simulation" class="quarto-xref"><span>Introduction to simulation</span></a></li>
+<li><a href="#sec-how_simulation" class="quarto-xref"><span>How to simulate data</span></a></li>
+<li><a href="#sec-unequal_probabilities" class="quarto-xref"><span>Unequal probabilities</span></a></li>
+<li><a href="#sec-repeating_simulations" class="quarto-xref"><span>Repeating simulations</span></a></li>
+<li><a href="#sec-binomial" class="quarto-xref"><span>The binomial distribution</span></a></li>
+<li><a href="#sec-inbuilt_functions" class="quarto-xref"><span>Inbuilt functions</span></a></li>
+<li><a href="#sec-summary_0302" class="quarto-xref"><span>Review</span></a></li>
+</ul>
+</div>
+</div>
+<div id="objectives-0302" class="objectives callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this part of the practical you will be able to:</p>
+<ul>
+<li>Approximate the outcome of stochastic processes using simulation</li>
+<li>Use <code>sample()</code> to simulate random events with equal or unequal probabilities.</li>
+<li>Use a <code>for</code> loop to repeat a simulation.</li>
+<li>Calculate binomial probabilities using <code>dbinom()</code> and <code>pbinom()</code>.</li>
+<li>Generate random values from a binomial distribution using <code>rbinom()</code>.</li>
+<li>Compare an empirical distribution obtained by simulation with a theoretical probability mass function.</li>
+</ul>
+</div>
+</div>
+<section id="sec-simulation" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-simulation">Introduction to simulation</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>Many biological processes involve an element of chance and therefore involve probability. In R, we can use simulation to generate data that approximates a random process. These simulated data allow us to investigate probability, test hypotheses and better understand the behaviour of biological systems.</p>
+<p>If you are studying a stochastic process, the exact probability of an event can <strong>sometimes</strong> be calculated mathematically. In these cases, simulation provides a useful way to <strong>check</strong> your calculations. In other cases, an exact solution may be difficult or impossible to obtain, and simulation allows you to <strong>estimate</strong> the answer instead.</p>
+</section>
+<section id="sec-how_simulation" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-how_simulation">How to simulate data</h2>
+<p>First, let’s perform a tiny simulation, of a coin toss.</p>
+<p>We are using the function <a href="../../R_reference.html#sec-prob_sim_glos"><code>sample()</code></a>, which was introduced in the last exercise of Part 1. We will initially use two arguments with this function: <code>x</code> - the elements from which to sample, and <code>size</code>, the number of samples to take. By default, R assumes that every element is equally probable.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>coin_toss <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Heads"</span>, <span class="st">"Tails"</span>), <span class="at">size =</span> <span class="dv">1</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(coin_toss)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Heads"</code></pre>
+</div>
+</div>
+<p>We can use a for loop to toss multiple coins.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="dv">5</span>)) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  coin_toss <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Heads"</span>, <span class="st">"Tails"</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">1</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(coin_toss)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Heads"
+[1] "Heads"
+[1] "Heads"
+[1] "Tails"
+[1] "Tails"</code></pre>
+</div>
+</div>
+<p>We can also do this directly with the sample function by changing <code>size</code>. We need to add the argument <code>replace = TRUE</code> to tell R to replace the samples - otherwise after two samples, the coin has no remaining sides!</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>coin_tosses <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Heads"</span>, <span class="st">"Tails"</span>),</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">5</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(coin_tosses)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Tails" "Tails" "Heads" "Tails" "Heads"</code></pre>
+</div>
+</div>
+<p>To count how many times a specific value occurs in a vector, you can use the operator <code>==</code> and the <code>sum()</code> function:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n_successes <span class="ot">&lt;-</span> <span class="fu">sum</span>(coin_tosses <span class="sc">==</span> <span class="st">"Heads"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_successes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+</div>
+<p>The coin showed Heads 2 times.</p>
+</section>
+<section id="sec-unequal_probabilities" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-unequal_probabilities">Unequal probabilities</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>So far, we’ve assumed a “fair coin” - with 50% probability of each outcome. However, we can change this by giving an additional argument to the <code>sample()</code> function.</p>
+<p>This argument is <code>prob</code> - a vector of <strong>probability weights</strong> corresponding to the elements of the original vector.</p>
+<p>So, if we want the coin to land on heads 70% of the time, we would use:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>coin_tosses <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Heads"</span>, <span class="st">"Tails"</span>),</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">5</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.7</span>, <span class="fl">0.3</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(coin_tosses)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Tails" "Tails" "Heads" "Heads" "Tails"</code></pre>
+</div>
+</div>
+<p>If we had a vector <code>c('Badger', 'Mushroom', 'Snake')</code> and we want to sample 100 times from this vector, with replacement, <a href="https://www.youtube.com/watch?v=EIyixC9NsLI">selecting <code>Badger</code> 95% of the time, <code>Mushroom</code> 4% of the time and <code>Snake</code> 1% of the time</a>, we would use this function as follows:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>bm_vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Badger"</span>, <span class="st">"Mushroom"</span>, <span class="st">"Snake"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>bm_probs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.04</span>, <span class="fl">0.01</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>my_sample <span class="ot">&lt;-</span> <span class="fu">sample</span>(bm_vec,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">100</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> bm_probs</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(my_sample)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "Mushroom" "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+  [7] "Mushroom" "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [13] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [19] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [25] "Badger"   "Badger"   "Badger"   "Mushroom" "Badger"   "Mushroom"
+ [31] "Badger"   "Badger"   "Mushroom" "Badger"   "Badger"   "Badger"  
+ [37] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [43] "Badger"   "Badger"   "Badger"   "Mushroom" "Badger"   "Badger"  
+ [49] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [55] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [61] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [67] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [73] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [79] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [85] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Mushroom"
+ [91] "Badger"   "Badger"   "Badger"   "Badger"   "Badger"   "Badger"  
+ [97] "Badger"   "Badger"   "Badger"   "Badger"  </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 1 - Simulating unequal probabilities
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-sample_binom" class="callout-exercise core">
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p>If you haven’t already, create a new Quarto file, <code>squirrels.qmd</code>.</p>
+<div id="copy-squirrels" class="copycode callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Include this code
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Include the following as an R code chunk in your <code>squirrels.qmd</code> Quarto file.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowsay)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>A squirrel has a 30% success rate at stealing seeds from a bird feeder. She tries 150 times.</p>
+<p>In your <code>squirrels.qmd</code> Quarto file, using the <code>sample()</code> function, take 150 samples with a 30% probability of a successful heist. Calculate the total number of successful heists and store it as a variable named <code>n_successes</code>.</p>
+<p>Have a squirrel announce the results of your simulation (the number of times she was successful) using the function <code>say()</code> and the argument <code>by="squirrel"</code>.</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_sample_binom_ans" class="callout-answer" data-collapse="true">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>is_success <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"SUCCESS"</span>, <span class="st">"FAILURE"</span>),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">150</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.7</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>n_successes <span class="ot">&lt;-</span> <span class="fu">sum</span>(is_success <span class="sc">==</span> <span class="st">"SUCCESS"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">say</span>(<span class="fu">paste</span>(<span class="st">"I was successful"</span>, n_successes, <span class="st">"times!"</span>), <span class="at">by =</span> <span class="st">"squirrel"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ ____________________________ 
+&lt; I was successful 54 times! &gt;
+ ---------------------------- 
+                    \
+                     \
+
+                      . .
+                      |\|\_
+                      /  ^ \
+                     /  _-_/°
+   \\\\\\\\\       /   / \
+  ////////////   /  \ / ||
+ \\\\\\\\\\\\\\ /   /\\ \\
+////////////////   /  \\ \\
+ \\\\\\\\\\\\\/   /  / `` ``
+     /////////   \  /  \
+ ML     \\\\\\___/_/___/</code></pre>
+</div>
+</div>
+<p>(You might get a different number)</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-repeating_simulations" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-repeating_simulations">Repeating simulations</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>If you run this simulation several times, you’ll see that the result often changes.</p>
+<p>We can formalise this using a for loop, running the simulation a fixed number of times.</p>
+<p>Let’s say we have 1000 squirrels, each making 150 attempts, with the same fixed probability of success of 30%.</p>
+<div id="copy-libraries" class="copycode callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Include this code
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Include the following as an R code chunk in your <code>squirrels.qmd</code> Quarto file.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>combined_successes <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="dv">1000</span>)) {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  is_success <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"SUCCESS"</span>, <span class="st">"FAILURE"</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">150</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.7</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  n_successes <span class="ot">&lt;-</span> <span class="fu">sum</span>(is_success <span class="sc">==</span> <span class="st">"SUCCESS"</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  combined_successes <span class="ot">&lt;-</span> <span class="fu">c</span>(combined_successes, n_successes)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(combined_successes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   [1] 40 40 42 49 39 44 44 51 34 45 44 55 48 45 55 43 49 38 53 49 48 53 50 54
+  [25] 47 40 53 50 43 41 43 48 45 52 54 45 38 45 40 41 41 54 34 46 47 50 48 41
+  [49] 40 39 35 43 40 40 45 45 37 48 46 52 48 33 49 42 50 53 41 46 55 43 42 47
+  [73] 53 40 55 42 46 42 50 47 48 47 44 51 41 43 35 44 39 50 53 47 44 47 41 39
+  [97] 39 46 35 45 47 34 46 41 44 39 50 46 50 48 46 42 51 35 45 57 44 45 43 38
+ [121] 45 44 49 42 46 40 44 42 41 36 45 45 48 48 36 49 51 47 38 39 51 36 48 43
+ [145] 47 40 51 51 42 39 41 49 44 45 47 46 44 41 48 42 42 53 46 50 44 45 59 42
+ [169] 43 46 51 41 47 36 39 39 44 58 42 43 52 41 55 44 43 45 44 34 37 54 43 48
+ [193] 50 35 44 40 41 57 53 58 47 29 51 57 57 49 46 38 49 50 44 45 40 43 50 55
+ [217] 48 37 39 43 41 47 42 50 43 59 35 37 46 50 37 52 37 41 38 42 47 40 53 51
+ [241] 45 42 55 41 43 53 44 39 45 49 51 52 39 40 54 53 41 52 42 45 46 42 42 44
+ [265] 51 53 40 49 41 36 41 44 43 42 45 42 42 51 40 39 44 42 53 37 46 54 44 58
+ [289] 50 43 44 41 48 53 42 47 54 50 46 50 54 49 43 42 43 48 43 44 38 43 46 50
+ [313] 55 47 46 50 50 51 40 43 47 50 45 46 52 48 54 39 53 54 55 54 44 44 51 50
+ [337] 49 50 42 47 44 54 44 38 52 37 48 47 56 38 46 39 35 49 40 47 54 52 47 47
+ [361] 43 46 59 47 47 58 45 42 44 43 48 39 43 55 39 39 56 45 39 55 45 43 42 41
+ [385] 39 44 39 49 39 50 50 32 50 46 49 43 48 50 46 48 44 50 40 42 47 44 48 43
+ [409] 40 28 48 40 49 45 42 33 45 50 52 48 42 41 50 49 47 45 42 39 45 45 43 45
+ [433] 51 51 51 48 42 43 40 46 45 40 53 50 42 43 42 45 52 37 36 51 44 52 40 43
+ [457] 41 50 38 40 43 47 34 46 35 57 42 59 45 45 46 54 39 50 47 42 48 51 51 48
+ [481] 40 42 43 52 42 49 44 50 40 42 49 48 53 46 48 45 46 48 47 52 37 53 53 37
+ [505] 54 37 48 40 41 59 47 49 43 48 48 59 48 42 48 39 49 48 44 62 49 37 42 41
+ [529] 28 43 34 43 50 45 43 40 42 41 38 43 46 54 46 45 44 55 50 52 37 39 46 41
+ [553] 41 49 43 42 48 44 35 37 44 47 46 52 40 37 56 46 35 39 48 52 41 55 55 37
+ [577] 40 43 52 40 52 38 44 52 51 46 46 47 34 44 43 47 45 50 40 45 42 39 50 46
+ [601] 52 39 50 49 41 42 47 48 40 39 47 38 43 34 47 51 48 48 27 46 48 48 42 49
+ [625] 49 41 47 57 45 46 49 47 43 47 41 44 33 52 44 51 53 54 36 45 49 49 47 39
+ [649] 36 46 52 39 39 42 53 42 43 45 45 55 50 53 41 48 47 46 47 47 49 51 41 41
+ [673] 62 42 51 35 41 36 39 46 54 38 50 47 37 43 48 54 43 44 40 52 49 48 47 47
+ [697] 38 42 50 42 47 40 43 45 47 48 41 47 41 50 50 47 43 50 45 41 42 44 34 46
+ [721] 44 50 48 44 37 48 49 46 42 48 44 37 40 49 38 50 42 43 45 45 52 44 44 46
+ [745] 44 42 58 52 37 47 46 52 47 37 60 50 55 43 37 40 44 54 55 44 52 45 37 49
+ [769] 36 52 35 48 51 39 34 48 45 48 34 50 42 37 42 52 40 37 56 46 50 51 36 38
+ [793] 47 51 47 53 46 35 46 32 45 40 44 48 45 41 49 43 42 41 44 43 51 37 48 51
+ [817] 46 48 56 41 49 53 44 39 39 42 53 53 42 50 43 43 43 40 54 46 53 49 50 49
+ [841] 35 45 42 43 51 40 54 44 50 42 43 52 44 45 42 46 36 41 46 48 54 39 40 46
+ [865] 41 55 45 51 45 50 42 37 44 41 40 58 42 57 46 50 40 55 39 44 46 40 43 42
+ [889] 41 43 33 41 43 41 45 49 39 34 42 43 40 51 49 40 44 52 46 47 46 59 50 48
+ [913] 41 40 41 47 51 56 39 54 46 47 52 38 39 51 47 33 53 51 46 48 39 31 47 49
+ [937] 46 39 46 37 38 42 43 38 48 42 43 51 37 39 47 42 40 47 37 38 35 41 32 56
+ [961] 39 58 46 58 45 32 39 54 59 53 48 35 44 49 40 40 55 43 44 38 48 39 46 52
+ [985] 42 44 37 48 38 41 48 38 46 52 42 44 41 50 46 43</code></pre>
+</div>
+</div>
+</div>
+</div>
+<p>We now know how many successful heists each squirrel had, out of 150.</p>
+<p>Let’s visualise how many squirrels have each number of successful heists - i.e.&nbsp;how many of our 1000 squirrels stole seeds once, twice, three times etc.</p>
+<p>First, we need to convert our vector into a data frame. We can do this by using the function <code>tibble()</code> and assigning the vector to a column.</p>
+<div id="copy-libraries2" class="copycode callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Include this code
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Include the following as an R code chunk in your <code>squirrels.qmd</code> Quarto file.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df_squirrels <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="st">"N_Successful_Heists"</span> <span class="ot">=</span> combined_successes)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(df_squirrels))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="xwxsilpvdl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xwxsilpvdl table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#xwxsilpvdl thead, #xwxsilpvdl tbody, #xwxsilpvdl tfoot, #xwxsilpvdl tr, #xwxsilpvdl td, #xwxsilpvdl th {
+  border-style: none;
+}
+
+#xwxsilpvdl p {
+  margin: 0;
+  padding: 0;
+}
+
+#xwxsilpvdl .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#xwxsilpvdl .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xwxsilpvdl .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xwxsilpvdl .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xwxsilpvdl .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xwxsilpvdl .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xwxsilpvdl .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xwxsilpvdl .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xwxsilpvdl .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#xwxsilpvdl .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#xwxsilpvdl .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xwxsilpvdl .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xwxsilpvdl .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xwxsilpvdl .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xwxsilpvdl .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xwxsilpvdl .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xwxsilpvdl .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xwxsilpvdl .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#xwxsilpvdl .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xwxsilpvdl .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xwxsilpvdl .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xwxsilpvdl .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xwxsilpvdl .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xwxsilpvdl .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xwxsilpvdl .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xwxsilpvdl .gt_left {
+  text-align: left;
+}
+
+#xwxsilpvdl .gt_center {
+  text-align: center;
+}
+
+#xwxsilpvdl .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xwxsilpvdl .gt_font_normal {
+  font-weight: normal;
+}
+
+#xwxsilpvdl .gt_font_bold {
+  font-weight: bold;
+}
+
+#xwxsilpvdl .gt_font_italic {
+  font-style: italic;
+}
+
+#xwxsilpvdl .gt_super {
+  font-size: 65%;
+}
+
+#xwxsilpvdl .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#xwxsilpvdl .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xwxsilpvdl .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#xwxsilpvdl .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#xwxsilpvdl .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#xwxsilpvdl .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#xwxsilpvdl .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#xwxsilpvdl .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#xwxsilpvdl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="N_Successful_Heists" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">N_Successful_Heists</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="N_Successful_Heists">40</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="N_Successful_Heists">40</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="N_Successful_Heists">42</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="N_Successful_Heists">49</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="N_Successful_Heists">39</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="N_Successful_Heists">44</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Then we can create a plot showing how many squirrels had each number of successful heists.</p>
+<p>The <a href="../../R_reference.html#sec-plotting_glos"><code>geom_bar()</code></a> function in <code>ggplot</code> counts how many times each value occurs in a column of a data frame and displays the result as a bar chart.</p>
+<p><code>geom_bar()</code> just needs the x axis to be specified - in this case the <code>N_Successful_Heists</code> column, as the y axis will be calculated.</p>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 2 - Plotting using geom_bar()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-plot_squirrels" class="callout-exercise core">
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p>In your <code>squirrels.qmd</code> Quarto file, plot the distribution of the number of successful heists per squirrel, using the <code>geom_bar()</code> function.</p>
+<div id="note-fig_labels" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Don’t forget to give your plot a title (<code>ggtitle()</code>) and axis labels (<code>xlab()</code> and <code>ylab()</code>).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_plot-squirrels_ans" class="callout-answer" data-collapse="true">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  df_squirrels,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> N_Successful_Heists</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Number of Successful Heists per Squirrel - Simulated"</span>) <span class="sc">+</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Number of successful heists"</span>) <span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Number of squirrels"</span>) <span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="03-02_intro_to_probability_files/figure-html/plot_squirrels_ans-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="03-02_intro_to_probability_files/figure-html/plot_squirrels_ans-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>You can see that a distribution is emerging here - the squirrels are likely to be successful around 40 to 55 times out of 150.</p>
+<p>This is called an <strong>empirical distribution</strong> because it is based on simulated observations rather than a mathematical formula.</p>
+</section>
+<section id="sec-binomial" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-binomial">The binomial distribution</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>As you may have recognised, this approximates a binomial distribution:</p>
+<ul>
+<li>We have a fixed number of trials - 150.</li>
+<li>We have a binary outcome - success or failure.</li>
+<li>Our trials are independent.</li>
+<li>The probability of success is constant across trials.</li>
+</ul>
+<p>The number of successes announced by the squirrel above is the random variable - the number of successes, <em>k</em> out of 150 trials.</p>
+<p>Increasing the number of simulations reduces the random variation in our estimate, bringing it closer to the theoretical distribution. Therefore, if we run our simulation more times, our empirical approximation should get closer to a theoretical binomial distribution.</p>
+</section>
+<section id="sec-using_prob_functions" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-using_prob_functions">Using probability functions in R</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>As you learned in the lectures, the <strong>probability mass function</strong> (PMF) for the binomial distribution is:</p>
+<p><span class="math display">\[
+P(X = k) =
+\binom{n}{k}
+p^k
+(1-p)^{n-k}
+\]</span></p>
+<p>This is implemented in R with the function <code>dbinom()</code>.</p>
+<p>The arguments for this function are:</p>
+<ul>
+<li><code>x</code>: calculate the number of successes - <em>k</em> in the equation,</li>
+<li><code>size</code>: number of trials, <em>n</em> in the equation, in our case 150 attempts per squirrel</li>
+<li><code>prob</code>: probability of success in each trial - <em>p</em> in the equation, the probability of squirrel success, 0.3, in our case.</li>
+</ul>
+<p>Let’s estimate the probability that a squirrel succeeds 48 times.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">150</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">48</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>prob_X_equals_k <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(k, n, p)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(prob_X_equals_k)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.06051733</code></pre>
+</div>
+</div>
+<p>We would expect this result around 6% of the time.</p>
+<p>Let’s compare this with the result from our simulation. Using the <code>sum()</code> function, we can count how many squirrels succeeded 48 times.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>n_successes <span class="ot">&lt;-</span> <span class="fu">pull</span>(df_squirrels, N_Successful_Heists)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>n_48 <span class="ot">&lt;-</span> <span class="fu">sum</span>(n_successes <span class="sc">==</span> <span class="dv">48</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_48)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 64</code></pre>
+</div>
+</div>
+<p>In my version of the simulation, 64 out of 1000 squirrels succeeded 48/150 times, your results might vary.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(n_48 <span class="sc">/</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.064</code></pre>
+</div>
+</div>
+<p>This is around 6% of the squirrels - not far off the estimate using the PMF.</p>
+<section id="sec-plotting_theoretical_binom" class="level3 fold extension">
+<h3 class="fold extension anchored" data-anchor-id="sec-plotting_theoretical_binom">Plotting the theoretical distribution</h3>
+<p><span class="extension-text"><strong>Extension</strong></span></p>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 3 - Plotting a theoretical binomial distribution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-theoretical_binom" class="callout-exercise extension">
+<p><span class="extension-text"><strong>Extension</strong></span></p>
+<p>In your <code>squirrels.qmd</code> Quarto file:</p>
+<ul>
+<li>Using a for loop, calculate the number of successes for every value of <code>k</code> - i.e.&nbsp;every number of successes, from 0 to 150.</li>
+<li>As above, convert your results into a data frame. Include a column for the value of <code>k</code>.</li>
+<li>Make a bar plot of the calculated probabilities.</li>
+</ul>
+<p>This time, instead of using <a href="../../R_reference.html#sec-plotting_glos"><code>geom_bar()</code></a>, which calculates the number of occurrences of each value in a column, we already have already calculated the heights we want for the bars in our bar chart - the probability of each number of successes. Therefore, we can use the function <a href="../../R_reference.html#sec-plotting_glos"><code>geom_col()</code></a> which draws a bar chart based directly on the values in a data frame column.</p>
+<p><code>geom_col()</code> just needs the x and y axes to be specified - in this case <code>N_Successful_Heists</code> on the x axis and <code>Probability</code> on the y axis.</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_theroetical_binom_ans" class="callout-answer" data-collapse="true">
+<p><span class="blue-text">Using a for loop, calculate the number of successes for every value of <code>k</code> - i.e.&nbsp;every number of successes, from 0 to 150.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">150</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (k <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">0</span>, n, <span class="dv">1</span>)) {</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  prob_X_equals_k <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(k, n, p)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> <span class="fu">c</span>(probs, prob_X_equals_k)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>probs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] 5.817093e-24 3.739560e-22 1.193988e-20 2.524432e-19 3.975980e-18
+  [6] 4.975655e-17 5.153357e-16 4.543368e-15 3.480544e-14 2.353511e-13
+ [11] 1.422193e-12 7.757416e-12 3.851003e-11 1.751995e-10 7.347652e-10
+ [16] 2.855088e-09 1.032420e-08 3.487671e-08 1.104429e-07 3.288376e-07
+ [21] 9.230940e-07 2.449025e-06 6.154368e-06 1.467874e-05 3.328929e-05
+ [26] 7.190486e-05 1.481556e-04 2.916079e-04 5.489965e-04 9.898163e-04
+ [31] 1.710968e-03 2.838473e-03 4.523816e-03 6.932601e-03 1.022413e-02
+ [36] 1.452244e-02 1.988191e-02 2.625333e-02 3.345819e-02 4.117931e-02
+ [41] 4.897397e-02 5.631153e-02 6.263221e-02 6.741806e-02 7.026363e-02
+ [46] 7.093281e-02 6.939079e-02 6.580525e-02 6.051733e-02 5.398922e-02
+ [51] 4.673924e-02 3.927667e-02 3.204717e-02 2.539587e-02 1.955079e-02
+ [56] 1.462501e-02 1.063298e-02 7.515037e-03 5.164274e-03 3.451185e-03
+ [61] 2.243271e-03 1.418461e-03 8.726480e-04 5.224015e-04 3.043455e-04
+ [66] 1.725739e-04 9.525185e-05 5.118010e-05 2.677278e-05 1.363583e-05
+ [71] 6.762257e-06 3.265476e-06 1.535551e-06 7.031683e-07 3.135751e-07
+ [76] 1.361812e-07 5.759542e-08 2.372205e-08 9.514887e-09 3.716484e-09
+ [81] 1.413591e-09 5.235523e-10 1.888072e-10 6.629375e-11 2.266164e-11
+ [86] 7.541184e-12 2.442742e-12 7.701256e-13 2.362885e-13 7.054521e-14
+ [91] 2.049171e-14 5.790435e-15 1.591470e-15 4.253700e-16 1.105445e-16
+ [96] 2.792703e-17 6.857082e-18 1.636005e-18 3.791906e-19 8.535893e-20
+[101] 1.865702e-20 3.958350e-21 8.149544e-22 1.627648e-22 3.152451e-23
+[106] 5.918887e-24 1.076886e-24 1.897851e-25 3.238396e-26 5.347810e-27
+[111] 8.542605e-28 1.319321e-28 1.968885e-29 2.837584e-30 3.947015e-31
+[116] 5.295374e-32 6.847467e-33 8.527981e-34 1.022119e-34 1.177952e-35
+[121] 1.304161e-36 1.385767e-37 1.411730e-38 1.377298e-39 1.285266e-40
+[126] 1.145723e-41 9.742544e-43 7.890475e-44 6.076370e-45 4.441201e-46
+[131] 3.074677e-47 2.011785e-48 1.241036e-49 7.198275e-51 3.913774e-52
+[136] 1.987949e-53 9.396817e-55 4.115394e-56 1.661495e-57 6.147359e-59
+[141] 2.070029e-60 6.291882e-62 1.709062e-63 4.097652e-65 8.536775e-67
+[146] 1.513911e-68 2.221983e-70 2.591234e-72 2.251072e-74 1.294960e-76
+[151] 3.699885e-79</code></pre>
+</div>
+</div>
+<p><span class="blue-text">As above, convert your results into a data frame. Include a column for the value of <code>k</code>.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df_probs <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">N_Successful_Heists =</span> <span class="fu">seq</span>(<span class="dv">0</span>, n, <span class="dv">1</span>),</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Probability =</span> probs</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><span class="blue-text">Make a bar plot of the calculated probabilities.</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  df_probs,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> N_Successful_Heists,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> Probability</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Binomial Distribution of Successful Heists - Theoretical"</span>) <span class="sc">+</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Number of successful heists"</span>) <span class="sc">+</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Probability"</span>) <span class="sc">+</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="03-02_intro_to_probability_files/figure-html/pmf_bar_plot-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="03-02_intro_to_probability_files/figure-html/pmf_bar_plot-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot shows how the data would be distributed under a perfect, theoretical binomial distribution.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-inbuilt_functions" class="level2 core">
+<h2 class="core anchored" data-anchor-id="sec-inbuilt_functions">Inbuilt functions</h2>
+<p><span class="core-text"><strong>Core</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>R is often used for simulation, so there are inbuilt functions to help us.</p>
+<p>Up to this point, we have simulated each individual attempt and then counted the number of successes. Because this type of experiment is so common, R provides a function that generates the number of successes directly.</p>
+<p>With this binomially distributed data, we could have avoided most of the above (sorry) by using the function <a href="../../R_reference.html#sec-prob_sim_glos"><code>rbinom()</code></a>, which automatically draws samples from a binomial distribution.</p>
+<p>This function takes three arguments:</p>
+<ul>
+<li><code>n</code>: number of observations, in our case e.g.&nbsp;1000 squirrels</li>
+<li><code>size</code>: number of trials, in our case 150 attempts per squirrel</li>
+<li><code>prob</code>: probability of success, in our case 0.3 (30% chance of stealing seeds successfully)</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>count_squirrels <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">size =</span> <span class="dv">150</span>, <span class="at">prob =</span> <span class="fl">0.3</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(count_squirrels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   [1] 41 39 45 40 41 45 46 41 43 44 49 46 55 42 46 48 60 50 46 51 51 48 50 47
+  [25] 52 45 49 54 39 39 54 43 51 51 48 42 60 43 45 41 46 43 39 42 49 45 46 66
+  [49] 47 39 38 38 46 48 46 36 38 47 47 44 40 40 42 35 47 48 41 55 55 47 46 45
+  [73] 38 48 49 39 38 43 42 51 45 43 49 47 49 35 49 45 48 48 51 37 50 37 40 38
+  [97] 39 34 46 48 44 42 54 46 44 40 40 48 48 55 42 49 51 45 48 37 49 58 50 53
+ [121] 52 47 59 37 42 43 50 41 47 45 49 40 43 55 40 38 47 27 42 50 39 52 55 49
+ [145] 49 39 35 40 51 49 50 48 56 46 47 43 50 53 43 39 42 44 46 45 44 45 40 41
+ [169] 55 32 43 48 49 44 37 46 43 50 50 50 43 51 38 45 38 42 47 40 39 51 36 48
+ [193] 42 45 45 45 54 42 52 52 54 54 52 41 42 53 40 39 51 47 46 39 43 50 43 45
+ [217] 47 45 42 44 41 53 43 39 52 37 49 45 51 40 50 34 50 44 45 36 49 49 46 52
+ [241] 49 40 42 54 44 41 47 45 57 40 37 44 39 42 41 47 46 57 42 39 45 53 45 51
+ [265] 50 48 42 49 42 38 47 50 43 50 51 38 40 42 45 40 50 47 45 47 53 45 43 46
+ [289] 44 40 41 51 41 43 36 54 45 40 54 46 40 48 47 41 37 41 42 51 46 44 55 42
+ [313] 46 40 44 54 39 45 47 49 46 42 41 46 49 48 55 43 49 40 52 43 45 43 42 43
+ [337] 53 48 44 47 42 49 49 46 41 59 45 51 41 54 41 36 48 42 47 42 45 41 47 62
+ [361] 54 36 42 39 46 32 42 51 51 58 40 57 38 46 44 46 40 39 38 52 38 49 39 41
+ [385] 39 45 50 45 53 51 45 46 44 47 50 42 47 45 50 33 38 44 56 45 49 48 38 42
+ [409] 49 48 47 47 46 45 48 37 51 59 42 40 48 41 58 45 50 45 52 42 53 53 42 53
+ [433] 40 36 49 33 44 46 41 44 41 45 32 44 46 37 51 47 49 49 53 52 38 38 44 44
+ [457] 48 47 38 37 43 43 41 44 54 50 39 49 51 47 47 44 40 46 38 45 43 49 40 43
+ [481] 35 47 47 52 38 42 38 37 44 59 49 40 52 46 47 43 29 55 45 51 53 47 36 45
+ [505] 44 44 38 44 51 46 35 38 53 48 41 42 52 42 53 44 47 51 51 54 48 46 50 55
+ [529] 51 51 41 37 43 49 41 48 37 48 43 44 42 38 42 37 49 51 47 48 40 48 49 45
+ [553] 47 45 55 39 54 52 43 52 44 46 45 48 45 52 51 46 43 44 54 38 42 47 45 47
+ [577] 58 46 50 48 50 40 41 37 39 41 48 41 41 51 41 54 39 47 43 49 50 37 44 47
+ [601] 58 44 35 44 49 39 58 49 44 50 35 45 48 49 36 36 45 59 48 46 57 52 42 39
+ [625] 42 45 42 53 32 49 57 46 49 48 49 38 52 54 43 46 35 50 50 39 37 60 49 48
+ [649] 53 46 45 39 49 57 43 34 49 50 39 50 40 33 42 36 44 53 45 51 50 45 43 41
+ [673] 53 52 49 52 46 51 42 46 43 50 40 42 48 52 54 40 45 34 41 48 46 45 44 41
+ [697] 43 45 43 58 42 42 41 50 46 47 45 45 46 47 47 58 50 42 42 44 50 44 41 46
+ [721] 44 50 34 45 45 53 45 43 49 54 45 46 44 45 46 42 49 37 53 46 38 51 43 45
+ [745] 37 45 47 45 47 42 39 50 54 60 41 40 49 42 49 41 51 48 45 42 44 37 46 45
+ [769] 38 48 51 43 38 42 47 44 41 46 36 49 50 46 39 45 39 41 41 44 48 32 41 42
+ [793] 36 40 47 44 41 50 45 40 34 40 58 38 37 44 38 42 47 42 37 44 47 41 48 48
+ [817] 49 34 50 46 42 37 53 45 41 39 41 49 43 49 47 41 45 45 51 39 51 42 49 46
+ [841] 42 45 43 39 60 43 38 41 38 55 50 44 40 49 45 37 51 42 41 52 46 48 57 39
+ [865] 46 43 55 51 36 41 46 47 47 40 52 54 44 39 44 41 55 43 43 47 35 58 51 42
+ [889] 52 48 38 53 49 45 47 50 48 46 46 36 48 38 47 53 40 41 41 43 53 54 42 47
+ [913] 43 48 43 38 38 52 36 49 55 39 34 38 44 41 36 42 41 34 38 43 42 47 48 40
+ [937] 43 47 51 45 50 36 37 66 40 53 48 37 33 61 47 38 49 48 50 43 48 36 43 51
+ [961] 41 46 39 46 42 54 44 48 43 30 48 46 40 36 43 54 47 51 39 42 45 45 42 46
+ [985] 40 47 48 50 59 41 36 44 37 44 34 51 42 50 45 40</code></pre>
+</div>
+</div>
+<p>This gives us our counts per squirrel, just like we calculated above, and we can plot it in the same way.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>rb_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">N_Successful_Heists =</span> count_squirrels)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rb_df,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> N_Successful_Heists)) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Number of Successful Heists per Squirrel - Simulated"</span>) <span class="sc">+</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Number of successful heists"</span>) <span class="sc">+</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Number of squirrels"</span>) <span class="sc">+</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="03-02_intro_to_probability_files/figure-html/plot_rbinom-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="03-02_intro_to_probability_files/figure-html/plot_rbinom-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We have already used the function <a href="../../R_reference.html#sec-prob_sim_glos"><code>dbinom()</code></a>, which gives us the probability of a specific number of successes, given specified values of k, n and p.</p>
+<p>Another function, <a href="../../R_reference.html#sec-prob_sim_glos"><code>pbinom()</code></a> calculates the probability that there will be <strong>no more than</strong> a specific number of successes. This is known as the cumulative probability. The arguments are similar to <code>dbinom</code>:</p>
+<ul>
+<li><code>q</code>: calculate the probability of no more than this number of successes.</li>
+<li><code>size</code>: number of trials - <em>n</em> in the equation, the number of attempts per squirrel, 150, in our case.</li>
+<li><code>prob</code>: probability of success in each trial - <em>p</em> in the equation, the probability of squirrel success, 0.3, in our case.</li>
+</ul>
+<p>For example, to calculate the probability that a squirrel will succeed no more than 48 times:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>prob_up_to_48 <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="dv">48</span>, <span class="dv">150</span>, <span class="fl">0.3</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(prob_up_to_48)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7358792</code></pre>
+</div>
+</div>
+<p>We can verify this with our <code>count_squirrels</code> vector generated with <code>rbinom</code>.</p>
+<p>The function <code>length()</code> returns the number of elements in a vector.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sum</span>(count_squirrels <span class="sc">&lt;=</span> <span class="dv">48</span>) <span class="sc">/</span> <span class="fu">length</span>(count_squirrels))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.718</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 4 - Using binomial functions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-rbinom_flowers" class="callout-exercise rec">
+<p><span class="rec-text"><strong>Recommended</strong></span></p>
+<p><a href="#">↑ top</a></p>
+<p>A botanist studies a plant species in which each flower has a 60% probability of having been pollinated. She needs 125 pollinated flowers for her experiment, but she can’t tell which flowers are pollinated until she gets back to the lab. She picks 200 flowers.</p>
+<p>Using simulation, estimate the probability that she has collected enough pollinated flowers for her experiment.</p>
+<p>Please solve this problem using the <code>rbinom()</code> function in your <code>prac3_exercises.qmd</code> Quarto file.</p>
+<div id="note-sumif" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To count how many numbers in a numeric vector, <code><span class="orange-text">vec</span></code>, are less than or equal to a certain value, <code><span class="blue-text">val</span></code> you can use <code>sum(<span class="orange-text">vec</span> &lt;= <span class="blue-text">val</span>)</code>. This syntax also works with other operators (<a href="../Practical_2_Data_Frames_and_Plots/02-01_manipulating_dataframes1.html#sec-filter" class="quarto-xref"><span>Filtering data frames</span></a>), e.g.&nbsp;<code>&lt;</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>==</code>, <code>!=</code>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex_rbinom_flowers_ans" class="callout-answer" data-collapse="true">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>n_flowers_per_sim <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate 1000 datasets of 200 flowers with</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># a 60% chance of being pollinated</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>flowers <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> n_sims,</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> n_flowers_per_sim,</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fl">0.6</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co"># How many times were at least 125 flowers</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co"># pollinated?</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>times_successful <span class="ot">&lt;-</span> <span class="fu">sum</span>(flowers <span class="sc">&gt;=</span> <span class="dv">125</span>)</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co"># What proportion of the attempts is this?</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>prop_successful <span class="ot">&lt;-</span> times_successful <span class="sc">/</span> n_sims</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(prop_successful)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.264</code></pre>
+</div>
+</div>
+<p>Based on this simulation, there is an estimated 26% probability she has 125 pollinated flowers.</p>
+<p>We can check this using <code>pbinom()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability that less than 125 flowers are</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pollinated</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>prob_under_125 <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="dv">124</span>, <span class="dv">200</span>, <span class="fl">0.6</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability that at least 125 flowers are</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pollinated</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>prob_125_or_over <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> prob_under_125</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(prob_125_or_over)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2589559</code></pre>
+</div>
+</div>
+<p>26% - similar to the simulated value. Running more simulations would make the estimate more accurate.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-exercise no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Exercise</span>Exercise 5 - How many flowers should she collect?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div id="ex-binomial_ext" class="callout-exercise extension">
+<p><span class="extension-text"><strong>Extension</strong></span></p>
+<p>In your <code>prac3_exercises.qmd</code> Quarto file, estimate the smallest number of flowers the botanist would need to collect to have at least a 95% probability of obtaining 125 pollinated flowers.</p>
+<div class="callout callout-style-default callout-answer no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="ex-binomial_ext_ans" class="callout-answer" data-collapse="true">
+<p>Option 1: Using simulation</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>props <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We know it's more than 200 - let's try to up to 250</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the simulation for each of these numbers of</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># flowers</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">1</span>)) {</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  flowers <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> n_sims,</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> i,</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob =</span> <span class="fl">0.6</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the number and proportion of times</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># she was successful</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store only this value, not the whole vector</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>  times_successful <span class="ot">&lt;-</span> <span class="fu">sum</span>(flowers <span class="sc">&gt;=</span> <span class="dv">125</span>)</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>  prop_successful <span class="ot">&lt;-</span> times_successful <span class="sc">/</span> n_sims</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>  props <span class="ot">&lt;-</span> <span class="fu">c</span>(props, prop_successful)</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert these into a data frame</span></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>prop_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">npicked =</span> <span class="fu">seq</span>(<span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">1</span>),</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">psuccess =</span> props</span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the rows where she succeeded at least</span></span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% of the time</span></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>prop_df_filt <span class="ot">&lt;-</span> prop_df <span class="sc">|&gt;</span></span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(psuccess <span class="sc">&gt;=</span> <span class="fl">0.95</span>)</span>
+<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(prop_df_filt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="tzkhxqvlms" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tzkhxqvlms table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#tzkhxqvlms thead, #tzkhxqvlms tbody, #tzkhxqvlms tfoot, #tzkhxqvlms tr, #tzkhxqvlms td, #tzkhxqvlms th {
+  border-style: none;
+}
+
+#tzkhxqvlms p {
+  margin: 0;
+  padding: 0;
+}
+
+#tzkhxqvlms .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#tzkhxqvlms .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#tzkhxqvlms .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#tzkhxqvlms .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#tzkhxqvlms .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#tzkhxqvlms .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#tzkhxqvlms .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#tzkhxqvlms .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#tzkhxqvlms .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#tzkhxqvlms .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#tzkhxqvlms .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#tzkhxqvlms .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#tzkhxqvlms .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#tzkhxqvlms .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#tzkhxqvlms .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tzkhxqvlms .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#tzkhxqvlms .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#tzkhxqvlms .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#tzkhxqvlms .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tzkhxqvlms .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#tzkhxqvlms .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tzkhxqvlms .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#tzkhxqvlms .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tzkhxqvlms .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tzkhxqvlms .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tzkhxqvlms .gt_left {
+  text-align: left;
+}
+
+#tzkhxqvlms .gt_center {
+  text-align: center;
+}
+
+#tzkhxqvlms .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#tzkhxqvlms .gt_font_normal {
+  font-weight: normal;
+}
+
+#tzkhxqvlms .gt_font_bold {
+  font-weight: bold;
+}
+
+#tzkhxqvlms .gt_font_italic {
+  font-style: italic;
+}
+
+#tzkhxqvlms .gt_super {
+  font-size: 65%;
+}
+
+#tzkhxqvlms .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#tzkhxqvlms .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#tzkhxqvlms .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#tzkhxqvlms .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#tzkhxqvlms .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#tzkhxqvlms .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#tzkhxqvlms .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#tzkhxqvlms .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#tzkhxqvlms div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="npicked" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">npicked</th>
+<th id="psuccess" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">psuccess</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">228</td>
+<td class="gt_row gt_right" headers="psuccess">0.954</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">229</td>
+<td class="gt_row gt_right" headers="psuccess">0.957</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">230</td>
+<td class="gt_row gt_right" headers="psuccess">0.959</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">231</td>
+<td class="gt_row gt_right" headers="psuccess">0.959</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">232</td>
+<td class="gt_row gt_right" headers="psuccess">0.977</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">233</td>
+<td class="gt_row gt_right" headers="psuccess">0.981</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">234</td>
+<td class="gt_row gt_right" headers="psuccess">0.980</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">235</td>
+<td class="gt_row gt_right" headers="psuccess">0.986</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">236</td>
+<td class="gt_row gt_right" headers="psuccess">0.989</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">237</td>
+<td class="gt_row gt_right" headers="psuccess">0.986</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">238</td>
+<td class="gt_row gt_right" headers="psuccess">0.986</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">239</td>
+<td class="gt_row gt_right" headers="psuccess">0.993</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">240</td>
+<td class="gt_row gt_right" headers="psuccess">0.996</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">241</td>
+<td class="gt_row gt_right" headers="psuccess">0.996</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">242</td>
+<td class="gt_row gt_right" headers="psuccess">0.998</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">243</td>
+<td class="gt_row gt_right" headers="psuccess">0.997</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">244</td>
+<td class="gt_row gt_right" headers="psuccess">1.000</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">245</td>
+<td class="gt_row gt_right" headers="psuccess">0.998</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">246</td>
+<td class="gt_row gt_right" headers="psuccess">0.999</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">247</td>
+<td class="gt_row gt_right" headers="psuccess">0.999</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">248</td>
+<td class="gt_row gt_right" headers="psuccess">0.999</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">249</td>
+<td class="gt_row gt_right" headers="psuccess">0.999</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">250</td>
+<td class="gt_row gt_right" headers="psuccess">1.000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>In my version of the simulation, she needs to pick 228 flowers.</p>
+<p>Option 2: Using <code>pbinom</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We know it's more than 200 - let's try to up to 250</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine the probability for each of these numbers</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># of flowers</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">1</span>)) {</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  prob_under_125 <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="dv">124</span>, i, <span class="fl">0.6</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  prob_125_or_over <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> prob_under_125</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> <span class="fu">c</span>(probs, prob_125_or_over)</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert these into a data frame</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>prob_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">npicked =</span> <span class="fu">seq</span>(<span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">1</span>),</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">psuccess =</span> probs</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the rows where she succeeded at least</span></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% of the time</span></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>prob_df_filt <span class="ot">&lt;-</span> prob_df <span class="sc">|&gt;</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(psuccess <span class="sc">&gt;=</span> <span class="fl">0.95</span>)</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(prob_df_filt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="barlhcejjl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#barlhcejjl table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#barlhcejjl thead, #barlhcejjl tbody, #barlhcejjl tfoot, #barlhcejjl tr, #barlhcejjl td, #barlhcejjl th {
+  border-style: none;
+}
+
+#barlhcejjl p {
+  margin: 0;
+  padding: 0;
+}
+
+#barlhcejjl .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#barlhcejjl .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#barlhcejjl .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#barlhcejjl .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#barlhcejjl .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#barlhcejjl .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#barlhcejjl .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#barlhcejjl .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#barlhcejjl .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#barlhcejjl .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#barlhcejjl .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#barlhcejjl .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#barlhcejjl .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#barlhcejjl .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#barlhcejjl .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#barlhcejjl .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#barlhcejjl .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#barlhcejjl .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#barlhcejjl .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#barlhcejjl .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#barlhcejjl .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#barlhcejjl .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#barlhcejjl .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#barlhcejjl .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#barlhcejjl .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#barlhcejjl .gt_left {
+  text-align: left;
+}
+
+#barlhcejjl .gt_center {
+  text-align: center;
+}
+
+#barlhcejjl .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#barlhcejjl .gt_font_normal {
+  font-weight: normal;
+}
+
+#barlhcejjl .gt_font_bold {
+  font-weight: bold;
+}
+
+#barlhcejjl .gt_font_italic {
+  font-style: italic;
+}
+
+#barlhcejjl .gt_super {
+  font-size: 65%;
+}
+
+#barlhcejjl .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#barlhcejjl .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#barlhcejjl .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#barlhcejjl .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#barlhcejjl .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#barlhcejjl .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#barlhcejjl .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#barlhcejjl .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#barlhcejjl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="npicked" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">npicked</th>
+<th id="psuccess" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">psuccess</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">228</td>
+<td class="gt_row gt_right" headers="psuccess">0.9511425</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">229</td>
+<td class="gt_row gt_right" headers="psuccess">0.9583986</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">230</td>
+<td class="gt_row gt_right" headers="psuccess">0.9647287</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">231</td>
+<td class="gt_row gt_right" headers="psuccess">0.9702227</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">232</td>
+<td class="gt_row gt_right" headers="psuccess">0.9749671</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">233</td>
+<td class="gt_row gt_right" headers="psuccess">0.9790437</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">234</td>
+<td class="gt_row gt_right" headers="psuccess">0.9825295</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">235</td>
+<td class="gt_row gt_right" headers="psuccess">0.9854955</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">236</td>
+<td class="gt_row gt_right" headers="psuccess">0.9880073</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">237</td>
+<td class="gt_row gt_right" headers="psuccess">0.9901243</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">238</td>
+<td class="gt_row gt_right" headers="psuccess">0.9919004</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">239</td>
+<td class="gt_row gt_right" headers="psuccess">0.9933836</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">240</td>
+<td class="gt_row gt_right" headers="psuccess">0.9946166</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">241</td>
+<td class="gt_row gt_right" headers="psuccess">0.9956370</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">242</td>
+<td class="gt_row gt_right" headers="psuccess">0.9964777</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">243</td>
+<td class="gt_row gt_right" headers="psuccess">0.9971674</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">244</td>
+<td class="gt_row gt_right" headers="psuccess">0.9977308</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">245</td>
+<td class="gt_row gt_right" headers="psuccess">0.9981890</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">246</td>
+<td class="gt_row gt_right" headers="psuccess">0.9985601</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">247</td>
+<td class="gt_row gt_right" headers="psuccess">0.9988594</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">248</td>
+<td class="gt_row gt_right" headers="psuccess">0.9990998</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="npicked">249</td>
+<td class="gt_row gt_right" headers="psuccess">0.9992921</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="npicked">250</td>
+<td class="gt_row gt_right" headers="psuccess">0.9994454</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>She needs to pick 228 flowers.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-summary_0302" class="level2">
+<h2 class="anchored" data-anchor-id="sec-summary_0302">Review</h2>
+<p><a href="#">↑ top</a></p>
+<div id="note-summary_0302" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Summary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="concepts" class="level4">
+<h4 class="anchored" data-anchor-id="concepts">Concepts</h4>
+<ul>
+<li><strong>Simulation</strong> can be used to approximate stochastic processes by generating random data.</li>
+<li>Random events can be simulated with <strong>equal or unequal probabilities</strong>.</li>
+<li>Repeating a simulation many times produces an <strong>empirical distribution</strong> of its possible outcomes.</li>
+<li>Increasing the number of simulations generally reduces random variation in an estimate, allowing the empirical distribution to more closely approximate the theoretical distribution.</li>
+<li>R provides functions both for calculating probabilities from theoretical distributions and for <strong>generating random values</strong> from them.</li>
+</ul>
+</section>
+<section id="functions" class="level4">
+<h4 class="anchored" data-anchor-id="functions">Functions</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>What it does</th>
+<th>Level</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>geom_bar()</code></td>
+<td>Creates a bar chart by counting the number of observations with each value and using this to calculate the height of the bars.</td>
+<td>Core</td>
+</tr>
+<tr class="even">
+<td><code>dbinom()</code></td>
+<td>Calculates the probability of a specified number of successes from a binomial distribution.</td>
+<td>Core</td>
+</tr>
+<tr class="odd">
+<td><code>rbinom()</code></td>
+<td>Generates random values from a binomial distribution.</td>
+<td>Core</td>
+</tr>
+<tr class="even">
+<td><code>pbinom()</code></td>
+<td>Calculates the cumulative probability of a binomial distribution up to a specified number of successes.</td>
+<td>Core</td>
+</tr>
+<tr class="odd">
+<td><code>length()</code></td>
+<td>Returns the number of elements in an object.</td>
+<td>Core</td>
+</tr>
+<tr class="even">
+<td><code>geom_col()</code></td>
+<td>Creates a bar chart using the values specified in the data to determine the heights of the bars.</td>
+<td>Extension</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="files" class="level4">
+<h4 class="anchored" data-anchor-id="files">Files</h4>
+<p>For this part of the practical, the main files you have edited are:</p>
+<ul>
+<li><code>squirrels.qmd</code></li>
+<li><code>prac3_exercises.qmd</code></li>
+</ul>
+<p>These are the files you should select when making your Git commit.</p>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Commit your changes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember to save your progress regularly by committing your changes with Git.</p>
+<ol type="1">
+<li>Save your changes to the files above in RStudio with the <code>Save</code> button.</li>
+<li>Render any Quarto documents with the <code>Render</code> button.</li>
+<li>Open the <code>Git</code> tab in RStudio.</li>
+<li>Tick the files listed above, don’t worry about any others.</li>
+<li>Click <code>Commit</code> and write a short message in the <code>Commit message</code> describing your changes, something like e.g.&nbsp;“Practical 1 part 1” is sufficient, then click <code>Commit</code>. Close the <code>Commit</code> popup.</li>
+</ol>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  /* ========================================================================
+     COLLAPSIBLE SECTIONS
+     ======================================================================== */
+
+  document
+    .querySelectorAll("h2.fold, h3.fold, h4.fold")
+    .forEach(function (heading) {
+
+      const section = heading.closest("section");
+      if (!section) return;
+
+      const details = document.createElement("details");
+      details.classList.add("collapse-section");
+
+      /* Copy content-level class from heading to details */
+      ["core", "rec", "extension", "bonus", "ref"].forEach(function (cls) {
+        if (heading.classList.contains(cls)) {
+          details.classList.add(cls);
+        }
+      });
+
+      /* Create clickable summary */
+      const summary = document.createElement("summary");
+      summary.textContent = heading.textContent.trim();
+      details.appendChild(summary);
+
+      /*
+       * Move everything after this heading that belongs to
+       * this Quarto section into the details element.
+       */
+      let node = heading.nextSibling;
+
+      while (node) {
+        const nextNode = node.nextSibling;
+        details.appendChild(node);
+        node = nextNode;
+      }
+
+      /* Insert the details element and hide the duplicate heading */
+      heading.insertAdjacentElement("afterend", details);
+      heading.style.display = "none";
+    });
+
+
+  /*
+   * Folded sections are collapsed by default.
+   * Open one automatically if it is reached through a
+   * sidebar link or cross-reference.
+   */
+  function openLinkedSection() {
+    if (!window.location.hash) return;
+
+    const target = document.querySelector(window.location.hash);
+    if (!target) return;
+
+    const section = target.closest("section");
+    if (!section) return;
+
+    const details = section.querySelector(
+      ":scope > details.collapse-section"
+    );
+
+    if (details) {
+      details.open = true;
+    }
+  }
+
+  openLinkedSection();
+  window.addEventListener("hashchange", openLinkedSection);
+
+
+  /* ========================================================================
+     ACCESSIBILITY FIXES FOR QUARTO-GENERATED ELEMENTS
+     ======================================================================== */
+
+  /*
+   * Give an element button behaviour when using the keyboard.
+   * This is needed for Quarto controls that are clickable
+   * but are not native <button> elements.
+   */
+  function makeKeyboardButton(element) {
+    element.setAttribute("role", "button");
+    element.setAttribute("tabindex", "0");
+
+    element.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        element.click();
+      }
+    });
+  }
+
+
+  /* Collapsible callout headers */
+  document
+    .querySelectorAll(".callout-header[data-bs-toggle='collapse']")
+    .forEach(makeKeyboardButton);
+
+  /* Sidebar section toggles */
+  document
+    .querySelectorAll(
+      "#quarto-sidebar [data-bs-toggle='collapse'][role='navigation']"
+    )
+    .forEach(makeKeyboardButton);
+
+
+  /* Give the navbar logo link an accessible name */
+  document
+    .querySelectorAll(".navbar-brand-logo")
+    .forEach(function (link) {
+      if (!link.getAttribute("aria-label")) {
+        link.setAttribute("aria-label", "Home");
+      }
+    });
+
+
+  /* Give navigation landmarks unique accessible names */
+  document
+    .querySelectorAll("nav.navbar")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "Main navigation");
+    });
+  document
+    .querySelectorAll("#TOC")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "On this page");
+    });
+  document
+    .querySelectorAll("#quarto-sidebar")
+    .forEach(function (nav) {
+      nav.setAttribute("aria-label", "Sidebar navigation");
+    });
+/* ========================================================================
+   EXERCISE TITLES
+   Remove Quarto's automatic exercise numbers
+   ======================================================================== */
+
+  document
+    .querySelectorAll(
+      ".callout-exercise > .callout-header .callout-title-container"
+    )
+    .forEach(function (title) {
+  
+      title.childNodes.forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.textContent = node.textContent.replace(
+            /^\s*Exercise\s+\d+\s*[-–—:]\s*/,
+            "Exercise - "
+          );
+        }
+      });
+    });
+});
+</script>
+<script src="../../answer-code.js"></script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../materials/Practical_3_Probability/03-01_for_loops.html" class="pagination-link" aria-label="Part 1: Loops">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 1: Loops</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../materials/Practical_3_Probability/03-03_distributions.html" class="pagination-link" aria-label="Part 3: Using simulation to understand data">
+        <span class="nav-page-text"><span class="chapter-title">Part 3: Using simulation to understand data</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> <img src="https://creativecommons.org/images/deed/cc_icon_black_x2.png" class="img-fluid" alt="" width="25"></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>
