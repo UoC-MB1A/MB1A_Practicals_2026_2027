@@ -289,3 +289,21 @@ These are the files you should select when making your Git commit.
 :::
 
 {{< include ../includes/git_commit.qmd >}}
+
+Because this is your first commit, you might see an error message saying that Git does not know who you are! If this happens, click on the "Terminal" tab in RStudio.
+
+![The Terminal tab](images/terminal.png){#fig-terminal}
+
+In the terminal, paste the following line of code, replacing `YourGitUserName` with your GitHub username (leave the quotation marks) then press Enter.
+
+```
+git config --global user.name "YourGitUserName"
+```
+
+Then paste the following line, replacing `YourGitEmail` with the email address you used when you signed up for GitHub.
+
+```
+git config --global user.email "YourGitEmail"
+```
+
+This will (hopefully) resolve the error. Click back onto the "Console" tab in RStudio.
